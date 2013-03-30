@@ -24,10 +24,10 @@ function(localinstall_copy target src dst)
     add_custom_command(
         OUTPUT ${dst}
         DEPENDS ${src}
-        COMMAND ${CMAKE_COMMAND} -E create_symlink ${src} ${dst}
+        COMMAND ln -f ${src} ${dst}
     )
     if(EXISTS ${src})
-        execute_process(COMMAND ${CMAKE_COMMAND} -E create_symlink ${src} ${dst})
+        execute_process(COMMAND ln -f ${src} ${dst})
     endif()
     target_sources(${target} PRIVATE ${dst})
 endfunction()

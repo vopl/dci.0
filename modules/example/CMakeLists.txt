@@ -111,8 +111,8 @@ function(dciDefineModule target)
 
 
     if(COMMAND localinstall)
-        localinstall(${target} share/dci-modules/${OPTS_NAME} DROP_PREFIX ${CMAKE_CURRENT_BINARY_DIR} ${manifest})
-        localinstall(${target} share/dci-modules/${OPTS_NAME} DROP_PREFIX ${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_BINARY_DIR}/${OPTS_MAINBINARY})
+        localinstall(${target} share/dci-modules/${OPTS_NAME} DROP_PREFIX ${CMAKE_CURRENT_BINARY_DIR}/ ${manifest})
+        localinstall(${target} share/dci-modules/${OPTS_NAME} DROP_PREFIX ${CMAKE_CURRENT_BINARY_DIR}/ ${CMAKE_CURRENT_BINARY_DIR}/${OPTS_MAINBINARY})
     endif()
 
 endfunction()
