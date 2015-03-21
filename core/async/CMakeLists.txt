@@ -234,6 +234,26 @@ endif()
 
 
 
+############################################################
+add_library(${PROJECT} SHARED
+    ${INC}             ${SRC}
+    ${INC_CTX}         ${SRC_CTX}
+)
+
+target_link_libraries(${PROJECT}
+    dci-himpl
+    dci-mm
+    dci-logger)
+
+set_property(TARGET ${PROJECT} PROPERTY CXX_STANDARD 11)
+set_property(TARGET ${PROJECT} PROPERTY CXX_STANDARD_REQUIRED ON)
+
+if(ASYNCSCHEDULER_CONTEXTENGINE_BOOSTCONTEXT)
+    target_link_libraries(${PROJECT} ${Boost_CONTEXT_LIBRARY})
+endif()
+
+target_link_libraries(${PROJECT} ${Boost_SYSTEM_LIBRARY})
+
 include(DciHimpl)
 mkHimplSizes(${PROJECT}
     OUTPUT
@@ -254,25 +274,7 @@ mkHimplSizes(${PROJECT}
 
 
 
-############################################################
-add_library(${PROJECT} SHARED
-    ${INC}             ${SRC}
-    ${INC_CTX}         ${SRC_CTX}
-)
 
-target_link_libraries(${PROJECT}
-    dci-himpl
-    dci-mm
-    dci-logger)
-
-set_property(TARGET ${PROJECT} PROPERTY CXX_STANDARD 11)
-set_property(TARGET ${PROJECT} PROPERTY CXX_STANDARD_REQUIRED ON)
-
-if(ASYNCSCHEDULER_CONTEXTENGINE_BOOSTCONTEXT)
-    target_link_libraries(${PROJECT} ${Boost_CONTEXT_LIBRARY})
-endif()
-
-target_link_libraries(${PROJECT} ${Boost_SYSTEM_LIBRARY})
 
 if(COMMAND localinstall)
     localinstall(${PROJECT} include/dci/async DROP_PREFIX include/ ${INC})

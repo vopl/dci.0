@@ -28,17 +28,6 @@ set(SRC
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 
-include(DciHimpl)
-mkHimplSizes(${PROJECT}
-    OUTPUT
-        ${CMAKE_CURRENT_SOURCE_DIR}/include/sizeProvider.hpp
-
-    HEADERS
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/impl/modulePlace.hpp
-
-    CLASSES
-        ::dci::site::impl::ModulePlace
-)
 
 
 
@@ -55,6 +44,18 @@ add_executable(${PROJECT}
 )
 set_property(TARGET ${PROJECT} PROPERTY CXX_STANDARD 11)
 set_property(TARGET ${PROJECT} PROPERTY CXX_STANDARD_REQUIRED ON)
+
+include(DciHimpl)
+mkHimplSizes(${PROJECT}
+    OUTPUT
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/sizeProvider.hpp
+
+    HEADERS
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/impl/modulePlace.hpp
+
+    CLASSES
+        ::dci::site::impl::ModulePlace
+)
 
 
 target_link_libraries(${PROJECT} ${Boost_PROGRAM_OPTIONS_LIBRARY} ${Boost_FILESYSTEM_LIBRARY})

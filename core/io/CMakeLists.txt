@@ -70,6 +70,20 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 
 
+
+############################################################
+add_library(${PROJECT} SHARED
+    ${INC}                  ${SRC}
+)
+set_property(TARGET ${PROJECT} PROPERTY CXX_STANDARD 11)
+set_property(TARGET ${PROJECT} PROPERTY CXX_STANDARD_REQUIRED ON)
+
+target_link_libraries(${PROJECT}
+    dci-mm
+    dci-async
+    dci-logger
+    dci-himpl)
+
 include(DciHimpl)
 mkHimplSizes(${PROJECT}
     OUTPUT
@@ -89,18 +103,6 @@ mkHimplSizes(${PROJECT}
 )
 
 
-############################################################
-add_library(${PROJECT} SHARED
-    ${INC}                  ${SRC}
-)
-set_property(TARGET ${PROJECT} PROPERTY CXX_STANDARD 11)
-set_property(TARGET ${PROJECT} PROPERTY CXX_STANDARD_REQUIRED ON)
-
-target_link_libraries(${PROJECT}
-    dci-mm
-    dci-async
-    dci-logger
-    dci-himpl)
 
 if(COMMAND localinstall)
     localinstall(${PROJECT} include/dci/io DROP_PREFIX include/ ${INC})

@@ -117,16 +117,26 @@ set(SRC
 
 
 
+
+
 ############################################################
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 
+############################################################
+add_library(${PROJECT} SHARED
+    ${INC}                  ${SRC}
+)
 
+target_link_libraries(${PROJECT}
+    dci-himpl
+    dci-mm
+    dci-logger)
 
+set_property(TARGET ${PROJECT} PROPERTY CXX_STANDARD 14)
+set_property(TARGET ${PROJECT} PROPERTY CXX_STANDARD_REQUIRED ON)
 
-
-
-
-
+############################################################
 include(DciHimpl)
 mkHimplSizes(${PROJECT}
     OUTPUT
@@ -193,23 +203,6 @@ mkHimplSizes(${PROJECT}
         ::dci::couple::meta::impl::LibraryBuilder
 )
 
-
-############################################################
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
-
-
-############################################################
-add_library(${PROJECT} SHARED
-    ${INC}                  ${SRC}
-)
-
-target_link_libraries(${PROJECT}
-    dci-himpl
-    dci-mm
-    dci-logger)
-
-set_property(TARGET ${PROJECT} PROPERTY CXX_STANDARD 14)
-set_property(TARGET ${PROJECT} PROPERTY CXX_STANDARD_REQUIRED ON)
 
 if(COMMAND localinstall)
     localinstall(${PROJECT} include/dci/couple/meta DROP_PREFIX include/ ${INC})
