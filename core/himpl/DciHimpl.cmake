@@ -80,7 +80,7 @@ macro(mkHimplSizes target)
     file(APPEND ${src} "        \"namespace dci { namespace himpl {\\n\"\n")
 
     foreach(class ${classes})
-        file(APPEND ${src} "        \"    template <> struct sizeProvider<${class}> { static const std::size_t _value =  \" << ::dci::himpl::SizeFetcher<${class}>::_value << \";};\\n\"\n")
+        file(APPEND ${src} "        \"    template <> struct sizeProvider< ${class} > { static const std::size_t _value =  \" << ::dci::himpl::SizeFetcher<${class}>::_value << \";};\\n\"\n")
     endforeach()
 
     file(APPEND ${src} "        \"}}\\n\"\n")

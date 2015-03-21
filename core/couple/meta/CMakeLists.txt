@@ -164,20 +164,20 @@ mkHimplSizes(${PROJECT}
         ::dci::couple::meta::impl::Alias
         ::dci::couple::meta::impl::Array
         ::dci::couple::meta::impl::Attribute
-        ::dci::couple::meta::impl::Compound<::dci::couple::meta::Attribute>
-        ::dci::couple::meta::impl::Compound<::dci::couple::meta::EnumValue>
-        ::dci::couple::meta::impl::Compound<::dci::couple::meta::Method>
-        ::dci::couple::meta::impl::Compound<::dci::couple::meta::Type>
-        ::dci::couple::meta::impl::Compound<::dci::couple::meta::Scope>
+        "::dci::couple::meta::impl::Compound< ::dci::couple::meta::Attribute>"
+        "::dci::couple::meta::impl::Compound< ::dci::couple::meta::EnumValue>"
+        "::dci::couple::meta::impl::Compound< ::dci::couple::meta::Method>"
+        "::dci::couple::meta::impl::Compound< ::dci::couple::meta::Type>"
+        "::dci::couple::meta::impl::Compound< ::dci::couple::meta::Scope>"
         ::dci::couple::meta::impl::Container1
         ::dci::couple::meta::impl::Container2
         ::dci::couple::meta::impl::Enum
         ::dci::couple::meta::impl::EnumValue
         ::dci::couple::meta::impl::Iface
-        ::dci::couple::meta::impl::Inheritable<::dci::couple::meta::Enum>
-        ::dci::couple::meta::impl::Inheritable<::dci::couple::meta::Iface>
-        ::dci::couple::meta::impl::Inheritable<::dci::couple::meta::Struct>
-        ::dci::couple::meta::impl::Inheritable<::dci::couple::meta::Variant>
+        "::dci::couple::meta::impl::Inheritable< ::dci::couple::meta::Enum>"
+        "::dci::couple::meta::impl::Inheritable< ::dci::couple::meta::Iface>"
+        "::dci::couple::meta::impl::Inheritable< ::dci::couple::meta::Struct>"
+        "::dci::couple::meta::impl::Inheritable< ::dci::couple::meta::Variant>"
         ::dci::couple::meta::impl::List
         ::dci::couple::meta::impl::Map
         ::dci::couple::meta::impl::Method
