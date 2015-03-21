@@ -99,9 +99,12 @@ macro(mkHimplSizes target)
     set_target_properties(${sizeProviderGen} PROPERTIES CXX_STANDARD ${CXX_STANDARD})
 
     ############################################################
-    add_custom_command(OUTPUT ${output}
-                        COMMAND ${sizeProviderGen} > ${output}
+    set(sizeProviderGenOut ${CMAKE_CURRENT_BINARY_DIR}/${sizeProviderGen}.out.hpp)
+    add_custom_command(OUTPUT ${sizeProviderGenOut}
+                        COMMAND ${sizeProviderGen} > ${sizeProviderGenOut}
+                        COMMAND ${CMAKE_COMMAND} -E copy_if_different ${sizeProviderGenOut} ${output}
                         DEPENDS ${sizeProviderGen}
-                        )
+    )
 
+    target_sources(${target} PRIVATE ${sizeProviderGenOut})
 endmacro()

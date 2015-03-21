@@ -19,7 +19,7 @@ macro(localinstall_copy target src dst)
     if(EXISTS ${src} AND ${src} IS_NEWER_THAN ${dst})
         configure_file(${src} ${dst} COPYONLY)
     endif()
-    target_sources(${target} PUBLIC ${dst})
+    target_sources(${target} PRIVATE ${dst})
 endmacro()
 
 macro(localinstall target dir)
