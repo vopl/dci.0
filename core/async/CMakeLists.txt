@@ -113,9 +113,6 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
 
 
-if(VALGRIND_FOUND)
-    include_directories(${VALGRIND_INCLUDE_DIR})
-endif()
 
 
 
@@ -227,6 +224,9 @@ if(ASYNCSCHEDULER_CONTEXTENGINE_BOOSTCONTEXT)
     include_directories(${Boost_INCLUDE_DIRS})
 endif()
 
+if(VALGRIND_FOUND)
+    include_directories(${VALGRIND_INCLUDE_DIR})
+endif()
 
 
 

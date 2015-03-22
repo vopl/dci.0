@@ -5,6 +5,8 @@
 #include <boost/spirit/repository/home/qi.hpp>
 #include <boost/spirit/include/phoenix.hpp>
 
+#include <memory>
+
 namespace qi = boost::spirit::qi;
 namespace phx = boost::phoenix;
 
