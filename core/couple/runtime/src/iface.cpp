@@ -2,4 +2,14 @@
 
 namespace dci { namespace couple { namespace runtime
 {
+    Iface::Iface()
+    {
+
+    }
+
+    Iface::~Iface()
+    {
+
+    }
+
 }}}

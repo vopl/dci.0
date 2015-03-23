@@ -4,10 +4,13 @@ project(${PROJECT})
 
 ############################################################
 set(INC
-    include/identifier.hpp
-    include/intrusivePtr.hpp
-    include/iface.hpp
+    include/callWire.hpp
     include/hub.hpp
+    include/identifier.hpp
+    include/iface.hpp
+    include/ifaceId.hpp
+    include/ifaceState.hpp
+    include/signal.hpp
     include/sizeProvider.hpp
 )
 
@@ -15,12 +18,11 @@ set(INC
 ############################################################
 set(SRC
     src/iface.cpp
+    src/ifaceState.cpp
     src/hub.cpp
 
-    src/impl/iface.hpp
     src/impl/hub.hpp
 
-    src/impl/iface.cpp
     src/impl/hub.cpp
 )
 
@@ -55,11 +57,9 @@ mkHimplSizes(${PROJECT}
 
     HEADERS
         ${CMAKE_CURRENT_SOURCE_DIR}/src/impl/hub.hpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/impl/iface.hpp
 
     CLASSES
         ::dci::couple::runtime::impl::Hub
-        ::dci::couple::runtime::impl::Iface
 )
 
 

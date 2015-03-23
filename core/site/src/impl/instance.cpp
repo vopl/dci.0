@@ -151,7 +151,7 @@ namespace dci { namespace site { namespace impl
         {
             _modulesInitialized = true;
 
-            fs::path modulesDir = fs::current_path() / "modules";
+            fs::path modulesDir = fs::current_path() / "share/dci-modules";
 
             if(!fs::exists(modulesDir))
             {

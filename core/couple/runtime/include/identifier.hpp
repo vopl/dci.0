@@ -8,7 +8,6 @@ namespace dci { namespace couple { namespace runtime
     template <class Tag, std::size_t size=128/8>
     class Identifier
     {
-        //not impl
     public:
         Identifier();
         ~Identifier();

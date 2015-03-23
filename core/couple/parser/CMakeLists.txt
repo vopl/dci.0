@@ -100,6 +100,13 @@ set_property(TARGET ${PROJECT} PROPERTY CXX_STANDARD_REQUIRED ON)
 
 target_link_libraries(${PROJECT} ${Boost_FILESYSTEM_LIBRARY} ${Boost_SYSTEM_LIBRARY})
 
+target_link_libraries(${PROJECT}
+    dci-himpl
+    dci-mm
+    dci-async
+    dci-couple-meta
+    dci-logger)
+
 include(DciPch)
 use_pch(${PROJECT} ${CMAKE_CURRENT_SOURCE_DIR}/src/pch.hpp ${SRC})
 

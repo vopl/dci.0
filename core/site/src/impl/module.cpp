@@ -30,17 +30,7 @@ namespace dci { namespace site { namespace impl
         , _state{ModuleState::null}
         , _place{}
 
-        , _moduleInstall{}
-        , _moduleUninstall{}
-
-        , _moduleLoad{}
-        , _moduleUnload{}
-
-        , _moduleStart{}
-        , _moduleStop{}
-
-        , _moduleGetServiceInstance{}
-
+        , _entry{}
     {
     }
 
@@ -264,55 +254,41 @@ namespace dci { namespace site { namespace impl
                 return;
             }
 
-            assert(!_moduleInstall);
-            assert(!_moduleUninstall);
+            assert(!_entry);
 
-            assert(!_moduleLoad);
-            assert(!_moduleUnload);
+            void **ppe = (void **)dlsym(_mainBinaryHandle, "dciModuleEntry");
+            if(!ppe)
+            {
+                LOGE("loading module \""<<_name<<"\": entry point is absent");
+                _state = ModuleState::loadError;
+                p.setValue(make_error_code(error::module::unable_load_binary));
+                return;
+            }
 
-            assert(!_moduleStart);
-            assert(!_moduleStop);
+             _entry = static_cast<ModuleEntry*>(*ppe);
 
-            assert(!_moduleGetServiceInstance);
-
-             _moduleInstall             = (FModuleInstall)              dlsym(_mainBinaryHandle, "dciModuleInstall");
-             _moduleUninstall           = (FModuleUninstall)            dlsym(_mainBinaryHandle, "dciModuleUninstall");
-
-             _moduleLoad                = (FModuleLoad)                 dlsym(_mainBinaryHandle, "dciModuleLoad");
-             _moduleUnload              = (FModuleUnload)               dlsym(_mainBinaryHandle, "dciModuleUnload");
-
-             _moduleStart               = (FModuleStart)                dlsym(_mainBinaryHandle, "dciModuleStart");
-             _moduleStop                = (FModuleStop)                 dlsym(_mainBinaryHandle, "dciModuleStop");
-
-             _moduleGetServiceInstance  = (FModuleGetServiceInstance)   dlsym(_mainBinaryHandle, "dciModuleGetServiceInstance");
-
-             if(_moduleLoad)
+             if(!_entry)
              {
-                 std::error_code ec = _moduleLoad(himpl::impl2Face<dci::site::ModulePlace>(_place)).value<0>();
-                 if(ec)
-                 {
-                     LOGE("loading module \""<<_name<<"\": "<<ec);
+                 LOGE("loading module \""<<_name<<"\": entry point is damaged");
+                 _state = ModuleState::loadError;
+                 p.setValue(make_error_code(error::module::unable_load_binary));
+                 return;
+             }
 
-                     _moduleInstall             = nullptr;
-                     _moduleUninstall           = nullptr;
+             std::error_code ec = _entry->load(himpl::impl2Face<dci::site::ModulePlace>(_place)).value<0>();
+             if(ec)
+             {
+                 LOGE("loading module \""<<_name<<"\": "<<ec);
 
-                     _moduleLoad                = nullptr;
-                     _moduleUnload              = nullptr;
+                 _entry  = nullptr;
 
-                     _moduleStart               = nullptr;
-                     _moduleStop                = nullptr;
+                 assert(_mainBinaryHandle);
+                 dlclose(_mainBinaryHandle);
+                 _mainBinaryHandle = nullptr;
 
-                     _moduleGetServiceInstance  = nullptr;
-
-
-                     assert(_mainBinaryHandle);
-                     dlclose(_mainBinaryHandle);
-                     _mainBinaryHandle = nullptr;
-
-                     _state = ModuleState::loadError;
-                     p.setValue(std::move(ec));
-                     return;
-                 }
+                 _state = ModuleState::loadError;
+                 p.setValue(std::move(ec));
+                 return;
              }
 
             _state = ModuleState::loaded;
@@ -342,10 +318,11 @@ namespace dci { namespace site { namespace impl
         async::spawn([p=std::move(p), this] () mutable {
 
             assert(ModuleState::unloading == _state);
+            assert(_entry);
 
-            if(_moduleUnload)
+            if(_entry)
             {
-                std::error_code ec = _moduleUnload(himpl::impl2Face<dci::site::ModulePlace>(_place)).value<0>();
+                std::error_code ec = _entry->unload(himpl::impl2Face<dci::site::ModulePlace>(_place)).value<0>();
                 if(ec)
                 {
                     LOGE("unloading module \""<<_name<<"\": "<<ec);
@@ -353,16 +330,7 @@ namespace dci { namespace site { namespace impl
                 }
             }
 
-            _moduleInstall             = nullptr;
-            _moduleUninstall           = nullptr;
-
-            _moduleLoad                = nullptr;
-            _moduleUnload              = nullptr;
-
-            _moduleStart               = nullptr;
-            _moduleStop                = nullptr;
-
-            _moduleGetServiceInstance  = nullptr;
+            _entry  = nullptr;
 
 
             assert(_mainBinaryHandle);
@@ -396,17 +364,15 @@ namespace dci { namespace site { namespace impl
         async::spawn([p=std::move(p), this] () mutable {
 
             assert(ModuleState::starting == _state);
+            assert(_entry);
 
-            if(_moduleStart)
+            std::error_code ec = _entry->start(himpl::impl2Face<dci::site::ModulePlace>(_place)).value<0>();
+            if(ec)
             {
-                std::error_code ec = _moduleStart(himpl::impl2Face<dci::site::ModulePlace>(_place)).value<0>();
-                if(ec)
-                {
-                    LOGE("starting module \""<<_name<<"\": "<<ec);
-                    _state = ModuleState::startError;
-                    p.setValue(std::move(ec));
-                    return;
-                }
+                LOGE("starting module \""<<_name<<"\": "<<ec);
+                _state = ModuleState::startError;
+                p.setValue(std::move(ec));
+                return;
             }
 
             _state = ModuleState::started;
@@ -437,15 +403,13 @@ namespace dci { namespace site { namespace impl
         async::spawn([p=std::move(p), this] () mutable {
 
             assert(ModuleState::stopping == _state);
+            assert(_entry);
 
-            if(_moduleStop)
+            std::error_code ec = _entry->stop(himpl::impl2Face<dci::site::ModulePlace>(_place)).value<0>();
+            if(ec)
             {
-                std::error_code ec = _moduleStop(himpl::impl2Face<dci::site::ModulePlace>(_place)).value<0>();
-                if(ec)
-                {
-                    LOGE("stopping module \""<<_name<<"\": "<<ec);
-                    //ignore error
-                }
+                LOGE("stopping module \""<<_name<<"\": "<<ec);
+                //ignore error
             }
 
             _state = ModuleState::loaded;
@@ -456,7 +420,7 @@ namespace dci { namespace site { namespace impl
         return f;
     }
 
-    async::Future<std::error_code, couple::runtime::IfacePtr> Module::getServiceInstance(const couple::runtime::Iid &iid)
+    async::Future<std::error_code, couple::runtime::Iface> Module::getServiceInstance(const couple::runtime::Iid &iid)
     {
         assert(0);
     }

@@ -6,6 +6,7 @@ set(INC
     include/error.hpp
     include/moduleId.hpp
     include/modulePlace.hpp
+    include/moduleEntryFunctions.hpp
     include/sizeProvider.hpp
 )
 

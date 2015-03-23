@@ -1,27 +1,47 @@
 #pragma once
 
-#include <dci/himpl/sizeProvider.hpp>
-#include SIZEPROVIDERFILE("sizeProvider.hpp")
-
-#include "identifier.hpp"
-#include "intrusivePtr.hpp"
-#include <dci/himpl/faceLayout.hpp>
+#include "ifaceId.hpp"
+#include "ifaceState.hpp"
 
 namespace dci { namespace couple { namespace runtime
 {
-    namespace impl
-    {
-        class Iface;
-    }
-
-    class IfaceIdentifierTag;
-    using Iid = Identifier<IfaceIdentifierTag>;
-
     class Iface
-        : public himpl::FaceLayout<impl::Iface>
     {
+    public:
+        Iface();
+        ~Iface();
+
+    private:
+        IfaceStatePtr _state;
     };
 
-    using IfacePtr = IntrusivePtr<Iface>;
+
+
+
+//    class CustomIface1Handler
+//    {
+//        CustomIface1 f;
+//    public:
+//        CustomIface1Handler()
+//        {
+//            f.out1.connect(&onOut1);
+//            f.out2.connect(&onOut2);
+//        }
+
+//        ~CustomIface1Handler()
+//        {
+//            //f.out1.disconnect();
+//            //f.out2.disconnect();
+//        }
+
+//        int onOut1()
+//        {
+//            return f.in1();
+//        }
+//        char onOut2()
+//        {
+//            return f.in2();
+//        }
+//    };
 
 }}}

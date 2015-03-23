@@ -6,6 +6,7 @@
 #include "moduleState.hpp"
 #include <modulePlace.hpp>
 #include "modulePlace.hpp"
+#include <moduleEntryFunctions.hpp>
 
 #include <dci/async/future.hpp>
 
@@ -61,7 +62,7 @@ namespace dci { namespace site { namespace impl
 
 
         //////////////// use
-        async::Future<std::error_code, couple::runtime::IfacePtr> getServiceInstance(const couple::runtime::Iid &iid);
+        async::Future<std::error_code, couple::runtime::Iface> getServiceInstance(const couple::runtime::Iid &iid);
 
     private:
         std::string                         _provider;
@@ -85,31 +86,8 @@ namespace dci { namespace site { namespace impl
     private:
         void *  _mainBinaryHandle;
 
-        using FModuleInstall            = async::Future<std::error_code> (*)(const dci::site::ModulePlace &place);
-        using FModuleUninstall          = async::Future<std::error_code> (*)(const dci::site::ModulePlace &place);
-
-        using FModuleLoad               = async::Future<std::error_code> (*)(const dci::site::ModulePlace &place);
-        using FModuleUnload             = async::Future<std::error_code> (*)(const dci::site::ModulePlace &place);
-
-        using FModuleStart              = async::Future<std::error_code> (*)(const dci::site::ModulePlace &place);
-        using FModuleStop               = async::Future<std::error_code> (*)(const dci::site::ModulePlace &place);
-
-        using FModuleGetServiceInstance = async::Future<std::error_code, couple::runtime::IfacePtr> (*)(const couple::runtime::Iid &iid);
-
-
-
     private:
-        FModuleInstall              _moduleInstall;
-        FModuleUninstall            _moduleUninstall;
-
-        FModuleLoad                 _moduleLoad;
-        FModuleUnload               _moduleUnload;
-
-        FModuleStart                _moduleStart;
-        FModuleStop                 _moduleStop;
-
-        FModuleGetServiceInstance   _moduleGetServiceInstance;
-
+        ModuleEntry * _entry;
     };
 
     using ModulePtr = std::unique_ptr<Module>;
