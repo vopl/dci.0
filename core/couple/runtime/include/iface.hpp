@@ -7,41 +7,20 @@ namespace dci { namespace couple { namespace runtime
 {
     class Iface
     {
+        Iface() = delete;
     public:
-        Iface();
+        Iface(IfaceState *state);
+        Iface(const Iface &from);
+        Iface(Iface &&from);
         ~Iface();
 
+        Iface &operator=(const Iface &from);
+        Iface &operator=(Iface &&from);
+
+        IfaceState *state();
+
     private:
-        IfaceStatePtr _state;
+        IfaceState *_state;
     };
-
-
-
-
-//    class CustomIface1Handler
-//    {
-//        CustomIface1 f;
-//    public:
-//        CustomIface1Handler()
-//        {
-//            f.out1.connect(&onOut1);
-//            f.out2.connect(&onOut2);
-//        }
-
-//        ~CustomIface1Handler()
-//        {
-//            //f.out1.disconnect();
-//            //f.out2.disconnect();
-//        }
-
-//        int onOut1()
-//        {
-//            return f.in1();
-//        }
-//        char onOut2()
-//        {
-//            return f.in2();
-//        }
-//    };
 
 }}}

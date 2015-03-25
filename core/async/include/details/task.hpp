@@ -33,5 +33,5 @@ namespace dci { namespace async { namespace details
         using himpl::FaceLayout<impl::Task>::impl;
     };
 
-    void spawn(details::Task *task);
+    void spawnTask(details::Task *task);
 }}}

@@ -5,6 +5,7 @@ project(${PROJECT})
 ############################################################
 set(INC
     include/callWire.hpp
+    include/callResult.hpp
     include/hub.hpp
     include/identifier.hpp
     include/iface.hpp

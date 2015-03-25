@@ -8,7 +8,8 @@ namespace dci { namespace couple { namespace runtime
 
     class IfaceState
     {
-        IfaceState(...) = delete;
+        IfaceState() = delete;
+        void operator=(const IfaceState &) = delete;
 
     public:
         using Deleter = void (*)(IfaceState *state);
@@ -25,20 +26,4 @@ namespace dci { namespace couple { namespace runtime
         Deleter     _deleter;
     };
 
-    class IfaceStatePtr
-    {
-    public:
-        IfaceStatePtr();
-        IfaceStatePtr(IfaceState *state);
-        IfaceStatePtr(const IfaceStatePtr &from);
-        IfaceStatePtr(IfaceStatePtr &&from);
-        ~IfaceStatePtr();
-
-        IfaceStatePtr operator=(const IfaceStatePtr &from);
-        IfaceStatePtr operator=(IfaceStatePtr &&from);
-
-    private:
-        IfaceState *_state;
-
-    };
 }}}

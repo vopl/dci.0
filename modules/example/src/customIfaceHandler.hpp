@@ -13,6 +13,7 @@ public:
     ~CustomIfaceHandler();
 
     int onOut1();
-    char onOut2();
+    dci::async::Future<char> onOut2();
+    CallResult<size_t> onOut3();
 
 };

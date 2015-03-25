@@ -4,59 +4,28 @@
 namespace dci { namespace couple { namespace runtime
 {
     IfaceState::IfaceState(Deleter deleter)
+        : _refs{0}
+        , _deleter{deleter}
     {
-        assert(0);
     }
 
     IfaceState::~IfaceState()
     {
-        assert(0);
+        assert(!_refs);
     }
 
     void IfaceState::incRef()
     {
-        assert(0);
+        _refs++;
     }
 
     void IfaceState::decRef()
     {
-        assert(0);
-    }
-
-
-    IfaceStatePtr::IfaceStatePtr()
-    {
-        assert(0);
-    }
-
-    IfaceStatePtr::IfaceStatePtr(IfaceState *state)
-    {
-        assert(0);
-    }
-
-    IfaceStatePtr::IfaceStatePtr(const IfaceStatePtr &from)
-    {
-        assert(0);
-    }
-
-    IfaceStatePtr::IfaceStatePtr(IfaceStatePtr &&from)
-    {
-        assert(0);
-    }
-
-    IfaceStatePtr::~IfaceStatePtr()
-    {
-        assert(0);
-    }
-
-    IfaceStatePtr IfaceStatePtr::operator=(const IfaceStatePtr &from)
-    {
-        assert(0);
-    }
-
-    IfaceStatePtr IfaceStatePtr::operator=(IfaceStatePtr &&from)
-    {
-        assert(0);
+        _refs--;
+        if(!_refs)
+        {
+            _deleter(this);
+        }
     }
 
 }}}

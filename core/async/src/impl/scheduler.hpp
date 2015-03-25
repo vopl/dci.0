@@ -17,7 +17,7 @@ namespace dci { namespace async { namespace impl
         static Scheduler &instance();
 
     public:
-        void spawn(Task *task);
+        void spawnTask(Task *task);
         void yield();
         void hold();
         void ready(ctx::Coro *coro);

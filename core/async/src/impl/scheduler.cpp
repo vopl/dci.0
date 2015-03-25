@@ -28,7 +28,7 @@ namespace dci { namespace async { namespace impl
         return _instance;
     }
 
-    void Scheduler::spawn(Task *task)
+    void Scheduler::spawnTask(Task *task)
     {
         _tasks.enqueue(task);
     }

@@ -1,44 +1,81 @@
 #include "customIfaceHandler.hpp"
 #include <cassert>
 
+using namespace dci::couple::runtime;
+
 CustomIface::CustomIface()
+    : Iface(new CustomIface1State)
 {
-    assert(0);
 }
 
-CustomIface::CustomIface(const CustomIface &)
+CustomIface::CustomIface(const CustomIface &from)
+    : Iface(from)
 {
-    assert(0);
 }
 
-CustomIface::CustomIface(const Iface &)
+CustomIface::CustomIface(CustomIface &&from)
+    : Iface(std::forward<Iface>(from))
 {
-    assert(0);
+}
+
+
+CustomIface::CustomIface(const Iface &from)
+    : Iface(from)
+{
+    //TODO: validate cast
+}
+
+CustomIface::CustomIface(Iface &&from)
+    : Iface(std::forward<Iface>(from))
+{
+    //TODO: validate cast
 }
 
 CustomIface::~CustomIface()
 {
-    assert(0);
 }
 
 
-CustomIface &CustomIface::operator=(const CustomIface &)
+CustomIface &CustomIface::operator=(const CustomIface &from)
 {
-    assert(0);
+    Iface::operator=(from);
+    return *this;
 }
 
-CustomIface &CustomIface::operator=(const Iface &)
+CustomIface &CustomIface::operator=(CustomIface &&from)
 {
-    assert(0);
+    Iface::operator=(std::move(from));
+    return *this;
 }
 
-int CustomIface::in1()
+CustomIface &CustomIface::operator=(const Iface &from)
 {
-    assert(0);
+    Iface::operator=(from);
+    return *this;
 }
 
-char CustomIface::in2()
+CustomIface &CustomIface::operator=(Iface &&from)
 {
-    assert(0);
+    Iface::operator=(std::move(from));
+    return *this;
 }
 
+CallResult<int> CustomIface::in1()
+{
+    return state()->in1();
+}
+
+CallResult<char> CustomIface::in2()
+{
+    return state()->in2();
+}
+
+CallResult<size_t> CustomIface::in3()
+{
+    return state()->in3();
+}
+
+CustomIface1State *CustomIface::state()
+{
+    return static_cast<CustomIface1State *>(Iface::state());
+}

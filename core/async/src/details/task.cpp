@@ -16,9 +16,9 @@ namespace dci { namespace async { namespace details
     }
 
     ////////////////////////////////////////////////////////////////////////////////
-    void spawn(details::Task *task)
+    void spawnTask(details::Task *task)
     {
-        return impl::Scheduler::instance().spawn(task->pimpl());
+        return impl::Scheduler::instance().spawnTask(task->pimpl());
     }
 
 }}}

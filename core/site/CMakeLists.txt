@@ -43,7 +43,7 @@ include_directories(${Boost_INCLUDE_DIRS})
 add_executable(${PROJECT}
     ${INC}  ${SRC}
 )
-set_property(TARGET ${PROJECT} PROPERTY CXX_STANDARD 11)
+set_property(TARGET ${PROJECT} PROPERTY CXX_STANDARD 14)
 set_property(TARGET ${PROJECT} PROPERTY CXX_STANDARD_REQUIRED ON)
 
 include(DciHimpl)

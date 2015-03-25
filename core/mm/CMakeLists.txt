@@ -71,7 +71,7 @@ add_library(${PROJECT} SHARED
     ${SRC}
 )
 
-set_target_properties(${PROJECT} PROPERTIES CXX_STANDARD 11)
+set_target_properties(${PROJECT} PROPERTIES CXX_STANDARD 14)
 set_target_properties(${PROJECT} PROPERTIES CXX_STANDARD_REQUIRED ON)
 
 
