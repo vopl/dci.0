@@ -139,6 +139,7 @@ set(INC
     include/future.hpp
     include/details/task.hpp
     include/details/taskInstance.hpp
+    include/details/taskPromiseProcessor.hpp
     include/details/acquire.hpp
     include/sizeProvider.hpp
 )
