@@ -27,7 +27,6 @@ namespace dci { namespace async
 
             Event       _readyEvent;
             typename std::aligned_storage<sizeof(Value), alignof(Value)>::type   _valueArea;
-            std::exception_ptr _exception;
         };
 
         struct FutureStateAccessos
@@ -94,7 +93,6 @@ namespace dci { namespace async
 
         bool isReady() const;
         void setValue(T&&... val);
-        void setException(const std::exception_ptr &exception);
     };
 
     template <typename... T>
@@ -116,7 +114,7 @@ namespace dci { namespace async
         template <typename... T>
         FutureState<T...>::~FutureState()
         {
-            if(_readyEvent.isSignalled() && !_exception)
+            if(_readyEvent.isSignalled())
             {
                 valueArea().~Value();
             }
@@ -180,10 +178,6 @@ namespace dci { namespace async
     const std::tuple<T...> &Future<T...>::value()
     {
         wait();
-        if(this->instance()._exception)
-        {
-            std::rethrow_exception(this->instance()._exception);
-        }
         return this->instance().valueArea();
     }
 
@@ -192,10 +186,6 @@ namespace dci { namespace async
     const typename std::tuple_element<idx, std::tuple<T...> >::type &Future<T...>::value()
     {
         wait();
-        if(this->instance()._exception)
-        {
-            std::rethrow_exception(this->instance()._exception);
-        }
         return std::get<idx>(this->instance().valueArea());
     }
 
@@ -203,10 +193,6 @@ namespace dci { namespace async
     std::tuple<T...> &&Future<T...>::detachValue()
     {
         wait();
-        if(this->_exception)
-        {
-            std::rethrow_exception(this->_exception);
-        }
         return this->valueArea();
     }
 
@@ -216,10 +202,6 @@ namespace dci { namespace async
     typename std::tuple_element<idx, std::tuple<T...> >::type &&Future<T...>::detachValue()
     {
         wait();
-        if(this->instance()._exception)
-        {
-            std::rethrow_exception(this->instance()._exception);
-        }
         return std::get<idx>(std::forward<typename details::FutureState<T...>::Value>(this->instance().valueArea()));
     }
 
@@ -276,19 +258,6 @@ namespace dci { namespace async
         }
 
         new(&this->instance().valueArea()) std::tuple<T...>(std::forward<T>(val)...);
-        this->instance()._readyEvent.set();
-    }
-
-    template <typename... T>
-    void Promise<T...>::setException(const std::exception_ptr &exception)
-    {
-        if(this->instance()._readyEvent.isSignalled())
-        {
-            assert(!"promise already has value or exception");
-            std::abort();
-        }
-
-        this->instance()._exception = exception;
         this->instance()._readyEvent.set();
     }
 
