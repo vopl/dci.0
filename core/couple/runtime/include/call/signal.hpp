@@ -1,12 +1,14 @@
 #pragma once
 
-#include <dci/async/future.hpp>
 #include "future.hpp"
 #include <functional>
 #include <type_traits>
 
 namespace dci { namespace couple { namespace runtime { namespace call
 {
+    /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
+    template<int> struct BindPlaceholder {};
+
     template <class F>
     class Signal;
 
@@ -15,33 +17,79 @@ namespace dci { namespace couple { namespace runtime { namespace call
     {
 
     public:
-        template <class F>
-        bool connect(F &&f);
+        Signal();
+        ~Signal();
+
+        template <class F, class... LocalArgs>
+        bool connect(F &&f, LocalArgs &&... localArgs);
 
         bool disconnect();
 
     protected:
-        Future<R> fire(Args...);
+        using Call = std::function<Future<R>(Args...)>;
+        Call _call;
     };
 
 
     template <class R, class...Args>
-    template <class F>
-    bool Signal<R(Args...)>::connect(F &&f)
+    Signal<R(Args...)>::Signal()
     {
-        assert(0);
+
+    }
+
+    template <class R, class...Args>
+    Signal<R(Args...)>::~Signal()
+    {
+
+    }
+
+    namespace details
+    {
+        template <class F, class... LocalArgs, int... phi>
+        decltype(std::bind(std::declval<F>(), std::declval<LocalArgs>()..., BindPlaceholder<phi>{}...))
+            mkCall(std::integer_sequence<int, phi...>, F &&f, LocalArgs &&... localArgs)
+        {
+            return std::bind(std::forward<F>(f), std::forward<LocalArgs>(localArgs)..., BindPlaceholder<phi>{}...);
+        }
+    }
+
+
+    template <class R, class...Args>
+    template <class F, class... LocalArgs>
+    bool Signal<R(Args...)>::connect(F &&f, LocalArgs &&... localArgs)
+    {
+        if(_call)
+        {
+            assert(!"signal already connected");
+            return false;
+        }
+
+        _call = details::mkCall(
+                        std::make_integer_sequence<int, sizeof... (Args)>{},
+                        std::forward<F>(f),
+                        std::forward<LocalArgs>(localArgs)...);
+        return true;
     }
 
     template <class R, class...Args>
     bool Signal<R(Args...)>::disconnect()
     {
-        assert(0);
-    }
+        if(!_call)
+        {
+            return false;
+        }
 
-    template <class R, class...Args>
-    Future<R> Signal<R(Args...)>::fire(Args...)
-    {
-        assert(0);
+        _call = Call{};
+        return true;
     }
 
 }}}}
+
+namespace std
+{
+    template<int N>
+    struct is_placeholder<dci::couple::runtime::call::BindPlaceholder<N>>
+        : integral_constant<int, N+1>
+    {};
+}
+

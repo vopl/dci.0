@@ -32,12 +32,24 @@ namespace dci { namespace logger
         os << ec.message() << " (" << ec.category().name() << '.' << ec.value() << ')';
         return os;
     }
+
+    inline LogStream& operator<< (LogStream& os, std::error_code &ec)
+    {
+        os << ec.message() << " (" << ec.category().name() << '.' << ec.value() << ')';
+        return os;
+    }
+
+    inline LogStream& operator<< (LogStream& os, boost::system::error_code &ec)
+    {
+        os << ec.message() << " (" << ec.category().name() << '.' << ec.value() << ')';
+        return os;
+    }
 }}
 
-#   define LOGF(msg) ::dci::logger::LogStream()<<msg<<::std::endl;
-#   define LOGE(msg) ::dci::logger::LogStream()<<msg<<::std::endl;
-#   define LOGW(msg) ::dci::logger::LogStream()<<msg<<::std::endl;
-#   define LOGI(msg) ::dci::logger::LogStream()<<msg<<::std::endl;
-#   define LOGD(msg) ::dci::logger::LogStream()<<msg<<::std::endl;
-#   define LOGT(msg) ::dci::logger::LogStream()<<msg<<::std::endl;
+#   define LOGF(msg) {::dci::logger::LogStream ls; ls<<msg<<::std::endl;}
+#   define LOGE(msg) {::dci::logger::LogStream ls; ls<<msg<<::std::endl;}
+#   define LOGW(msg) {::dci::logger::LogStream ls; ls<<msg<<::std::endl;}
+#   define LOGI(msg) {::dci::logger::LogStream ls; ls<<msg<<::std::endl;}
+#   define LOGD(msg) {::dci::logger::LogStream ls; ls<<msg<<::std::endl;}
+#   define LOGT(msg) {::dci::logger::LogStream ls; ls<<msg<<::std::endl;}
 

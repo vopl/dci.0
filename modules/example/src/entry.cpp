@@ -1,5 +1,6 @@
 #include <dci/site/moduleEntryFunctions.hpp>
 #include "customIfaceHandler.hpp"
+#include <dci/logger/logger.hpp>
 
 struct Entry
     : dci::site::ModuleEntry
@@ -7,7 +8,16 @@ struct Entry
     Entry()
     {
         CustomIfaceHandler h;
-        h.onOut1();
+        auto f = h.f.in1();
+
+        if(f.hasError())
+        {
+            LOGT(f.error());
+        }
+        else
+        {
+            LOGT(f.value());
+        }
     }
 
     ~Entry()

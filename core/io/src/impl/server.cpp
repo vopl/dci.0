@@ -241,7 +241,7 @@ namespace dci { namespace io { namespace impl
             _requestsFirst = _requestsLast = nullptr;
             for(; r; r = r->_next)
             {
-                r->_promise.setValue(std::error_code(ec), io::Stream {});
+                r->_promise.resolve(std::error_code(ec), io::Stream {});
                 delete r;
             }
         }
@@ -259,14 +259,14 @@ namespace dci { namespace io { namespace impl
             if(err)
             {
                 delete engine;
-                promise.setValue(std::forward<std::error_code>(err), dci::io::Stream());
+                promise.resolve(std::forward<std::error_code>(err), dci::io::Stream());
                 return false;
             }
 
             dci::io::Stream stream;
             himpl::face2Impl(stream).setEngine(engine);
 
-            promise.setValue(std::error_code(), std::move(stream));
+            promise.resolve(std::error_code(), std::move(stream));
             return true;
         }
 

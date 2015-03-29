@@ -136,7 +136,7 @@ namespace dci { namespace site { namespace impl
                 hasErrors = true;
             }
 
-            p.setValue(
+            p.resolve(
                         hasErrors ?
                             make_error_code(error::general::parial_failed) :
                             std::error_code{});
@@ -299,7 +299,7 @@ namespace dci { namespace site { namespace impl
                 }
             }
 
-            p.setValue(
+            p.resolve(
                         hasErrors ?
                             make_error_code(error::general::parial_failed) :
                             std::error_code{});

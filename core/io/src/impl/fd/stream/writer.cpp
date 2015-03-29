@@ -144,7 +144,7 @@ namespace dci { namespace io { namespace impl { namespace fd { namespace stream
                     _requestsFirst = _requestsLast = nullptr;
                 }
 
-                r->_promise.setValue(std::error_code());
+                r->_promise.resolve(std::error_code());
                 size -= r->_tailSize;
 
                 delete r;
@@ -182,7 +182,7 @@ namespace dci { namespace io { namespace impl { namespace fd { namespace stream
             _requestsFirst = _requestsLast = nullptr;
             for(; r; r = r->_next)
             {
-                r->_promise.setValue(std::error_code(ec));
+                r->_promise.resolve(std::error_code(ec));
                 delete r;
             }
         }

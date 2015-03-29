@@ -2,6 +2,7 @@
 
 #include "signal.hpp"
 #include "future.hpp"
+#include "../error.hpp"
 #include <cassert>
 
 namespace dci { namespace couple { namespace runtime { namespace call
@@ -20,26 +21,29 @@ namespace dci { namespace couple { namespace runtime { namespace call
         Wire();
         ~Wire();
 
-        Future<R> operator()(Args... args);
+        Future<R> operator()(Args &&... args);
     };
 
 
     template <class R, class... Args>
     Wire<R(Args...)>::Wire()
     {
-        assert(0);
     }
 
     template <class R, class... Args>
     Wire<R(Args...)>::~Wire()
     {
-        assert(0);
     }
 
     template <class R, class... Args>
-    Future<R> Wire<R(Args...)>::operator()(Args... args)
+    Future<R> Wire<R(Args...)>::operator()(Args &&... args)
     {
-        assert(0);
+        if(Signal<R(Args...)>::_call)
+        {
+            return Signal<R(Args...)>::_call(std::forward<Args>(args)...);
+        }
+
+        return Future<R>{make_error_code(error::general::call_not_connected)};
     }
 
 }}}}

@@ -250,7 +250,7 @@ namespace dci { namespace site { namespace impl
             {
                 LOGE(dlerror());
                 _state = ModuleState::loadError;
-                p.setValue(make_error_code(error::module::unable_load_binary));
+                p.resolve(make_error_code(error::module::unable_load_binary));
                 return;
             }
 
@@ -261,7 +261,7 @@ namespace dci { namespace site { namespace impl
             {
                 LOGE("loading module \""<<_name<<"\": entry point is absent");
                 _state = ModuleState::loadError;
-                p.setValue(make_error_code(error::module::unable_load_binary));
+                p.resolve(make_error_code(error::module::unable_load_binary));
                 return;
             }
 
@@ -271,7 +271,7 @@ namespace dci { namespace site { namespace impl
              {
                  LOGE("loading module \""<<_name<<"\": entry point is damaged");
                  _state = ModuleState::loadError;
-                 p.setValue(make_error_code(error::module::unable_load_binary));
+                 p.resolve(make_error_code(error::module::unable_load_binary));
                  return;
              }
 
@@ -287,12 +287,12 @@ namespace dci { namespace site { namespace impl
                  _mainBinaryHandle = nullptr;
 
                  _state = ModuleState::loadError;
-                 p.setValue(std::move(ec));
+                 p.resolve(std::move(ec));
                  return;
              }
 
             _state = ModuleState::loaded;
-            p.setValue(std::error_code{});
+            p.resolve(std::error_code{});
         });
 
         return f;
@@ -338,7 +338,7 @@ namespace dci { namespace site { namespace impl
             _mainBinaryHandle = nullptr;
 
             _state = ModuleState::attached;
-            p.setValue(std::error_code{});
+            p.resolve(std::error_code{});
             return;
         });
 
@@ -371,12 +371,12 @@ namespace dci { namespace site { namespace impl
             {
                 LOGE("starting module \""<<_name<<"\": "<<ec);
                 _state = ModuleState::startError;
-                p.setValue(std::move(ec));
+                p.resolve(std::move(ec));
                 return;
             }
 
             _state = ModuleState::started;
-            p.setValue(std::error_code{});
+            p.resolve(std::error_code{});
             return;
         });
 
@@ -413,7 +413,7 @@ namespace dci { namespace site { namespace impl
             }
 
             _state = ModuleState::loaded;
-            p.setValue(std::error_code{});
+            p.resolve(std::error_code{});
             return;
         });
 

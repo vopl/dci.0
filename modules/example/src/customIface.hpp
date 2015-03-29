@@ -20,11 +20,11 @@ public:
 
     call::Wire<int()> in1;
     call::Wire<char()> in2;
-    call::Wire<size_t()> in3;
+    call::Wire<size_t(double)> in3;
 
     call::Wire<int()> out1;
     call::Wire<char()> out2;
-    call::Wire<size_t()> out3;
+    call::Wire<size_t(double)> out3;
 };
 
 
@@ -47,11 +47,11 @@ public:
 public:
     call::Future<int> in1();
     call::Future<char> in2();
-    call::Future<size_t> in3();
+    call::Future<size_t> in3(double);
 
     call::Signal<int()> out1;
     call::Signal<char()> out2;
-    call::Signal<size_t()> out3;
+    call::Signal<size_t(double)> out3;
 
 private:
     CustomIface1State *state();

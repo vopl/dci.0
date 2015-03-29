@@ -6,14 +6,15 @@
 
 class CustomIfaceHandler
 {
+public:
     CustomIface f;
 
 public:
     CustomIfaceHandler();
     ~CustomIfaceHandler();
 
-    int onOut1();
-    dci::async::Future<char> onOut2();
-    call::Future<size_t> onOut3();
+    call::Future<int> onOut1();
+    call::Future<char> onOut2();
+    call::Future<size_t> onOut3(double d);
 
 };

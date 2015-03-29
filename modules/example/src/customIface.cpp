@@ -70,9 +70,9 @@ call::Future<char> CustomIface::in2()
     return state()->in2();
 }
 
-call::Future<size_t> CustomIface::in3()
+call::Future<size_t> CustomIface::in3(double d)
 {
-    return state()->in3();
+    return state()->in3(std::move(d));
 }
 
 CustomIface1State *CustomIface::state()

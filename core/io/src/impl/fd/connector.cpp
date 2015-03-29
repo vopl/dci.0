@@ -28,7 +28,7 @@ namespace dci { namespace io { namespace impl { namespace fd
             return;
         default:
             assert(!"not impl");
-            _promise.setValue(io::make_error_code(io::error::general::not_implemented), dci::io::Stream());
+            _promise.resolve(io::make_error_code(io::error::general::not_implemented), dci::io::Stream());
             delete this;
             return;
         }
@@ -116,14 +116,14 @@ namespace dci { namespace io { namespace impl { namespace fd
         int fd = getDescriptor();
         if(-1 == fd)
         {
-            assert(_promise.isReady());
+            assert(_promise.resolved());
             return;
         }
 
         setDescriptor(-1);
         ::close(fd);
 
-        if(!_promise.isReady())
+        if(!_promise.resolved())
         {
             resolve(make_error_code(error::stream::closed));
         }
@@ -133,7 +133,7 @@ namespace dci { namespace io { namespace impl { namespace fd
     {
         if(err)
         {
-            _promise.setValue(std::forward<std::error_code>(err), dci::io::Stream());
+            _promise.resolve(std::forward<std::error_code>(err), dci::io::Stream());
             delete this;
             return;
         }
@@ -145,7 +145,7 @@ namespace dci { namespace io { namespace impl { namespace fd
         {
             delete engine;
 
-            _promise.setValue(std::forward<std::error_code>(err), dci::io::Stream());
+            _promise.resolve(std::forward<std::error_code>(err), dci::io::Stream());
             delete this;
             return;
         }
@@ -153,7 +153,7 @@ namespace dci { namespace io { namespace impl { namespace fd
         dci::io::Stream stream;
         himpl::face2Impl(stream).setEngine(engine);
 
-        _promise.setValue(std::error_code(), std::move(stream));
+        _promise.resolve(std::error_code(), std::move(stream));
         delete this;
     }
 

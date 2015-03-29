@@ -4,15 +4,15 @@ project(${PROJECT})
 
 ############################################################
 set(INC
+    include/error.hpp
+
     include/hub.hpp
     include/identifier.hpp
     include/iface.hpp
     include/ifaceId.hpp
     include/ifaceState.hpp
 
-    include/call/error.hpp
     include/call/future.hpp
-    include/call/promise.hpp
     include/call/signal.hpp
     include/call/wire.hpp
 
@@ -22,6 +22,8 @@ set(INC
 
 ############################################################
 set(SRC
+    src/error.cpp
+
     src/iface.cpp
     src/ifaceState.cpp
     src/hub.cpp

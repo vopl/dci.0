@@ -23,8 +23,14 @@ namespace dci { namespace async
 
             FutureState();
             ~FutureState();
-            Value &valueArea();
 
+            bool resolved() const;
+            void resolve(T &&... val);
+
+            void wait();
+            Value &value();
+
+        private:
             Event       _readyEvent;
             typename std::aligned_storage<sizeof(Value), alignof(Value)>::type   _valueArea;
         };
@@ -52,6 +58,7 @@ namespace dci { namespace async
         Future(const StateInstance &state);
 
     public:
+        Future(T &&... vals);
         Future(const Future &other);
         Future(Future &&other);
 
@@ -59,7 +66,7 @@ namespace dci { namespace async
         Future &operator=(Future &&other);
 
         void wait();
-        bool isReady() const;
+        bool resolved() const;
 
         const std::tuple<T...> &value();
 
@@ -91,16 +98,14 @@ namespace dci { namespace async
 
         Future<T...> future();
 
-        bool isReady() const;
-        void setValue(T&&... val);
+        bool resolved() const;
+        void resolve(T&&... val);
     };
 
     template <typename... T>
     Future<T...> mkReadyFuture(T&&... val)
     {
-        Promise<T...> promise;
-        promise.setValue(std::forward<T>(val)...);
-        return promise.future();
+        return Future<T...> {std::forward<T>(val)...};
     }
 
     namespace details
@@ -114,19 +119,46 @@ namespace dci { namespace async
         template <typename... T>
         FutureState<T...>::~FutureState()
         {
-            if(_readyEvent.isSignalled())
+            if(resolved())
             {
-                valueArea().~Value();
+                value().~Value();
             }
         }
 
         template <typename... T>
-        typename FutureState<T...>::Value &FutureState<T...>::valueArea()
+        bool FutureState<T...>::resolved() const
+        {
+            return _readyEvent.isSignalled();
+        }
+
+        template <typename... T>
+        void FutureState<T...>::resolve(T &&... val)
+        {
+            assert(!resolved());
+            new(&value()) Value {std::forward<T>(val)...};
+            _readyEvent.set();
+        }
+
+        template <typename... T>
+        void FutureState<T...>::wait()
+        {
+            _readyEvent.acquire();
+        }
+
+        template <typename... T>
+        typename FutureState<T...>::Value &FutureState<T...>::value()
         {
             return *reinterpret_cast<Value *>(&_valueArea);
         }
     }
 
+
+    template <typename... T>
+    Future<T...>::Future(T &&... vals)
+        : StateInstance()
+    {
+        this->instance().resolve(std::forward<T>(vals)...);
+    }
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
     template <typename... T>
@@ -165,20 +197,20 @@ namespace dci { namespace async
     template <typename... T>
     void Future<T...>::wait()
     {
-        this->instance()._readyEvent.acquire();
+        this->instance().wait();
     }
 
     template <typename... T>
-    bool Future<T...>::isReady() const
+    bool Future<T...>::resolved() const
     {
-        return this->_readyEvent.isSignalled();
+        return this->instance().resolved();
     }
 
     template <typename... T>
     const std::tuple<T...> &Future<T...>::value()
     {
         wait();
-        return this->instance().valueArea();
+        return this->instance().value();
     }
 
     template <typename... T>
@@ -186,14 +218,14 @@ namespace dci { namespace async
     const typename std::tuple_element<idx, std::tuple<T...> >::type &Future<T...>::value()
     {
         wait();
-        return std::get<idx>(this->instance().valueArea());
+        return std::get<idx>(this->instance().value());
     }
 
     template <typename... T>
     std::tuple<T...> &&Future<T...>::detachValue()
     {
         wait();
-        return this->valueArea();
+        return this->value();
     }
 
 
@@ -202,7 +234,7 @@ namespace dci { namespace async
     typename std::tuple_element<idx, std::tuple<T...> >::type &&Future<T...>::detachValue()
     {
         wait();
-        return std::get<idx>(std::forward<typename details::FutureState<T...>::Value>(this->instance().valueArea()));
+        return std::get<idx>(std::forward<typename details::FutureState<T...>::Value>(this->instance().value()));
     }
 
 
@@ -229,7 +261,7 @@ namespace dci { namespace async
     template <typename... T>
     Promise<T...>::~Promise()
     {
-        if(this->counter()>1 && !this->instance()._readyEvent.isSignalled())
+        if(this->counter()>1 && !this->instance().resolved())
         {
             assert(!"unsetted promise destroyed while futures exists");
             std::abort();
@@ -243,22 +275,15 @@ namespace dci { namespace async
     }
 
     template <typename... T>
-    bool Promise<T...>::isReady() const
+    bool Promise<T...>::resolved() const
     {
-        return this->instance()._readyEvent.isSignalled();
+        return this->instance().resolved();
     }
 
     template <typename... T>
-    void Promise<T...>::setValue(T&&... val)
+    void Promise<T...>::resolve(T&&... val)
     {
-        if(this->instance()._readyEvent.isSignalled())
-        {
-            assert(!"promise already has value or exception");
-            std::abort();
-        }
-
-        new(&this->instance().valueArea()) std::tuple<T...>(std::forward<T>(val)...);
-        this->instance()._readyEvent.set();
+        this->instance().resolve(std::forward<T>(val)...);
     }
 
 }}
