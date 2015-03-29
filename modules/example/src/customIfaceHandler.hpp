@@ -14,6 +14,6 @@ public:
 
     int onOut1();
     dci::async::Future<char> onOut2();
-    CallResult<size_t> onOut3();
+    call::Future<size_t> onOut3();
 
 };

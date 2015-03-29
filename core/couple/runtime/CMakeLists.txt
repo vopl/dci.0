@@ -4,14 +4,18 @@ project(${PROJECT})
 
 ############################################################
 set(INC
-    include/callWire.hpp
-    include/callResult.hpp
     include/hub.hpp
     include/identifier.hpp
     include/iface.hpp
     include/ifaceId.hpp
     include/ifaceState.hpp
-    include/signal.hpp
+
+    include/call/error.hpp
+    include/call/future.hpp
+    include/call/promise.hpp
+    include/call/signal.hpp
+    include/call/wire.hpp
+
     include/sizeProvider.hpp
 )
 

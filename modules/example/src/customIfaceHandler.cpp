@@ -21,30 +21,32 @@ CustomIfaceHandler::~CustomIfaceHandler()
 
 int CustomIfaceHandler::onOut1()
 {
-    auto r = f.in1();
-    if(r.hasError())
-    {
-        return 0;
-    }
+    assert(0);
+//    auto r = f.in1();
+//    if(r.hasError())
+//    {
+//        return 0;
+//    }
 
-    return r.value();
+//    return r.value();
 }
 
 dci::async::Future<char> CustomIfaceHandler::onOut2()
 {
-    return dci::async::spawn([this](dci::async::Promise<char> p) mutable {
-        auto r = this->f.in1();
-        if(r.hasError())
-        {
-            p.setValue(0);
-            return;
-        }
+    assert(0);
+//    return dci::async::spawn([this](dci::async::Promise<char> p) mutable {
+//        auto r = this->f.in1();
+//        if(r.hasError())
+//        {
+//            p.setValue(0);
+//            return;
+//        }
 
-        p.setValue(r.value());
-    });
+//        p.setValue(r.value());
+//    });
 }
 
-CallResult<size_t> CustomIfaceHandler::onOut3()
+call::Future<size_t> CustomIfaceHandler::onOut3()
 {
     return f.in3();
 }

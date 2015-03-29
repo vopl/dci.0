@@ -29,7 +29,7 @@ namespace dci { namespace async
             typename std::aligned_storage<sizeof(Value), alignof(Value)>::type   _valueArea;
         };
 
-        struct FutureStateAccessos
+        struct FutureStateAccessor
         {
             template <typename... T>
             static FutureState<T...> &exec(Future<T...> &src)
@@ -47,7 +47,7 @@ namespace dci { namespace async
         : private dci::mm::SharedInstance<details::FutureState<T...>>
     {
         friend class Promise<T...>;
-        friend class details::FutureStateAccessos;
+        friend class details::FutureStateAccessor;
         using StateInstance = dci::mm::SharedInstance<details::FutureState<T...>>;
         Future(const StateInstance &state);
 

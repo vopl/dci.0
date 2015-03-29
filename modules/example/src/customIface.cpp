@@ -60,17 +60,17 @@ CustomIface &CustomIface::operator=(Iface &&from)
     return *this;
 }
 
-CallResult<int> CustomIface::in1()
+call::Future<int> CustomIface::in1()
 {
     return state()->in1();
 }
 
-CallResult<char> CustomIface::in2()
+call::Future<char> CustomIface::in2()
 {
     return state()->in2();
 }
 
-CallResult<size_t> CustomIface::in3()
+call::Future<size_t> CustomIface::in3()
 {
     return state()->in3();
 }

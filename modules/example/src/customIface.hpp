@@ -1,8 +1,8 @@
 #pragma once
 
 #include <dci/couple/runtime/iface.hpp>
-#include <dci/couple/runtime/callWire.hpp>
-#include <dci/couple/runtime/signal.hpp>
+#include <dci/couple/runtime/call/wire.hpp>
+#include <dci/couple/runtime/call/signal.hpp>
 
 #include <dci/async/future.hpp>
 
@@ -18,13 +18,13 @@ public:
     {
     }
 
-    CallWire<int()> in1;
-    CallWire<char()> in2;
-    CallWire<size_t()> in3;
+    call::Wire<int()> in1;
+    call::Wire<char()> in2;
+    call::Wire<size_t()> in3;
 
-    CallWire<int()> out1;
-    CallWire<char()> out2;
-    CallWire<size_t()> out3;
+    call::Wire<int()> out1;
+    call::Wire<char()> out2;
+    call::Wire<size_t()> out3;
 };
 
 
@@ -45,13 +45,13 @@ public:
     CustomIface &operator=(Iface &&);
 
 public:
-    CallResult<int> in1();
-    CallResult<char>  in2();
-    CallResult<size_t>  in3();
+    call::Future<int> in1();
+    call::Future<char> in2();
+    call::Future<size_t> in3();
 
-    Signal<int()> out1;
-    Signal<char()> out2;
-    Signal<size_t()> out3;
+    call::Signal<int()> out1;
+    call::Signal<char()> out2;
+    call::Signal<size_t()> out3;
 
 private:
     CustomIface1State *state();

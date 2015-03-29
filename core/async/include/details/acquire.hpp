@@ -23,7 +23,7 @@ namespace dci { namespace async { namespace details
     template <typename... TT>
     impl::SyncronizerPtr syncronizer(Future<TT...> &v)
     {
-        return syncronizer(FutureStateAccessos::exec(v)._readyEvent);
+        return syncronizer(FutureStateAccessor::exec(v)._readyEvent);
     }
 
     ////////////////////////////////////////////////////////////////////////////////////
