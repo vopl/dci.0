@@ -1,0 +1,119 @@
+
+
+
+scope talk
+{
+    
+    //клиентское подключение
+    iface Peer
+    {
+        alias Id = array<int8, 32>;
+
+        enum Status
+        {
+            available;
+            busy;
+        }
+        
+        out void setId(Id id);
+        out void setStatus(Status status);
+        
+        out bool joinChat(Chat chat);
+    }
+    
+    
+    
+    iface Chat
+    {
+        out void setMembers(list<Peer::Id> ids);
+
+        out void addMember(Peer::Id id);
+        out void delMember(Peer::Id id);
+        
+        out void exhibit(VoiceTrain voice);
+        out void exhibit(VideoTrain video);
+        out FilesReceiver getFiles(FilesInfo::Id);
+
+        out void typing(bool);
+        out void message(Message msg);
+        in  void wantMessageReply(Message::Id from, Message::Id to);
+
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    struct FilesInfo
+    {
+        alias Id=int64;
+        Id id;
+        
+        list<string> topNamesPreview;
+        uint64 filesAmount;
+        uint64 directoriesAmount;
+        uint64 totalFilesVolume;
+    }
+
+    struct MediaInfo
+        : FilesInfo
+    {
+        string mimeType;
+        list<int8> preview;
+    }
+
+    struct Message
+    {
+        alias Id=int64;
+        variant Data
+        {
+            string text;
+            FilesInfo files;
+            MediaInfo media;
+        }
+        
+        
+        Id id;
+        list<Data> data;
+    }
+    
+    
+    
+    iface FilesReceiver
+    {
+        in void abort();
+        out void abort();
+        
+        struct Entry
+        {
+            variant SizeOrVoid
+            {
+                uint64 size;
+                void;
+            }
+
+            string name;
+            SizeOrVoid sizeOrVoid;
+        }
+        
+        in void list(list<FilesReceiver::Entry> entries);
+        in void content(list<int8> bytes);
+
+        in void finish();
+    }
+    
+    iface VoiceTrain
+    {
+    }
+
+    iface VideoTrain
+    {
+    }
+}
