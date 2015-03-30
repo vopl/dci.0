@@ -216,7 +216,9 @@ namespace  dci { namespace couple { namespace parser { namespace impl { namespac
         {
             bool res = true;
 
-            res &= resolveScope(v.get());
+            SScope *outerScope;
+
+            res &= beginResolveScope(v.get(), outerScope);
             res &= resolveBases(v.get());
             res &= resolveFields(v.get());
             res &= resolveAlias(v.get());
@@ -225,23 +227,34 @@ namespace  dci { namespace couple { namespace parser { namespace impl { namespac
             res &= resolveValueType(v.get());
             res &= resolveKeyType(v.get());
 
+            endResolveScope(outerScope);
+
             return res;
         }
 
         /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
-        bool resolveScope(...)
+        bool beginResolveScope(...)
         {
             return true;
         }
 
-        bool resolveScope(SScope *v)
+        bool beginResolveScope(SScope *v, SScope *&outerScope)
         {
-            SScope *old = _currentScope;
+            outerScope = _currentScope;
             _currentScope = v;
             bool res = exec(v->decls);
-            _currentScope = old;
 
             return res;
+        }
+
+        /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
+        void endResolveScope(...)
+        {
+        }
+
+        void endResolveScope(SScope *v, SScope *&outerScope)
+        {
+            _currentScope = outerScope;
         }
 
         /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
