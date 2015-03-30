@@ -98,6 +98,11 @@ macro(mkHimplSizes target)
     get_target_property(CXX_STANDARD ${target} CXX_STANDARD)
     set_target_properties(${sizeProviderGen} PROPERTIES CXX_STANDARD ${CXX_STANDARD})
 
+    get_target_property(LINK_LIBRARIES ${target} LINK_LIBRARIES)
+    if(LINK_LIBRARIES)
+        target_link_libraries(${sizeProviderGen} ${LINK_LIBRARIES})
+    endif()
+
     ############################################################
     set(sizeProviderGenOut ${CMAKE_CURRENT_BINARY_DIR}/${sizeProviderGen}.out.hpp)
     add_custom_command(OUTPUT ${sizeProviderGenOut}
