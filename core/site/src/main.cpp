@@ -25,10 +25,10 @@ void signalHandler(int signum)
         if(instance)
         {
             dci::async::spawn([](){
-                std::error_code ec = instance->stop().value<0>();
-                if(ec)
+                auto f = instance->stop();
+                if(f.hasError())
                 {
-                    LOGE("stop: "<<ec);
+                    LOGE("stop: "<<f.error());
                 }
             });
         }

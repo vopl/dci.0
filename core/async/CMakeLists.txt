@@ -137,6 +137,8 @@ set(INC
     include/event.hpp
     include/acquire.hpp
     include/future.hpp
+    include/promise.hpp
+    include/details/futureState.hpp
     include/details/task.hpp
     include/details/taskInstance.hpp
     include/details/taskPromiseProcessor.hpp

@@ -60,17 +60,17 @@ CustomIface &CustomIface::operator=(Iface &&from)
     return *this;
 }
 
-call::Future<int> CustomIface::in1()
+dci::async::Future<call::Error, int> CustomIface::in1()
 {
     return state()->in1();
 }
 
-call::Future<char> CustomIface::in2()
+dci::async::Future<call::Error, char> CustomIface::in2()
 {
     return state()->in2();
 }
 
-call::Future<size_t> CustomIface::in3(double d)
+dci::async::Future<call::Error, size_t> CustomIface::in3(double d)
 {
     return state()->in3(std::move(d));
 }

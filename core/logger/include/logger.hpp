@@ -8,9 +8,15 @@ namespace dci { namespace logger
 {
     struct LogStream
     {
-        template <class T> LogStream &operator<<(const T& v)
+        LogStream &operator<<(const std::error_code &ec)
         {
-            std::cout<<v;
+            std::cout << ec.message() << " (" << ec.category().name() << '.' << ec.value() << ')';
+            return *this;
+        }
+
+        LogStream &operator<<(const boost::system::error_code &ec)
+        {
+            std::cout << ec.message() << " (" << ec.category().name() << '.' << ec.value() << ')';
             return *this;
         }
 
@@ -19,31 +25,14 @@ namespace dci { namespace logger
             std::cout<<v;
             return *this;
         }
+
+        template <class T> LogStream &operator<<(const T& v)
+        {
+            std::cout<<v;
+            return *this;
+        }
     };
 
-    inline LogStream& operator<< (LogStream& os, const std::error_code &ec)
-    {
-        os << ec.message() << " (" << ec.category().name() << '.' << ec.value() << ')';
-        return os;
-    }
-
-    inline LogStream& operator<< (LogStream& os, const boost::system::error_code &ec)
-    {
-        os << ec.message() << " (" << ec.category().name() << '.' << ec.value() << ')';
-        return os;
-    }
-
-    inline LogStream& operator<< (LogStream& os, std::error_code &ec)
-    {
-        os << ec.message() << " (" << ec.category().name() << '.' << ec.value() << ')';
-        return os;
-    }
-
-    inline LogStream& operator<< (LogStream& os, boost::system::error_code &ec)
-    {
-        os << ec.message() << " (" << ec.category().name() << '.' << ec.value() << ')';
-        return os;
-    }
 }}
 
 #   define LOGF(msg) {::dci::logger::LogStream ls; ls<<msg<<::std::endl;}

@@ -28,7 +28,7 @@ namespace dci { namespace io { namespace impl { namespace fd
             return;
         default:
             assert(!"not impl");
-            _promise.resolve(io::make_error_code(io::error::general::not_implemented), dci::io::Stream());
+            _promise.resolveError(io::make_error_code(io::error::general::not_implemented));
             delete this;
             return;
         }
@@ -39,7 +39,7 @@ namespace dci { namespace io { namespace impl { namespace fd
         fdClose();
     }
 
-    template <typename Address>
+    template <class Address>
     void Connector::startInet(const Address &address, std::uint16_t port)
     {
         utils::Sockaddr<Address> sa;
@@ -133,7 +133,7 @@ namespace dci { namespace io { namespace impl { namespace fd
     {
         if(err)
         {
-            _promise.resolve(std::forward<std::error_code>(err), dci::io::Stream());
+            _promise.resolveError(std::forward<std::error_code>(err));
             delete this;
             return;
         }
@@ -145,7 +145,7 @@ namespace dci { namespace io { namespace impl { namespace fd
         {
             delete engine;
 
-            _promise.resolve(std::forward<std::error_code>(err), dci::io::Stream());
+            _promise.resolveError(std::forward<std::error_code>(err));
             delete this;
             return;
         }
@@ -153,7 +153,7 @@ namespace dci { namespace io { namespace impl { namespace fd
         dci::io::Stream stream;
         himpl::face2Impl(stream).setEngine(engine);
 
-        _promise.resolve(std::error_code(), std::move(stream));
+        _promise.resolveValue(std::move(stream));
         delete this;
     }
 

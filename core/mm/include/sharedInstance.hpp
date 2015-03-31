@@ -10,14 +10,14 @@
 namespace dci { namespace mm
 {
 
-    template <typename T>
+    template <class T>
     class SharedInstance
     {
     public:
         using Instance = typename std::decay<T>::type;
 
     public:
-        template <typename... Args>
+        template <class... Args>
         SharedInstance(Args &&... args);
 
         SharedInstance(const SharedInstance &other);
@@ -54,8 +54,8 @@ namespace dci { namespace mm
 
 
 
-    template <typename T>
-    template <typename... Args>
+    template <class T>
+    template <class... Args>
     SharedInstance<T>::SharedInstance(Args &&... args)
         : _state(static_cast<State *>(mm::alloc<sizeof(State)>()))
     {
@@ -63,14 +63,14 @@ namespace dci { namespace mm
         _state->_counter = 1;
     }
 
-    template <typename T>
+    template <class T>
     SharedInstance<T>::SharedInstance(const SharedInstance &other)
         : _state(other._state)
     {
         ref();
     }
 
-    template <typename T>
+    template <class T>
     SharedInstance<T>::SharedInstance(SharedInstance &&other)
         : _state(other._state)
     {
@@ -80,13 +80,13 @@ namespace dci { namespace mm
         }
     }
 
-    template <typename T>
+    template <class T>
     SharedInstance<T>::~SharedInstance()
     {
         unref();
     }
 
-    template <typename T>
+    template <class T>
     SharedInstance<T> &SharedInstance<T>::operator=(const SharedInstance &other)
     {
         unref();
@@ -94,7 +94,7 @@ namespace dci { namespace mm
         ref();
     }
 
-    template <typename T>
+    template <class T>
     SharedInstance<T> &SharedInstance<T>::operator=(SharedInstance &&other)
     {
         unref();
@@ -105,7 +105,7 @@ namespace dci { namespace mm
         }
     }
 
-    template <typename T>
+    template <class T>
     std::int32_t SharedInstance<T>::counter() const
     {
         if(_state)
@@ -116,47 +116,47 @@ namespace dci { namespace mm
         return 0;
     }
 
-    template <typename T>
+    template <class T>
     typename SharedInstance<T>::Instance &SharedInstance<T>::instance()
     {
         assert(_state);
         return _state->_instance;
     }
 
-    template <typename T>
+    template <class T>
     typename SharedInstance<T>::Instance *SharedInstance<T>::instancePtr()
     {
         assert(_state);
         return &_state->_instance;
     }
 
-    template <typename T>
+    template <class T>
     typename SharedInstance<T>::Instance *SharedInstance<T>::operator->()
     {
         return instancePtr();
     }
 
-    template <typename T>
+    template <class T>
     const typename SharedInstance<T>::Instance &SharedInstance<T>::instance() const
     {
         assert(_state);
         return _state->_instance;
     }
 
-    template <typename T>
+    template <class T>
     const typename SharedInstance<T>::Instance *SharedInstance<T>::instancePtr() const
     {
         assert(_state);
         return &_state->_instance;
     }
 
-    template <typename T>
+    template <class T>
     const typename SharedInstance<T>::Instance *SharedInstance<T>::operator->() const
     {
         return instancePtr();
     }
 
-    template <typename T>
+    template <class T>
     void SharedInstance<T>::ref()
     {
         if(_state)
@@ -166,7 +166,7 @@ namespace dci { namespace mm
         }
     }
 
-    template <typename T>
+    template <class T>
     void SharedInstance<T>::unref()
     {
         if(_state)

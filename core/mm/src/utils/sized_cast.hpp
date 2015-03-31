@@ -2,6 +2,6 @@
 
 namespace dci { namespace mm { namespace utils
 {
-    template <typename To, typename From>
+    template <class To, class From>
     To sized_cast(From from);
 }}}

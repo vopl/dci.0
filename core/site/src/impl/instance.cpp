@@ -58,16 +58,16 @@ namespace dci { namespace site { namespace impl
                 LOGE("initialize modules: "<<ec);
             }
 
-            ec = loadModules().value<0>();
-            if(ec)
+            auto f = loadModules();
+            if(f.hasError())
             {
-                LOGE("load modules: "<<ec);
+                LOGE("load modules: "<<f.error());
             }
 
-            ec = startModules().value<0>();
-            if(ec)
+            f = startModules();
+            if(f.hasError())
             {
-                LOGE("start modules: "<<ec);
+                LOGE("start modules: "<<f.error());
             }
 
             _workState = WorkState::started;
@@ -84,42 +84,39 @@ namespace dci { namespace site { namespace impl
             break;
 
         case WorkState::stopped:
-            return async::mkReadyFuture(make_error_code(error::general::already_stopped));
+            return async::Future<std::error_code>(make_error_code(error::general::already_stopped));
 
         case WorkState::starting:
-            return async::mkReadyFuture(make_error_code(error::general::starting_in_progress));
+            return async::Future<std::error_code>(make_error_code(error::general::starting_in_progress));
 
         case WorkState::stopping:
-            return async::mkReadyFuture(make_error_code(error::general::stopping_in_progress));
+            return async::Future<std::error_code>(make_error_code(error::general::stopping_in_progress));
 
         default:
             assert("unknown work state");
             abort();
         }
 
-        async::Promise<std::error_code> p;
-        async::Future<std::error_code> f = p.future();
-
         _workState = WorkState::stopping;
-        async::spawn([p=std::move(p), this]() mutable{
+        return async::spawn([this](async::Promise<std::error_code> p) mutable{
 
             bool hasErrors = false;
 
-            std::error_code ec = stopModules().value<0>();
-            if(ec)
+            auto f = stopModules();
+            if(f.hasError())
             {
-                LOGE("stop modules: "<<ec);
+                LOGE("stop modules: "<<f.error());
                 hasErrors = true;
             }
 
-            ec = unloadModules().value<0>();
-            if(ec)
+            f = unloadModules();
+            if(f.hasError())
             {
-                LOGE("unload modules: "<<ec);
+                LOGE("unload modules: "<<f.error());
                 hasErrors = true;
             }
 
-            ec = deinitializeModules();
+            std::error_code ec = deinitializeModules();
             if(ec)
             {
                 LOGE("detach modules: "<<ec);
@@ -136,13 +133,15 @@ namespace dci { namespace site { namespace impl
                 hasErrors = true;
             }
 
-            p.resolve(
-                        hasErrors ?
-                            make_error_code(error::general::parial_failed) :
-                            std::error_code{});
+            if(hasErrors)
+            {
+                p.resolveError(make_error_code(error::general::parial_failed));
+            }
+            else
+            {
+                p.resolveValue();
+            }
         });
-
-        return f;
     }
 
     std::error_code Instance::initializeModules()
@@ -200,7 +199,7 @@ namespace dci { namespace site { namespace impl
             });
         }
 
-        return async::mkReadyFuture(std::error_code{});
+        return async::Future<std::error_code>();
     }
 
     async::Future<std::error_code> Instance::startModules()
@@ -214,7 +213,7 @@ namespace dci { namespace site { namespace impl
             });
         }
 
-        return async::mkReadyFuture(std::error_code{});
+        return async::Future<std::error_code>();
     }
 
     async::Future<std::error_code> Instance::stopModules()
@@ -228,7 +227,7 @@ namespace dci { namespace site { namespace impl
             });
         }
 
-        return async::mkReadyFuture(std::error_code{});
+        return async::Future<std::error_code>();
     }
 
     async::Future<std::error_code> Instance::unloadModules()
@@ -242,7 +241,7 @@ namespace dci { namespace site { namespace impl
             });
         }
 
-        return async::mkReadyFuture(std::error_code{});
+        return async::Future<std::error_code>();
     }
 
     std::error_code Instance::deinitializeModules()
@@ -276,10 +275,7 @@ namespace dci { namespace site { namespace impl
     template <class F>
     async::Future<std::error_code> Instance::massModulesOperation(const std::string &name, F operation)
     {
-        async::Promise<std::error_code> p;
-        async::Future<std::error_code> f = p.future();
-
-        async::spawn([p=std::move(p), this, name, operation]() mutable {
+        return async::spawn([this, name, operation](async::Promise<std::error_code> p) mutable {
 
             bool hasErrors = false;
 
@@ -292,20 +288,22 @@ namespace dci { namespace site { namespace impl
 
             for(auto &r : results)
             {
-                if(std::get<1>(r).value<0>())
+                if(std::get<1>(r).hasError())
                 {
-                    LOGE(name<<" module \""<<std::get<0>(r)->getName()<<"\": "<<std::get<1>(r).value<0>());
+                    LOGE(name<<" module \""<<std::get<0>(r)->getName()<<"\": "<<std::get<1>(r).error());
                     hasErrors = true;
                 }
             }
 
-            p.resolve(
-                        hasErrors ?
-                            make_error_code(error::general::parial_failed) :
-                            std::error_code{});
+            if(hasErrors)
+            {
+                p.resolveError(make_error_code(error::general::parial_failed));
+            }
+            else
+            {
+                p.resolveValue();
+            }
         });
-
-        return f;
     }
 
 

@@ -20,7 +20,7 @@ namespace dci { namespace async { namespace details
     impl::SyncronizerPtr syncronizer(Mutex &v);
     impl::SyncronizerPtr syncronizer(Event &v);
 
-    template <typename... TT>
+    template <class... TT>
     impl::SyncronizerPtr syncronizer(Future<TT...> &v)
     {
         return syncronizer(FutureStateAccessor::exec(v)._readyEvent);
@@ -36,13 +36,13 @@ namespace dci { namespace async { namespace details
         return 0;
     }
 
-    template <typename First, typename... Acquirable>
+    template <class First, class... Acquirable>
     std::size_t acquerablesAmount(First &first, Acquirable&... acquirables)
     {
         return 1 + acquerablesAmount(acquirables...);
     }
 
-    template <template <typename...> class Container, typename First, typename... Acquirable, typename... ContainerExtraArgs>
+    template <template <class...> class Container, class First, class... Acquirable, class... ContainerExtraArgs>
     std::size_t acquerablesAmount(Container<First, ContainerExtraArgs...> &first, Acquirable&... acquirables)
     {
         return first.size() + acquerablesAmount(acquirables...);
@@ -51,14 +51,14 @@ namespace dci { namespace async { namespace details
     ////////////////////////////////////////////////////////////////////////////////////
     inline void collect(impl::SyncronizerPtr *syncronizers){}
 
-    template <typename First, typename... Acquirable>
+    template <class First, class... Acquirable>
     void collect(impl::SyncronizerPtr *syncronizers, First &first, Acquirable&... acquirables)
     {
         *syncronizers = syncronizer(first);
         return collect(syncronizers+1, acquirables...);
     }
 
-    template <template <typename...> class Container, typename First, typename... Acquirable, typename... ContainerExtraArgs>
+    template <template <class...> class Container, class First, class... Acquirable, class... ContainerExtraArgs>
     void collect(impl::SyncronizerPtr *syncronizers, Container<First, ContainerExtraArgs...> &first, Acquirable&... acquirables)
     {
         using Cnt = Container<First, ContainerExtraArgs...>;
@@ -76,7 +76,7 @@ namespace dci { namespace async { namespace details
     }
 
     ////////////////////////////////////////////////////////////////////////////////////
-    template <typename... Acquirable>
+    template <class... Acquirable>
     std::size_t acquireAny(Acquirable&... acquirables)
     {
         const std::size_t amount = acquerablesAmount(acquirables...);
@@ -86,7 +86,7 @@ namespace dci { namespace async { namespace details
         return res;
     }
 
-    template <typename... Acquirable>
+    template <class... Acquirable>
     void acquireAll(Acquirable&... acquirables)
     {
         const std::size_t amount = acquerablesAmount(acquirables...);

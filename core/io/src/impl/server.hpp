@@ -31,7 +31,7 @@ namespace dci { namespace io { namespace impl
         std::error_code close();
 
     private:
-        template <typename Address>
+        template <class Address>
         std::error_code listenInet(const Address &address, std::uint16_t port);
 
         std::error_code listenLocal(const io::str::Address &address);

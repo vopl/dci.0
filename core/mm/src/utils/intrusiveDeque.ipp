@@ -6,7 +6,7 @@ namespace dci { namespace mm { namespace utils
 {
 
     ////////////////////////////////////////////////////////////////////////////////
-    template <typename T>
+    template <class T>
     IntrusiveDeque<T>::IntrusiveDeque()
         : _first{}
         , _last{}
@@ -14,7 +14,7 @@ namespace dci { namespace mm { namespace utils
     }
 
     ////////////////////////////////////////////////////////////////////////////////
-    template <typename T>
+    template <class T>
     IntrusiveDeque<T>::IntrusiveDeque(T *element)
         : _first{element}
         , _last{element}
@@ -23,14 +23,14 @@ namespace dci { namespace mm { namespace utils
     }
 
     ////////////////////////////////////////////////////////////////////////////////
-    template <typename T>
+    template <class T>
     IntrusiveDeque<T>::~IntrusiveDeque()
     {
         assert(!_first && !_last);
     }
 
     ////////////////////////////////////////////////////////////////////////////////
-    template <typename T>
+    template <class T>
     bool IntrusiveDeque<T>::empty() const
     {
         assert(!!_first == !!_last);
@@ -38,21 +38,21 @@ namespace dci { namespace mm { namespace utils
     }
 
     ////////////////////////////////////////////////////////////////////////////////
-    template <typename T>
+    template <class T>
     T *IntrusiveDeque<T>::first() const
     {
         return _first;
     }
 
     ////////////////////////////////////////////////////////////////////////////////
-    template <typename T>
+    template <class T>
     T *IntrusiveDeque<T>::last() const
     {
         return _last;
     }
 
     ////////////////////////////////////////////////////////////////////////////////
-    template <typename T>
+    template <class T>
     bool IntrusiveDeque<T>::contain(T *element) const
     {
         T *first = element;
@@ -65,7 +65,7 @@ namespace dci { namespace mm { namespace utils
     }
 
     ////////////////////////////////////////////////////////////////////////////////
-    template <typename T>
+    template <class T>
     void IntrusiveDeque<T>::push(T *element)
     {
         if(_last)
@@ -92,7 +92,7 @@ namespace dci { namespace mm { namespace utils
     }
 
     ////////////////////////////////////////////////////////////////////////////////
-    template <typename T>
+    template <class T>
     void IntrusiveDeque<T>::remove(T *element)
     {
         assert(contain(element));

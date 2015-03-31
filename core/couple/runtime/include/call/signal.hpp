@@ -1,6 +1,8 @@
 #pragma once
 
-#include "future.hpp"
+#include <dci/async/future.hpp>
+
+#include "error.hpp"
 #include <functional>
 #include <type_traits>
 
@@ -26,7 +28,7 @@ namespace dci { namespace couple { namespace runtime { namespace call
         bool disconnect();
 
     protected:
-        using Call = std::function<Future<R>(Args...)>;
+        using Call = std::function<dci::async::Future<Error, R>(Args...)>;
         Call _call;
     };
 

@@ -11,7 +11,7 @@ namespace dci { namespace himpl
         struct CheckerImpl
         {
             static_assert(sizeof(TFace) == sizeof(typename TFace::Impl), "size of face and impl must be equal");
-            static_assert(std::tuple_size<typename TFace::BaseFaces>::value == std::tuple_size<typename TFace::Impl::BaseImpls>::value, "base classes amount for face and for impl must be equal");
+            static_assert(std::tuple_size<class TFace::BaseFaces>::value == std::tuple_size<class TFace::Impl::BaseImpls>::value, "base classes amount for face and for impl must be equal");
 
             static_assert(
                     std::is_same<
@@ -21,10 +21,10 @@ namespace dci { namespace himpl
                     "first base of impl must be same as impl of first base of face");
 
 
-            template<typename T>
+            template<class T>
             struct removeFirst;
 
-            template<typename T, typename... Ts>
+            template<class T, class... Ts>
             struct removeFirst<std::tuple<T, Ts...>>
             {
                 typedef std::tuple<Ts...> type;
@@ -42,7 +42,7 @@ namespace dci { namespace himpl
         struct CheckerImpl<TFace, std::tuple<>>
         {
             static_assert(sizeof(TFace) == sizeof(typename TFace::Impl), "size of face and impl must be equal");
-            static_assert(std::tuple_size<typename TFace::BaseFaces>::value == std::tuple_size<typename TFace::Impl::BaseImpls>::value, "base classes amount for face and for impl must be equal");
+            static_assert(std::tuple_size<class TFace::BaseFaces>::value == std::tuple_size<class TFace::Impl::BaseImpls>::value, "base classes amount for face and for impl must be equal");
 
             struct Payload {};
         };

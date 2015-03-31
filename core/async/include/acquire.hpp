@@ -4,10 +4,10 @@
 
 namespace dci { namespace async
 {
-    template <typename... Acquirable>
+    template <class... Acquirable>
     std::size_t acquireAny(Acquirable&... acquirables);
 
-    template <typename... Acquirable>
+    template <class... Acquirable>
     void acquireAll(Acquirable&... acquirables);
 }}
 
@@ -15,13 +15,13 @@ namespace dci { namespace async
 
 namespace dci { namespace async
 {
-    template <typename... Acquirable>
+    template <class... Acquirable>
     std::size_t acquireAny(Acquirable&... acquirables)
     {
         return details::acquireAny(acquirables...);
     }
 
-    template <typename... Acquirable>
+    template <class... Acquirable>
     void acquireAll(Acquirable&... acquirables)
     {
         return details::acquireAll(acquirables...);

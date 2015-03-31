@@ -8,7 +8,7 @@ namespace dci { namespace async { namespace impl
 {
     class Scheduler;
 
-    template <typename T>
+    template <class T>
     class EffortContainer;
 
 }}}

@@ -6,7 +6,7 @@
 
 namespace dci { namespace mm
 {
-    template <typename T>
+    template <class T>
     struct NewDelete
     {
         void* operator new(size_t sz)

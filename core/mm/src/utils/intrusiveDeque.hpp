@@ -2,7 +2,7 @@
 
 namespace dci { namespace mm { namespace utils
 {
-    template <typename T>
+    template <class T>
     class IntrusiveDeque
     {
     public:

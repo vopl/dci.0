@@ -5,13 +5,13 @@ namespace dci { namespace himpl
     template <class TFace>
     typename TFace::Impl *face2Impl(TFace *face)
     {
-        return reinterpret_cast<typename TFace::Impl *>(face);
+        return reinterpret_cast<class TFace::Impl *>(face);
     }
 
     template <class TFace>
     typename TFace::Impl &face2Impl(TFace &face)
     {
-        return reinterpret_cast<typename TFace::Impl &>(face);
+        return reinterpret_cast<class TFace::Impl &>(face);
     }
 
     template <class TFace>

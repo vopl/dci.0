@@ -25,13 +25,13 @@ namespace dci { namespace couple { namespace parser { namespace impl
             typedef T & type;
         };
 
-        template <typename T>
+        template <class T>
         T &operator()(T &arg1) const
         {
             return arg1;
         }
 
-        template <typename T>
+        template <class T>
         T &operator()(std::shared_ptr<T> arg1) const
         {
             return *arg1;

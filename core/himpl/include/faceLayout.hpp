@@ -11,7 +11,7 @@ namespace dci { namespace himpl
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
     namespace details
     {
-        template <typename... TBaseFaces>
+        template <class... TBaseFaces>
         struct FacesSizeEvaluator
         {
             class Probe : public TBaseFaces... {};
@@ -50,10 +50,10 @@ namespace dci { namespace himpl
     protected:
         FaceLayout();
 
-        template <typename... Arg>
+        template <class... Arg>
         FaceLayout(const Arg &... args);
 
-        template <typename... Arg>
+        template <class... Arg>
         FaceLayout(Arg &&... args);
 
         FaceLayout(const FaceLayout &other);
@@ -83,7 +83,7 @@ namespace dci { namespace himpl
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
     namespace details
     {
-        template <typename TImpl, typename... TBaseFaces, std::size_t s1=sizeof(TImpl), std::size_t s2 = sizeof(FaceLayout<TImpl, TBaseFaces...>)>
+        template <class TImpl, class... TBaseFaces, std::size_t s1=sizeof(TImpl), std::size_t s2 = sizeof(FaceLayout<TImpl, TBaseFaces...>)>
         void sizeChecker()
         {
             static_assert(sizeof(TImpl)==sizeof(FaceLayout<TImpl, TBaseFaces...>), "inconsistent sizeProvider");
@@ -102,7 +102,7 @@ namespace dci { namespace himpl
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
     template <class TImpl, class... TBaseFaces>
-    template <typename... Arg>
+    template <class... Arg>
     FaceLayout<TImpl, TBaseFaces...>::FaceLayout(const Arg &... args)
     {
         details::sizeChecker<Impl>();
@@ -111,7 +111,7 @@ namespace dci { namespace himpl
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
     template <class TImpl, class... TBaseFaces>
-    template <typename... Arg>
+    template <class... Arg>
     FaceLayout<TImpl, TBaseFaces...>::FaceLayout(Arg &&... args)
     {
         details::sizeChecker<Impl>();

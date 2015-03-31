@@ -45,7 +45,8 @@ namespace dci { namespace io { namespace impl { namespace fd { namespace stream
     {
         if(_buffer.size() >= min)
         {
-            return async::mkReadyFuture(std::error_code(), _buffer.detachFirst(std::min(_buffer.size(), max)));
+            //return async::mkResolvedFuture<std::error_code, io::Data>(_buffer.detachFirst(std::min(_buffer.size(), max)));
+            return _buffer.detachFirst(std::min(_buffer.size(), max));
         }
 
         if(!_requestsFirst)
@@ -98,7 +99,7 @@ namespace dci { namespace io { namespace impl { namespace fd { namespace stream
                 _requestsLast = nullptr;
             }
 
-            r->_promise.resolve(std::error_code{}, _buffer.detachFirst(size));
+            r->_promise.resolveValue(_buffer.detachFirst(size));
             delete r;
         }
     }
@@ -121,7 +122,7 @@ namespace dci { namespace io { namespace impl { namespace fd { namespace stream
             _requestsFirst = _requestsLast = nullptr;
             for(; r; r = r->_next)
             {
-                r->_promise.resolve(std::error_code(ec), io::Data {});
+                r->_promise.resolveError(std::error_code(ec));
                 delete r;
             }
         }

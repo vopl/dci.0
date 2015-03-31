@@ -69,7 +69,7 @@ namespace dci { namespace async { namespace details
         template <class... Promises>
         struct MkFutures<std::tuple<Promises...>>
         {
-            using result = std::tuple<typename Promise2FutureMapper<Promises>::Future...>;
+            using result = std::tuple<class Promise2FutureMapper<Promises>::Future...>;
         };
 
         template <class Promises>

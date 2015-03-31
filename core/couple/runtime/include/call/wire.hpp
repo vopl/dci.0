@@ -1,7 +1,9 @@
 #pragma once
 
+#include <dci/async/future.hpp>
+
 #include "signal.hpp"
-#include "future.hpp"
+#include "error.hpp"
 #include "../error.hpp"
 #include <cassert>
 
@@ -21,7 +23,7 @@ namespace dci { namespace couple { namespace runtime { namespace call
         Wire();
         ~Wire();
 
-        Future<R> operator()(Args &&... args);
+        dci::async::Future<Error, R> operator()(Args &&... args);
     };
 
 
@@ -36,14 +38,14 @@ namespace dci { namespace couple { namespace runtime { namespace call
     }
 
     template <class R, class... Args>
-    Future<R> Wire<R(Args...)>::operator()(Args &&... args)
+    dci::async::Future<Error, R> Wire<R(Args...)>::operator()(Args &&... args)
     {
         if(Signal<R(Args...)>::_call)
         {
             return Signal<R(Args...)>::_call(std::forward<Args>(args)...);
         }
 
-        return Future<R>{make_error_code(error::general::call_not_connected)};
+        return dci::async::Future<Error, R>(make_error_code(error::general::call_not_connected));
     }
 
 }}}}

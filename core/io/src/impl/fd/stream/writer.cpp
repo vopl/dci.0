@@ -43,7 +43,7 @@ namespace dci { namespace io { namespace impl { namespace fd { namespace stream
         assert(!data.empty());
         if(data.empty())
         {
-            return async::mkReadyFuture(std::error_code());
+            return async::Future<std::error_code>(std::error_code());
         }
 
         if(!_requestsFirst)
@@ -144,7 +144,7 @@ namespace dci { namespace io { namespace impl { namespace fd { namespace stream
                     _requestsFirst = _requestsLast = nullptr;
                 }
 
-                r->_promise.resolve(std::error_code());
+                r->_promise.resolveValue();
                 size -= r->_tailSize;
 
                 delete r;
@@ -182,7 +182,7 @@ namespace dci { namespace io { namespace impl { namespace fd { namespace stream
             _requestsFirst = _requestsLast = nullptr;
             for(; r; r = r->_next)
             {
-                r->_promise.resolve(std::error_code(ec));
+                r->_promise.resolveError(std::error_code(ec));
                 delete r;
             }
         }

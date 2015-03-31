@@ -19,12 +19,12 @@ CustomIfaceHandler::~CustomIfaceHandler()
 {
 }
 
-call::Future<int> CustomIfaceHandler::onOut1()
+dci::async::Future<call::Error, int> CustomIfaceHandler::onOut1()
 {
     return f.in1();
 }
 
-call::Future<char> CustomIfaceHandler::onOut2()
+dci::async::Future<call::Error, char> CustomIfaceHandler::onOut2()
 {
     assert(0);
 //    return dci::async::spawn([this](dci::async::Promise<char> p) mutable {
@@ -39,7 +39,7 @@ call::Future<char> CustomIfaceHandler::onOut2()
 //    });
 }
 
-call::Future<size_t> CustomIfaceHandler::onOut3(double d)
+dci::async::Future<call::Error, size_t> CustomIfaceHandler::onOut3(double d)
 {
     return f.in3(d);
 }

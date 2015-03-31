@@ -8,7 +8,7 @@
 namespace dci { namespace io { namespace impl { namespace utils
 {
 
-    template <typename Address>
+    template <class Address>
     using Sockaddr = typename std::conditional
     <
         std::is_same<Address, io::ip4::Address>::value,

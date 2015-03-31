@@ -13,7 +13,7 @@ set(INC
     include/ifaceId.hpp
     include/ifaceState.hpp
 
-    include/call/future.hpp
+    include/call/error.hpp
     include/call/signal.hpp
     include/call/wire.hpp
 

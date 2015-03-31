@@ -26,7 +26,7 @@ namespace dci { namespace io { namespace impl { namespace fd
         ~Connector();
 
     private:
-        template <typename Address>
+        template <class Address>
         void startInet(const Address &address, std::uint16_t port);
 
         void startLocal(const io::str::Address &address);

@@ -5,7 +5,7 @@
 
 namespace dci { namespace async { namespace impl
 {
-    template <typename T>
+    template <class T>
     class EffortContainer;
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7

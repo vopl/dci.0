@@ -72,7 +72,7 @@ namespace dci { namespace io { namespace impl
     {
         if(getDescriptor() < 0)
         {
-            return async::mkReadyFuture(io::make_error_code(error::general::no_listen), io::Stream());
+            return async::Future<std::error_code, dci::io::Stream>(io::make_error_code(error::general::no_listen));
         }
 
         if(_descriptorReady)
@@ -106,7 +106,7 @@ namespace dci { namespace io { namespace impl
         assert(0);
     }
 
-    template <typename Address>
+    template <class Address>
     std::error_code Server::listenInet(const Address &address, std::uint16_t port)
     {
         utils::Sockaddr<Address> sa;
@@ -241,7 +241,7 @@ namespace dci { namespace io { namespace impl
             _requestsFirst = _requestsLast = nullptr;
             for(; r; r = r->_next)
             {
-                r->_promise.resolve(std::error_code(ec), io::Stream {});
+                r->_promise.resolveError(std::error_code(ec));
                 delete r;
             }
         }
@@ -259,14 +259,14 @@ namespace dci { namespace io { namespace impl
             if(err)
             {
                 delete engine;
-                promise.resolve(std::forward<std::error_code>(err), dci::io::Stream());
+                promise.resolveError(std::forward<std::error_code>(err));
                 return false;
             }
 
             dci::io::Stream stream;
             himpl::face2Impl(stream).setEngine(engine);
 
-            promise.resolve(std::error_code(), std::move(stream));
+            promise.resolveValue(std::move(stream));
             return true;
         }
 

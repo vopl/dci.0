@@ -49,7 +49,7 @@ namespace dci { namespace mm { namespace allocator
         ElementHeader *_nextFreeElement;
 
         //for intrusiveDeque
-        template <typename T> friend class utils::IntrusiveDeque;
+        template <class T> friend class utils::IntrusiveDeque;
 
         Block *_next;
         Block *_prev;

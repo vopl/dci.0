@@ -228,15 +228,12 @@ namespace dci { namespace site { namespace impl
             break;
 
         default:
-            return async::mkReadyFuture(make_error_code(error::module::wrong_state));
+            return async::Future<std::error_code>(make_error_code(error::module::wrong_state));
         }
 
         _state = ModuleState::loading;
 
-        async::Promise<std::error_code> p;
-        async::Future<std::error_code> f = p.future();
-
-        async::spawn([p=std::move(p), this] () mutable {
+        return async::spawn([this] (async::Promise<std::error_code> p) mutable {
 
             assert(ModuleState::loading == _state);
 
@@ -250,7 +247,7 @@ namespace dci { namespace site { namespace impl
             {
                 LOGE(dlerror());
                 _state = ModuleState::loadError;
-                p.resolve(make_error_code(error::module::unable_load_binary));
+                p.resolveError(make_error_code(error::module::unable_load_binary));
                 return;
             }
 
@@ -261,7 +258,7 @@ namespace dci { namespace site { namespace impl
             {
                 LOGE("loading module \""<<_name<<"\": entry point is absent");
                 _state = ModuleState::loadError;
-                p.resolve(make_error_code(error::module::unable_load_binary));
+                p.resolveError(make_error_code(error::module::unable_load_binary));
                 return;
             }
 
@@ -271,14 +268,14 @@ namespace dci { namespace site { namespace impl
              {
                  LOGE("loading module \""<<_name<<"\": entry point is damaged");
                  _state = ModuleState::loadError;
-                 p.resolve(make_error_code(error::module::unable_load_binary));
+                 p.resolveError(make_error_code(error::module::unable_load_binary));
                  return;
              }
 
-             std::error_code ec = _entry->load(himpl::impl2Face<dci::site::ModulePlace>(_place)).value<0>();
-             if(ec)
+             auto f = _entry->load(himpl::impl2Face<dci::site::ModulePlace>(_place));
+             if(f.hasError())
              {
-                 LOGE("loading module \""<<_name<<"\": "<<ec);
+                 LOGE("loading module \""<<_name<<"\": "<<f.error());
 
                  _entry  = nullptr;
 
@@ -287,15 +284,13 @@ namespace dci { namespace site { namespace impl
                  _mainBinaryHandle = nullptr;
 
                  _state = ModuleState::loadError;
-                 p.resolve(std::move(ec));
+                 p.resolveError(f.detachError());
                  return;
              }
 
             _state = ModuleState::loaded;
-            p.resolve(std::error_code{});
+            p.resolveValue();
         });
-
-        return f;
     }
 
     async::Future<std::error_code> Module::unload()
@@ -307,25 +302,22 @@ namespace dci { namespace site { namespace impl
             break;
 
         default:
-            return async::mkReadyFuture(make_error_code(error::module::wrong_state));
+            return async::Future<std::error_code>(make_error_code(error::module::wrong_state));
         }
 
         _state = ModuleState::unloading;
 
-        async::Promise<std::error_code> p;
-        async::Future<std::error_code> f = p.future();
-
-        async::spawn([p=std::move(p), this] () mutable {
+        return async::spawn([this] (async::Promise<std::error_code> p) mutable {
 
             assert(ModuleState::unloading == _state);
             assert(_entry);
 
             if(_entry)
             {
-                std::error_code ec = _entry->unload(himpl::impl2Face<dci::site::ModulePlace>(_place)).value<0>();
-                if(ec)
+                auto f = _entry->unload(himpl::impl2Face<dci::site::ModulePlace>(_place));
+                if(f.hasError())
                 {
-                    LOGE("unloading module \""<<_name<<"\": "<<ec);
+                    LOGE("unloading module \""<<_name<<"\": "<<f.error());
                     //ignore error
                 }
             }
@@ -338,11 +330,9 @@ namespace dci { namespace site { namespace impl
             _mainBinaryHandle = nullptr;
 
             _state = ModuleState::attached;
-            p.resolve(std::error_code{});
+            p.resolveValue();
             return;
         });
-
-        return f;
     }
 
     async::Future<std::error_code> Module::start()
@@ -353,34 +343,29 @@ namespace dci { namespace site { namespace impl
             break;
 
         default:
-            return async::mkReadyFuture(make_error_code(error::module::wrong_state));
+            return async::Future<std::error_code>(make_error_code(error::module::wrong_state));
         }
 
         _state = ModuleState::starting;
 
-        async::Promise<std::error_code> p;
-        async::Future<std::error_code> f = p.future();
-
-        async::spawn([p=std::move(p), this] () mutable {
+        return async::spawn([this] (async::Promise<std::error_code> p) mutable {
 
             assert(ModuleState::starting == _state);
             assert(_entry);
 
-            std::error_code ec = _entry->start(himpl::impl2Face<dci::site::ModulePlace>(_place)).value<0>();
-            if(ec)
+            auto f = _entry->start(himpl::impl2Face<dci::site::ModulePlace>(_place));
+            if(f.hasError())
             {
-                LOGE("starting module \""<<_name<<"\": "<<ec);
+                LOGE("starting module \""<<_name<<"\": "<<f.error());
                 _state = ModuleState::startError;
-                p.resolve(std::move(ec));
+                p.resolveError(f.detachError());
                 return;
             }
 
             _state = ModuleState::started;
-            p.resolve(std::error_code{});
+            p.resolveValue();
             return;
         });
-
-        return f;
     }
 
     async::Future<std::error_code> Module::stop()
@@ -392,32 +377,26 @@ namespace dci { namespace site { namespace impl
             break;
 
         default:
-            return async::mkReadyFuture(make_error_code(error::module::wrong_state));
+            return async::Future<std::error_code>(make_error_code(error::module::wrong_state));
         }
 
         _state = ModuleState::stopping;
 
-        async::Promise<std::error_code> p;
-        async::Future<std::error_code> f = p.future();
-
-        async::spawn([p=std::move(p), this] () mutable {
+        async::spawn([this] (async::Promise<std::error_code> p) mutable {
 
             assert(ModuleState::stopping == _state);
             assert(_entry);
 
-            std::error_code ec = _entry->stop(himpl::impl2Face<dci::site::ModulePlace>(_place)).value<0>();
-            if(ec)
+            auto f = _entry->stop(himpl::impl2Face<dci::site::ModulePlace>(_place));
+            if(f.hasError())
             {
-                LOGE("stopping module \""<<_name<<"\": "<<ec);
+                LOGE("stopping module \""<<_name<<"\": "<<f.error());
                 //ignore error
             }
 
             _state = ModuleState::loaded;
-            p.resolve(std::error_code{});
-            return;
+            p.resolveValue();
         });
-
-        return f;
     }
 
     async::Future<std::error_code, couple::runtime::Iface> Module::getServiceInstance(const couple::runtime::Iid &iid)
