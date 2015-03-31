@@ -18,6 +18,17 @@ set(SRC
 ############################################################
 add_library(${PROJECT} MODULE
     ${SRC}
+    idl/talk.idl
+    generated/talk.idl.hpp
+    generated/talk.idl.cpp
+
+    generated/talk/Peer.fwd.hpp
+    generated/talk/Peer.hpp
+    generated/talk/details/PeerScope.hpp
+    generated/talk/details/PeerState.hpp
+
+    generated/talk/Chat.fwd.hpp
+
 )
 
 target_link_libraries(${PROJECT}

@@ -24,10 +24,10 @@ function(localinstall_copy target src dst)
     add_custom_command(
         OUTPUT ${dst}
         DEPENDS ${src}
-        COMMAND ln -f ${src} ${dst}
+        COMMAND ln -sf ${src} ${dst}
     )
     if(EXISTS ${src})
-        execute_process(COMMAND ln -f ${src} ${dst})
+        execute_process(COMMAND ln -sf ${src} ${dst})
     endif()
     target_sources(${target} PRIVATE ${dst})
 endfunction()

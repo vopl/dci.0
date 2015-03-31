@@ -5,6 +5,7 @@ project(${PROJECT})
 ############################################################
 set(INC
     include/error.hpp
+    include/idl.hpp
 
     include/hub.hpp
     include/identifier.hpp
