@@ -20,13 +20,17 @@ namespace dci { namespace async
         Promise &operator=(const Promise &other) = delete;
 
     public:
+        using Future = dci::async::Future<E, T...>;
+
+
+    public:
         Promise();
         Promise(Promise &&other);
         Promise &operator=(Promise &&other);
 
         ~Promise();
 
-        Future<E, T...> future();
+        Future future();
 
         bool resolved() const;
         void resolveValue(T&&... val);
@@ -66,7 +70,7 @@ namespace dci { namespace async
     template <class E, class... T>
     Future<E, T...> Promise<E, T...>::future()
     {
-        return Future<E, T...>(*this);
+        return Future(*this);
     }
 
     template <class E, class... T>

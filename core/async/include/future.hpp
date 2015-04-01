@@ -18,6 +18,9 @@ namespace dci { namespace async
         explicit Future(const StateInstance &state);
 
     public:
+        using Promise = dci::async::Promise<E, T...>;
+
+    public:
         Future(E && err);
         Future(T &&... vals);
         Future(const Future &other);

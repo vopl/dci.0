@@ -4,12 +4,13 @@
 #include <climits>
 #include <string>
 #include <array>
+#include <memory>
 
 namespace dci { namespace couple { namespace runtime { namespace idl
 {
     struct S{};
 
-    using void_     = bool;
+    using void_     = void;
     using bool_     = bool;
     using string    = std::string;
     using int8      = std::int8_t;

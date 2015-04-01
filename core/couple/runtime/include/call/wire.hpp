@@ -23,7 +23,7 @@ namespace dci { namespace couple { namespace runtime { namespace call
         Wire();
         ~Wire();
 
-        dci::async::Future<Error, R> operator()(Args &&... args);
+        typename Signal<R(Args...)>::Future operator()(Args &&... args);
     };
 
 
@@ -38,14 +38,14 @@ namespace dci { namespace couple { namespace runtime { namespace call
     }
 
     template <class R, class... Args>
-    dci::async::Future<Error, R> Wire<R(Args...)>::operator()(Args &&... args)
+    typename Signal<R(Args...)>::Future Wire<R(Args...)>::operator()(Args &&... args)
     {
         if(Signal<R(Args...)>::_call)
         {
             return Signal<R(Args...)>::_call(std::forward<Args>(args)...);
         }
 
-        return dci::async::Future<Error, R>(make_error_code(error::general::call_not_connected));
+        return typename Signal<R(Args...)>::Future(make_error_code(error::general::call_not_connected));
     }
 
 }}}}

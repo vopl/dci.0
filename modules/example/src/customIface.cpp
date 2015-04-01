@@ -8,22 +8,11 @@ CustomIface::CustomIface()
 {
 }
 
-CustomIface::CustomIface(const CustomIface &from)
-    : Iface(from)
-{
-}
-
 CustomIface::CustomIface(CustomIface &&from)
     : Iface(std::forward<Iface>(from))
 {
 }
 
-
-CustomIface::CustomIface(const Iface &from)
-    : Iface(from)
-{
-    //TODO: validate cast
-}
 
 CustomIface::CustomIface(Iface &&from)
     : Iface(std::forward<Iface>(from))
@@ -36,21 +25,9 @@ CustomIface::~CustomIface()
 }
 
 
-CustomIface &CustomIface::operator=(const CustomIface &from)
-{
-    Iface::operator=(from);
-    return *this;
-}
-
 CustomIface &CustomIface::operator=(CustomIface &&from)
 {
     Iface::operator=(std::move(from));
-    return *this;
-}
-
-CustomIface &CustomIface::operator=(const Iface &from)
-{
-    Iface::operator=(from);
     return *this;
 }
 

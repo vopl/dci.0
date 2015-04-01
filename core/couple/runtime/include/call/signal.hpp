@@ -28,7 +28,14 @@ namespace dci { namespace couple { namespace runtime { namespace call
         bool disconnect();
 
     protected:
-        using Call = std::function<dci::async::Future<Error, R>(Args...)>;
+        using Future = std::conditional_t<
+            std::is_same<void, R>::value,
+            dci::async::Future<Error>,
+            dci::async::Future<Error, R>>;
+
+        using Promise = typename Future::Promise;
+
+        using Call = std::function<Future(Args...)>;
         Call _call;
     };
 

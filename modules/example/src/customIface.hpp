@@ -33,15 +33,11 @@ class CustomIface
 {
 public:
     CustomIface();
-    CustomIface(const CustomIface &from);
     CustomIface(CustomIface &&from);
-    CustomIface(const Iface &from);
     CustomIface(Iface &&from);
     ~CustomIface();
 
-    CustomIface &operator=(const CustomIface &);
     CustomIface &operator=(CustomIface &&);
-    CustomIface &operator=(const Iface &);
     CustomIface &operator=(Iface &&);
 
 public:

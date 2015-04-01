@@ -9,12 +9,6 @@ namespace dci { namespace couple { namespace runtime
         _state->incRef();
     }
 
-    Iface::Iface(const Iface &from)
-        : _state(from._state)
-    {
-        _state->incRef();
-    }
-
     Iface::Iface(Iface &&from)
         : _state(from._state)
     {
@@ -27,14 +21,6 @@ namespace dci { namespace couple { namespace runtime
         {
             _state->decRef();
         }
-    }
-
-    Iface &Iface::operator=(const Iface &from)
-    {
-        _state->decRef();
-        _state = from._state;
-        _state->incRef();
-        return *this;
     }
 
     Iface &Iface::operator=(Iface &&from)

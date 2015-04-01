@@ -8,13 +8,14 @@ namespace dci { namespace couple { namespace runtime
     class Iface
     {
         Iface() = delete;
-    public:
+
+    protected:
         Iface(IfaceState *state);
-        Iface(const Iface &from);
         Iface(Iface &&from);
+
+    public:
         ~Iface();
 
-        Iface &operator=(const Iface &from);
         Iface &operator=(Iface &&from);
 
         IfaceState *state();
