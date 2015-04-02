@@ -10,7 +10,7 @@ namespace dci { namespace couple { namespace runtime
         Iface() = delete;
 
     protected:
-        Iface(IfaceState *state);
+        Iface(IfaceState *state, bool fwd);
         Iface(Iface &&from);
 
     public:
@@ -22,6 +22,7 @@ namespace dci { namespace couple { namespace runtime
 
     private:
         IfaceState *_state;
+        bool _fwd;
     };
 
 }}}

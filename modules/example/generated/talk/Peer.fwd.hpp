@@ -3,4 +3,5 @@
 namespace talk
 {
     struct Peer;
+    struct PeerOpposite;
 }

@@ -4,8 +4,6 @@
 
 namespace dci { namespace couple { namespace runtime
 {
-    class IfaceStatePtr;
-
     class IfaceState
     {
         IfaceState() = delete;
@@ -18,12 +16,12 @@ namespace dci { namespace couple { namespace runtime
         IfaceState(Deleter deleter);
         ~IfaceState();
 
-        void incRef();
-        void decRef();
+        void involve(bool fwd, bool use);
 
     private:
-        std::size_t _refs;
-        Deleter     _deleter;
+        bool    _involvedFwd;
+        bool    _involvedBwd;
+        Deleter _deleter;
     };
 
 }}}

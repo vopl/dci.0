@@ -14,6 +14,7 @@ set(INC
     include/ifaceState.hpp
 
     include/call/error.hpp
+    include/call/value.hpp
     include/call/signal.hpp
     include/call/wire.hpp
 

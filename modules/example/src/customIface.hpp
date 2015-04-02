@@ -41,9 +41,9 @@ public:
     CustomIface &operator=(Iface &&);
 
 public:
-    dci::async::Future<call::Error, int> in1();
-    dci::async::Future<call::Error, char> in2();
-    dci::async::Future<call::Error, size_t> in3(double);
+    dci::async::Future<call::Error, call::Value<int>> in1();
+    dci::async::Future<call::Error, call::Value<char>> in2();
+    dci::async::Future<call::Error, call::Value<size_t>> in3(call::Value<double>);
 
     call::Signal<int()> out1;
     call::Signal<char()> out2;

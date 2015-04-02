@@ -4,25 +4,32 @@
 namespace dci { namespace couple { namespace runtime
 {
     IfaceState::IfaceState(Deleter deleter)
-        : _refs{0}
+        : _involvedFwd{}
+        , _involvedBwd{}
         , _deleter{deleter}
     {
     }
 
     IfaceState::~IfaceState()
     {
-        assert(!_refs);
+        assert(!_involvedFwd && !_involvedBwd);
     }
 
-    void IfaceState::incRef()
-    {
-        _refs++;
-    }
 
-    void IfaceState::decRef()
+    void IfaceState::involve(bool fwd, bool use)
     {
-        _refs--;
-        if(!_refs)
+        if(fwd)
+        {
+            assert(_involvedFwd != use);
+            _involvedFwd = use;
+        }
+        else
+        {
+            assert(_involvedBwd != use);
+            _involvedBwd = use;
+        }
+
+        if(!_involvedFwd && !_involvedBwd)
         {
             _deleter(this);
         }

@@ -13,8 +13,8 @@ public:
     CustomIfaceHandler();
     ~CustomIfaceHandler();
 
-    dci::async::Future<call::Error, int> onOut1();
-    dci::async::Future<call::Error, char> onOut2();
-    dci::async::Future<call::Error, size_t> onOut3(double d);
+    dci::async::Future<call::Error, call::Value<int>> onOut1();
+    dci::async::Future<call::Error, call::Value<char>> onOut2();
+    dci::async::Future<call::Error, call::Value<size_t>> onOut3(call::Value<double> d);
 
 };

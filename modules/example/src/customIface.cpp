@@ -4,7 +4,7 @@
 using namespace dci::couple::runtime;
 
 CustomIface::CustomIface()
-    : Iface(new CustomIface1State)
+    : Iface(new CustomIface1State, true)
 {
 }
 
@@ -27,27 +27,27 @@ CustomIface::~CustomIface()
 
 CustomIface &CustomIface::operator=(CustomIface &&from)
 {
-    Iface::operator=(std::move(from));
+    Iface::operator=(std::forward<Iface>(from));
     return *this;
 }
 
 CustomIface &CustomIface::operator=(Iface &&from)
 {
-    Iface::operator=(std::move(from));
+    Iface::operator=(std::forward<Iface>(from));
     return *this;
 }
 
-dci::async::Future<call::Error, int> CustomIface::in1()
+dci::async::Future<call::Error, call::Value<int>> CustomIface::in1()
 {
     return state()->in1();
 }
 
-dci::async::Future<call::Error, char> CustomIface::in2()
+dci::async::Future<call::Error, call::Value<char>> CustomIface::in2()
 {
     return state()->in2();
 }
 
-dci::async::Future<call::Error, size_t> CustomIface::in3(double d)
+dci::async::Future<call::Error, call::Value<size_t>> CustomIface::in3(call::Value<double> d)
 {
     return state()->in3(std::move(d));
 }

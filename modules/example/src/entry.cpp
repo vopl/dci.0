@@ -8,7 +8,7 @@ struct Entry
     Entry()
     {
         CustomIfaceHandler h;
-        dci::async::Future<call::Error, int> f = h.f.in1();
+        dci::async::Future<call::Error, call::Value<int>> f = h.f.in1();
 
         if(f.hasError())
         {
@@ -16,7 +16,7 @@ struct Entry
         }
         else
         {
-            LOGT(f.value<0>());
+            LOGT(f.value<0>()._value);
         }
     }
 

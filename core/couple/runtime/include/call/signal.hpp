@@ -3,6 +3,7 @@
 #include <dci/async/future.hpp>
 
 #include "error.hpp"
+#include "value.hpp"
 #include <functional>
 #include <type_traits>
 
@@ -31,11 +32,11 @@ namespace dci { namespace couple { namespace runtime { namespace call
         using Future = std::conditional_t<
             std::is_same<void, R>::value,
             dci::async::Future<Error>,
-            dci::async::Future<Error, R>>;
+            dci::async::Future<Error, Value<R>>>;
 
         using Promise = typename Future::Promise;
 
-        using Call = std::function<Future(Args...)>;
+        using Call = std::function<Future(Value<Args>...)>;
         Call _call;
     };
 
