@@ -6,11 +6,6 @@ cmake_minimum_required(VERSION 3.1.0 FATAL_ERROR)
 
 set(SRC
     src/entry.cpp
-
-    src/customIface.hpp
-    src/customIface.cpp
-    src/customIfaceHandler.hpp
-    src/customIfaceHandler.cpp
 )
 
 
@@ -44,7 +39,7 @@ set_property(TARGET ${PROJECT} PROPERTY CXX_STANDARD_REQUIRED ON)
 
 
 
-
+include_directories(generated)
 
 
 

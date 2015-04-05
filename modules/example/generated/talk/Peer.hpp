@@ -14,6 +14,8 @@ namespace talk
     template <class F>
     using Signal = ::dci::couple::runtime::call::Signal<F>;
 
+    struct PeerOpposite;
+
     struct Peer
         : public ::talk::details::PeerScope
         , public ::dci::couple::runtime::Iface
@@ -24,6 +26,7 @@ namespace talk
         Peer();
         Peer(Peer &&from);
         Peer(::dci::couple::runtime::Iface &&from);
+        Peer(PeerOpposite &);
         ~Peer();
 
         Peer &operator=(Peer &&from);
@@ -53,6 +56,7 @@ namespace talk
         PeerOpposite();
         PeerOpposite(PeerOpposite &&from);
         PeerOpposite(::dci::couple::runtime::Iface &&from);
+        PeerOpposite(Peer &from);
         ~PeerOpposite();
 
         PeerOpposite &operator=(PeerOpposite &&from);

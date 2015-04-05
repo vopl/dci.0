@@ -1,22 +1,42 @@
 #include <dci/site/moduleEntryFunctions.hpp>
-#include "customIfaceHandler.hpp"
 #include <dci/logger/logger.hpp>
+
+#include "talk.idl.hpp"
 
 struct Entry
     : dci::site::ModuleEntry
 {
     Entry()
     {
-        CustomIfaceHandler h;
-        dci::async::Future<call::Error, call::Value<int>> f = h.f.in1();
+        talk::Peer p;
+        talk::PeerOpposite op(p);
+
+
+        op.setId().connect([](dci::couple::runtime::call::Value<talk::Peer::Id> &&id)->dci::async::Future<dci::couple::runtime::call::Error>{
+
+            return dci::async::Future<dci::couple::runtime::call::Error>();
+        });
+
+        op.setStatus().connect([](const talk::Peer::Status &s){
+
+            return dci::async::Future<dci::couple::runtime::call::Error>();
+        });
+
+
+        talk::Peer::Id id;
+
+        dci::async::Future<dci::couple::runtime::call::Error> f = p.setId(std::move(id));
 
         if(f.hasError())
         {
             LOGT(f.error());
         }
-        else
+
+        f = p.setStatus(talk::Peer::Status::busy);
+
+        if(f.hasError())
         {
-            LOGT(f.value<0>()._value);
+            LOGT(f.error());
         }
     }
 

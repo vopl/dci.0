@@ -6,7 +6,7 @@ namespace dci { namespace couple { namespace parser { namespace impl
     {
         ////////////////////////////////////////////////////////////////////////////////
         baseStructs =
-            toks.colon[qi::_val = phx::construct<BaseStructs>(phx::new_<SBaseStructs>())] >>
+            toks.colon[qi::_val = phx::construct<BaseStructs>(phx::new_<SBaseStructs>())] >
             (
                 (
                     scopedName[phx::push_back(phx::bind(&SBaseStructs::scopedNames, deref(qi::_val)), qi::_1)] |
@@ -16,7 +16,7 @@ namespace dci { namespace couple { namespace parser { namespace impl
 
         ////////////////////////////////////////////////////////////////////////////////
         baseVariants =
-            toks.colon[qi::_val = phx::construct<BaseVariants>(phx::new_<SBaseVariants>())] >>
+            toks.colon[qi::_val = phx::construct<BaseVariants>(phx::new_<SBaseVariants>())] >
             (
                 (
                     scopedName[phx::push_back(phx::bind(&SBaseVariants::scopedNames, deref(qi::_val)), qi::_1)] |
@@ -26,7 +26,7 @@ namespace dci { namespace couple { namespace parser { namespace impl
 
         ////////////////////////////////////////////////////////////////////////////////
         baseEnums =
-            toks.colon[qi::_val = phx::construct<BaseEnums>(phx::new_<SBaseEnums>())] >>
+            toks.colon[qi::_val = phx::construct<BaseEnums>(phx::new_<SBaseEnums>())] >
             (
                 (
                     scopedName[phx::push_back(phx::bind(&SBaseEnums::scopedNames, deref(qi::_val)), qi::_1)] |
@@ -36,7 +36,7 @@ namespace dci { namespace couple { namespace parser { namespace impl
 
         ////////////////////////////////////////////////////////////////////////////////
         baseIfaces =
-            toks.colon[qi::_val = phx::construct<BaseIfaces>(phx::new_<SBaseIfaces>())] >>
+            toks.colon[qi::_val = phx::construct<BaseIfaces>(phx::new_<SBaseIfaces>())] >
             (
                 (
                     scopedName[phx::push_back(phx::bind(&SBaseIfaces::scopedNames, deref(qi::_val)), qi::_1)] |

@@ -36,7 +36,7 @@ namespace dci { namespace couple { namespace runtime { namespace call
 
         using Promise = typename Future::Promise;
 
-        using Call = std::function<Future(Value<Args>...)>;
+        using Call = std::function<Future(Value<Args> &&...)>;
         Call _call;
     };
 

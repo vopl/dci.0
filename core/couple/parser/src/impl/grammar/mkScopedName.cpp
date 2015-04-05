@@ -11,7 +11,7 @@ namespace dci { namespace couple { namespace parser { namespace impl
                     toks.dcolon
                         [qi::_val = phx::construct<ScopedName>(phx::new_<SScopedName>())]
                         [phx::bind(&SScopedName::root, deref(qi::_val)) = true]
-                        [phx::bind(&SScopedName::pos, deref(qi::_val)) = qi::_1] >>
+                        [phx::bind(&SScopedName::pos, deref(qi::_val)) = qi::_1] >
                         (
                             name[phx::push_back(phx::bind(&SScopedName::values, deref(qi::_val)), qi::_1)] |
                             error(+"type name expected")
@@ -23,9 +23,9 @@ namespace dci { namespace couple { namespace parser { namespace impl
                         [phx::push_back(phx::bind(&SScopedName::values, deref(qi::_val)), qi::_1)]
                         [phx::bind(&SScopedName::pos, deref(qi::_val)) = phx::bind(&SName::pos, deref(qi::_1))]
                 )
-            ) >>
+            ) >
             *(
-                toks.dcolon >>
+                toks.dcolon >
                 (
                     name[phx::push_back(phx::bind(&SScopedName::values, deref(qi::_val)), qi::_1)] |
                     error(+"type name expected")

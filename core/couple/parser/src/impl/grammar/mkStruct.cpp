@@ -6,13 +6,13 @@ namespace dci { namespace couple { namespace parser { namespace impl
     {
         ////////////////////////////////////////////////////////////////////////////////
         struct_ =
-            toks.kwstruct[qi::_val = phx::construct<Struct>(phx::new_<SStruct>())] >>
+            toks.kwstruct[qi::_val = phx::construct<Struct>(phx::new_<SStruct>())] >
             (
                 name[phx::bind(&SStruct::name, deref(qi::_val)) = qi::_1] |
                 error(+"structure name expected")
-            ) >>
-            -baseStructs[phx::bind(&SStruct::bases, deref(qi::_val)) = qi::_1]>>
-            (toks.ocb | error(+"'{' expected")) >>
+            ) >
+            -baseStructs[phx::bind(&SStruct::bases, deref(qi::_val)) = qi::_1]>
+            (toks.ocb | error(+"'{' expected")) >
             *(
                 //decls[phx::insert(phx::bind(&SStruct::decls, deref(qi::_val)), phx::end(phx::bind(&SStruct::decls, deref(qi::_val))), phx::begin(qi::_1), phx::end(qi::_1))] |
 
@@ -26,7 +26,7 @@ namespace dci { namespace couple { namespace parser { namespace impl
                 ] |
 
                 structField[phx::push_back(phx::bind(&SStruct::fields, deref(qi::_val)), qi::_1)]
-            ) >>
+            ) >
             (toks.ccb | error(+"'}' expected"));
     }
 

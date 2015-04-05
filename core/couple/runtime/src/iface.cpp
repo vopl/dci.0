@@ -7,7 +7,7 @@ namespace dci { namespace couple { namespace runtime
         : _state(state)
         , _fwd(fwd)
     {
-        _state->involve(fwd, _fwd);
+        _state->involve(_fwd, true);
     }
 
     Iface::Iface(Iface &&from)

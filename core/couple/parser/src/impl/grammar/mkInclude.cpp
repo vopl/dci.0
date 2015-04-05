@@ -34,11 +34,11 @@ namespace dci { namespace couple { namespace parser { namespace impl
     {
         ////////////////////////////////////////////////////////////////////////////////
         include =
-            toks.kwinclude[qi::_val = phx::construct<std::vector<Decl>>()] >>
+            toks.kwinclude[qi::_val = phx::construct<std::vector<Decl>>()] >
             (
                 toks.quotedString[qi::_val = phx::bind(&Grammar::doInclude, this, qi::_1)] |
                 error(+"file name expected")
-            ) >>
+            ) >
             (toks.semi | error(+"';' expected"));
     }
 
