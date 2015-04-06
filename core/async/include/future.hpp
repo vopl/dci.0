@@ -13,7 +13,7 @@ namespace dci { namespace async
         : private dci::mm::SharedInstance<details::FutureState<E, T...>>
     {
         friend class Promise<E, T...>;
-        friend class details::FutureStateAccessor;
+        friend struct details::FutureStateAccessor;
         using StateInstance = dci::mm::SharedInstance<details::FutureState<E, T...>>;
         explicit Future(const StateInstance &state);
 
@@ -25,6 +25,7 @@ namespace dci { namespace async
         Future(T &&... vals);
         Future(const Future &other);
         Future(Future &&other);
+        ~Future();
 
         Future &operator=(const Future &other);
         Future &operator=(Future &&other);
@@ -82,6 +83,11 @@ namespace dci { namespace async
         : StateInstance(std::forward<StateInstance>(other))
     {
 
+    }
+
+    template <class E, class... T>
+    Future<E, T...>::~Future()
+    {
     }
 
     template <class E, class... T>

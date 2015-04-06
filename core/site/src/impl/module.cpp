@@ -211,6 +211,7 @@ namespace dci { namespace site { namespace impl
 
     async::Future<std::error_code> Module::install(const ModulePlace &place)
     {
+        (void)place;
         assert(!"not impl");
     }
 
@@ -382,7 +383,7 @@ namespace dci { namespace site { namespace impl
 
         _state = ModuleState::stopping;
 
-        async::spawn([this] (async::Promise<std::error_code> p) mutable {
+        return async::spawn([this] (async::Promise<std::error_code> p) mutable {
 
             assert(ModuleState::stopping == _state);
             assert(_entry);
@@ -401,6 +402,7 @@ namespace dci { namespace site { namespace impl
 
     async::Future<std::error_code, couple::runtime::Iface> Module::getServiceInstance(const couple::runtime::Iid &iid)
     {
+        (void)iid;
         assert(0);
     }
 

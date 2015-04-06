@@ -216,7 +216,7 @@ namespace  dci { namespace couple { namespace parser { namespace impl { namespac
         {
             bool res = true;
 
-            SScope *outerScope;
+            SScope *outerScope = nullptr;
 
             res &= beginResolveScope(v.get(), outerScope);
             res &= resolveBases(v.get());
@@ -254,6 +254,7 @@ namespace  dci { namespace couple { namespace parser { namespace impl { namespac
 
         void endResolveScope(SScope *v, SScope *&outerScope)
         {
+            (void)v;
             _currentScope = outerScope;
         }
 

@@ -46,7 +46,7 @@ namespace dci { namespace mm
 
         addr = ConfigHeap::alignUp(addr, ConfigStack::_stackPages*ConfigMemory::_pageSize);
         _stacks = utils::sized_cast<void *>(addr);
-        addr += _stacksAlignedSize;
+        //addr += _stacksAlignedSize;
 
         if(!vm::init(g_vmAccessHandler))
         {

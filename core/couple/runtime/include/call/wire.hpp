@@ -23,7 +23,7 @@ namespace dci { namespace couple { namespace runtime { namespace call
         Wire();
         ~Wire();
 
-        typename Signal<R(Args...)>::Future operator()(Value<Args> &&... args);
+        typename Signal<R(Args...)>::Future operator()(ValuePorter<Args> &&... args);
     };
 
 
@@ -38,11 +38,11 @@ namespace dci { namespace couple { namespace runtime { namespace call
     }
 
     template <class R, class... Args>
-    typename Signal<R(Args...)>::Future Wire<R(Args...)>::operator()(call::Value<Args> &&... args)
+    typename Signal<R(Args...)>::Future Wire<R(Args...)>::operator()(call::ValuePorter<Args> &&... args)
     {
         if(Signal<R(Args...)>::_call)
         {
-            return Signal<R(Args...)>::_call(std::forward<call::Value<Args>>(args)...);
+            return Signal<R(Args...)>::_call(std::forward<call::ValuePorter<Args>>(args)...);
         }
 
         return typename Signal<R(Args...)>::Future(make_error_code(error::general::call_not_connected));

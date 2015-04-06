@@ -219,6 +219,7 @@ namespace dci { namespace io { namespace impl
 
     void Data::dropLast(std::size_t size)
     {
+        (void)size;
         assert(0);
     }
 
@@ -274,6 +275,7 @@ namespace dci { namespace io { namespace impl
 
     Data Data::detachLast(std::size_t size)
     {
+        (void)size;
         assert(0);
     }
 

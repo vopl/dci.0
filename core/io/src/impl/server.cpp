@@ -42,6 +42,7 @@ namespace dci { namespace io { namespace impl
 
     Server &Server::operator=(Server &&from)
     {
+        (void)from;
         assert(0);
     }
 
@@ -166,6 +167,7 @@ namespace dci { namespace io { namespace impl
 
     std::error_code Server::listenLocal(const io::str::Address &address)
     {
+        (void)address;
         assert(0);
     }
 

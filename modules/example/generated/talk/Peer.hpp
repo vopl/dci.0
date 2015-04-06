@@ -6,10 +6,10 @@
 namespace talk
 {
     template <class T>
-    using Value = ::dci::couple::runtime::call::Value<T>;
+    using ValuePorter = ::dci::couple::runtime::call::ValuePorter<T>;
 
     template <class... T>
-    using Future = ::dci::async::Future<::dci::couple::runtime::call::Error, Value<T>...>;
+    using Future = ::dci::async::Future<::dci::couple::runtime::call::Error, ValuePorter<T>...>;
 
     template <class F>
     using Signal = ::dci::couple::runtime::call::Signal<F>;
@@ -37,10 +37,10 @@ namespace talk
         ::talk::details::PeerState *state();
 
 
-        Future<> setId(Value<Id> &&id);
-        Future<> setStatus(Value<Status> &&id);
+        Future<> setId(ValuePorter<Id> &&id);
+        Future<> setStatus(ValuePorter<Status> &&id);
 
-        Future<bool> joinChat(Value<Chat> &&chat);
+        Future<bool> joinChat(ValuePorter<Chat> &&chat);
     };
 
 

@@ -32,6 +32,7 @@ namespace dci { namespace io { namespace impl { namespace fd { namespace stream
 
     void Reader::error(const std::error_code &err)
     {
+        (void)err;
         assert(0);
     }
 
@@ -43,6 +44,8 @@ namespace dci { namespace io { namespace impl { namespace fd { namespace stream
 
     async::Future<std::error_code, io::Data> Reader::read(int descriptor, std::size_t min, std::size_t max)
     {
+        (void)descriptor;
+
         if(_buffer.size() >= min)
         {
             //return async::mkResolvedFuture<std::error_code, io::Data>(_buffer.detachFirst(std::min(_buffer.size(), max)));

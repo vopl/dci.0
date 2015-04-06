@@ -6,22 +6,6 @@
 #include <type_traits>
 #include <cstddef>
 
-namespace dci { namespace async
-{
-    template <class T>
-    struct Promise2FutureMapper
-    {
-        using Future = void;
-    };
-
-    template <class... T>
-    struct Promise2FutureMapper<Promise<T...>>
-    {
-        using Future = dci::async::Future<T...>;
-    };
-
-}}
-
 namespace dci { namespace async { namespace details
 {
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
@@ -69,7 +53,7 @@ namespace dci { namespace async { namespace details
         template <class... Promises>
         struct MkFutures<std::tuple<Promises...>>
         {
-            using result = std::tuple<class Promise2FutureMapper<Promises>::Future...>;
+            using result = std::tuple<typename Promises::Future...>;
         };
 
         template <class Promises>

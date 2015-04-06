@@ -29,6 +29,7 @@ namespace dci { namespace io { namespace impl { namespace fd { namespace stream
 
     void Writer::error(const std::error_code &err)
     {
+        (void)err;
         assert(0);
     }
 
@@ -99,8 +100,8 @@ namespace dci { namespace io { namespace impl { namespace fd { namespace stream
 
         if(iovAmount)
         {
-            iovec iov[iovAmount];
-            _buffer.fillIovec(&iov[0]);
+            iovec *iov = (iovec *)alloca(iovAmount * sizeof(iovec));
+            _buffer.fillIovec(iov);
 
             ssize_t res = ::writev(descriptor, iov, iovAmount);
 
@@ -158,7 +159,7 @@ namespace dci { namespace io { namespace impl { namespace fd { namespace stream
             else
             {
                 _requestsFirst->_tailSize -= size;
-                size = 0;
+                //size = 0;
                 break;
             }
         }

@@ -151,6 +151,7 @@ namespace dci { namespace mm { namespace allocator
     public:
         StackLayout()
         {
+            (void)_guardArea;
         }
 
         ~StackLayout()
@@ -328,6 +329,7 @@ namespace dci { namespace mm { namespace allocator
     public:
         StackLayout()
         {
+            (void)_guardArea;
         }
 
         ~StackLayout()

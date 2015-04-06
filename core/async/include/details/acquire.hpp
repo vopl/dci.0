@@ -39,6 +39,7 @@ namespace dci { namespace async { namespace details
     template <class First, class... Acquirable>
     std::size_t acquerablesAmount(First &first, Acquirable&... acquirables)
     {
+        (void)first;
         return 1 + acquerablesAmount(acquirables...);
     }
 
@@ -49,7 +50,7 @@ namespace dci { namespace async { namespace details
     }
 
     ////////////////////////////////////////////////////////////////////////////////////
-    inline void collect(impl::SyncronizerPtr *syncronizers){}
+    inline void collect(impl::SyncronizerPtr *){}
 
     template <class First, class... Acquirable>
     void collect(impl::SyncronizerPtr *syncronizers, First &first, Acquirable&... acquirables)

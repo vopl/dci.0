@@ -57,6 +57,7 @@ namespace  dci { namespace couple { namespace parser { namespace impl { namespac
 
         void exec(std::vector<EnumField> &vs)
         {
+            (void)vs;
 //            std::for_each(
 //                vs.begin(),
 //                vs.end(),
@@ -248,10 +249,12 @@ namespace  dci { namespace couple { namespace parser { namespace impl { namespac
 
         void operator()(SPrimitive *v)
         {
+            (void)v;
         }
 
         void operator()(SScopedName *v)
         {
+            (void)v;
         }
 
     };

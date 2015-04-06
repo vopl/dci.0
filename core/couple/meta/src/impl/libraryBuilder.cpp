@@ -16,6 +16,7 @@ namespace dci { namespace couple { namespace meta { namespace impl
 
     void LibraryBuilder::merge(const Library &lib)
     {
+        (void)lib;
         assert(0);
     }
 
@@ -282,6 +283,7 @@ namespace dci { namespace couple { namespace meta { namespace impl
 
     bool LibraryBuilder::commitChanges(Library &lib, std::vector<CommitError> &errors)
     {
+        (void)errors;
         //TODO: check errors
 
         lib = std::move(_lc);

@@ -112,14 +112,14 @@ namespace  dci { namespace couple { namespace parser { namespace impl
         if(fileName.empty())
         {
             parseState._errors.emplace_back(ErrorInfo {fileNameUnresolved, -1, -1, resolverErrorMessage});
-            return false;
+            return Scope();
         }
 
         //check cyclic
         if(parseState._processedFiles.end() != parseState._processedFiles.find(fileName))
         {
             parseState._errors.emplace_back(ErrorInfo {fileNameUnresolved, -1, -1, "error: cyclic inclusion"});
-            return false;
+            return Scope();
         }
 
         //load content
@@ -127,7 +127,7 @@ namespace  dci { namespace couple { namespace parser { namespace impl
         if(!*reader)
         {
             parseState._errors.emplace_back(ErrorInfo {fileName, -1, -1, strerror(errno)});
-            return false;
+            return Scope();
         }
 
         parseState._processedFiles.emplace(std::make_pair(fileName, reader));
@@ -160,7 +160,7 @@ namespace  dci { namespace couple { namespace parser { namespace impl
                 if(!token_is_valid(*tokIter))
                 {
                     pushError(lexIter, "invalid input sequence");
-                    return false;
+                    return Scope();
                 }
             }
         }

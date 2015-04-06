@@ -12,6 +12,7 @@ namespace dci { namespace couple { namespace meta { namespace impl
 
     LoadResult Library::load(const std::string &file)
     {
+        (void)file;
         return LoadResult::malformedFile;
     }
 

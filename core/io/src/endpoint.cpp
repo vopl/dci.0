@@ -18,9 +18,9 @@ namespace dci { namespace io
             unsigned int v0, v1, v2, v3;
 
             if(!qi::parse(begin, end,
-                          uint3d[([&](unsigned v){v0=v;})] >> '.' >>
-                          uint3d[([&](unsigned v){v1=v;})] >> '.' >>
-                          uint3d[([&](unsigned v){v2=v;})] >> '.' >>
+                          uint3d[([&](unsigned v){v0=v;})] > '.' >
+                          uint3d[([&](unsigned v){v1=v;})] > '.' >
+                          uint3d[([&](unsigned v){v2=v;})] > '.' >
                           uint3d[([&](unsigned v){v3=v;})]))
             {
                 return false;
@@ -60,17 +60,17 @@ namespace dci { namespace io
             unsigned int v0, v1, v2, v3, v4, v5, v6, v7;
 
             if(!qi::parse(begin, end,
-                          '[' >>
+                          '[' >
                           (
-                              (uhex4d[([&](unsigned v){v0=v;})] >> ':') >>
-                              (uhex4d[([&](unsigned v){v1=v;})] >> ':') >>
-                              (uhex4d[([&](unsigned v){v2=v;})] >> ':') >>
-                              (uhex4d[([&](unsigned v){v3=v;})] >> ':') >>
-                              (uhex4d[([&](unsigned v){v4=v;})] >> ':') >>
-                              (uhex4d[([&](unsigned v){v5=v;})] >> ':') >>
-                              (uhex4d[([&](unsigned v){v6=v;})] >> ':') >>
+                              (uhex4d[([&](unsigned v){v0=v;})] > ':') >
+                              (uhex4d[([&](unsigned v){v1=v;})] > ':') >
+                              (uhex4d[([&](unsigned v){v2=v;})] > ':') >
+                              (uhex4d[([&](unsigned v){v3=v;})] > ':') >
+                              (uhex4d[([&](unsigned v){v4=v;})] > ':') >
+                              (uhex4d[([&](unsigned v){v5=v;})] > ':') >
+                              (uhex4d[([&](unsigned v){v6=v;})] > ':') >
                               (uhex4d[([&](unsigned v){v7=v;})])
-                          ) >> ']'))
+                          ) > ']'))
             {
                 return false;
             }
@@ -322,7 +322,7 @@ namespace dci { namespace io
 
 //        auto scope =
 //                (
-//                    qi::lit("ip") >>
+//                    qi::lit("ip") >
 //                    (
 //                        qi::lit("c://")[([&](){allow_ipc=true;})] |
 //                        qi::lit("6://")[([&](){allow_ip6=true;})] |
@@ -333,7 +333,7 @@ namespace dci { namespace io
 
         if(!qi::parse(str, end,
                       (
-                          qi::lit("ip") >>
+                          qi::lit("ip") >
                           (
                               qi::lit("c://")[([&](){allow_ipc=true;})] |
                               qi::lit("6://")[([&](){allow_ip6=true;})] |
@@ -367,7 +367,7 @@ namespace dci { namespace io
 
         unsigned port;
         bool has_port = qi::parse(str, end,
-                                  ':' >> qi::uint_[([&](unsigned v){port=v;})]);
+                                  ':' > qi::uint_[([&](unsigned v){port=v;})]);
 
 
         if(isIp6Address)

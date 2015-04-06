@@ -8,6 +8,11 @@ namespace dci { namespace io { namespace error
             : public std::error_category
         {
         public:
+            GeneralCatogory()
+                : std::error_category()
+            {
+            }
+
             const char* name() const noexcept
             {
                 return "dci.io.general";
@@ -41,6 +46,11 @@ namespace dci { namespace io { namespace error
             : public std::error_category
         {
         public:
+            StreamCatogory()
+                : std::error_category()
+            {
+            }
+
             const char* name() const noexcept
             {
                 return "dci.io.stream";

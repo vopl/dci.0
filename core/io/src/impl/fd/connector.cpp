@@ -82,6 +82,7 @@ namespace dci { namespace io { namespace impl { namespace fd
 
     void Connector::startLocal(const io::str::Address &address)
     {
+        (void)address;
         assert(!"not impl");
     }
 

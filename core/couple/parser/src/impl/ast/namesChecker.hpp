@@ -87,6 +87,7 @@ namespace  dci { namespace couple { namespace parser { namespace impl { namespac
 
         bool checkFields(const SIface *v)
         {
+            (void)v;
             return true;
         }
 

@@ -8,6 +8,11 @@ namespace dci { namespace site { namespace error
             : public std::error_category
         {
         public:
+            GeneralCatogory()
+                : std::error_category()
+            {
+            }
+
             const char* name() const noexcept
             {
                 return "dci.site.general";
@@ -44,6 +49,11 @@ namespace dci { namespace site { namespace error
             : public std::error_category
         {
         public:
+            ModuleCatogory()
+                : std::error_category()
+            {
+            }
+
             const char* name() const noexcept
             {
                 return "dci.site.module";

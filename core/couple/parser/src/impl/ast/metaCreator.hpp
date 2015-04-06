@@ -190,6 +190,7 @@ namespace  dci { namespace couple { namespace parser { namespace impl { namespac
 
         void operator()(SScopedName *v)
         {
+            (void)v;
         }
 
     };

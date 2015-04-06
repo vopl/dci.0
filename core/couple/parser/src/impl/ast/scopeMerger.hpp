@@ -47,10 +47,12 @@ namespace  dci { namespace couple { namespace parser { namespace impl { namespac
 
         bool operator()(const Alias &v)
         {
+            (void)v;
             return false;
         }
         bool operator()(const Enum &v)
         {
+            (void)v;
             return false;
         }
 

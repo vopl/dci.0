@@ -4,6 +4,7 @@ cmake_minimum_required(VERSION 3.0)
 set(CMAKE_BUILD_TYPE Debug)
 
 
+
 ###########################################
 set(LOCALINSTALL_DIR ${CMAKE_BINARY_DIR})
 
@@ -53,6 +54,8 @@ include_directories(${LOCALINSTALL_DIR}/include)
 
 set(CMAKE_SHARED_LINKER_FLAGS "-Wl,--no-undefined")
 set(CMAKE_MODULE_LINKER_FLAGS "-Wl,--no-undefined")
+
+set(CMAKE_CXX_FLAGS "-Wall -Wextra -Wpedantic -ftemplate-depth-1000")
 
 
 ###########################################

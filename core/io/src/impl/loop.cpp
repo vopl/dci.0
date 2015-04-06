@@ -32,7 +32,12 @@ namespace dci { namespace io { namespace impl { namespace loop
         {
             int typeFlags = fdb->getEventTypes();
 
-            uint32_t res = (typeFlags & fd::etf_read) ? EPOLLIN : 0;
+            uint32_t res = 0;
+
+            if(typeFlags & fd::etf_read)
+            {
+                res |= EPOLLIN;
+            }
 
             if(typeFlags & fd::etf_write)
             {
@@ -51,7 +56,7 @@ namespace dci { namespace io { namespace impl { namespace loop
     std::error_code listenerAdd(fd::Base *fdb)
     {
         {
-            epoll_event evt = {0};
+            epoll_event evt{0,{0}};
             evt.data.ptr = fdb;
             evt.events = mkEpollEventsMask(fdb);
 
@@ -88,7 +93,7 @@ namespace dci { namespace io { namespace impl { namespace loop
                 return make_error_code(error::general::invalid_argument);
             }
 
-            epoll_event evt = {0};
+            epoll_event evt{0,{0}};
             evt.data.ptr = fdbTo;
             evt.events = mkEpollEventsMask(fdbTo);
 

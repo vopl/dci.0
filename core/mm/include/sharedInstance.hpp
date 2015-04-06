@@ -103,6 +103,8 @@ namespace dci { namespace mm
         {
             other._state = nullptr;
         }
+
+        return *this;
     }
 
     template <class T>
