@@ -1,22 +1,22 @@
-#include <ifaceState.hpp>
+#include <ifaceWire.hpp>
 #include <cassert>
 
 namespace dci { namespace couple { namespace runtime
 {
-    IfaceState::IfaceState(Deleter deleter)
+    IfaceWire::IfaceWire(Deleter deleter)
         : _involvedFwd{}
         , _involvedBwd{}
         , _deleter{deleter}
     {
     }
 
-    IfaceState::~IfaceState()
+    IfaceWire::~IfaceWire()
     {
         assert(!_involvedFwd && !_involvedBwd);
     }
 
 
-    void IfaceState::involve(bool fwd, bool use)
+    void IfaceWire::involve(bool fwd, bool use)
     {
         if(fwd)
         {

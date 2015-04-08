@@ -1,7 +1,7 @@
 #include <dci/site/moduleEntryFunctions.hpp>
 #include <dci/logger/logger.hpp>
 
-#include "talk.idl.hpp"
+#include "talk.hpp"
 
 struct Entry
     : dci::site::ModuleEntry
@@ -10,6 +10,7 @@ struct Entry
     {
         talk::Peer p;
         talk::PeerOpposite op(p);
+
 
 
         op.setId().connect([](dci::couple::runtime::call::ValuePorter<talk::Peer::Id> &&id)->dci::async::Future<dci::couple::runtime::call::Error>{

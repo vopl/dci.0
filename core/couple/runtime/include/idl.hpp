@@ -1,5 +1,10 @@
 #pragma once
 
+#include "call/valuePorter.hpp"
+#include "call/error.hpp"
+#include "call/signal.hpp"
+#include <dci/async/future.hpp>
+
 #include <cstdint>
 #include <climits>
 #include <string>
@@ -29,5 +34,15 @@ namespace dci { namespace couple { namespace runtime { namespace idl
 
     template <class T, std::size_t N>
     using array = std::array<T, N>;
+
+
+    template <class T>
+    using ValuePorter = ::dci::couple::runtime::call::ValuePorter<T>;
+
+    template <class... T>
+    using Future = ::dci::async::Future< ::dci::couple::runtime::call::Error, ValuePorter<T>...>;
+
+    template <class F>
+    using Signal = ::dci::couple::runtime::call::Signal<F>;
 
 }}}}

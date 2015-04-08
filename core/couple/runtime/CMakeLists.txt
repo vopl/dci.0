@@ -11,7 +11,7 @@ set(INC
     include/identifier.hpp
     include/iface.hpp
     include/ifaceId.hpp
-    include/ifaceState.hpp
+    include/ifaceWire.hpp
 
     include/call/error.hpp
     include/call/valuePorter.hpp
@@ -27,7 +27,7 @@ set(SRC
     src/error.cpp
 
     src/iface.cpp
-    src/ifaceState.cpp
+    src/ifaceWire.cpp
     src/hub.cpp
 
     src/impl/hub.hpp

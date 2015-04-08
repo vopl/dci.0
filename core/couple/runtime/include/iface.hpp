@@ -1,7 +1,7 @@
 #pragma once
 
 #include "ifaceId.hpp"
-#include "ifaceState.hpp"
+#include "ifaceWire.hpp"
 
 namespace dci { namespace couple { namespace runtime
 {
@@ -10,7 +10,7 @@ namespace dci { namespace couple { namespace runtime
         Iface() = delete;
 
     protected:
-        Iface(IfaceState *state, bool fwd);
+        Iface(IfaceWire *wire, bool fwd);
         Iface(Iface &&from);
 
     public:
@@ -18,10 +18,10 @@ namespace dci { namespace couple { namespace runtime
 
         Iface &operator=(Iface &&from);
 
-        IfaceState *state();
+        IfaceWire *wire();
 
     private:
-        IfaceState *_state;
+        IfaceWire*_wire;
         bool _fwd;
     };
 

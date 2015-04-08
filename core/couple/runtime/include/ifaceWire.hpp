@@ -4,17 +4,17 @@
 
 namespace dci { namespace couple { namespace runtime
 {
-    class IfaceState
+    class IfaceWire
     {
-        IfaceState() = delete;
-        void operator=(const IfaceState &) = delete;
+        IfaceWire() = delete;
+        void operator=(const IfaceWire&) = delete;
 
     public:
-        using Deleter = void (*)(IfaceState *state);
+        using Deleter = void (*)(IfaceWire*state);
 
     public:
-        IfaceState(Deleter deleter);
-        ~IfaceState();
+        IfaceWire(Deleter deleter);
+        ~IfaceWire();
 
         void involve(bool fwd, bool use);
 

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <type_traits>
+#include <utility>
 #include <cassert>
 
 namespace dci { namespace couple { namespace runtime { namespace call
@@ -48,7 +49,7 @@ namespace dci { namespace couple { namespace runtime { namespace call
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
     template <class T>
     ValuePorter<T>::ValuePorter(const T &from)
-        : _ptr(&from)
+        : _ptr(const_cast<T *>(&from))
         , _isConst(true)
         , _isOwn(false)
     {
