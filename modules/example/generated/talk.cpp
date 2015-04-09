@@ -1,8 +1,5 @@
 #include "talk.hpp"
 
-#include "talk/Peer.hpp"
-#include "talk/Chat.hpp"
-
 
 namespace wire
 {

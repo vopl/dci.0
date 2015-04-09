@@ -1,13 +1,18 @@
 #include <dci/couple/meta/libraryBuilder.hpp>
 #include <dci/couple/meta/library.hpp>
+
 #include <dci/couple/parser/config.hpp>
 #include <dci/couple/parser/errorInfo.hpp>
 #include <dci/couple/parser/exec.hpp>
+
+#include <dci/couple/generator/executor.hpp>
 
 #include <dci/logger/logger.hpp>
 
 #include <boost/program_options.hpp>
 #include <boost/program_options/parsers.hpp>
+
+#include <boost/filesystem.hpp>
 
 namespace po = boost::program_options;
 
@@ -41,10 +46,20 @@ int main(int argc, const char **argv)
     po::options_description descOutput("output options");
     descOutput.add_options()
             (
-                "out,o",
+                "list-generators",
+                "show available generators"
+            )
+            (
+                "generate,g",
+                po::value<std::vector<std::string>>(),
+                "specify generator for use"
+            )
+            (
+                "outdir,o",
                 po::value<std::string>(),
-                "output file name"
+                "output directory"
             );
+
     desc.add(descOutput);
 
     ////////////////////////////////////////////////////////////////////////////////
@@ -78,7 +93,6 @@ int main(int argc, const char **argv)
     if(vars.count("help"))
     {
         std::cout << desc << std::endl;
-        return EXIT_SUCCESS;
     }
 
     dci::couple::meta::Library lib;
@@ -142,10 +156,59 @@ int main(int argc, const char **argv)
         }
     }
 
-    if(vars.count("out"))
+    if(vars.count("list-generators"))
     {
-        std::cout << "output: " << vars["out"].as<std::string>() << std::endl;
-        return EXIT_SUCCESS;
+        std::cout << "generators available:" << std::endl;
+
+        for(const auto &gen : dci::couple::generator::Executor::getAll())
+        {
+            std::cout << gen.first;
+            if(!gen.second->description().empty())
+            {
+                std::cout << ": " << gen.second->description();
+            }
+            std::cout << std::endl;
+        }
+
+        std::cout << std::endl;
+    }
+
+    std::string outdir;
+    if(vars.count("outdir"))
+    {
+        outdir = vars["generate"].as<std::string>();
+    }
+    else
+    {
+        outdir = boost::filesystem::current_path().string();
+    }
+
+    if(vars.count("generate"))
+    {
+        for(const std::string &gen: vars["generate"].as<std::vector<std::string>>())
+        {
+            dci::couple::generator::Executor *executor = nullptr;
+            try
+            {
+                executor = dci::couple::generator::Executor::getAll().at(gen);
+            }
+            catch(const std::out_of_range &e)
+            {
+                std::cout << "generator " << gen << " is not found" << std::endl;
+                continue;
+            }
+
+            std::error_code ec = executor->exec(lib, outdir);
+            if(ec)
+            {
+                std::cout << "genarate " << gen << ": " << ec.message() << std::endl;
+                break;
+            }
+            else
+            {
+                std::cout << gen << " generation done" << std::endl;
+            }
+        }
     }
 
     return EXIT_SUCCESS;
