@@ -1,14 +1,17 @@
 #pragma once
 
+#include "iface.hpp"
 #include "call/valuePorter.hpp"
 #include "call/error.hpp"
 #include "call/signal.hpp"
+#include "call/wire.hpp"
 #include <dci/async/future.hpp>
 
 #include <cstdint>
 #include <climits>
 #include <string>
 #include <array>
+#include <vector>
 #include <memory>
 
 namespace dci { namespace couple { namespace runtime { namespace idl
@@ -35,6 +38,17 @@ namespace dci { namespace couple { namespace runtime { namespace idl
     template <class T, std::size_t N>
     using array = std::array<T, N>;
 
+    template <class T>
+    using list = std::vector<T>;
+
+    template <class... TT>
+    struct variant
+    {
+
+    };
+
+    template <class F>
+    using Wire = ::dci::couple::runtime::call::Wire<F>;
 
     template <class T>
     using ValuePorter = ::dci::couple::runtime::call::ValuePorter<T>;

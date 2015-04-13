@@ -14,15 +14,18 @@ set(SRC
 add_library(${PROJECT} MODULE
     ${SRC}
     idl/talk.idl
-    generated/talk.hpp
-    generated/talk.cpp
+    generated1/talk.hpp
+    generated1/talk.cpp
 
-    generated/talk/Peer.fwd.hpp
-    generated/talk/Peer.hpp
-    generated/scope/talk/Peer.hpp
-    generated/wire/talk/Peer.hpp
+    generated1/talk/Peer.fwd.hpp
+    generated1/talk/Peer.hpp
+    generated1/scope/talk/Peer.hpp
+    generated1/wire/talk/Peer.hpp
 
-    generated/talk/Chat.fwd.hpp
+    generated1/talk/Chat.fwd.hpp
+
+    generated2/talk.hpp
+    generated2/talk.cpp
 
 )
 
@@ -39,7 +42,7 @@ set_property(TARGET ${PROJECT} PROPERTY CXX_STANDARD_REQUIRED ON)
 
 
 
-include_directories(generated)
+include_directories(generated2)
 
 
 

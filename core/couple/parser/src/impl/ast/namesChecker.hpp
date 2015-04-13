@@ -85,12 +85,6 @@ namespace  dci { namespace couple { namespace parser { namespace impl { namespac
             return true;
         }
 
-        bool checkFields(const SIface *v)
-        {
-            (void)v;
-            return true;
-        }
-
         template <class T>
         typename std::enable_if<sizeof(T::fields)!=0, bool>::type checkFields(const T *v)
         {

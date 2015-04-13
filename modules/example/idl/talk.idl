@@ -30,8 +30,8 @@ scope talk
         out void addMember(Peer::Id id);
         out void delMember(Peer::Id id);
         
-        out void exhibit(VoiceTrain voice);
-        out void exhibit(VideoTrain video);
+        out void exhibitVoice(VoiceTrain voice);
+        out void exhibitVideo(VideoTrain video);
         out FilesReceiver getFiles(FilesInfo::Id);
 
         out void typing(bool);
@@ -89,7 +89,7 @@ scope talk
     iface FilesReceiver
     {
         in void abort();
-        out void abort();
+        out void abort2();
         
         struct Entry
         {
