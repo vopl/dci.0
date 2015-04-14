@@ -1,16 +1,21 @@
 #pragma once
 
-#include <dci/himpl/implLayout.hpp>
+#include <type.hpp>
 
 namespace dci { namespace couple { namespace meta { namespace impl
 {
     class Type
-        : public himpl::ImplLayout<Type>
     {
 
+    protected:
+        Type(TypeConcrete concrete);
+
     public:
-        Type();
-        ~Type();
+        TypeConcrete concrete() const;
+
+    private:
+        TypeConcrete _concrete{TypeConcrete::null};
+
     };
 
 }}}}

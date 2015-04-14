@@ -11,6 +11,8 @@ namespace dci { namespace couple { namespace meta
     class Struct
         : public himpl::FaceLayout<impl::Struct, Type, Scope, Compound<Attribute>, Inheritable<Struct>>
     {
+    public:
+        static const TypeConcrete _concrete = TypeConcrete::struct_;
 
     };
 

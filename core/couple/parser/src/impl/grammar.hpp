@@ -49,35 +49,35 @@ namespace dci { namespace couple { namespace parser { namespace impl
         std::vector<Decl> doInclude(const Token::token_value_type &str);
 
     private:
-        qi::rule<TokIterator, Primitive(), qi::locals<PrimitiveKind>>   primitive;
-        qi::rule<TokIterator, List()>                                   list;
-        qi::rule<TokIterator, Set()>                                    set;
-        qi::rule<TokIterator, Map()>                                    map;
-        qi::rule<TokIterator, Ptr()>                                    ptr;
-        qi::rule<TokIterator, Array()>                                  array;
-        qi::rule<TokIterator, Name()>                                   name;
-        qi::rule<TokIterator, ScopedName()>                             scopedName;
-        qi::rule<TokIterator, TypeUse()>                                typeUse;
-        qi::rule<TokIterator, Alias()>                                  alias;
-        qi::rule<TokIterator, BaseStructs()>                            baseStructs;
-        qi::rule<TokIterator, BaseVariants()>                           baseVariants;
-        qi::rule<TokIterator, BaseEnums()>                              baseEnums;
-        qi::rule<TokIterator, BaseIfaces()>                             baseIfaces;
-        qi::rule<TokIterator, VariantField()>                           variantField;
-        qi::rule<TokIterator, Variant()>                                variant;
-        qi::rule<TokIterator, StructField()>                            structField;
-        qi::rule<TokIterator, Struct()>                                 struct_;
-        qi::rule<TokIterator, EnumField()>                              enumField;
-        qi::rule<TokIterator, Enum()>                                   enum_;
-        qi::rule<TokIterator, MethodParam()>                            methodParam;
-        qi::rule<TokIterator, Method(), qi::locals<MethodDirection>>    method;
-        qi::rule<TokIterator, Iface()>                                  iface;
-        qi::rule<TokIterator, Scope()>                                  scope;
-        qi::rule<TokIterator, std::vector<Decl>()>                      include;
-        qi::rule<TokIterator, Decl()>                                   decl;
-        qi::rule<TokIterator, std::vector<Decl>()>                      decls;
+        qi::rule<TokIterator, Primitive(), qi::locals<meta::PrimitiveKind>> primitive;
+        qi::rule<TokIterator, List()>                                       list;
+        qi::rule<TokIterator, Set()>                                        set;
+        qi::rule<TokIterator, Map()>                                        map;
+        qi::rule<TokIterator, Ptr()>                                        ptr;
+        qi::rule<TokIterator, Array()>                                      array;
+        qi::rule<TokIterator, Name()>                                       name;
+        qi::rule<TokIterator, ScopedName()>                                 scopedName;
+        qi::rule<TokIterator, TypeUse()>                                    typeUse;
+        qi::rule<TokIterator, Alias()>                                      alias;
+        qi::rule<TokIterator, BaseStructs()>                                baseStructs;
+        qi::rule<TokIterator, BaseVariants()>                               baseVariants;
+        qi::rule<TokIterator, BaseEnums()>                                  baseEnums;
+        qi::rule<TokIterator, BaseIfaces()>                                 baseIfaces;
+        qi::rule<TokIterator, VariantField()>                               variantField;
+        qi::rule<TokIterator, Variant()>                                    variant;
+        qi::rule<TokIterator, StructField()>                                structField;
+        qi::rule<TokIterator, Struct()>                                     struct_;
+        qi::rule<TokIterator, EnumField()>                                  enumField;
+        qi::rule<TokIterator, Enum()>                                       enum_;
+        qi::rule<TokIterator, MethodParam()>                                methodParam;
+        qi::rule<TokIterator, Method(), qi::locals<MethodDirection>>        method;
+        qi::rule<TokIterator, Iface()>                                      iface;
+        qi::rule<TokIterator, Scope()>                                      scope;
+        qi::rule<TokIterator, std::vector<Decl>()>                          include;
+        qi::rule<TokIterator, Decl()>                                       decl;
+        qi::rule<TokIterator, std::vector<Decl>()>                          decls;
 
-        qi::rule<TokIterator, Scope()>                                  file;
+        qi::rule<TokIterator, Scope()>                                      file;
     };
 
 }}}}

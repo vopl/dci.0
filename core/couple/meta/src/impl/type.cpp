@@ -2,14 +2,14 @@
 
 namespace dci { namespace couple { namespace meta { namespace impl
 {
-    Type::Type()
+    Type::Type(TypeConcrete concrete)
+        : _concrete (concrete)
     {
-
     }
 
-    Type::~Type()
+    TypeConcrete Type::concrete() const
     {
-
+        return _concrete;
     }
 
 }}}}

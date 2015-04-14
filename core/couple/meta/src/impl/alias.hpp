@@ -2,12 +2,14 @@
 
 #include "type.hpp"
 #include "named.hpp"
-#include <dci/himpl/implLayout.hpp>
+#include "scoped.hpp"
 
 namespace dci { namespace couple { namespace meta { namespace impl
 {
     class Alias
-        : public himpl::ImplLayout<Alias, Type, Named>
+        : public Type
+        , public Named
+        , public Scoped
     {
     public:
         Alias();

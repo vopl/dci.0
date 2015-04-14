@@ -16,14 +16,11 @@ namespace dci { namespace couple { namespace meta
         : public himpl::FaceLayout<impl::Method, Named, Compound<Attribute>>
     {
     public:
-        Iface *iface();
 
-        Type *resultType();
-
-        CallDirection direction();
-
-        bool nowait();
-
+        CallDirection direction() const;
+        bool nowait() const;
+        const Type *resultType() const;
+        const std::vector<Attribute *> &attributes() const;
     };
 
 }}}

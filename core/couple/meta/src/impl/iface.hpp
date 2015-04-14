@@ -5,19 +5,21 @@
 #include "compound.hpp"
 #include "inheritable.hpp"
 #include "method.hpp"
-#include <dci/himpl/implLayout.hpp>
 
 namespace dci { namespace couple { namespace meta { namespace impl
 {
     class Iface
-        : public himpl::ImplLayout<Iface, Type, Scope, Compound<Method>, Inheritable<Iface>>
+        : public Type
+        , public Scope
+        , public Compound<Method>
+        , public Inheritable<Iface>
     {
     public:
+        using Compound<Method>::add;
+        using Scope::add;
+
         Iface();
         ~Iface();
-
-        using Compound<Method>::add;
-        using Compound<Type>::add;
 
     };
 

@@ -14,12 +14,14 @@ namespace dci { namespace himpl
     struct SizeFetcher
     {
         static const std::size_t _value = sizeof(T);
+        static const std::size_t _align = alignof(T);
     };
 
     template <class T>
     struct SizeFetcher<T, true>
     {
         static const std::size_t _value = 0;
+        static const std::size_t _align = alignof(T);
     };
 
 }}

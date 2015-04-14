@@ -68,7 +68,7 @@ namespace dci { namespace couple { namespace meta
 
         void setType(Attribute *target, Type *type);
         void setType(Alias *target, Type *type);
-        void setType(Method *target, Type *type);
+        void setResultType(Method *target, Type *type);
 
         void setElementType(Set *target, Type *type);
         void setElementType(List *target, Type *type);
@@ -81,6 +81,8 @@ namespace dci { namespace couple { namespace meta
         void setMethodNowait(Method *target, bool nowait);
 
         void setArraySize(Array *target, std::uint32_t size);
+
+        void setPrimitiveKind(Primitive *target, PrimitiveKind kind);
 
     public:// commit
         bool commitChanges(Library &lib, std::vector<CommitError> &errors);

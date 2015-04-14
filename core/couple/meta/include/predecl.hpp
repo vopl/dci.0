@@ -21,6 +21,7 @@ namespace dci { namespace couple { namespace meta
     class Set;
     class Struct;
     class Named;
+    class Scoped;
     class Type;
     class Variant;
 
@@ -49,6 +50,7 @@ namespace dci { namespace couple { namespace meta { namespace impl
     class Set;
     class Struct;
     class Named;
+    class Scoped;
     class Type;
     class Variant;
 

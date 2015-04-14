@@ -1,5 +1,6 @@
 #include "out.hpp"
 #include <iostream>
+#include <cassert>
 
 namespace dci { namespace couple { namespace generator
 {
@@ -24,6 +25,8 @@ namespace dci { namespace couple { namespace generator
     Out::Out()
         : _fname()
         , _s()
+        , _levels()
+        , _currentStream(&_s)
         , _indentLevel(0)
         , _indentPad("    ")
     {
@@ -51,6 +54,34 @@ namespace dci { namespace couple { namespace generator
         _s.clear();
     }
 
+    void Out::push()
+    {
+        _levels.emplace(std::ios_base::out);
+        _currentStream = &_levels.top();
+    }
+
+    void Out::pop(bool commit)
+    {
+        assert(!_levels.empty());
+
+        auto content = _levels.top().str();
+        _levels.pop();
+
+        if(_levels.empty())
+        {
+            _currentStream = &_s;
+        }
+        else
+        {
+            _currentStream = &_levels.top();
+        }
+
+        if(commit)
+        {
+            _currentStream->write(content.data(), content.size());
+        }
+    }
+
     Out::operator bool()
     {
         return static_cast<bool>(_s);
@@ -63,7 +94,7 @@ namespace dci { namespace couple { namespace generator
 
     Out &Out::operator<<(std::ostream&(*v)(std::ostream&))
     {
-        _s << v;
+        (*_currentStream) << v;
         if(!_s)
         {
             throw std::system_error(std::error_code(errno, std::system_category()), "unable to write file "+_fname);
@@ -77,7 +108,7 @@ namespace dci { namespace couple { namespace generator
         {
             for(std::size_t i(0); i<_indentLevel; ++i)
             {
-                _s << _indentPad;
+                (*_currentStream) << _indentPad;
                 if(!_s)
                 {
                     throw std::system_error(std::error_code(errno, std::system_category()), "unable to write file "+_fname);

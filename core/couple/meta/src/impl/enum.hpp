@@ -2,15 +2,19 @@
 
 #include "type.hpp"
 #include "named.hpp"
+#include "scoped.hpp"
 #include "compound.hpp"
 #include "inheritable.hpp"
 #include "enumValue.hpp"
-#include <dci/himpl/implLayout.hpp>
 
 namespace dci { namespace couple { namespace meta { namespace impl
 {
     class Enum
-        : public himpl::ImplLayout<Enum, Type, Named, Compound<EnumValue>, Inheritable<Enum>>
+        : public Type
+        , public Named
+        , public Scoped
+        , public Compound<EnumValue>
+        , public Inheritable<Enum>
     {
     public:
         Enum();

@@ -1,19 +1,21 @@
 #pragma once
 
 #include "type.hpp"
-#include <dci/himpl/implLayout.hpp>
 
 namespace dci { namespace couple { namespace meta { namespace impl
 {
     class Container2
-        : public himpl::ImplLayout<Container2, Type>
+        : public Type
     {
     public:
-        Container2();
+        Container2(TypeConcrete concrete);
         ~Container2();
 
         void setElementType1(Type *v);
         void setElementType2(Type *v);
+
+        const Type *elementType1() const;
+        const Type *elementType2() const;
 
     private:
         Type *_elementType1{nullptr};

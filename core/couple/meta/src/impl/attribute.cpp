@@ -12,9 +12,14 @@ namespace dci { namespace couple { namespace meta { namespace impl
 
     }
 
-    void Attribute::setValueType(Type *v)
+    void Attribute::setType(Type *v)
     {
-        _valueType = v;
+        _type = v;
+    }
+
+    const Type *Attribute::type() const
+    {
+        return _type;
     }
 
 }}}}

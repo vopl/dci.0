@@ -12,12 +12,6 @@ namespace dci { namespace couple { namespace meta { namespace impl
 
     }
 
-
-    void Method::setResultType(Type *v)
-    {
-        _resultType = v;
-    }
-
     void Method::setDirection(CallDirection v)
     {
         _direction = v;
@@ -26,6 +20,26 @@ namespace dci { namespace couple { namespace meta { namespace impl
     void Method::setNowait(bool v)
     {
         _nowait = v;
+    }
+
+    void Method::setResultType(Type *v)
+    {
+        _resultType = v;
+    }
+
+    CallDirection Method::direction() const
+    {
+        return _direction;
+    }
+
+    bool Method::nowait() const
+    {
+        return _nowait;
+    }
+
+    const Type *Method::resultType() const
+    {
+        return _resultType;
     }
 
 }}}}

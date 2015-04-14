@@ -12,12 +12,11 @@ namespace dci { namespace couple { namespace meta
         : public himpl::FaceLayout<impl::Iface, Type, Scope, Compound<Method>, Inheritable<Iface>>
     {
     public:
-        std::vector<Method *> methods();
+        static const TypeConcrete _concrete = TypeConcrete::iface;
 
-        bool forward();
+        const std::vector<Method *> &methods() const;
 
-        Iface *opposite();
-
+        bool forward() const;
     };
 
 }}}

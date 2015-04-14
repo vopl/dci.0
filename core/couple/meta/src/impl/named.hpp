@@ -1,13 +1,10 @@
 #pragma once
 
-#include <dci/himpl/implLayout.hpp>
-
 #include <string>
 
 namespace dci { namespace couple { namespace meta { namespace impl
 {
     class Named
-        : public himpl::ImplLayout<Named>
     {
 
     public:

@@ -74,6 +74,7 @@ namespace  dci { namespace couple { namespace parser { namespace impl { namespac
                 [&](const Method &v) {
                     _lb.setMethodDirection(v->meta, MethodDirection::in==v->direction ? meta::CallDirection::in : meta::CallDirection::out);
                     _lb.setMethodNowait(v->meta, v->nowait);
+                    _lb.setResultType(v->meta, typeUse2Meta(v->resultType));
                     exec(v->params);
                     boost::apply_visitor(*this, v->resultType);
                 }
@@ -86,6 +87,7 @@ namespace  dci { namespace couple { namespace parser { namespace impl { namespac
                 vs.begin(),
                 vs.end(),
                 [&](const MethodParam &v) {
+                    _lb.setType(v->meta, typeUse2Meta(v->type));
                     boost::apply_visitor(*this, v->type);
                 }
             );
@@ -249,7 +251,7 @@ namespace  dci { namespace couple { namespace parser { namespace impl { namespac
 
         void operator()(SPrimitive *v)
         {
-            (void)v;
+            _lb.setPrimitiveKind(v->meta, v->kind);
         }
 
         void operator()(SScopedName *v)

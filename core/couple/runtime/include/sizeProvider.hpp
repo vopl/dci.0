@@ -5,6 +5,6 @@
 namespace dci {namespace couple {namespace runtime {namespace impl {class Hub;}}}}
 
 namespace dci { namespace himpl {
-    template <> struct sizeProvider< ::dci::couple::runtime::impl::Hub > { static const std::size_t _value =  0;};
+    template <> struct sizeProvider< ::dci::couple::runtime::impl::Hub > { static const std::size_t _value=0; static const std::size_t _align=1; };
 }}
 

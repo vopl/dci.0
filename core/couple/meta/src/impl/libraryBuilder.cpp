@@ -59,6 +59,7 @@ namespace dci { namespace couple { namespace meta { namespace impl
         {
             _lc.checkPresense(parent);
             parent->add(res);
+            res->setScope(parent);
         }
 
         return res;
@@ -71,6 +72,7 @@ namespace dci { namespace couple { namespace meta { namespace impl
 
         _lc.checkPresense(parent);
         parent->add(res);
+        res->setScope(parent);
 
         return res;
     }
@@ -81,8 +83,8 @@ namespace dci { namespace couple { namespace meta { namespace impl
         res->setName(name);
 
         _lc.checkPresense(parent);
-        parent->add(static_cast<Type *>(res));
-        parent->add(static_cast<Scope *>(res));
+        parent->add(res);
+        res->setScope(parent);
 
         return res;
     }
@@ -93,8 +95,8 @@ namespace dci { namespace couple { namespace meta { namespace impl
         res->setName(name);
 
         _lc.checkPresense(parent);
-        parent->add(static_cast<Type *>(res));
-        parent->add(static_cast<Scope *>(res));
+        parent->add(res);
+        res->setScope(parent);
 
         return res;
     }
@@ -106,6 +108,7 @@ namespace dci { namespace couple { namespace meta { namespace impl
 
         _lc.checkPresense(parent);
         parent->add(res);
+        res->setScope(parent);
 
         return res;
     }
@@ -116,8 +119,8 @@ namespace dci { namespace couple { namespace meta { namespace impl
         res->setName(name);
 
         _lc.checkPresense(parent);
-        parent->add(static_cast<Type *>(res));
-        parent->add(static_cast<Scope *>(res));
+        parent->add(res);
+        res->setScope(parent);
 
         return res;
     }
@@ -209,7 +212,7 @@ namespace dci { namespace couple { namespace meta { namespace impl
     {
         _lc.checkPresense(target);
         _lc.checkPresense(type);
-        target->setValueType(type);
+        target->setType(type);
     }
 
     void LibraryBuilder::setType(Alias *target, Type *type)
@@ -219,7 +222,7 @@ namespace dci { namespace couple { namespace meta { namespace impl
         target->setTarget(type);
     }
 
-    void LibraryBuilder::setType(Method *target, Type *type)
+    void LibraryBuilder::setResultType(Method *target, Type *type)
     {
         _lc.checkPresense(target);
         _lc.checkPresense(type);
@@ -279,6 +282,12 @@ namespace dci { namespace couple { namespace meta { namespace impl
     {
         _lc.checkPresense(target);
         target->setSize(size);
+    }
+
+    void LibraryBuilder::setPrimitiveKind(Primitive *target, PrimitiveKind kind)
+    {
+        _lc.checkPresense(target);
+        target->setKind(kind);
     }
 
     bool LibraryBuilder::commitChanges(Library &lib, std::vector<CommitError> &errors)

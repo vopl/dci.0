@@ -25,6 +25,7 @@ set(INC
     include/set.hpp
     include/struct.hpp
     include/named.hpp
+    include/scoped.hpp
     include/type.hpp
     include/variant.hpp
 
@@ -56,6 +57,7 @@ set(SRC
     src/set.cpp
     src/struct.cpp
     src/named.cpp
+    src/scoped.cpp
     src/type.cpp
     src/variant.cpp
 
@@ -81,6 +83,7 @@ set(SRC
     src/impl/set.hpp
     src/impl/struct.hpp
     src/impl/named.hpp
+    src/impl/scoped.hpp
     src/impl/type.hpp
     src/impl/variant.hpp
     src/impl/library.hpp
@@ -106,6 +109,7 @@ set(SRC
     src/impl/set.cpp
     src/impl/struct.cpp
     src/impl/named.cpp
+    src/impl/scoped.cpp
     src/impl/type.cpp
     src/impl/variant.cpp
     src/impl/library.cpp
@@ -162,6 +166,7 @@ mkHimplSizes(${PROJECT}
         ${CMAKE_CURRENT_SOURCE_DIR}/src/impl/set.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/impl/struct.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/impl/named.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/impl/scoped.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/impl/type.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/impl/variant.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/impl/library.hpp
@@ -177,7 +182,11 @@ mkHimplSizes(${PROJECT}
         "::dci::couple::meta::impl::Compound< ::dci::couple::meta::Attribute>"
         "::dci::couple::meta::impl::Compound< ::dci::couple::meta::EnumValue>"
         "::dci::couple::meta::impl::Compound< ::dci::couple::meta::Method>"
-        "::dci::couple::meta::impl::Compound< ::dci::couple::meta::Type>"
+        "::dci::couple::meta::impl::Compound< ::dci::couple::meta::Struct>"
+        "::dci::couple::meta::impl::Compound< ::dci::couple::meta::Variant>"
+        "::dci::couple::meta::impl::Compound< ::dci::couple::meta::Enum>"
+        "::dci::couple::meta::impl::Compound< ::dci::couple::meta::Alias>"
+        "::dci::couple::meta::impl::Compound< ::dci::couple::meta::Iface>"
         "::dci::couple::meta::impl::Compound< ::dci::couple::meta::Scope>"
         ::dci::couple::meta::impl::Container1
         ::dci::couple::meta::impl::Container2
@@ -197,6 +206,7 @@ mkHimplSizes(${PROJECT}
         ::dci::couple::meta::impl::Set
         ::dci::couple::meta::impl::Struct
         ::dci::couple::meta::impl::Named
+        ::dci::couple::meta::impl::Scoped
         ::dci::couple::meta::impl::Type
         ::dci::couple::meta::impl::Variant
         ::dci::couple::meta::impl::Library

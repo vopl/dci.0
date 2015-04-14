@@ -5,8 +5,6 @@ project(${PROJECT})
 ############################################################
 set(INC
     include/faceLayout.hpp
-    include/implLayout.hpp
-    include/layoutChecker.hpp
     include/sizeProvider.hpp
     include/sizeProviderDefault.hpp
     include/sizeFetcher.hpp

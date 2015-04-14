@@ -5,12 +5,12 @@
 #include "attribute.hpp"
 #include "type.hpp"
 #include <method.hpp>
-#include <dci/himpl/implLayout.hpp>
 
 namespace dci { namespace couple { namespace meta { namespace impl
 {
     class Method
-        : public himpl::ImplLayout<Method, Named, Compound<Attribute>>
+        : public Named
+        , public Compound<Attribute>
     {
     public:
         using Compound<Attribute>::add;
@@ -18,16 +18,18 @@ namespace dci { namespace couple { namespace meta { namespace impl
         Method();
         ~Method();
 
+        void setDirection(CallDirection v);
+        void setNowait(bool v);
         void setResultType(Type *v);
 
-        void setDirection(CallDirection v);
-
-        void setNowait(bool v);
+        CallDirection direction() const;
+        bool nowait() const;
+        const Type *resultType() const;
 
     private:
-        Type            *_resultType{nullptr};
         CallDirection   _direction{CallDirection::in};
         bool            _nowait{false};
+        Type            *_resultType{nullptr};
 
     };
 

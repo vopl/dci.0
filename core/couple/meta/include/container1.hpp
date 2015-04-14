@@ -8,7 +8,7 @@ namespace dci { namespace couple { namespace meta
         : public himpl::FaceLayout<impl::Container1, Type>
     {
     public:
-        Type *elementType();
+        const Type *elementType() const;
     };
 
 }}}

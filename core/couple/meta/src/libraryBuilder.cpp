@@ -151,9 +151,9 @@ namespace dci { namespace couple { namespace meta
         return impl().setType(face2Impl(target), face2Impl(type));
     }
 
-    void LibraryBuilder::setType(Method *target, Type *type)
+    void LibraryBuilder::setResultType(Method *target, Type *type)
     {
-        return impl().setType(face2Impl(target), face2Impl(type));
+        return impl().setResultType(face2Impl(target), face2Impl(type));
     }
 
     void LibraryBuilder::setElementType(Set *target, Type *type)
@@ -194,6 +194,11 @@ namespace dci { namespace couple { namespace meta
     void LibraryBuilder::setArraySize(Array *target, std::uint32_t size)
     {
         return impl().setArraySize(face2Impl(target), size);
+    }
+
+    void LibraryBuilder::setPrimitiveKind(Primitive *target, PrimitiveKind kind)
+    {
+        return impl().setPrimitiveKind(face2Impl(target), kind);
     }
 
     bool LibraryBuilder::commitChanges(Library &lib, std::vector<CommitError> &errors)

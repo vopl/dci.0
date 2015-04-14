@@ -10,7 +10,9 @@ namespace dci { namespace couple { namespace meta
         : public himpl::FaceLayout<impl::Array, Container1>
     {
     public:
-        std::uint32_t size();
+        static const TypeConcrete _concrete = TypeConcrete::array;
+
+        std::uint32_t size() const;
 
     };
 

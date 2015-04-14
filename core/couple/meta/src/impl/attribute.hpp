@@ -2,21 +2,22 @@
 
 #include "named.hpp"
 #include "type.hpp"
-#include <dci/himpl/implLayout.hpp>
 
 namespace dci { namespace couple { namespace meta { namespace impl
 {
     class Attribute
-        : public himpl::ImplLayout<Attribute, Named>
+        : public Named
     {
     public:
         Attribute();
         ~Attribute();
 
-        void setValueType(Type *v);
+        void setType(Type *v);
+
+        const Type *type() const;
 
     private:
-        Type *_valueType{nullptr};
+        Type *_type{nullptr};
     };
 
 }}}}

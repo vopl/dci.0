@@ -1,11 +1,10 @@
 #pragma once
 
-#include <dci/himpl/implLayout.hpp>
+#include <string>
 
 namespace dci { namespace site { namespace impl
 {
     class ModulePlace
-        : public himpl::ImplLayout<ModulePlace>
     {
     public:
         ModulePlace();

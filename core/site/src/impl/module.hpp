@@ -1,5 +1,3 @@
-#include <dci/himpl/implLayout.hpp>
-
 #include <dci/couple/runtime/identifier.hpp>
 #include <dci/couple/runtime/iface.hpp>
 #include <moduleId.hpp>
@@ -18,7 +16,6 @@
 namespace dci { namespace site { namespace impl
 {
     class Module
-        : public himpl::ImplLayout<Module>
     {
     public:
         Module();

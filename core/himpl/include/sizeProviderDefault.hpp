@@ -8,6 +8,7 @@ namespace dci { namespace himpl
     struct sizeProvider
     {
         static const std::size_t _value = 0;
+        static const std::size_t _align = 1;
     };
 
 }}

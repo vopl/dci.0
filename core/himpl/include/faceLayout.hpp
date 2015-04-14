@@ -35,7 +35,7 @@ namespace dci { namespace himpl
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
     template <class TImpl, class... TBaseFaces>
-    class FaceLayout
+    class alignas(sizeProvider<TImpl>::_align) FaceLayout
         : public TBaseFaces...
         , public details::Area<
             FaceLayout<TImpl, TBaseFaces...>,

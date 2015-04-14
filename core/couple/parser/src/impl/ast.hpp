@@ -3,28 +3,10 @@
 #include "common.hpp"
 #include "tokenizer.hpp"
 
+#include <dci/couple/meta/libraryBuilder.hpp>
+
 #include <boost/variant.hpp>
 
-namespace dci { namespace couple { namespace meta
-{
-    class Primitive;
-    class List;
-    class Set;
-    class Map;
-    class Ptr;
-    class Array;
-    class Scope;
-    class Alias;
-    class Attribute;
-    class Variant;
-    class Attribute;
-    class Struct;
-    class EnumValue;
-    class Enum;
-    class Attribute;
-    class Method;
-    class Iface;
-}}}
 
 namespace dci { namespace couple { namespace parser { namespace impl
 {
@@ -196,31 +178,9 @@ namespace dci { namespace couple { namespace parser { namespace impl
 
     ////////////////////////////////////////////////////////////////////////////////
     //    primitive
-    enum class PrimitiveKind
-    {
-        void_,
-
-        bool_,
-
-        string,
-
-        int8,
-        int16,
-        int32,
-        int64,
-
-        uint8,
-        uint16,
-        uint32,
-        uint64,
-
-        real32,
-        real64,
-    };
-
     struct SPrimitive
     {
-        PrimitiveKind   kind;
+        meta::PrimitiveKind   kind;
         meta::Primitive *meta{nullptr};
     };
 
@@ -306,7 +266,7 @@ namespace dci { namespace couple { namespace parser { namespace impl
 
     struct SScopeEntry
     {
-        SScope  *owner{0};
+        SScope  *owner{nullptr};
         Name    name;
     };
 
@@ -363,7 +323,7 @@ namespace dci { namespace couple { namespace parser { namespace impl
     //    variantField
     struct SVariantField
     {
-        SVariant        *owner{0};
+        SVariant        *owner{nullptr};
         Name            name;
         TypeUse         type;
 
@@ -383,7 +343,7 @@ namespace dci { namespace couple { namespace parser { namespace impl
     //    structField
     struct SStructField
     {
-        SStruct         *owner{0};
+        SStruct         *owner{nullptr};
         Name            name;
         TypeUse         type;
 
@@ -403,7 +363,7 @@ namespace dci { namespace couple { namespace parser { namespace impl
     //    enumField
     struct SEnumField
     {
-        SEnum           *owner{0};
+        SEnum           *owner{nullptr};
         Name            name;
 
         meta::EnumValue *meta{nullptr};
@@ -422,7 +382,7 @@ namespace dci { namespace couple { namespace parser { namespace impl
     //    methodParam
     struct SMethodParam
     {
-        SMethod         *owner{0};
+        SMethod         *owner{nullptr};
         Name            name;
         TypeUse         type;
 
@@ -438,11 +398,11 @@ namespace dci { namespace couple { namespace parser { namespace impl
 
     struct SMethod
     {
-        SIface                      *owner{0};
+        SIface                      *owner{nullptr};
 
-        MethodDirection             direction;
+        MethodDirection             direction{MethodDirection::out};
         TypeUse                     resultType;
-        bool                        nowait;
+        bool                        nowait{false};
         Name                        name;
         std::vector<MethodParam>    params;
 

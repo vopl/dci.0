@@ -1,14 +1,11 @@
 #pragma once
 
-#include <dci/himpl/implLayout.hpp>
-
 #include <vector>
 
 namespace dci { namespace couple { namespace meta { namespace impl
 {
     template <class E>
     class Compound
-        : public himpl::ImplLayout<Compound<E>>
     {
     public:
         Compound();

@@ -30,7 +30,9 @@ namespace dci { namespace couple { namespace meta
         : public himpl::FaceLayout<impl::Primitive, Type>
     {
     public:
-        PrimitiveKind kind();
+        static const TypeConcrete _concrete = TypeConcrete::primitive;
+
+        PrimitiveKind kind() const;
 
     };
 

@@ -12,7 +12,13 @@ namespace dci { namespace couple { namespace meta
         return this->impl().elements();
     }
 
+    template class Compound<Struct>;
+    template class Compound<Variant>;
+    template class Compound<Enum>;
+    template class Compound<Alias>;
+    template class Compound<Iface>;
+    template class Compound<Method>;
+    template class Compound<Attribute>;
     template class Compound<Scope>;
-    template class Compound<Type>;
 }}}
 

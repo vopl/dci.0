@@ -1,13 +1,11 @@
 #pragma once
 
-#include <dci/himpl/implLayout.hpp>
 #include <libraryBuilder.hpp>
 #include "libraryContent.hpp"
 
 namespace dci { namespace couple { namespace meta { namespace impl
 {
     class LibraryBuilder
-        : public himpl::ImplLayout<LibraryBuilder>
     {
     public:
         LibraryBuilder();
@@ -45,7 +43,7 @@ namespace dci { namespace couple { namespace meta { namespace impl
 
         void setType(Attribute *target, Type *type);
         void setType(Alias *target, Type *type);
-        void setType(Method *target, Type *type);
+        void setResultType(Method *target, Type *type);
 
         void setElementType(Set *target, Type *type);
         void setElementType(List *target, Type *type);
@@ -58,6 +56,8 @@ namespace dci { namespace couple { namespace meta { namespace impl
         void setMethodNowait(Method *target, bool nowait);
 
         void setArraySize(Array *target, std::uint32_t size);
+
+        void setPrimitiveKind(Primitive *target, PrimitiveKind kind);
 
     public:// commit
         bool commitChanges(Library &lib, std::vector<meta::CommitError> &errors);

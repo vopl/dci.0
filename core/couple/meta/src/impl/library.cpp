@@ -14,7 +14,7 @@ namespace dci { namespace couple { namespace meta { namespace impl
     {
         for(Scope *s : _lc.items<Scope>())
         {
-            if(std::string() == s->name())
+            if(!s->scope())
             {
                 return s;
             }

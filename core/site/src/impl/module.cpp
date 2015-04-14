@@ -12,8 +12,7 @@
 namespace dci { namespace site { namespace impl
 {
     Module::Module()
-        : himpl::ImplLayout<Module>{}
-        , _provider{}
+        : _provider{}
         , _id{}
         , _serviceIds{}
 

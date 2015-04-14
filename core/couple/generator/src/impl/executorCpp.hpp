@@ -22,8 +22,10 @@ namespace dci { namespace couple { namespace generator { namespace impl
             const std::string &name) override;
 
     private:
-        void writeWires(const dci::couple::meta::Scope *v);
-        void writeWires(const dci::couple::meta::Iface *v);
+        bool writeWires(const dci::couple::meta::Scope *v);
+        bool writeWires(const dci::couple::meta::Struct *v);
+        bool writeWires(const dci::couple::meta::Variant *v);
+        bool writeWires(const dci::couple::meta::Iface *v);
 
     private:
         void writeBodies(const dci::couple::meta::Scope *scope);
@@ -42,8 +44,15 @@ namespace dci { namespace couple { namespace generator { namespace impl
         void writeTargets(const dci::couple::meta::Iface *v);
 
     private:
+        std::string typeName(const dci::couple::meta::Type *v);
+        std::string typeNameInBody(const dci::couple::meta::Scope *v, const std::string &name);
+
+    private:
         std::string _wireName;
         std::string _bodyName;
+
+        //const std::string _idlNamespace = "::dci::couple::runtime::idl";
+        const std::string _idlNamespace = "idl";
 
         Out _hpp;
         Out _cpp;

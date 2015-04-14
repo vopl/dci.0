@@ -60,6 +60,8 @@ scope talk
         uint64 filesAmount;
         uint64 directoriesAmount;
         uint64 totalFilesVolume;
+
+        iface StubInFilesInfo {}
     }
 
     struct MediaInfo

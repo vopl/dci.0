@@ -1,4 +1,3 @@
-#include <dci/himpl/layoutChecker.hpp>
 #include <array.hpp>
 #include "impl/array.hpp"
 
@@ -6,10 +5,9 @@
 
 namespace dci { namespace couple { namespace meta
 {
-
-
-
-    static_assert(0!=sizeof(himpl::Checker<Array>), "check array layout");
-
+    std::uint32_t Array::size() const
+    {
+        return impl().size();
+    }
 
 }}}
