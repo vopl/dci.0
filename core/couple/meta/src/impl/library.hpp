@@ -13,6 +13,8 @@ namespace dci { namespace couple { namespace meta { namespace impl
         Library();
         ~Library();
 
+        const Scope *rootScope() const;
+
     public:// changes
         LoadResult load(const std::string &file);
 

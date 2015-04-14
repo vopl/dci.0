@@ -55,9 +55,14 @@ int main(int argc, const char **argv)
                 "specify generator for use"
             )
             (
-                "outdir,o",
+                "outdir,d",
                 po::value<std::string>(),
                 "output directory"
+            )
+            (
+                "outname,n",
+                po::value<std::string>(),
+                "output name"
             );
 
     desc.add(descOutput);
@@ -176,7 +181,7 @@ int main(int argc, const char **argv)
     std::string outdir;
     if(vars.count("outdir"))
     {
-        outdir = vars["generate"].as<std::string>();
+        outdir = vars["outdir"].as<std::string>();
     }
     else
     {
@@ -198,15 +203,24 @@ int main(int argc, const char **argv)
                 continue;
             }
 
-            std::error_code ec = executor->exec(lib, outdir);
-            if(ec)
+            std::string outname;
+            if(vars.count("outname"))
             {
-                std::cout << "genarate " << gen << ": " << ec.message() << std::endl;
-                break;
+                outname = vars["outname"].as<std::string>();
             }
             else
             {
+                outname = "unnamed";
+            }
+
+            if(executor->exec(lib, outdir, outname))
+            {
                 std::cout << gen << " generation done" << std::endl;
+            }
+            else
+            {
+                std::cout << gen << " generation failed" << std::endl;
+                break;
             }
         }
     }

@@ -12,6 +12,11 @@ namespace dci { namespace couple { namespace meta { namespace impl
 
     }
 
+    const std::string &Named::name() const
+    {
+        return _name;
+    }
+
     void Named::setName(const std::string &name)
     {
         _name = name;

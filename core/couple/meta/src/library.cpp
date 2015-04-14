@@ -14,6 +14,11 @@ namespace dci { namespace couple { namespace meta
     {
     }
 
+    const Scope *Library::rootScope() const
+    {
+        return himpl::impl2Face<Scope>(impl().rootScope());
+    }
+
     LoadResult Library::load(const std::string &file)
     {
         return impl().load(file);

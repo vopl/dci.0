@@ -47,6 +47,9 @@ namespace dci { namespace couple { namespace meta { namespace impl
         Items<T> &items();
 
         template <class T>
+        const Items<T> &items() const;
+
+        template <class T>
         void checkPresense(T *p);
 
         void clear();
@@ -97,6 +100,12 @@ namespace dci { namespace couple { namespace meta { namespace impl
         typename std::enable_if<!std::is_convertible<T*, typename TItems::value_type>::value>::type locateConvertible(T *, TItems &)
         {
         }
+    }
+
+    template <class T>
+    const LibraryContent::Items<T> &LibraryContent::items() const
+    {
+        return const_cast<LibraryContent *>(this)->items<T>();
     }
 
     template <class T>

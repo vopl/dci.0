@@ -32,6 +32,8 @@ namespace dci { namespace couple { namespace meta
         Library();
         ~Library();
 
+        const Scope *rootScope() const;
+
     public:// changes
         LoadResult load(const std::string &file);
         //save

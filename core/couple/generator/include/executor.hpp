@@ -14,9 +14,10 @@ namespace dci { namespace couple { namespace generator
         virtual std::string name() = 0;
         virtual std::string description() = 0;
 
-        virtual std::error_code exec(
+        virtual bool exec(
             const dci::couple::meta::Library &lib,
-            const std::string &dir) = 0;
+            const std::string &dir,
+            const std::string &name) = 0;
 
 
         static const std::map<std::string, Executor *> &getAll();

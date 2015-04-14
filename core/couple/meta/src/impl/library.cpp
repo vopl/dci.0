@@ -10,6 +10,19 @@ namespace dci { namespace couple { namespace meta { namespace impl
     {
     }
 
+    const Scope *Library::rootScope() const
+    {
+        for(Scope *s : _lc.items<Scope>())
+        {
+            if(std::string() == s->name())
+            {
+                return s;
+            }
+        }
+
+        return nullptr;
+    }
+
     LoadResult Library::load(const std::string &file)
     {
         (void)file;

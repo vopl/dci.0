@@ -13,7 +13,7 @@ namespace dci { namespace couple { namespace meta
     {
     public:
         //имя
-        std::string name();
+        const std::string &name() const;
 
     };
 
