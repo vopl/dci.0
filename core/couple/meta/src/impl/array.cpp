@@ -1,4 +1,5 @@
 #include "array.hpp"
+#include "signBuilder.hpp"
 
 namespace dci { namespace couple { namespace meta { namespace impl
 {
@@ -20,6 +21,17 @@ namespace dci { namespace couple { namespace meta { namespace impl
     std::uint32_t Array::size() const
     {
         return _size;
+    }
+
+    void Array::makeSign()
+    {
+        SignBuilder s;
+
+        s.add("array");
+        s.add(_elementType->concreteSign());
+        s.add(size());
+
+        setSign(s.finish());
     }
 
 }}}}

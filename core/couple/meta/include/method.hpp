@@ -1,6 +1,7 @@
 #pragma once
 
 #include "named.hpp"
+#include "signed.hpp"
 #include "compound.hpp"
 #include "type.hpp"
 
@@ -13,7 +14,7 @@ namespace dci { namespace couple { namespace meta
     };
 
     class Method
-        : public himpl::FaceLayout<impl::Method, Named, Compound<Attribute>>
+        : public himpl::FaceLayout<impl::Method, Named, Signed, Compound<Attribute>>
     {
     public:
 

@@ -39,6 +39,7 @@ namespace  dci { namespace couple { namespace parser { namespace impl { namespac
                 vs.begin(),
                 vs.end(),
                 [&](const VariantField &v) {
+                    _lb.setType(v->meta, typeUse2Meta(v->type));
                     boost::apply_visitor(*this, v->type);
                 }
             );
@@ -50,6 +51,7 @@ namespace  dci { namespace couple { namespace parser { namespace impl { namespac
                 vs.begin(),
                 vs.end(),
                 [&](const StructField &v) {
+                    _lb.setType(v->meta, typeUse2Meta(v->type));
                     boost::apply_visitor(*this, v->type);
                 }
             );
@@ -104,11 +106,6 @@ namespace  dci { namespace couple { namespace parser { namespace impl { namespac
         void operator()(T &v)
         {
             (*this)(&v);
-        }
-
-        void operator()(SAlias *v)
-        {
-            boost::apply_visitor(*this, v->type);
         }
 
         void operator()(SVariant *v)
@@ -211,6 +208,12 @@ namespace  dci { namespace couple { namespace parser { namespace impl { namespac
         meta::Type *typeUse2Meta(TypeUse &tu)
         {
             return boost::apply_visitor(TypeUseMetaFetcher(), tu);
+        }
+
+        void operator()(SAlias *v)
+        {
+            boost::apply_visitor(*this, v->type);
+            _lb.setType(v->meta, typeUse2Meta(v->type));
         }
 
         void operator()(SList *v)

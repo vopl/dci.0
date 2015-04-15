@@ -2,12 +2,13 @@
 
 #include "named.hpp"
 #include "scoped.hpp"
+#include "signed.hpp"
 #include "compound.hpp"
 
 namespace dci { namespace couple { namespace meta
 {
     class Scope
-        : public himpl::FaceLayout<impl::Scope, Named, Scoped, Compound<Struct>, Compound<Variant>, Compound<Enum>, Compound<Alias>, Compound<Iface>, Compound<Scope>>
+        : public himpl::FaceLayout<impl::Scope, Named, Scoped, Signed, Compound<Struct>, Compound<Variant>, Compound<Enum>, Compound<Alias>, Compound<Iface>, Compound<Scope>>
     {
     public:
         using Named::name;

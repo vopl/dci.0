@@ -15,11 +15,13 @@ namespace dci { namespace couple { namespace meta { namespace impl
         , public Inheritable<Struct>
     {
     public:
+        Struct();
+        ~Struct();
+
         using Compound<Attribute>::add;
         using Scope::add;
 
-        Struct();
-        ~Struct();
+        void makeSign() override;
     };
 
 }}}}

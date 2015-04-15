@@ -7,7 +7,7 @@ set(INC
     include/moduleId.hpp
     include/modulePlace.hpp
     include/moduleEntryFunctions.hpp
-    include/sizeProvider.hpp
+    include/layoutProvider.hpp
 )
 
 set(SRC
@@ -47,9 +47,9 @@ set_property(TARGET ${PROJECT} PROPERTY CXX_STANDARD 14)
 set_property(TARGET ${PROJECT} PROPERTY CXX_STANDARD_REQUIRED ON)
 
 include(DciHimpl)
-mkHimplSizes(${PROJECT}
+mkHimplLayouts(${PROJECT}
     OUTPUT
-        ${CMAKE_CURRENT_SOURCE_DIR}/include/sizeProvider.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/layoutProvider.hpp
 
     HEADERS
         ${CMAKE_CURRENT_SOURCE_DIR}/src/impl/modulePlace.hpp

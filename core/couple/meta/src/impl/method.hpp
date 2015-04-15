@@ -10,13 +10,14 @@ namespace dci { namespace couple { namespace meta { namespace impl
 {
     class Method
         : public Named
+        , public Signed
         , public Compound<Attribute>
     {
     public:
-        using Compound<Attribute>::add;
-
         Method();
         ~Method();
+
+        using Compound<Attribute>::add;
 
         void setDirection(CallDirection v);
         void setNowait(bool v);
@@ -25,6 +26,8 @@ namespace dci { namespace couple { namespace meta { namespace impl
         CallDirection direction() const;
         bool nowait() const;
         const Type *resultType() const;
+
+        void makeSign() override;
 
     private:
         CallDirection   _direction{CallDirection::in};

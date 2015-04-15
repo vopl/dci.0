@@ -1,5 +1,5 @@
-#include <dci/himpl/sizeProvider.hpp>
-#include SIZEPROVIDERFILE(<sizeProvider.hpp>)
+#include <dci/himpl/layoutProvider.hpp>
+#include LAYOUTPROVIDERFILE(<layoutProvider.hpp>)
 #include <stream.hpp>
 #include "impl/stream.hpp"
 

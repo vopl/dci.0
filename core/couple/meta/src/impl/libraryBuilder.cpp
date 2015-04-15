@@ -219,7 +219,7 @@ namespace dci { namespace couple { namespace meta { namespace impl
     {
         _lc.checkPresense(target);
         _lc.checkPresense(type);
-        target->setTarget(type);
+        target->setType(type);
     }
 
     void LibraryBuilder::setResultType(Method *target, Type *type)
@@ -295,6 +295,9 @@ namespace dci { namespace couple { namespace meta { namespace impl
         (void)errors;
         //TODO: check errors
 
+        makeSign();
+        makeSign();
+
         lib = std::move(_lc);
         _lc.clear();
         return true;
@@ -303,6 +306,38 @@ namespace dci { namespace couple { namespace meta { namespace impl
     void LibraryBuilder::rollbackChanges()
     {
         _lc.clear();
+    }
+
+    namespace
+    {
+        template <class T>
+        void makeSign4Items(const std::set<T *> &items)
+        {
+            for(T *v : items)
+            {
+                v->makeSign();
+            }
+        }
+    }
+    void LibraryBuilder::makeSign()
+    {
+
+        makeSign4Items(_lc.items<Primitive>());
+
+        makeSign4Items(_lc.items<Scope>());//structs, variants, ifaces,
+
+        makeSign4Items(_lc.items<List>());
+        makeSign4Items(_lc.items<Set>());
+        makeSign4Items(_lc.items<Map>());
+        makeSign4Items(_lc.items<Ptr>());
+        makeSign4Items(_lc.items<Array>());
+
+        makeSign4Items(_lc.items<Method>());
+        makeSign4Items(_lc.items<Attribute>());
+        makeSign4Items(_lc.items<EnumValue>());
+
+        makeSign4Items(_lc.items<Alias>());
+        makeSign4Items(_lc.items<Enum>());
     }
 
 }}}}

@@ -1,4 +1,5 @@
 #include "list.hpp"
+#include "signBuilder.hpp"
 
 namespace dci { namespace couple { namespace meta { namespace impl
 {
@@ -10,6 +11,16 @@ namespace dci { namespace couple { namespace meta { namespace impl
     List::~List()
     {
 
+    }
+
+    void List::makeSign()
+    {
+        SignBuilder s;
+
+        s.add("list");
+        s.add(_elementType->concreteSign());
+
+        setSign(s.finish());
     }
 
 }}}}

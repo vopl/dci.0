@@ -17,7 +17,7 @@ namespace dci { namespace couple { namespace meta { namespace impl
         const Type *elementType1() const;
         const Type *elementType2() const;
 
-    private:
+    protected:
         Type *_elementType1{nullptr};
         Type *_elementType2{nullptr};
     };

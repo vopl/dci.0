@@ -18,7 +18,7 @@ set(INC
     include/call/signal.hpp
     include/call/wire.hpp
 
-    include/sizeProvider.hpp
+    include/layoutProvider.hpp
 )
 
 
@@ -60,9 +60,9 @@ target_link_libraries(${PROJECT}
 
 ############################################################
 include(DciHimpl)
-mkHimplSizes(${PROJECT}
+mkHimplLayouts(${PROJECT}
     OUTPUT
-        ${CMAKE_CURRENT_SOURCE_DIR}/include/sizeProvider.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/layoutProvider.hpp
 
     HEADERS
         ${CMAKE_CURRENT_SOURCE_DIR}/src/impl/hub.hpp

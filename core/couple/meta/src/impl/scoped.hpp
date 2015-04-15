@@ -1,5 +1,7 @@
 #pragma once
 
+#include "sign.hpp"
+
 namespace dci { namespace couple { namespace meta { namespace impl
 {
     class Scope;
@@ -12,6 +14,8 @@ namespace dci { namespace couple { namespace meta { namespace impl
 
         const Scope *scope() const;
         void setScope(Scope *scope);
+
+        Sign scopesSign() const;
 
     private:
         Scope *_scope{nullptr};

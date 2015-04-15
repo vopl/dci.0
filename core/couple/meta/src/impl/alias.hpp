@@ -3,6 +3,7 @@
 #include "type.hpp"
 #include "named.hpp"
 #include "scoped.hpp"
+#include "signed.hpp"
 
 namespace dci { namespace couple { namespace meta { namespace impl
 {
@@ -10,15 +11,17 @@ namespace dci { namespace couple { namespace meta { namespace impl
         : public Type
         , public Named
         , public Scoped
+        , public Signed
     {
     public:
         Alias();
         ~Alias();
 
-        void setTarget(Type *v);
+        void setType(Type *v);
+        void makeSign() override;
 
     private:
-        Type *_target{nullptr};
+        Type *_type{nullptr};
     };
 
 }}}}

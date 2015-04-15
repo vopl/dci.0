@@ -26,10 +26,12 @@ set(INC
     include/struct.hpp
     include/named.hpp
     include/scoped.hpp
+    include/signed.hpp
+    include/sign.hpp
     include/type.hpp
     include/variant.hpp
 
-    include/sizeProvider.hpp
+    include/layoutProvider.hpp
     include/predecl.hpp
 
     include/library.hpp
@@ -58,6 +60,8 @@ set(SRC
     src/struct.cpp
     src/named.cpp
     src/scoped.cpp
+    src/signed.cpp
+    src/sign.cpp
     src/type.cpp
     src/variant.cpp
 
@@ -84,6 +88,9 @@ set(SRC
     src/impl/struct.hpp
     src/impl/named.hpp
     src/impl/scoped.hpp
+    src/impl/signed.hpp
+    src/impl/sign.hpp
+    src/impl/signBuilder.hpp
     src/impl/type.hpp
     src/impl/variant.hpp
     src/impl/library.hpp
@@ -110,6 +117,9 @@ set(SRC
     src/impl/struct.cpp
     src/impl/named.cpp
     src/impl/scoped.cpp
+    src/impl/signed.cpp
+    src/impl/sign.cpp
+    src/impl/signBuilder.cpp
     src/impl/type.cpp
     src/impl/variant.cpp
     src/impl/library.cpp
@@ -142,9 +152,9 @@ set_property(TARGET ${PROJECT} PROPERTY CXX_STANDARD_REQUIRED ON)
 
 ############################################################
 include(DciHimpl)
-mkHimplSizes(${PROJECT}
+mkHimplLayouts(${PROJECT}
     OUTPUT
-        ${CMAKE_CURRENT_SOURCE_DIR}/include/sizeProvider.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/layoutProvider.hpp
 
     HEADERS
         ${CMAKE_CURRENT_SOURCE_DIR}/src/impl/alias.hpp
@@ -167,6 +177,8 @@ mkHimplSizes(${PROJECT}
         ${CMAKE_CURRENT_SOURCE_DIR}/src/impl/struct.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/impl/named.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/impl/scoped.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/impl/signed.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/impl/sign.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/impl/type.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/impl/variant.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/impl/library.hpp
@@ -207,6 +219,8 @@ mkHimplSizes(${PROJECT}
         ::dci::couple::meta::impl::Struct
         ::dci::couple::meta::impl::Named
         ::dci::couple::meta::impl::Scoped
+        ::dci::couple::meta::impl::Signed
+        ::dci::couple::meta::impl::Sign
         ::dci::couple::meta::impl::Type
         ::dci::couple::meta::impl::Variant
         ::dci::couple::meta::impl::Library

@@ -32,8 +32,14 @@ namespace dci { namespace couple { namespace generator { namespace impl
         const std::string &dir_,
         const std::string &name)
     {
-        _wireName = "wire_"+name;
-        _bodyName = "body_"+name;
+        if(!lib.rootScope())
+        {
+            std::cerr << "unable to generate sources from empty lib "<<std::endl;
+            return false;
+        }
+
+        _wireName = "wire_"+lib.rootScope()->sign().string(8)+"_"+name;
+        _bodyName = "body_"+lib.rootScope()->sign().string(8)+"_"+name;
 
         boost::filesystem::path dir(dir_);
 

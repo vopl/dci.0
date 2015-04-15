@@ -15,12 +15,13 @@ namespace dci { namespace couple { namespace meta { namespace impl
         , public Inheritable<Iface>
     {
     public:
-        using Compound<Method>::add;
-        using Scope::add;
-
         Iface();
         ~Iface();
 
+        using Compound<Method>::add;
+        using Scope::add;
+
+        void makeSign() override;
     };
 
 }}}}

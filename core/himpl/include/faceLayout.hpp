@@ -1,7 +1,7 @@
 #pragma once
 
-#include "sizeProvider.hpp"
-#include "sizeFetcher.hpp"
+#include "layoutProvider.hpp"
+#include "layoutFetcher.hpp"
 #include "face2Impl.hpp"
 #include "impl2Face.hpp"
 #include <utility>
@@ -12,13 +12,14 @@ namespace dci { namespace himpl
     namespace details
     {
         template <class... TBaseFaces>
-        struct FacesSizeEvaluator
+        struct FacesLayoutEvaluator
         {
             class Probe : public TBaseFaces... {};
-            static const std::size_t _value = SizeFetcher<Probe>::_value;
+            static const std::size_t _size = LayoutFetcher<Probe>::_size;
+            static const std::size_t _polymorphic = LayoutFetcher<Probe>::_polymorphic;
         };
 
-        template <class Tag, std::size_t implSize, std::size_t facesSize, bool isEqual = implSize==facesSize>
+        template <class Tag, std::size_t implSize, std::size_t facesSize, bool polymorphic, bool isEqual = implSize==facesSize>
         class Area
         {
         protected:
@@ -27,7 +28,26 @@ namespace dci { namespace himpl
         };
 
         template <class Tag, std::size_t implSize, std::size_t facesSize>
-        class Area<Tag, implSize, facesSize, true>
+        class Area<Tag, implSize, facesSize, true, false>
+        {
+        protected:
+            virtual ~Area() {}
+            static_assert(implSize > facesSize + sizeof(void*), "impl size must be greater than all faces, possible impl inheritance is different from faces");
+            char _space[implSize - facesSize - sizeof(void*)];
+        };
+
+        template <class Tag, std::size_t implSize, std::size_t facesSize>
+        class Area<Tag, implSize, facesSize, true, true>
+        {
+        protected:
+            virtual ~Area();
+
+            //impossible
+            char _space[(int)implSize - 100500];
+        };
+
+        template <class Tag, std::size_t implSize, std::size_t facesSize>
+        class Area<Tag, implSize, facesSize, false, true>
         {
         };
     }
@@ -35,12 +55,13 @@ namespace dci { namespace himpl
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
     template <class TImpl, class... TBaseFaces>
-    class alignas(sizeProvider<TImpl>::_align) FaceLayout
+    class alignas(LayoutProvider<TImpl>::_align) FaceLayout
         : public TBaseFaces...
         , public details::Area<
             FaceLayout<TImpl, TBaseFaces...>,
-            sizeProvider<TImpl>::_value,
-            details::FacesSizeEvaluator<TBaseFaces...>::_value
+            LayoutProvider<TImpl>::_size,
+            details::FacesLayoutEvaluator<TBaseFaces...>::_size,
+            !details::FacesLayoutEvaluator<TBaseFaces...>::_polymorphic && LayoutProvider<TImpl>::_polymorphic
         >
     {
     public:
@@ -86,7 +107,7 @@ namespace dci { namespace himpl
         template <class TImpl, class... TBaseFaces, std::size_t s1=sizeof(TImpl), std::size_t s2 = sizeof(FaceLayout<TImpl, TBaseFaces...>)>
         void sizeChecker()
         {
-            static_assert(sizeof(TImpl)==sizeof(FaceLayout<TImpl, TBaseFaces...>), "inconsistent sizeProvider");
+            static_assert(sizeof(TImpl)==sizeof(FaceLayout<TImpl, TBaseFaces...>), "inconsistent layoutProvider");
         }
     }
 

@@ -1,9 +1,9 @@
 #pragma once
 
-#include <dci/himpl/sizeProvider.hpp>
-#include SIZEPROVIDERFILE("sizeProvider.hpp")
-#include "predecl.hpp"
+#include <dci/himpl/layoutProvider.hpp>
+#include LAYOUTPROVIDERFILE("layoutProvider.hpp")
 #include <dci/himpl/faceLayout.hpp>
+
 #include <type_traits>
 #include <cstdlib>
 #include <cassert>

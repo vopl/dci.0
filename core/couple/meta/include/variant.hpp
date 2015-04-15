@@ -3,6 +3,7 @@
 #include "type.hpp"
 #include "scope.hpp"
 #include "scoped.hpp"
+#include "signed.hpp"
 #include "compound.hpp"
 #include "attribute.hpp"
 #include "inheritable.hpp"

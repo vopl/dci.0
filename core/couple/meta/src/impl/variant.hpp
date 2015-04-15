@@ -15,11 +15,13 @@ namespace dci { namespace couple { namespace meta { namespace impl
         , public Inheritable<Variant>
     {
     public:
+        Variant();
+        ~Variant();
+
         using Compound<Attribute>::add;
         using Scope::add;
 
-        Variant();
-        ~Variant();
+        void makeSign() override;
     };
 
 }}}}

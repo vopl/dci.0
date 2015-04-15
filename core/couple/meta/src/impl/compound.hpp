@@ -15,7 +15,7 @@ namespace dci { namespace couple { namespace meta { namespace impl
 
         const std::vector<E *> &elements() const;
 
-    private:
+    protected:
         std::vector<E *> _elements;
     };
 

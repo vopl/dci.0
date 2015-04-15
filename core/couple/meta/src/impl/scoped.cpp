@@ -1,4 +1,6 @@
 #include "scoped.hpp"
+#include "scope.hpp"
+#include "signBuilder.hpp"
 
 namespace dci { namespace couple { namespace meta { namespace impl
 {
@@ -20,6 +22,20 @@ namespace dci { namespace couple { namespace meta { namespace impl
     void Scoped::setScope(Scope *scope)
     {
         _scope = scope;
+    }
+
+    Sign Scoped::scopesSign() const
+    {
+        SignBuilder s;
+
+        const Scope *scope = _scope;
+        while(scope)
+        {
+            s.add(scope->sign());
+            scope = scope->scope();
+        }
+
+        return s.finish();
     }
 
 }}}}

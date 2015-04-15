@@ -1,4 +1,5 @@
 #include "alias.hpp"
+#include "signBuilder.hpp"
 
 namespace dci { namespace couple { namespace meta { namespace impl
 {
@@ -12,9 +13,21 @@ namespace dci { namespace couple { namespace meta { namespace impl
 
     }
 
-    void Alias::setTarget(Type *v)
+    void Alias::setType(Type *v)
     {
-        _target = v;
+        _type = v;
+    }
+
+    void Alias::makeSign()
+    {
+        SignBuilder s;
+
+        s.add("alias");
+        s.add(scopesSign());
+        s.add(_type->concreteSign());
+        s.add(name());
+
+        setSign(s.finish());
     }
 
 }}}}

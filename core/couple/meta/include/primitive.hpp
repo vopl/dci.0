@@ -1,6 +1,7 @@
 #pragma once
 
 #include "type.hpp"
+#include "signed.hpp"
 
 namespace dci { namespace couple { namespace meta
 {
@@ -27,7 +28,7 @@ namespace dci { namespace couple { namespace meta
     };
 
     class Primitive
-        : public himpl::FaceLayout<impl::Primitive, Type>
+        : public himpl::FaceLayout<impl::Primitive, Type, Signed>
     {
     public:
         static const TypeConcrete _concrete = TypeConcrete::primitive;

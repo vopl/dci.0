@@ -1,8 +1,8 @@
 #pragma once
 
 #include <dci/himpl/faceLayout.hpp>
-#include <dci/himpl/sizeProvider.hpp>
-#include SIZEPROVIDERFILE("sizeProvider.hpp")
+#include <dci/himpl/layoutProvider.hpp>
+#include LAYOUTPROVIDERFILE("layoutProvider.hpp")
 #include "data.hpp"
 #include <dci/async/future.hpp>
 

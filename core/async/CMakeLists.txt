@@ -143,7 +143,7 @@ set(INC
     include/details/taskInstance.hpp
     include/details/taskPromiseProcessor.hpp
     include/details/acquire.hpp
-    include/sizeProvider.hpp
+    include/layoutProvider.hpp
 )
 
 ############################################################
@@ -258,9 +258,9 @@ endif()
 target_link_libraries(${PROJECT} ${Boost_SYSTEM_LIBRARY})
 
 include(DciHimpl)
-mkHimplSizes(${PROJECT}
+mkHimplLayouts(${PROJECT}
     OUTPUT
-        ${CMAKE_CURRENT_SOURCE_DIR}/include/sizeProvider.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/layoutProvider.hpp
 
     HEADERS
         ${CMAKE_CURRENT_SOURCE_DIR}/src/impl/scheduler.hpp

@@ -12,6 +12,7 @@ namespace dci { namespace couple { namespace meta { namespace impl
         ~Inheritable();
 
         void addBase(B *);
+        const std::vector<B*> &bases() const;
 
     private:
         std::vector<B*> _bases;
@@ -34,5 +35,12 @@ namespace dci { namespace couple { namespace meta { namespace impl
     {
         _bases.push_back(v);
     }
+
+    template <class B>
+    const std::vector<B*> &Inheritable<B>::bases() const
+    {
+        return _bases;
+    }
+
 
 }}}}

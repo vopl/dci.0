@@ -1,5 +1,5 @@
 
-macro(mkHimplSizes target)
+macro(mkHimplLayouts target)
 
     ############################################################
     set(output)
@@ -22,19 +22,22 @@ macro(mkHimplSizes target)
             elseif(_state STREQUAL "PREDECL")
                 list(APPEND predecl ${arg})
             else()
-                message(WARNING "unknown arg kind for mkHimplSizes: kind=${arg}, state=${_state}")
+                message(WARNING "unknown arg kind for mkHimplLayouts: kind=${arg}, state=${_state}")
             endif()
         endif()
     endforeach()
     #message("output: ${output}, headers: ${headers}, classes: ${classes}")
 
     ############################################################
-    set(src "${CMAKE_CURRENT_BINARY_DIR}/sizeProviderGen.cpp")
+    set(src "${CMAKE_CURRENT_BINARY_DIR}/layoutProviderGen.cpp")
 
-    file(WRITE ${src} "#define GENERATE_SIZEPROVIDER 1\n")
-    file(APPEND ${src} "#include <dci/himpl/sizeProviderDefault.hpp>\n")
-    file(APPEND ${src} "#include <dci/himpl/sizeFetcher.hpp>\n")
+    file(WRITE ${src} "#define GENERATE_LAYOUTPROVIDER 1\n")
+    file(APPEND ${src} "#include <dci/himpl/layoutProviderDefault.hpp>\n")
+    file(APPEND ${src} "#include <dci/himpl/layoutFetcher.hpp>\n")
 
+    if(predecl)
+        file(APPEND ${src} "#include \"${predecl}\"\n")
+    endif()
     foreach(header ${headers})
         file(APPEND ${src} "#include \"${header}\"\n")
     endforeach()
@@ -45,7 +48,7 @@ macro(mkHimplSizes target)
     file(APPEND ${src} "    std::cout<<\n")
     file(APPEND ${src} "        \"#pragma once\\n\"\n")
     file(APPEND ${src} "        \"\\n\"\n")
-    file(APPEND ${src} "        \"#include <dci/himpl/sizeProvider.hpp>\\n\"\n")
+    file(APPEND ${src} "        \"#include <dci/himpl/layoutProvider.hpp>\\n\"\n")
     file(APPEND ${src} "        \"\\n\"\n")
 
     ############################################################
@@ -80,9 +83,10 @@ macro(mkHimplSizes target)
     file(APPEND ${src} "        \"namespace dci { namespace himpl {\\n\"\n")
 
     foreach(class ${classes})
-        file(APPEND ${src} "        \"    template <> struct sizeProvider< ${class} > { ")
-        file(APPEND ${src} "static const std::size_t _value=\" << ::dci::himpl::SizeFetcher<${class}>::_value << \"; ")
-        file(APPEND ${src} "static const std::size_t _align=\" << ::dci::himpl::SizeFetcher<${class}>::_align << \"; ")
+        file(APPEND ${src} "        \"    template <> struct LayoutProvider< ${class} > { ")
+        file(APPEND ${src} "static const std::size_t _size=\" << ::dci::himpl::LayoutFetcher<${class}>::_size << \"; ")
+        file(APPEND ${src} "static const std::size_t _align=\" << ::dci::himpl::LayoutFetcher<${class}>::_align << \"; ")
+        file(APPEND ${src} "static const bool _polymorphic=\" << ::dci::himpl::LayoutFetcher<${class}>::_polymorphic << \"; ")
         file(APPEND ${src} "};\\n\"\n")
     endforeach()
 
@@ -94,25 +98,25 @@ macro(mkHimplSizes target)
     file(APPEND ${src} "}\n")
 
     ############################################################
-    set(sizeProviderGen ${target}-sizeProviderGen)
-    add_executable(${sizeProviderGen} EXCLUDE_FROM_ALL ${src})
-    set_target_properties(${sizeProviderGen} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
+    set(layoutProviderGen ${target}-layoutProviderGen)
+    add_executable(${layoutProviderGen} EXCLUDE_FROM_ALL ${src})
+    set_target_properties(${layoutProviderGen} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 
     get_target_property(CXX_STANDARD ${target} CXX_STANDARD)
-    set_target_properties(${sizeProviderGen} PROPERTIES CXX_STANDARD ${CXX_STANDARD})
+    set_target_properties(${layoutProviderGen} PROPERTIES CXX_STANDARD ${CXX_STANDARD})
 
     get_target_property(LINK_LIBRARIES ${target} LINK_LIBRARIES)
     if(LINK_LIBRARIES)
-        target_link_libraries(${sizeProviderGen} ${LINK_LIBRARIES})
+        target_link_libraries(${layoutProviderGen} ${LINK_LIBRARIES})
     endif()
 
     ############################################################
-    set(sizeProviderGenOut ${CMAKE_CURRENT_BINARY_DIR}/${sizeProviderGen}.out.hpp)
-    add_custom_command(OUTPUT ${sizeProviderGenOut}
-                        COMMAND ${sizeProviderGen} > ${sizeProviderGenOut}
-                        COMMAND ${CMAKE_COMMAND} -E copy_if_different ${sizeProviderGenOut} ${output}
-                        DEPENDS ${sizeProviderGen}
+    set(layoutProviderGenOut ${CMAKE_CURRENT_BINARY_DIR}/${layoutProviderGen}.out.hpp)
+    add_custom_command(OUTPUT ${layoutProviderGenOut}
+                        COMMAND ${layoutProviderGen} > ${layoutProviderGenOut}
+                        COMMAND ${CMAKE_COMMAND} -E copy_if_different ${layoutProviderGenOut} ${output}
+                        DEPENDS ${layoutProviderGen}
     )
 
-    target_sources(${target} PRIVATE ${sizeProviderGenOut})
+    target_sources(${target} PRIVATE ${layoutProviderGenOut})
 endmacro()

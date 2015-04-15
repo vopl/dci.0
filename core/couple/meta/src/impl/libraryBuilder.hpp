@@ -64,6 +64,9 @@ namespace dci { namespace couple { namespace meta { namespace impl
         void rollbackChanges();
 
     private:
+        void makeSign();
+
+    private:
         LibraryContent _lc;
     };
 

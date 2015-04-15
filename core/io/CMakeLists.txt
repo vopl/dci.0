@@ -15,7 +15,7 @@ set(INC
     include/timer.hpp
     include/data.hpp
     include/error.hpp
-    include/sizeProvider.hpp
+    include/layoutProvider.hpp
 )
 
 ############################################################
@@ -85,9 +85,9 @@ target_link_libraries(${PROJECT}
     dci-himpl)
 
 include(DciHimpl)
-mkHimplSizes(${PROJECT}
+mkHimplLayouts(${PROJECT}
     OUTPUT
-        ${CMAKE_CURRENT_SOURCE_DIR}/include/sizeProvider.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/layoutProvider.hpp
 
     HEADERS
         ${CMAKE_CURRENT_SOURCE_DIR}/src/impl/stream.hpp

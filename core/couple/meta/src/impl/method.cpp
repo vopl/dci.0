@@ -1,4 +1,5 @@
 #include "method.hpp"
+#include "signBuilder.hpp"
 
 namespace dci { namespace couple { namespace meta { namespace impl
 {
@@ -40,6 +41,24 @@ namespace dci { namespace couple { namespace meta { namespace impl
     const Type *Method::resultType() const
     {
         return _resultType;
+    }
+
+    void Method::makeSign()
+    {
+        SignBuilder s;
+
+        s.add("method");
+        s.add((std::uint32_t)_direction);
+        s.add((std::uint32_t)_nowait);
+        s.add(_resultType->concreteSign());
+        s.add(_name);
+
+        for(auto v : _elements)
+        {
+            s.add(v->sign());
+        }
+
+        setSign(s.finish());
     }
 
 }}}}
