@@ -2,7 +2,6 @@
 
 #include "named.hpp"
 #include "scoped.hpp"
-#include "signed.hpp"
 #include "compound.hpp"
 
 namespace dci { namespace couple { namespace meta { namespace impl
@@ -17,7 +16,6 @@ namespace dci { namespace couple { namespace meta { namespace impl
     class Scope
         : public Named
         , public Scoped
-        , public Signed
         , public Compound<Struct>
         , public Compound<Variant>
         , public Compound<Enum>
@@ -36,7 +34,7 @@ namespace dci { namespace couple { namespace meta { namespace impl
         using Compound<Iface>::add;
         using Compound<Scope>::add;
 
-        void makeSign() override;
+        void makeSign();
     };
 
 }}}}

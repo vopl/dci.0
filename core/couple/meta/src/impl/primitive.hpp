@@ -16,7 +16,7 @@ namespace dci { namespace couple { namespace meta { namespace impl
 
         void setKind(PrimitiveKind kind);
         PrimitiveKind kind() const;
-        void makeSign() override;
+        void makeSign();
 
     private:
         PrimitiveKind _kind = PrimitiveKind::void_;

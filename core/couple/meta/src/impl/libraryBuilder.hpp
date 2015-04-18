@@ -36,9 +36,7 @@ namespace dci { namespace couple { namespace meta { namespace impl
         Attribute   *addAttribute(Method *parent, const std::string &name);
         EnumValue   *addEnumValue(Enum *parent, const std::string &name);
 
-        void addBase(Variant *target, Variant *base);
         void addBase(Struct *target, Struct *base);
-        void addBase(Enum *target, Enum *base);
         void addBase(Iface *target, Iface *base);
 
         void setType(Attribute *target, Type *type);
@@ -62,9 +60,6 @@ namespace dci { namespace couple { namespace meta { namespace impl
     public:// commit
         bool commitChanges(Library &lib, std::vector<meta::CommitError> &errors);
         void rollbackChanges();
-
-    private:
-        void makeSign();
 
     private:
         LibraryContent _lc;

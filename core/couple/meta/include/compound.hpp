@@ -15,7 +15,11 @@ namespace dci { namespace couple { namespace meta
         : public himpl::FaceLayout<impl::Compound<E>>
     {
     public:
-        const std::vector<E *> &elements() const;
+        using himpl::FaceLayout<impl::Compound<E>>::FaceLayout;
+        Compound() = delete;
+        ~Compound() = delete;
+
+        const std::vector<const E *> &elements() const;
     };
 
 }}}

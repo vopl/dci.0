@@ -18,7 +18,7 @@ namespace dci { namespace couple { namespace meta
         return himpl::impl2Face<Type>(impl().resultType());
     }
 
-    const std::vector<Attribute *> &Method::attributes() const
+    const std::vector<const Attribute *> &Method::attributes() const
     {
         return Compound<Attribute>::elements();
     }

@@ -8,6 +8,10 @@ namespace dci { namespace couple { namespace meta
         : public himpl::FaceLayout<impl::Signed>
     {
     public:
+        using ThisFaceLayout::ThisFaceLayout;
+        Signed();
+        ~Signed();
+
         const Sign &sign() const;
 
     };

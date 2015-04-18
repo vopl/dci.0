@@ -8,12 +8,12 @@ namespace dci { namespace couple { namespace meta { namespace impl
     {
     public:
         Signed();
-        virtual ~Signed();
+        ~Signed();
 
         const Sign &sign() const;
         void setSign(const Sign &s);
 
-        virtual void makeSign() = 0;
+        void makeSign() = delete;
 
     private:
         Sign _sign;

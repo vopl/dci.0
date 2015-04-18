@@ -8,6 +8,10 @@ namespace dci { namespace couple { namespace meta
         : public himpl::FaceLayout<impl::Container1, Type>
     {
     public:
+        using ThisFaceLayout::ThisFaceLayout;
+        Container1() = delete;
+        ~Container1() = delete;
+
         const Type *elementType() const;
     };
 

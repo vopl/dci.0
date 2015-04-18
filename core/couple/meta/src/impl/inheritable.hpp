@@ -12,10 +12,10 @@ namespace dci { namespace couple { namespace meta { namespace impl
         ~Inheritable();
 
         void addBase(B *);
-        const std::vector<B*> &bases() const;
+        const std::vector<const B*> &bases() const;
 
     private:
-        std::vector<B*> _bases;
+        std::vector<const B*> _bases;
     };
 
 
@@ -37,7 +37,7 @@ namespace dci { namespace couple { namespace meta { namespace impl
     }
 
     template <class B>
-    const std::vector<B*> &Inheritable<B>::bases() const
+    const std::vector<const B*> &Inheritable<B>::bases() const
     {
         return _bases;
     }

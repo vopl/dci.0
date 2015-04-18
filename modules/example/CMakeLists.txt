@@ -24,8 +24,7 @@ add_library(${PROJECT} MODULE
 
     generated1/talk/Chat.fwd.hpp
 
-    generated2/talk.hpp
-    generated2/talk.cpp
+    generated/talk.hpp
 
 )
 
@@ -42,7 +41,7 @@ set_property(TARGET ${PROJECT} PROPERTY CXX_STANDARD_REQUIRED ON)
 
 
 
-include_directories(generated2)
+include_directories(generated)
 
 
 

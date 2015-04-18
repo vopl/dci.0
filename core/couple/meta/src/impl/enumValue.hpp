@@ -13,7 +13,7 @@ namespace dci { namespace couple { namespace meta { namespace impl
         EnumValue();
         ~EnumValue();
 
-        void makeSign() override;
+        void makeSign();
     };
 
 }}}}

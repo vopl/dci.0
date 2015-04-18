@@ -1,5 +1,6 @@
 #pragma once
 
+#include "signed.hpp"
 #include "alias.hpp"
 #include "array.hpp"
 #include "enum.hpp"
@@ -26,9 +27,10 @@ namespace dci { namespace couple { namespace meta
     };
 
     class Library
-        : public himpl::FaceLayout<impl::Library>
+        : public himpl::FaceLayout<impl::Library, Signed>
     {
     public:
+        using ThisFaceLayout::ThisFaceLayout;
         Library();
         ~Library();
 

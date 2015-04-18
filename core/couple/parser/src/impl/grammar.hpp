@@ -60,8 +60,6 @@ namespace dci { namespace couple { namespace parser { namespace impl
         qi::rule<TokIterator, TypeUse()>                                    typeUse;
         qi::rule<TokIterator, Alias()>                                      alias;
         qi::rule<TokIterator, BaseStructs()>                                baseStructs;
-        qi::rule<TokIterator, BaseVariants()>                               baseVariants;
-        qi::rule<TokIterator, BaseEnums()>                                  baseEnums;
         qi::rule<TokIterator, BaseIfaces()>                                 baseIfaces;
         qi::rule<TokIterator, VariantField()>                               variantField;
         qi::rule<TokIterator, Variant()>                                    variant;

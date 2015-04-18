@@ -31,6 +31,7 @@ namespace dci { namespace couple { namespace meta
         : public himpl::FaceLayout<impl::LibraryBuilder>
     {
     public:
+        using ThisFaceLayout::ThisFaceLayout;
         LibraryBuilder();
         ~LibraryBuilder();
 
@@ -61,9 +62,7 @@ namespace dci { namespace couple { namespace meta
         Attribute   *addAttribute(Method *parent, const std::string &name);
         EnumValue   *addEnumValue(Enum *parent, const std::string &name);
 
-        void addBase(Variant *target, Variant *base);
         void addBase(Struct *target, Struct *base);
-        void addBase(Enum *target, Enum *base);
         void addBase(Iface *target, Iface *base);
 
         void setType(Attribute *target, Type *type);

@@ -15,7 +15,7 @@ namespace dci { namespace async { namespace details
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
     class Task
-            : public himpl::FaceLayout<impl::Task>
+        : public himpl::FaceLayout<impl::Task>
     {
         Task(const Task &) = delete;
         void operator=(const Task &) = delete;

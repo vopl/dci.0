@@ -4,6 +4,7 @@
 #include LAYOUTPROVIDERFILE("layoutProvider.hpp")
 
 #include <dci/himpl/faceLayout.hpp>
+#include <vector>
 
 namespace dci { namespace couple { namespace meta
 {
@@ -12,8 +13,11 @@ namespace dci { namespace couple { namespace meta
         : public himpl::FaceLayout<impl::Inheritable<B>>
     {
     public:
-        std::vector<B *> bases();
+        using himpl::FaceLayout<impl::Inheritable<B>>::FaceLayout;
+        Inheritable() = delete;
+        ~Inheritable() = delete;
 
+        const std::vector<const B *> &bases() const;
 
     };
 

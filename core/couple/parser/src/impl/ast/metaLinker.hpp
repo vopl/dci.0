@@ -110,17 +110,6 @@ namespace  dci { namespace couple { namespace parser { namespace impl { namespac
 
         void operator()(SVariant *v)
         {
-            if(v->bases)
-            {
-                std::for_each(
-                    v->bases->instances.begin(),
-                    v->bases->instances.end(),
-                    [&](SVariant *b) {
-                        _lb.addBase(v->meta, b->meta);
-                    }
-                );
-            }
-
             exec(v->decls);
             exec(v->fields);
         }
@@ -144,17 +133,6 @@ namespace  dci { namespace couple { namespace parser { namespace impl { namespac
 
         void operator()(SEnum *v)
         {
-            if(v->bases)
-            {
-                std::for_each(
-                    v->bases->instances.begin(),
-                    v->bases->instances.end(),
-                    [&](SEnum *b) {
-                        _lb.addBase(v->meta, b->meta);
-                    }
-                );
-            }
-
             exec(v->fields);
         }
 
@@ -218,26 +196,32 @@ namespace  dci { namespace couple { namespace parser { namespace impl { namespac
 
         void operator()(SList *v)
         {
+            boost::apply_visitor(*this, v->elementType);
             _lb.setElementType(v->meta, typeUse2Meta(v->elementType));
         }
 
         void operator()(SSet *v)
         {
+            boost::apply_visitor(*this, v->elementType);
             _lb.setElementType(v->meta, typeUse2Meta(v->elementType));
         }
 
         void operator()(SMap *v)
         {
+            boost::apply_visitor(*this, v->keyType);
+            boost::apply_visitor(*this, v->valueType);
             _lb.setElementType(v->meta, typeUse2Meta(v->keyType), typeUse2Meta(v->valueType));
         }
 
         void operator()(SPtr *v)
         {
+            boost::apply_visitor(*this, v->valueType);
             _lb.setElementType(v->meta, typeUse2Meta(v->valueType));
         }
 
         void operator()(SArray *v)
         {
+            boost::apply_visitor(*this, v->elementType);
             _lb.setElementType(v->meta, typeUse2Meta(v->elementType));
 
             //TODO

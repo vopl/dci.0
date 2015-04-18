@@ -18,6 +18,7 @@ namespace dci { namespace couple { namespace generator
 
     Out &undent(Out &out)
     {
+        assert(out._indentLevel);
         --out._indentLevel;
         return out;
     }

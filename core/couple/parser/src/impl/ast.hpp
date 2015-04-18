@@ -110,12 +110,6 @@ namespace dci { namespace couple { namespace parser { namespace impl
     struct SBaseStructs;
     using BaseStructs = std::shared_ptr<SBaseStructs>;
 
-    struct SBaseVariants;
-    using BaseVariants = std::shared_ptr<SBaseVariants>;
-
-    struct SBaseEnums;
-    using BaseEnums = std::shared_ptr<SBaseEnums>;
-
     struct SBaseIfaces;
     using BaseIfaces = std::shared_ptr<SBaseIfaces>;
 
@@ -302,18 +296,6 @@ namespace dci { namespace couple { namespace parser { namespace impl
         std::vector<SStruct*>   instances;
     };
 
-    struct SBaseVariants
-    {
-        std::vector<ScopedName> scopedNames;
-        std::vector<SVariant*>  instances;
-    };
-
-    struct SBaseEnums
-    {
-        std::vector<ScopedName> scopedNames;
-        std::vector<SEnum*>     instances;
-    };
-
     struct SBaseIfaces
     {
         std::vector<ScopedName> scopedNames;
@@ -334,7 +316,6 @@ namespace dci { namespace couple { namespace parser { namespace impl
     struct SVariant
         : SScope
     {
-        BaseVariants                bases;
         std::vector<VariantField>   fields;
 
         meta::Variant               *meta{nullptr};
@@ -373,7 +354,6 @@ namespace dci { namespace couple { namespace parser { namespace impl
     struct SEnum
         : SScopeEntry
     {
-        BaseEnums               bases;
         std::vector<EnumField>  fields;
 
         meta::Enum              *meta{nullptr};

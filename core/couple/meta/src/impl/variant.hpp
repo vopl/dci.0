@@ -12,7 +12,6 @@ namespace dci { namespace couple { namespace meta { namespace impl
         : public Type
         , public Scope
         , public Compound<Attribute>
-        , public Inheritable<Variant>
     {
     public:
         Variant();
@@ -21,7 +20,7 @@ namespace dci { namespace couple { namespace meta { namespace impl
         using Compound<Attribute>::add;
         using Scope::add;
 
-        void makeSign() override;
+        void makeSign();
     };
 
 }}}}

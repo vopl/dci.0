@@ -13,7 +13,7 @@ namespace dci { namespace couple { namespace meta { namespace impl
         Ptr();
         ~Ptr();
 
-        void makeSign() override;
+        void makeSign();
     };
 
 }}}}

@@ -16,7 +16,7 @@ namespace dci { namespace couple { namespace meta { namespace impl
 
         void setType(Type *v);
         const Type *type() const;
-        void makeSign() override;
+        void makeSign();
 
     private:
         Type *_type{nullptr};

@@ -11,7 +11,6 @@ namespace dci { namespace couple { namespace parser { namespace impl
                 name[phx::bind(&SVariant::name, deref(qi::_val)) = qi::_1] |
                 error(+"variant name expected")
             ) >
-            -baseVariants[phx::bind(&SVariant::bases, deref(qi::_val)) = qi::_1] >
             (toks.ocb | error(+"'{' expected")) >
             *(
                 //decls[phx::insert(phx::bind(&SVariant::decls, deref(qi::_val)), phx::end(phx::bind(&SVariant::decls, deref(qi::_val))), phx::begin(qi::_1), phx::end(qi::_1))] |

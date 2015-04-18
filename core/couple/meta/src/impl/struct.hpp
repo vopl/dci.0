@@ -21,7 +21,7 @@ namespace dci { namespace couple { namespace meta { namespace impl
         using Compound<Attribute>::add;
         using Scope::add;
 
-        void makeSign() override;
+        void makeSign();
     };
 
 }}}}

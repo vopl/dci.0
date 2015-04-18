@@ -9,6 +9,10 @@ namespace dci { namespace couple { namespace meta
         : public himpl::FaceLayout<impl::Attribute, Named, Signed>
     {
     public:
+        using ThisFaceLayout::ThisFaceLayout;
+        Attribute() = delete;
+        ~Attribute() = delete;
+
         const Type *type() const;
 
     };

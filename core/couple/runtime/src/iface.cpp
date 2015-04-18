@@ -45,6 +45,19 @@ namespace dci { namespace couple { namespace runtime
         return *this;
     }
 
+    void Iface::assign(IfaceWire *wire, bool fwd)
+    {
+        if(_wire == wire)
+        {
+            assert(_fwd == fwd);
+            return;
+        }
+
+        _wire->involve(_fwd, false);
+        _wire = wire;
+        _fwd = fwd;
+        _wire->involve(_fwd, true);
+    }
 
     IfaceWire *Iface::wire()
     {

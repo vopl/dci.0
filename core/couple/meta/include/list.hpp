@@ -9,6 +9,10 @@ namespace dci { namespace couple { namespace meta
         : public himpl::FaceLayout<impl::List, Signed, Container1>
     {
     public:
+        using ThisFaceLayout::ThisFaceLayout;
+        List() = delete;
+        ~List() = delete;
+
         static const TypeConcrete _concrete = TypeConcrete::list;
 
     };

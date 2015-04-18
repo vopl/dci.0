@@ -8,8 +8,6 @@ namespace dci { namespace couple { namespace generator { namespace impl
     using namespace dci::couple::meta;
 
     ExecutorCpp::ExecutorCpp()
-        //: _idlNamespace("::dci::couple::runtime::idl")
-        //: _idlNamespace("::dci::couple::runtime::idl")
     {
     }
 
@@ -38,8 +36,8 @@ namespace dci { namespace couple { namespace generator { namespace impl
             return false;
         }
 
-        _wireName = "wire_"+lib.rootScope()->sign().string(8)+"_"+name;
-        _bodyName = "body_"+lib.rootScope()->sign().string(8)+"_"+name;
+        _wireName = "wire_"+lib.sign().string(8)+"_"+name;
+        _bodyName = "body_"+lib.sign().string(8)+"_"+name;
 
         boost::filesystem::path dir(dir_);
 
@@ -55,7 +53,6 @@ namespace dci { namespace couple { namespace generator { namespace impl
         try
         {
             _hpp.open((dir/(name+".hpp")).string());
-            _cpp.open((dir/(name+".cpp")).string());
 
             {
                 _hpp<< "#pragma once"<<el;
@@ -75,19 +72,9 @@ namespace dci { namespace couple { namespace generator { namespace impl
                 _hpp<< indent;
             }
 
-            {
-                _cpp<< "#include \""<<name<<".hpp\""<<el;
-
-                _cpp<< el;
-                _cpp<< "namespace dci { namespace couple { namespace runtime { namespace generated"<<el;
-                _cpp<< "{"<<el;
-                _cpp<< indent;
-
-            }
-
             if(lib.rootScope())
             {
-                writeWires(lib.rootScope());
+                writeWire(lib.rootScope());
             }
 
 
@@ -104,7 +91,7 @@ namespace dci { namespace couple { namespace generator { namespace impl
 
             if(lib.rootScope())
             {
-                writeBodies(lib.rootScope());
+                writeBody(lib.rootScope(), false);
             }
 
             {
@@ -113,22 +100,14 @@ namespace dci { namespace couple { namespace generator { namespace impl
 
 
                 _hpp<< undent;
-                _hpp<< "}"<<el;
+                _hpp<< "}}}}"<<el;
                 _hpp<< el;
 
-            }
-            {
-                _cpp<< el;
-                _cpp<< "template class "<<_wireName<<"<0>"<<el;
-                _cpp<< "template class "<<_bodyName<<"<0>"<<el;
-
-                _cpp<< undent;
-                _cpp<< "}"<<el;
             }
 
             if(lib.rootScope())
             {
-                writeTargets(lib.rootScope());
+                writeTarget(lib.rootScope());
             }
         }
         catch(const std::runtime_error &e)
@@ -140,7 +119,20 @@ namespace dci { namespace couple { namespace generator { namespace impl
         return true;
     }
 
-    bool ExecutorCpp::writeWires(const Scope *v)
+    template <>
+    void ExecutorCpp::writeTarget<Iface>(const Iface *v)
+    {
+        _hpp<< "using "<<v->name()<<" = "<<typeName(v, inBody|forGlobalScope|instantiated)<<";"<<el;
+        _hpp<< "using "<<v->name()<<"Opposite = "<<typeName(v, inBody|forGlobalScope|instantiated)<<"Opposite;"<<el;
+    }
+
+    template <class T>
+    void ExecutorCpp::writeTarget(const T *v)
+    {
+        _hpp<< "using "<<v->name()<<" = "<<typeName(v, inBody|forGlobalScope|instantiated)<<";"<<el;
+    }
+
+    bool ExecutorCpp::writeWire(const Scope *v)
     {
         _hpp.push();
 
@@ -153,10 +145,10 @@ namespace dci { namespace couple { namespace generator { namespace impl
         }
 
         bool res = false;
-        for(auto child : v->ifaces())   res |= writeWires(child);
-        for(auto child : v->structs())  res |= writeWires(child);
-        for(auto child : v->variants()) res |= writeWires(child);
-        for(auto child : v->scopes())   res |= writeWires(child);
+        for(auto child : v->ifaces())   res |= writeWire(child);
+        for(auto child : v->structs())  res |= writeWire(child);
+        for(auto child : v->variants()) res |= writeWire(child);
+        for(auto child : v->scopes())   res |= writeWire(child);
 
         if(!v->name().empty())
         {
@@ -169,7 +161,7 @@ namespace dci { namespace couple { namespace generator { namespace impl
         return res;
     }
 
-    bool ExecutorCpp::writeWires(const Struct *v)
+    bool ExecutorCpp::writeWire(const Struct *v)
     {
         _hpp.push();
 
@@ -179,10 +171,10 @@ namespace dci { namespace couple { namespace generator { namespace impl
         _hpp<<indent;
 
         bool res = false;
-        for(auto child : v->ifaces())   res |= writeWires(child);
-        for(auto child : v->structs())  res |= writeWires(child);
-        for(auto child : v->variants()) res |= writeWires(child);
-        for(auto child : v->scopes())   res |= writeWires(child);
+        for(auto child : v->ifaces())   res |= writeWire(child);
+        for(auto child : v->structs())  res |= writeWire(child);
+        for(auto child : v->variants()) res |= writeWire(child);
+        for(auto child : v->scopes())   res |= writeWire(child);
 
         _hpp<<undent;
         _hpp<< "};"<<el;
@@ -192,7 +184,7 @@ namespace dci { namespace couple { namespace generator { namespace impl
         return res;
     }
 
-    bool ExecutorCpp::writeWires(const Variant *v)
+    bool ExecutorCpp::writeWire(const Variant *v)
     {
         _hpp.push();
 
@@ -202,10 +194,10 @@ namespace dci { namespace couple { namespace generator { namespace impl
         _hpp<<indent;
 
         bool res = false;
-        for(auto child : v->ifaces())   res |= writeWires(child);
-        for(auto child : v->structs())  res |= writeWires(child);
-        for(auto child : v->variants()) res |= writeWires(child);
-        for(auto child : v->scopes())   res |= writeWires(child);
+        for(auto child : v->ifaces())   res |= writeWire(child);
+        for(auto child : v->structs())  res |= writeWire(child);
+        for(auto child : v->variants()) res |= writeWire(child);
+        for(auto child : v->scopes())   res |= writeWire(child);
 
         _hpp<<undent;
         _hpp<< "};"<<el;
@@ -215,7 +207,7 @@ namespace dci { namespace couple { namespace generator { namespace impl
         return res;
     }
 
-    bool ExecutorCpp::writeWires(const Iface *v)
+    bool ExecutorCpp::writeWire(const Iface *v)
     {
         _hpp<< "// iface "<<v->name()<<el;
         _hpp<< "struct "<<v->name()<<el;
@@ -225,7 +217,18 @@ namespace dci { namespace couple { namespace generator { namespace impl
         _hpp<< "{"<<el;
         _hpp<< indent;
 
-        _hpp<< v->name()<<"();"<<el;
+        //ctor
+        {
+            _hpp<< v->name()<<"()"<<el;
+
+            _hpp<< indent;
+            _hpp<< ": IfaceWire([](IfaceWire *p){delete static_cast<"<<v->name()<<"*>(p);})"<<el;
+            _hpp<< undent;
+            _hpp<< "{"<<el;
+            _hpp<< indent;
+            _hpp<< undent;
+            _hpp<< "}"<<el;
+        }
 
         for(auto *m : v->methods())
         {
@@ -262,60 +265,138 @@ namespace dci { namespace couple { namespace generator { namespace impl
         return true;
     }
 
-    void ExecutorCpp::writeBodies(const Scope *scope)
+    void ExecutorCpp::writeBody(const Scope *scope, bool withSelf)
     {
-        if(!scope->name().empty())
+        if(withSelf)
         {
+            _hpp<< "// scope "<<scope->name()<<el;
             _hpp<< "struct "<<scope->name()<<el;
             _hpp<< "{"<<el;
             _hpp<<indent;
         }
 
-        for(auto child : scope->structs())  writeBodies(child);
-        for(auto child : scope->variants()) writeBodies(child);
-        for(auto child : scope->enums())    writeBodies(child);
-        for(auto child : scope->aliases())  writeBodies(child);
-        for(auto child : scope->ifaces())   writeBodies(child);
-        for(auto child : scope->scopes())   writeBodies(child);
+        for(auto child : scope->structs())  writeBody(child);
+        for(auto child : scope->variants()) writeBody(child);
+        for(auto child : scope->enums())    writeBody(child);
+        for(auto child : scope->aliases())  writeBody(child);
+        for(auto child : scope->ifaces())   writeBody(child);
+        for(auto child : scope->scopes())   writeBody(child, true);
 
-        if(!scope->name().empty())
+        if(withSelf)
         {
             _hpp<<undent;
             _hpp<< "};"<<el;
         }
     }
 
-    void ExecutorCpp::writeBodies(const Struct *v)
+    void ExecutorCpp::writeBody(const Struct *v)
     {
-        _hpp<< "struct body"<<el;
-        //assert(0);
+        _hpp<< "// struct "<<v->name()<<el;
+        _hpp<< "struct "<<v->name()<<el;
+        if(!v->bases().empty())
+        {
+            _hpp<< indent;
+            bool first = true;
+            for(auto b : v->bases())
+            {
+                if(first)
+                {
+                    first = false;
+                    _hpp<< ": ";
+                }
+                else
+                {
+                    _hpp<< ", ";
+                }
+
+                _hpp<< typeName(b, inBody|ignoreTemplateTypename)<<el;
+            }
+
+            _hpp<< undent;
+        }
+
+        _hpp<< "{"<<el;
+        _hpp<< indent;
+
+        writeBody(static_cast<const Scope *>(v), false);
+
+        for(auto f : v->fields())
+        {
+            _hpp<< typeName(f->type())<<" "<<f->name()<<";"<<el;
+        }
+
+        _hpp<< undent;
+        _hpp<< "};"<<el;
     }
 
-    void ExecutorCpp::writeBodies(const Variant *v)
+    void ExecutorCpp::writeBody(const Variant *v)
     {
-        _hpp<< "variant body"<<el;
-        //assert(0);
+        _hpp<< "// variant "<<v->name()<<el;
+        _hpp<< "struct "<<v->name()<<el;
+
+        _hpp<< indent;
+        _hpp<< ": "<<_idlNamespace<<"::variant<"<<el;
+
+        _hpp<< indent;
+        bool first = true;
+        for(auto a : v->fields())
+        {
+            if(first)
+            {
+                first = false;
+                _hpp<< "  ";
+            }
+            else
+            {
+                _hpp<< ", ";
+            }
+
+            _hpp<< typeName(a->type(), inBody)<<el;
+        }
+        _hpp<< undent;
+
+        _hpp<< ">"<<el;
+        _hpp<< undent;
+
+        _hpp<< "{"<<el;
+        _hpp<< indent;
+
+        writeBody(static_cast<const Scope *>(v), false);
+
+        _hpp<< undent;
+        _hpp<< "};"<<el;
     }
 
-    void ExecutorCpp::writeBodies(const Enum *v)
+    void ExecutorCpp::writeBody(const Enum *v)
     {
-        _hpp<< "enum body"<<el;
-        //assert(0);
+        _hpp<< "// enum "<<v->name()<<el;
+        _hpp<< "enum class "<<v->name()<<el;
+
+        _hpp<< "{"<<el;
+        _hpp<< indent;
+
+        for(auto f : v->values())
+        {
+            _hpp<< f->name()<<","<<el;
+        }
+
+        _hpp<< undent;
+        _hpp<< "};"<<el;
     }
 
-    void ExecutorCpp::writeBodies(const Alias *v)
+    void ExecutorCpp::writeBody(const Alias *v)
     {
-        _hpp<< "alias body"<<el;
-        //assert(0);
+        _hpp<< "// alias "<<v->name()<<el;
+        _hpp<< "using "<<v->name()<<" = "<<typeName(v->type())<<";"<<el;
     }
 
-    void ExecutorCpp::writeBodies(const Iface *v)
+    void ExecutorCpp::writeBody(const Iface *v)
     {
-        _hpp<< "iface body"<<el;
-        //assert(0);
+        writeIfaceBody(v, false);
+        writeIfaceBody(v, true);
     }
 
-    void ExecutorCpp::writeTargets(const Scope *scope)
+    void ExecutorCpp::writeTarget(const Scope *scope)
     {
         if(!scope->name().empty())
         {
@@ -324,12 +405,12 @@ namespace dci { namespace couple { namespace generator { namespace impl
             _hpp<<indent;
         }
 
-        for(auto child : scope->structs())  writeTargets(child);
-        for(auto child : scope->variants()) writeTargets(child);
-        for(auto child : scope->enums())    writeTargets(child);
-        for(auto child : scope->aliases())  writeTargets(child);
-        for(auto child : scope->ifaces())   writeTargets(child);
-        for(auto child : scope->scopes())   writeTargets(child);
+        for(auto child : scope->structs())  writeTarget(child);
+        for(auto child : scope->variants()) writeTarget(child);
+        for(auto child : scope->enums())    writeTarget(child);
+        for(auto child : scope->aliases())  writeTarget(child);
+        for(auto child : scope->ifaces())   writeTarget(child);
+        for(auto child : scope->scopes())   writeTarget(child);
 
         if(!scope->name().empty())
         {
@@ -338,37 +419,164 @@ namespace dci { namespace couple { namespace generator { namespace impl
         }
     }
 
-    void ExecutorCpp::writeTargets(const Struct *v)
+    void ExecutorCpp::writeIfaceBody(const dci::couple::meta::Iface *v, bool opposite)
     {
-        _hpp<< "struct target"<<el;
-        //assert(0);
+        std::string name = v->name() + (opposite ? "Opposite" : "");
+        std::string oppositeName = typeName(v) + (opposite ? "" : "Opposite");
+
+        _hpp<< "// "<<(opposite ? "opposite " : "")<<"iface "<<v->name()<<el;
+        _hpp<< "struct "<<name<<el;
+
+        _hpp<< indent;
+        if(v->bases().empty())
+        {
+            _hpp<< ": public Iface"<<el;
+        }
+        else
+        {
+            bool first = true;
+            for(auto b : v->bases())
+            {
+                if(first)
+                {
+                    first = false;
+                    _hpp<< ": ";
+                }
+                else
+                {
+                    _hpp<< ", ";
+                }
+
+                _hpp<< typeName(b, inBody|ignoreTemplateTypename)<<el;
+            }
+        }
+        _hpp<< undent;
+
+        _hpp<< "{"<<el;
+        _hpp<< indent;
+
+        writeBody(static_cast<const Scope *>(v), false);
+
+        _hpp<< el;
+
+        //ctor
+        {
+            _hpp<< name<<"()"<<el;
+            _hpp<< indent;
+            _hpp<< ": Iface(new "<<typeName(v, inWire)<<", "<<(opposite?"false":"true")<<")"<<el;
+            _hpp<< undent;
+            _hpp<< "{"<<el;
+            _hpp<< "}"<<el;
+        }
+
+        //move ctor
+        {
+            _hpp<< name<<"("<<name<<" &&from)"<<el;
+            _hpp<< indent;
+            _hpp<< ": Iface(std::forward< Iface>(from))"<<el;
+            _hpp<< undent;
+            _hpp<< "{"<<el;
+            _hpp<< "}"<<el;
+        }
+
+        //from opposite ctor
+        {
+            _hpp<< name<<"("<<oppositeName<<" &from)"<<el;
+            _hpp<< indent;
+            _hpp<< ": Iface(from.wire(), "<<(opposite?"false":"true")<<")"<<el;
+            _hpp<< undent;
+            _hpp<< "{"<<el;
+            _hpp<< "}"<<el;
+        }
+
+        //dtor
+        {
+            _hpp<< "~"<<name<<"()"<<el;
+            _hpp<< "{"<<el;
+            _hpp<< "}"<<el;
+        }
+        _hpp<< el;
+
+        //move assignment operator
+        {
+            _hpp<< name<<" &operator=("<<name<<" &&from)"<<el;
+            _hpp<< "{"<<el;
+            _hpp<< indent;
+            _hpp<< "Iface::operator=(std::forward< Iface>(from));"<<el;
+            _hpp<< "return *this;"<<el;
+            _hpp<< undent;
+            _hpp<< "}"<<el;
+        }
+
+        //from opposite assignment
+        {
+            _hpp<< name<<" &operator=("<<oppositeName<<" &from)"<<el;
+            _hpp<< "{"<<el;
+            _hpp<< indent;
+            _hpp<< "Iface::assign(from.wire(), "<<(opposite?"false":"true")<<");"<<el;
+            _hpp<< "return *this;"<<el;
+            _hpp<< undent;
+            _hpp<< "}"<<el;
+        }
+        _hpp<< el;
+
+        //wire access
+        {
+            _hpp<< typeName(v, inWire)<<" *wire()"<<el;
+            _hpp<< "{"<<el;
+            _hpp<< indent;
+            _hpp<< "return static_cast< "<<typeName(v, inWire)<<" *>(Iface::wire());"<<el;
+            _hpp<< undent;
+            _hpp<< "}"<<el;
+        }
+        _hpp<< el;
+
+        for(const Method *m : v->methods())
+        {
+            bool in = CallDirection::in == m->direction();
+            if(opposite) in = !in;
+
+            if(in)
+            {
+                _hpp<< _idlNamespace<<"::Signal< "<<typeName(m->resultType())<<"("<<methodArgiments(m,false)<<")> &"<<m->name()<<"()"<<el;
+
+                _hpp<< "{"<<el;
+                _hpp<< indent;
+                _hpp<< "return wire()->"<<m->name()<<";"<<el;
+                _hpp<< undent;
+                _hpp<< "}"<<el;
+            }
+            else
+            {
+                _hpp<< methodSignature(m)<<el;
+
+                _hpp<< "{"<<el;
+                _hpp<< indent;
+
+                _hpp<< "return wire()->"<<m->name()<<"(";
+
+                bool first = true;
+                for(const Attribute *a : m->attributes())
+                {
+                    if(first) first = false;
+                    else _hpp<< ", ";
+
+                    _hpp<< "std::forward< "<<_idlNamespace+"::ValuePorter< "<<typeName(a->type())<<">>("<<a->name()<<")";
+                }
+                _hpp<< ");"<<el;
+
+                _hpp<< undent;
+                _hpp<< "}"<<el;
+
+            }
+        }
+        _hpp<< el;
+
+        _hpp<< undent;
+        _hpp<< "};"<<el;
     }
 
-    void ExecutorCpp::writeTargets(const Variant *v)
-    {
-        _hpp<< "variant target"<<el;
-        //assert(0);
-    }
-
-    void ExecutorCpp::writeTargets(const Enum *v)
-    {
-        _hpp<< "enum target"<<el;
-        //assert(0);
-    }
-
-    void ExecutorCpp::writeTargets(const Alias *v)
-    {
-        _hpp<< "alias target"<<el;
-        //assert(0);
-    }
-
-    void ExecutorCpp::writeTargets(const Iface *v)
-    {
-        _hpp<< "iface target"<<el;
-        //assert(0);
-    }
-
-    std::string ExecutorCpp::typeName(const Type *v)
+    std::string ExecutorCpp::typeName(const Type *v, int flags)
     {
         switch(v->concrete())
         {
@@ -377,72 +585,72 @@ namespace dci { namespace couple { namespace generator { namespace impl
 
         case TypeConcrete::struct_:
             {
-                auto vv = v->cast<Struct>();
-                return typeNameInBody(vv->scope(), vv->name());
+                auto vv = static_cast<const Struct *>(v);
+                return typeName(vv->scope(), vv->name(), flags);
             }
         case TypeConcrete::variant:
             {
-                auto vv = v->cast<Variant>();
-                return typeNameInBody(vv->scope(), vv->name());
+                auto vv = static_cast<const Variant *>(v);
+                return typeName(vv->scope(), vv->name(), flags);
             }
         case TypeConcrete::alias:
             {
-                auto vv = v->cast<Alias>();
-                return typeNameInBody(vv->scope(), vv->name());
+                auto vv = static_cast<const Alias *>(v);
+                return typeName(vv->scope(), vv->name(), flags);
             }
         case TypeConcrete::enum_:
             {
-                auto vv = v->cast<Enum>();
-                return typeNameInBody(vv->scope(), vv->name());
+                auto vv = static_cast<const Enum *>(v);
+                return typeName(vv->scope(), vv->name(), flags);
             }
         case TypeConcrete::iface:
             {
-                auto vv = v->cast<Iface>();
-                return typeNameInBody(vv->scope(), vv->name());
+                auto vv = static_cast<const Iface *>(v);
+                return typeName(vv->scope(), vv->name(), flags);
             }
 
         case TypeConcrete::array:
             {
-                auto vc = v->cast<Array>();
-                return _idlNamespace+"::array< " + typeName(vc->elementType()) + ", " + std::to_string(vc->size()) + ">";
+                auto vc = static_cast<const Array *>(v);
+                return _idlNamespace+"::array< " + typeName(vc->elementType(), flags) + ", " + std::to_string(vc->size()) + ">";
             }
         case TypeConcrete::list:
             {
-                auto vc = v->cast<List>();
-                return _idlNamespace+"::list< " + typeName(vc->elementType()) + ">";
+                auto vc = static_cast<const List *>(v);
+                return _idlNamespace+"::list< " + typeName(vc->elementType(), flags) + ">";
             }
         case TypeConcrete::ptr:
             {
-                auto vc = v->cast<Ptr>();
-                return _idlNamespace+"::ptr< " + typeName(vc->elementType()) + ">";
+                auto vc = static_cast<const Ptr *>(v);
+                return _idlNamespace+"::ptr< " + typeName(vc->elementType(), flags) + ">";
             }
         case TypeConcrete::set:
             {
-                auto vc = v->cast<Set>();
-                return _idlNamespace+"::set< " + typeName(vc->elementType()) + ">";
+                auto vc = static_cast<const Set *>(v);
+                return _idlNamespace+"::set< " + typeName(vc->elementType(), flags) + ">";
             }
         case TypeConcrete::map:
             {
-                auto vc = v->cast<Map>();
-                return _idlNamespace+"::map< " + typeName(vc->elementType1()) + ", " + typeName(vc->elementType2()) + ">";
+                auto vc = static_cast<const Map *>(v);
+                return _idlNamespace+"::map< " + typeName(vc->elementType1(), flags) + ", " + typeName(vc->elementType2(), flags) + ">";
             }
         case TypeConcrete::primitive:
             {
-                auto vc = v->cast<Primitive>();
+                auto vc = static_cast<const Primitive *>(v);
                 switch(vc->kind())
                 {
-                case PrimitiveKind::void_: return _idlNamespace+"::void_";
+                case PrimitiveKind::void_:  return _idlNamespace+"::void_";
 
-                case PrimitiveKind::bool_: return _idlNamespace+"::bool_";
+                case PrimitiveKind::bool_:  return _idlNamespace+"::bool_";
 
                 case PrimitiveKind::string: return _idlNamespace+"::string";
 
-                case PrimitiveKind::int8: return _idlNamespace+"::int8";
-                case PrimitiveKind::int16: return _idlNamespace+"::int16";
-                case PrimitiveKind::int32: return _idlNamespace+"::int32";
-                case PrimitiveKind::int64: return _idlNamespace+"::int64";
+                case PrimitiveKind::int8:   return _idlNamespace+"::int8";
+                case PrimitiveKind::int16:  return _idlNamespace+"::int16";
+                case PrimitiveKind::int32:  return _idlNamespace+"::int32";
+                case PrimitiveKind::int64:  return _idlNamespace+"::int64";
 
-                case PrimitiveKind::uint8: return _idlNamespace+"::uint8";
+                case PrimitiveKind::uint8:  return _idlNamespace+"::uint8";
                 case PrimitiveKind::uint16: return _idlNamespace+"::uint16";
                 case PrimitiveKind::uint32: return _idlNamespace+"::uint32";
                 case PrimitiveKind::uint64: return _idlNamespace+"::uint64";
@@ -460,7 +668,7 @@ namespace dci { namespace couple { namespace generator { namespace impl
         return "";
     }
 
-    std::string ExecutorCpp::typeNameInBody(const dci::couple::meta::Scope *v, const std::string &name)
+    std::string ExecutorCpp::typeName(const Scope *v, const std::string &name, int flags)
     {
         std::string scopedName = name;
         while(v)
@@ -469,6 +677,50 @@ namespace dci { namespace couple { namespace generator { namespace impl
             v = v->scope();
         }
 
-        return "typename "+_bodyName+"<i>"+scopedName;
+        return
+                std::string(flags&ignoreTemplateTypename ? "" : "typename ")+
+                (flags&forGlobalScope ? "::dci::couple::runtime::generated::" : "")+
+                (flags&inWire ? _wireName : _bodyName)+
+                "<"+(flags&instantiated ? "0" : "i")+">"+scopedName;
     }
+
+    std::string ExecutorCpp::methodArgiments(const Method *v, bool forOutput)
+    {
+        std::string res;
+
+        bool first = true;
+        for(const Attribute *a : v->attributes())
+        {
+            if(first) first = false;
+            else res+= ", ";
+
+            if(forOutput) res+= _idlNamespace+"::ValuePorter< ";
+            res+= typeName(a->type());
+            if(forOutput) res+= "> &&";
+            if(forOutput) res+= a->name();
+        }
+
+        return res;
+    }
+
+    std::string ExecutorCpp::methodSignature(const Method *m, const Iface *i)
+    {
+        std::string res;
+
+        res+= _idlNamespace+"::Future< ";
+
+        const Type *rt = m->resultType();
+        if(TypeConcrete::primitive != rt->concrete() || PrimitiveKind::void_ != static_cast<const Primitive *>(rt)->kind())
+        {
+            res+= typeName(rt);
+        }
+        res+= "> ";
+
+        if(i) res += typeName(i);
+
+        res+= m->name()+"("+methodArgiments(m,true)+")";
+
+        return res;
+    }
+
 }}}}

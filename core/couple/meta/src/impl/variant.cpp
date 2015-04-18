@@ -28,12 +28,6 @@ namespace dci { namespace couple { namespace meta { namespace impl
             s.add(v->sign());
         }
 
-        s.add(Inheritable<Variant>::bases().size());
-        for(auto v : Inheritable<Variant>::bases())
-        {
-            s.add(v->sign());
-        }
-
         setSign(s.finish());
     }
 

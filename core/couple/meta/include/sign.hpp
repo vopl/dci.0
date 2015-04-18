@@ -13,8 +13,9 @@ namespace dci { namespace couple { namespace meta
         : public himpl::FaceLayout<impl::Sign>
     {
     public:
-        Sign();
-        ~Sign();
+        using ThisFaceLayout::ThisFaceLayout;
+        Sign() = delete;
+        ~Sign() = delete;
 
         std::string string(std::size_t chars=64) const;
     };

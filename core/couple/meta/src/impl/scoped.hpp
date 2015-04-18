@@ -1,12 +1,13 @@
 #pragma once
 
-#include "sign.hpp"
+#include "signed.hpp"
 
 namespace dci { namespace couple { namespace meta { namespace impl
 {
     class Scope;
 
     class Scoped
+        : public Signed
     {
     public:
         Scoped();
@@ -15,7 +16,7 @@ namespace dci { namespace couple { namespace meta { namespace impl
         const Scope *scope() const;
         void setScope(Scope *scope);
 
-        Sign scopesSign() const;
+        void makeSign();
 
     private:
         Scope *_scope{nullptr};

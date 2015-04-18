@@ -1,11 +1,13 @@
 #pragma once
 
 #include <library.hpp>
+#include "signed.hpp"
 #include "libraryContent.hpp"
 
 namespace dci { namespace couple { namespace meta { namespace impl
 {
     class Library
+        : public Signed
     {
     public:
         Library();
@@ -19,6 +21,8 @@ namespace dci { namespace couple { namespace meta { namespace impl
         Library &operator=(LibraryContent &&lc);
 
     private:
+        void makeSign();
+
         LibraryContent _lc;
     };
 

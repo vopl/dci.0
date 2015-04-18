@@ -18,12 +18,17 @@ namespace dci { namespace couple { namespace meta { namespace impl
         _type = v;
     }
 
+    const Type *Alias::type() const
+    {
+        return _type;
+    }
+
     void Alias::makeSign()
     {
         SignBuilder s;
 
         s.add("alias");
-        s.add(scopesSign());
+        s.add(sign());
         s.add(_type->concreteSign());
         s.add(name());
 

@@ -6,7 +6,7 @@ namespace dci { namespace couple { namespace meta
     using namespace himpl;
 
     Library::Library()
-        : FaceLayout<impl::Library>()
+        : FaceLayout<impl::Library, Signed>()
     {
     }
 

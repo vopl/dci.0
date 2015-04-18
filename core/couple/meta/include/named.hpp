@@ -12,6 +12,10 @@ namespace dci { namespace couple { namespace meta
         : public himpl::FaceLayout<impl::Named>
     {
     public:
+        using ThisFaceLayout::ThisFaceLayout;
+        Named() = delete;
+        ~Named() = delete;
+
         //имя
         const std::string &name() const;
 

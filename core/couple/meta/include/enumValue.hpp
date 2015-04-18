@@ -9,7 +9,9 @@ namespace dci { namespace couple { namespace meta
         : public himpl::FaceLayout<impl::EnumValue, Named, Signed>
     {
     public:
-        std::uint64_t numericalValue();
+        using ThisFaceLayout::ThisFaceLayout;
+        EnumValue() = delete;
+        ~EnumValue() = delete;
 
     };
 

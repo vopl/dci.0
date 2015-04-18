@@ -121,17 +121,7 @@ namespace dci { namespace couple { namespace meta
         return impl2Face<EnumValue>(impl().addEnumValue(face2Impl(parent), name));
     }
 
-    void LibraryBuilder::addBase(Variant *target, Variant *base)
-    {
-        return impl().addBase(face2Impl(target), face2Impl(base));
-    }
-
     void LibraryBuilder::addBase(Struct *target, Struct *base)
-    {
-        return impl().addBase(face2Impl(target), face2Impl(base));
-    }
-
-    void LibraryBuilder::addBase(Enum *target, Enum *base)
     {
         return impl().addBase(face2Impl(target), face2Impl(base));
     }
@@ -210,5 +200,4 @@ namespace dci { namespace couple { namespace meta
     {
         return impl().rollbackChanges();
     }
-
 }}}

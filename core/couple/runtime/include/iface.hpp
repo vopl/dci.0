@@ -13,10 +13,11 @@ namespace dci { namespace couple { namespace runtime
         Iface(IfaceWire *wire, bool fwd);
         Iface(Iface &&from);
 
-    public:
+    protected:
         ~Iface();
 
         Iface &operator=(Iface &&from);
+        void assign(IfaceWire *wire, bool fwd);
 
         IfaceWire *wire();
 

@@ -1,5 +1,6 @@
 #include <container1.hpp>
 #include "impl/container1.hpp"
+#include "impl/type.hpp"
 
 namespace dci { namespace couple { namespace meta
 {

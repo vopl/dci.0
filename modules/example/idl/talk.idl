@@ -32,9 +32,9 @@ scope talk
         
         out void exhibitVoice(VoiceTrain voice);
         out void exhibitVideo(VideoTrain video);
-        out FilesReceiver getFiles(FilesInfo::Id);
+        out FilesReceiver getFiles(FilesInfo::Id id);
 
-        out void typing(bool);
+        out void typing(bool v);
         out void message(Message msg);
         in  void wantMessageReply(Message::Id from, Message::Id to);
 

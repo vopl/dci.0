@@ -6,12 +6,10 @@ namespace dci { namespace couple { namespace meta { namespace impl
 {
     Scoped::Scoped()
     {
-
     }
 
     Scoped::~Scoped()
     {
-
     }
 
     const Scope *Scoped::scope() const
@@ -24,18 +22,20 @@ namespace dci { namespace couple { namespace meta { namespace impl
         _scope = scope;
     }
 
-    Sign Scoped::scopesSign() const
+    void Scoped::makeSign()
     {
         SignBuilder s;
+
+        s.add("scoped");
 
         const Scope *scope = _scope;
         while(scope)
         {
-            s.add(scope->sign());
+            s.add(scope->name());
             scope = scope->scope();
         }
 
-        return s.finish();
+        setSign(s.finish());
     }
 
 }}}}

@@ -13,10 +13,10 @@ namespace dci { namespace couple { namespace meta { namespace impl
 
         void add(E *element);
 
-        const std::vector<E *> &elements() const;
+        const std::vector<const E *> &elements() const;
 
     protected:
-        std::vector<E *> _elements;
+        std::vector<const E *> _elements;
     };
 
 
@@ -40,7 +40,7 @@ namespace dci { namespace couple { namespace meta { namespace impl
     }
 
     template <class E>
-    const std::vector<E *> &Compound<E>::elements() const
+    const std::vector<const E *> &Compound<E>::elements() const
     {
         return _elements;
     }

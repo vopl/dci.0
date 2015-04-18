@@ -17,11 +17,14 @@ namespace dci { namespace couple { namespace meta
         : public himpl::FaceLayout<impl::Method, Named, Signed, Compound<Attribute>>
     {
     public:
+        using ThisFaceLayout::ThisFaceLayout;
+        Method() = delete;
+        ~Method() = delete;
 
         CallDirection direction() const;
         bool nowait() const;
         const Type *resultType() const;
-        const std::vector<Attribute *> &attributes() const;
+        const std::vector<const Attribute *> &attributes() const;
     };
 
 }}}

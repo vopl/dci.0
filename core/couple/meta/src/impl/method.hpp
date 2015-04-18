@@ -27,7 +27,7 @@ namespace dci { namespace couple { namespace meta { namespace impl
         bool nowait() const;
         const Type *resultType() const;
 
-        void makeSign() override;
+        void makeSign();
 
     private:
         CallDirection   _direction{CallDirection::in};
