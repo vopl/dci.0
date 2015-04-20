@@ -1,0 +1,98 @@
+
+
+//temporary
+alias Data = list<uint8>;
+
+
+scope net
+{
+    /////////////////////////////////////////////////////////
+    iface Host
+    {
+        in list<Interface> interfaces();
+        out void interfaceAdded(Interface v);
+        out void interfaceRemoved(Interface v);
+
+        in ip4::stream::Host ip4StreamHost();
+        in ip4::datagram::Host ip4DatagramHost();
+
+        in ip6::stream::Host ip6StreamHost();
+        in ip6::datagram::Host ip6DatagramHost();
+
+        in local::stream::Host localStreamHost();
+    }
+
+    /////////////////////////////////////////////////////////
+    iface Interface
+    {
+        in uint32 flags();
+        out void flagsChanged();
+        
+        in string name();
+        out void nameChanged();
+        
+        in list<ip4::Interface> ip4Interfaces();
+        out void ip4InterfacesChanged();
+        
+        in list<ip6::Interface> ip6Interfaces();
+        out void ip6InterfacesChanged();
+    }
+
+    /////////////////////////////////////////////////////////
+    scope ip4
+    {
+        struct Ip
+        {
+            array<uint8, 4> octets;
+        }
+        
+        struct Address: Ip
+        {
+            uint16 port;
+        }
+
+        struct Interface
+        {
+            Ip address;
+            Ip netmask;
+            Ip broadcast;
+        } 
+
+        include "net/stream.inc";
+        include "net/datagram.inc";
+    }
+
+    /////////////////////////////////////////////////////////
+    scope ip6
+    {
+        struct Ip
+        {
+            array<uint8, 16> octets;
+        }
+        
+        struct Address: Ip
+        {
+            uint16 port;
+        }
+
+        struct Interface
+        {
+            Ip address;
+            uint16 prefixLength;
+        }
+        
+        include "net/stream.inc";
+        include "net/datagram.inc";
+    }
+
+    /////////////////////////////////////////////////////////
+    scope local
+    {
+        struct Address
+        {
+            string key;
+        }
+
+        include "net/stream.inc";
+    }
+}

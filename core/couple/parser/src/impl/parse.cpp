@@ -20,17 +20,21 @@ namespace  dci { namespace couple { namespace parser { namespace impl
         struct FNameRaii
         {
             std::string _old;
+            std::string _cur;
             ParseState &_parseState;
 
             FNameRaii(const std::string &fname, ParseState &parseState)
                 : _old(parseState._currentFile)
+                , _cur(fname)
                 , _parseState(parseState)
             {
-                _parseState._currentFile = fname;
+                _parseState._currentFile = _cur;
+                _parseState._currentFiles.insert(_cur);
             }
 
             ~FNameRaii()
             {
+                _parseState._currentFiles.erase(_cur);
                 _parseState._currentFile = _old;
             }
         };
@@ -116,7 +120,7 @@ namespace  dci { namespace couple { namespace parser { namespace impl
         }
 
         //check cyclic
-        if(parseState._processedFiles.end() != parseState._processedFiles.find(fileName))
+        if(parseState._currentFiles.end() != parseState._currentFiles.find(fileName))
         {
             parseState._errors.emplace_back(ErrorInfo {fileNameUnresolved, -1, -1, "error: cyclic inclusion"});
             return Scope();
@@ -205,7 +209,7 @@ namespace  dci { namespace couple { namespace parser { namespace impl
     {
         Scope res;
         {
-            ParseState parseState = {cfg, errs, nullptr, {}, {}};
+            ParseState parseState = {cfg, errs, nullptr, {}, {}, {}};
             Grammar g(parseState);
             parseState._grammar = &g;
 

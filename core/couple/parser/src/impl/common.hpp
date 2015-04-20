@@ -40,4 +40,20 @@ namespace dci { namespace couple { namespace parser { namespace impl
 
     extern boost::phoenix::function<derefEngine> deref;
 
+    struct appendEngine
+    {
+        template<class T1, class T2> struct result
+        {
+            typedef void type;
+        };
+
+        template <class T>
+        void operator()(T &arg1, const T &arg2) const
+        {
+            arg1.insert(arg1.end(), arg2.begin(), arg2.end());
+        }
+    };
+
+    extern boost::phoenix::function<appendEngine> append;
+
 }}}}

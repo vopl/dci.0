@@ -4,6 +4,7 @@
 #include <errorInfo.hpp>
 
 #include <vector>
+#include <set>
 #include <map>
 #include <fstream>
 #include <memory>
@@ -19,6 +20,8 @@ namespace  dci { namespace couple { namespace parser { namespace impl
 
         Grammar                                 *_grammar;
         std::string                             _currentFile;
+        std::set<std::string>                   _currentFiles;
+
         std::map<std::string, std::shared_ptr<std::ifstream>>    _processedFiles;
     };
 
