@@ -7,6 +7,7 @@
 #include "parse.hpp"
 #include "grammar.hpp"
 #include "grammarError.hpp"
+#include "currentPosRaii.hpp"
 
 #include <boost/filesystem.hpp>
 
@@ -16,29 +17,6 @@ namespace  dci { namespace couple { namespace parser { namespace impl
 {
     namespace
     {
-        ////////////////////////////////////////////////////////////////////////////////
-        struct FNameRaii
-        {
-            std::string _old;
-            std::string _cur;
-            ParseState &_parseState;
-
-            FNameRaii(const std::string &fname, ParseState &parseState)
-                : _old(parseState._currentFile)
-                , _cur(fname)
-                , _parseState(parseState)
-            {
-                _parseState._currentFile = _cur;
-                _parseState._currentFiles.insert(_cur);
-            }
-
-            ~FNameRaii()
-            {
-                _parseState._currentFiles.erase(_cur);
-                _parseState._currentFile = _old;
-            }
-        };
-
         ////////////////////////////////////////////////////////////////////////////////
         std::string resolveFileName(const std::string &in, const ParseState &parseState, std::string &errorMessage)
         {
@@ -60,13 +38,13 @@ namespace  dci { namespace couple { namespace parser { namespace impl
                 {
                     boost::filesystem::path base;
 
-                    if(parseState._currentFile.empty())
+                    if(!parseState._currentPos)
                     {
                         base = boost::filesystem::current_path();
                     }
                     else
                     {
-                        base = boost::filesystem::absolute(parseState._currentFile).remove_filename();
+                        base = boost::filesystem::absolute(parseState._currentPos.file()).remove_filename();
                     }
 
                     if(boost::filesystem::exists(base / p))
@@ -86,6 +64,12 @@ namespace  dci { namespace couple { namespace parser { namespace impl
                     }
                 }
 
+                if(!boost::filesystem::exists(candidate))
+                {
+                    errorMessage = "not found";
+                    return std::string();
+                }
+
                 if(boost::filesystem::is_symlink(candidate))
                 {
                     candidate = boost::filesystem::read_symlink(candidate);
@@ -96,10 +80,13 @@ namespace  dci { namespace couple { namespace parser { namespace impl
                     candidate.normalize();
                     return candidate.generic_string();
                 }
+
+                errorMessage = "is not a regular file";
+                return std::string();
             }
             catch(const boost::filesystem::filesystem_error &err)
             {
-                errorMessage = err.what();
+                errorMessage = err.code().message();
                 return std::string();
             }
 
@@ -115,14 +102,22 @@ namespace  dci { namespace couple { namespace parser { namespace impl
         std::string fileName = resolveFileName(fileNameUnresolved, parseState, resolverErrorMessage);
         if(fileName.empty())
         {
-            parseState._errors.emplace_back(ErrorInfo {fileNameUnresolved, -1, -1, resolverErrorMessage});
+            parseState._errors.emplace_back(ErrorInfo {
+                                                parseState._currentPos.file(),
+                                                parseState._currentPos.line(),
+                                                parseState._currentPos.column(),
+                                                fileNameUnresolved + ": " + resolverErrorMessage});
             return Scope();
         }
 
         //check cyclic
         if(parseState._currentFiles.end() != parseState._currentFiles.find(fileName))
         {
-            parseState._errors.emplace_back(ErrorInfo {fileNameUnresolved, -1, -1, "error: cyclic inclusion"});
+            parseState._errors.emplace_back(ErrorInfo {
+                                                parseState._currentPos.file(),
+                                                parseState._currentPos.line(),
+                                                parseState._currentPos.column(),
+                                                fileNameUnresolved + ": cyclic inclusion"});
             return Scope();
         }
 
@@ -134,8 +129,6 @@ namespace  dci { namespace couple { namespace parser { namespace impl
             return Scope();
         }
 
-        parseState._processedFiles.emplace(std::make_pair(fileName, reader));
-        FNameRaii fnr(fileName, parseState);
 
         CharIterator lexBegin{boost::spirit::multi_pass<std::istreambuf_iterator<char>>{std::istreambuf_iterator<char>{*reader}}, fileName};
         CharIterator lexEnd{boost::spirit::multi_pass<std::istreambuf_iterator<char>>{std::istreambuf_iterator<char>{}}, fileName};
@@ -148,6 +141,9 @@ namespace  dci { namespace couple { namespace parser { namespace impl
                                   static_cast<int>(pos.column()),
                                   msg});
         };
+
+        parseState._processedFiles.emplace(std::make_pair(fileName, reader));
+        CurentPosRaii fnr(lexBegin, parseState);
 
         //tokenize
         TokIterator tokBegin;

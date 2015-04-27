@@ -59,9 +59,6 @@ set(CMAKE_CXX_FLAGS "-Wall -Wextra -Wpedantic -ftemplate-depth-1000")
 
 
 ###########################################
-file(GLOB subs */CMakeLists.txt)
-foreach(sub ${subs})
-    get_filename_component(sub ${sub} DIRECTORY)
-    get_filename_component(sub ${sub} NAME)
-    add_subdirectory(${sub})
-endforeach()
+add_subdirectory(core)
+add_subdirectory(modules)
+

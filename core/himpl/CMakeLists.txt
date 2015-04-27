@@ -14,6 +14,7 @@ set(INC
 
 add_library(${PROJECT} STATIC
     ${INC}
+    DciHimpl.cmake
 )
 set_target_properties(${PROJECT} PROPERTIES LINKER_LANGUAGE CXX)
 

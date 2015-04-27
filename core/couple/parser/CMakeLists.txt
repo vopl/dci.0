@@ -35,6 +35,7 @@ set(SRC
     src/impl/grammarError.hpp
     src/impl/parse.hpp
     src/impl/parseState.hpp
+    src/impl/currentPosRaii.hpp
 
     src/impl/ast.hpp
     src/impl/ast/namesChecker.hpp

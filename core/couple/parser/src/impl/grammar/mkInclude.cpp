@@ -1,6 +1,7 @@
 #include "../grammar.hpp"
 #include "../parse.hpp"
 #include "../grammarError.hpp"
+#include "../currentPosRaii.hpp"
 
 namespace dci { namespace couple { namespace parser { namespace impl
 {
@@ -20,9 +21,14 @@ namespace dci { namespace couple { namespace parser { namespace impl
             fileName.erase(fileName.begin() + pos);
         }
 
-        Scope res;
 
-        if(! (res = impl::parse(fileName, _parseState)))
+        Scope res;
+        {
+            CurentPosRaii fnr(std::begin(str), _parseState);
+            res = impl::parse(fileName, _parseState);
+        }
+
+        if(!res)
         {
             throw GrammarError(std::begin(str), "unable to include file");
         }

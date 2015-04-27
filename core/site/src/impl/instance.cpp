@@ -135,7 +135,7 @@ namespace dci { namespace site { namespace impl
 
             if(hasErrors)
             {
-                p.resolveError(make_error_code(error::general::parial_failed));
+                p.resolveError(make_error_code(error::general::partial_failed));
             }
             else
             {
@@ -181,7 +181,7 @@ namespace dci { namespace site { namespace impl
             }
 
             return hasErrors ?
-                        make_error_code(error::general::parial_failed) :
+                        make_error_code(error::general::partial_failed) :
                         std::error_code{};
         }
 
@@ -265,7 +265,7 @@ namespace dci { namespace site { namespace impl
             _modules.clear();
 
             return hasErrors ?
-                        make_error_code(error::general::parial_failed) :
+                        make_error_code(error::general::partial_failed) :
                         std::error_code{};
         }
 
@@ -297,7 +297,7 @@ namespace dci { namespace site { namespace impl
 
             if(hasErrors)
             {
-                p.resolveError(make_error_code(error::general::parial_failed));
+                p.resolveError(make_error_code(error::general::partial_failed));
             }
             else
             {

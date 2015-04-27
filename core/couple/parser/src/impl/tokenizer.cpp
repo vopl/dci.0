@@ -49,8 +49,16 @@ namespace dci { namespace couple { namespace parser { namespace impl
         , kwout     {"\"out\""}
         , kwnowait  {"\"nowait\""}
 
-        , id        {"[a-zA-Z_]+\\w*"}
+        , id        {"([a-zA-Z_]|{UTF8_2_4})+(\\w|{UTF8_2_4})*"}
     {
+        this->self.add_pattern(
+                    "ANY",
+                    "[\\x01-\\xff]");
+
+        this->self.add_pattern(
+                    "UTF8_2_4",
+                    "([\\xc0-\\xdf]{ANY}{1})|([\\xe0-\\xef]{ANY}{2})|([\\xf0-\\xf7]{ANY}{3})");
+
         this->self
             = TokenDef{"\\s"}                       [boost::spirit::lex::_pass = boost::spirit::lex::pass_flags::pass_ignore]
             | TokenDef{"\\/\\/[^\\r\\n]*\\r?\\n?"}  [boost::spirit::lex::_pass = boost::spirit::lex::pass_flags::pass_ignore]

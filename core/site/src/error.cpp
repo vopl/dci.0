@@ -36,8 +36,8 @@ namespace dci { namespace site { namespace error
                     return "modules directory is absent";
                 case general::failed:
                     return "failed";
-                case general::parial_failed:
-                    return "parial failed";
+                case general::partial_failed:
+                    return "partial failed";
                 }
 
                 return "dci.site.general error";

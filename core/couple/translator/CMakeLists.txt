@@ -7,6 +7,7 @@ project(${PROJECT})
 ############################################################
 set(SRC
     src/main.cpp
+    DciUseIdl.cmake
 )
 
 
@@ -34,3 +35,7 @@ target_link_libraries(${PROJECT}
     dci-couple-meta
     dci-couple-generator
 )
+
+if(COMMAND localinstall)
+    localinstall(${PROJECT} share/cmake/Modules DciUseIdl.cmake)
+endif()

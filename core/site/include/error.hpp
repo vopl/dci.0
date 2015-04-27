@@ -13,7 +13,7 @@ namespace dci { namespace site { namespace error
         stopping_in_progress,
         modules_directory_absent,
         failed,
-        parial_failed,
+        partial_failed,
     };
 
     enum class module

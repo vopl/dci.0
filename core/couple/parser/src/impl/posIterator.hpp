@@ -19,9 +19,12 @@ namespace dci { namespace couple { namespace parser { namespace impl
 
         explicit PosIterator(Iterator, const std::string &file);
 
+        operator bool() const;
+        bool operator!() const;
+
         const std::string &file() const;
-        std::size_t line() const;
-        std::size_t column() const;
+        int line() const;
+        int column() const;
 
     private:
         friend class boost::iterator_core_access;
@@ -29,8 +32,8 @@ namespace dci { namespace couple { namespace parser { namespace impl
         void increment();
 
         std::shared_ptr<std::string> _filePtr;
-        std::size_t _line;
-        std::size_t _column;
+        int _line;
+        int _column;
         typename std::iterator_traits<Iterator>::value_type _prev;
     };
     //]
@@ -39,8 +42,8 @@ namespace dci { namespace couple { namespace parser { namespace impl
     PosIterator<Iterator>::PosIterator()
         : PosIterator::iterator_adaptor()
         , _filePtr()
-        , _line(1)
-        , _column(1)
+        , _line(-1)
+        , _column(-1)
         , _prev(0)
     { }
 
@@ -54,6 +57,18 @@ namespace dci { namespace couple { namespace parser { namespace impl
     { }
 
     template <class Iterator>
+    PosIterator<Iterator>::operator bool() const
+    {
+        return static_cast<bool>(_filePtr);
+    }
+
+    template <class Iterator>
+    bool PosIterator<Iterator>::operator!() const
+    {
+        return !operator bool();
+    }
+
+    template <class Iterator>
     const std::string &PosIterator<Iterator>::file() const
     {
         static std::string staticStub = "unknown file";
@@ -61,13 +76,13 @@ namespace dci { namespace couple { namespace parser { namespace impl
     }
 
     template <class Iterator>
-    std::size_t PosIterator<Iterator>::line() const
+    int PosIterator<Iterator>::line() const
     {
         return _line;
     }
 
     template <class Iterator>
-    std::size_t PosIterator<Iterator>::column() const
+    int PosIterator<Iterator>::column() const
     {
         return _column;
     }

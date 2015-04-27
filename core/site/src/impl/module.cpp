@@ -29,13 +29,14 @@ namespace dci { namespace site { namespace impl
         , _state{ModuleState::null}
         , _place{}
 
+        , _mainBinaryHandle{}
         , _entry{}
     {
     }
 
     Module::~Module()
     {
-        assert(ModuleState::null == _state);
+        assert(ModuleState::null == _state || ModuleState::attachError == _state);
     }
 
     const std::string &Module::getProvider() const
@@ -310,7 +311,7 @@ namespace dci { namespace site { namespace impl
         return async::spawn([this] (async::Promise<std::error_code> p) mutable {
 
             assert(ModuleState::unloading == _state);
-            assert(_entry);
+            //assert(_entry);
 
             if(_entry)
             {

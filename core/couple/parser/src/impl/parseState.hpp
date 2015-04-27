@@ -3,6 +3,8 @@
 #include <config.hpp>
 #include <errorInfo.hpp>
 
+#include "tokenizer.hpp"
+
 #include <vector>
 #include <set>
 #include <map>
@@ -19,7 +21,7 @@ namespace  dci { namespace couple { namespace parser { namespace impl
         std::vector<ErrorInfo> &_errors;
 
         Grammar                                 *_grammar;
-        std::string                             _currentFile;
+        CharIterator                            _currentPos;
         std::set<std::string>                   _currentFiles;
 
         std::map<std::string, std::shared_ptr<std::ifstream>>    _processedFiles;

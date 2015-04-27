@@ -1,23 +1,27 @@
-set(PROJECT dci-module-example)
+set(PROJECT dci-module-net)
 project(${PROJECT} CXX)
 cmake_minimum_required(VERSION 3.1.0 FATAL_ERROR)
 
 
+
+set(IDL
+    idl/net.idl
+    idl/net/datagram.inc
+    idl/net/stream.inc
+)
 
 set(SRC
     src/entry.cpp
 )
 
 
-
 ############################################################
 add_library(${PROJECT} MODULE
+    ${IDL}
     ${SRC}
-    idl/talk.idl
 )
 
 target_link_libraries(${PROJECT}
-    dci-himpl
     dci-mm
     dci-async
     dci-couple-runtime
@@ -32,7 +36,9 @@ set_property(TARGET ${PROJECT} PROPERTY CXX_STANDARD_REQUIRED ON)
 include(DciUseIdl)
 dciUseIdl(${PROJECT}
     GEN cpp
-    SOURCES idl/talk.idl
+    SOURCES idl/net.idl
+
+    OUTID net::Host netHostId
 )
 
 
@@ -40,14 +46,15 @@ include(DciDefineModule)
 dciDefineModule(${PROJECT}
 
     PROVIDER            "dci internal"
-    ID                  ae014f8e04b222312e3e4750597d9d1b5f9a8f53
-    SERVICEIDS
+    ID                  d177db226be58114ea371999c30b55ef845172e366eda44dfc3b32dc1f5e3c6d
+    SERVICEIDS          ${netHostId}
     REVISION            0
-    NAME                "example"
-    DESCRIPTION         "example module"
+    NAME                "net"
+    DESCRIPTION         "network module"
     TAGS
     REQUIREDSERVICEIDS
     REQUIREDMODULEIDS
-    MAINBINARY          example.so
+    MAINBINARY          net.so
+    IDL                 ${IDL}
 )
 

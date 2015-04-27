@@ -42,6 +42,7 @@ include_directories(${Boost_INCLUDE_DIRS})
 
 add_executable(${PROJECT}
     ${INC}  ${SRC}
+    DciDefineModule.cmake
 )
 set_property(TARGET ${PROJECT} PROPERTY CXX_STANDARD 14)
 set_property(TARGET ${PROJECT} PROPERTY CXX_STANDARD_REQUIRED ON)
@@ -70,4 +71,5 @@ target_link_libraries(${PROJECT}
 
 if(COMMAND localinstall)
     localinstall(${PROJECT} include/dci/site DROP_PREFIX include/ ${INC})
+    localinstall(${PROJECT} share/cmake/Modules DciDefineModule.cmake)
 endif()

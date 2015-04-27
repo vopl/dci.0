@@ -23,7 +23,7 @@ scope datagram
         in Datagram receive();
         out void received(Datagram v);
         
-        in void send(Data v, Address v);
+        in void send(Data d, Address a);
         
         in void close();
     }

@@ -42,6 +42,7 @@ namespace  dci { namespace couple { namespace parser { namespace impl { namespac
             bool res = true;
             res &= checkTypeName(v.get());
             res &= checkFields(v.get());
+            res &= checkParams(v.get());
             res &= checkChildren(v.get());
             return res;
         }
@@ -80,24 +81,31 @@ namespace  dci { namespace couple { namespace parser { namespace impl { namespac
         }
 
     private:
-        bool checkFields(...)
+
+        template <class T>
+        static auto getFieldsOrParams(const T *v)
         {
-            return true;
+            return v->fields;
+        }
+
+        static auto getFieldsOrParams(const SMethod *v)
+        {
+            return v->params;
         }
 
         template <class T>
-        typename std::enable_if<sizeof(T::fields)!=0, bool>::type checkFields(const T *v)
+        bool checkFieldsOrParams(const T *v)
         {
-            std::map<std::string, Name> fieldNames;
+            std::map<std::string, Name> names;
 
             bool res = true;
-            for(const auto &f : v->fields)
+            for(const auto &f : getFieldsOrParams(v))
             {
                 const Name &cur = f->name;
 
                 if(cur)
                 {
-                    auto ires = fieldNames.insert(std::make_pair(cur->value, cur));
+                    auto ires = names.insert(std::make_pair(cur->value, cur));
                     if(!ires.second)
                     {
                         _errs.emplace_back(ErrorInfo {
@@ -122,6 +130,30 @@ namespace  dci { namespace couple { namespace parser { namespace impl { namespac
         }
 
     private:
+        bool checkFields(...)
+        {
+            return true;
+        }
+
+        template <class T>
+        typename std::enable_if<sizeof(T::fields)!=0, bool>::type checkFields(const T *v)
+        {
+            return checkFieldsOrParams(v);
+        }
+
+    private:
+        bool checkParams(...)
+        {
+            return true;
+        }
+
+        template <class T>
+        typename std::enable_if<sizeof(T::params)!=0, bool>::type checkParams(const T *v)
+        {
+            return checkFieldsOrParams(v);
+        }
+
+    private:
         bool checkChildren(...)
         {
             return true;
@@ -131,6 +163,16 @@ namespace  dci { namespace couple { namespace parser { namespace impl { namespac
         typename std::enable_if<std::is_base_of<SScope, T>::value, bool>::type checkChildren(const T *v)
         {
             return NamesChecker(_errs).exec(v->decls);
+        }
+
+        bool checkChildren(const SIface *v)
+        {
+            return std::accumulate(
+                v->fields.begin(),
+                v->fields.end(),
+                NamesChecker(_errs).exec(v->decls),
+                [&](bool v, const Method &d)->bool{return NamesChecker(_errs)(d) && v;}
+            );
         }
     };
 

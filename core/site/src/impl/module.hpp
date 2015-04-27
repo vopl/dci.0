@@ -76,7 +76,7 @@ namespace dci { namespace site { namespace impl
 
         std::string                         _mainBinary;
 
-        ModuleState                               _state;
+        ModuleState                         _state;
         ModulePlace                         _place;
 
 
