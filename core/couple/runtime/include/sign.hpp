@@ -7,16 +7,25 @@
 #include <string>
 #include <cstdint>
 
-namespace dci { namespace couple { namespace meta
+namespace dci { namespace couple { namespace runtime
 {
+    namespace impl
+    {
+        class Sign;
+    }
+
     class Sign
         : public himpl::FaceLayout<impl::Sign>
     {
     public:
         using ThisFaceLayout::ThisFaceLayout;
-        Sign() = delete;
-        ~Sign() = delete;
+        Sign();
+        Sign(const Sign &from);
+        ~Sign();
 
-        std::string string(std::size_t chars=64) const;
+        Sign &operator=(const Sign &from);
+
+        std::string toHex(std::size_t chars=64) const;
+        bool fromHex(const std::string &txt);
     };
 }}}

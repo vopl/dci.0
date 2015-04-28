@@ -12,12 +12,12 @@ namespace dci { namespace couple { namespace meta { namespace impl
 
     }
 
-    const Sign &Signed::sign() const
+    const runtime::Sign &Signed::sign() const
     {
         return _sign;
     }
 
-    void Signed::setSign(const Sign &s)
+    void Signed::setSign(const runtime::Sign &s)
     {
         _sign = s;
     }

@@ -1,15 +1,14 @@
+#pragma once
+
 #include <dci/couple/runtime/identifier.hpp>
 #include <dci/couple/runtime/iface.hpp>
-#include <moduleId.hpp>
 #include "moduleState.hpp"
 #include <modulePlace.hpp>
 #include "modulePlace.hpp"
-#include <moduleEntryFunctions.hpp>
+#include <moduleEntry.hpp>
 
 #include <dci/async/future.hpp>
 
-#include <string>
-#include <vector>
 #include <system_error>
 #include <memory>
 
@@ -18,24 +17,14 @@ namespace dci { namespace site { namespace impl
     class Module
     {
     public:
+        static std::string generateManifest(const std::string &mainBinaryFullPath);
+
+    public:
         Module();
         ~Module();
 
         ////////////// identify
-        const std::string &getProvider() const;
-
-        const Mid &getId() const;
-        const std::vector<couple::runtime::Iid> &getServieceIds() const;
-
-        std::size_t getRevision() const;
-
-        const std::string &getName() const;
-        const std::string &getDescription() const;
-        const std::vector<std::string> &getTags() const;
-
-        /////////////////// dependencies
-        const std::vector<couple::runtime::Iid> &getRequiredServiceIds() const;
-        const std::vector<Mid> &getRequiredModuleIds() const;
+        const ModuleInfo &getInfo() const;
 
         ModuleState getState() const;
 
@@ -62,29 +51,17 @@ namespace dci { namespace site { namespace impl
         async::Future<std::error_code, couple::runtime::Iface> getServiceInstance(const couple::runtime::Iid &iid);
 
     private:
-        std::string                         _provider;
-        Mid                                 _id;
-        std::vector<couple::runtime::Iid>   _serviceIds;
 
-        std::size_t                         _revision;
-        std::string                         _name;
-        std::string                         _description;
-        std::vector<std::string>            _tags;
+        std::string     _mainBinary;
 
-        std::vector<couple::runtime::Iid>   _requiredServiceIds;
-        std::vector<Mid>                    _requiredModuleIds;
-
-        std::string                         _mainBinary;
-
-        ModuleState                         _state;
-        ModulePlace                         _place;
-
+        ModuleState     _state;
+        ModulePlace     _place;
 
     private:
-        void *  _mainBinaryHandle;
+        void *          _mainBinaryHandle;
 
-    private:
-        ModuleEntry * _entry;
+        ModuleEntry *   _entry;
+        ModuleInfo      _info;
     };
 
     using ModulePtr = std::unique_ptr<Module>;

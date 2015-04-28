@@ -1,5 +1,5 @@
 #include "map.hpp"
-#include "signBuilder.hpp"
+#include <dci/couple/runtime/signBuilder.hpp>
 
 namespace dci { namespace couple { namespace meta { namespace impl
 {
@@ -15,7 +15,7 @@ namespace dci { namespace couple { namespace meta { namespace impl
 
     void Map::makeSign()
     {
-        SignBuilder s;
+        runtime::SignBuilder s;
 
         s.add("map");
         s.add(_elementType1->concreteSign());

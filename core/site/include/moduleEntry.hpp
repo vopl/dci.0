@@ -1,6 +1,7 @@
 #pragma once
 
 #include "modulePlace.hpp"
+#include "moduleInfo.hpp"
 #include <dci/async/future.hpp>
 #include <dci/couple/runtime/iface.hpp>
 
@@ -11,6 +12,8 @@ namespace dci { namespace site
 {
     struct ModuleEntry
     {
+        virtual const ModuleInfo &getInfo() = 0;
+
         virtual async::Future<std::error_code> install(const dci::site::ModulePlace &place) = 0;
         virtual async::Future<std::error_code> uninstall(const dci::site::ModulePlace &place) = 0;
 

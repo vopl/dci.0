@@ -27,7 +27,6 @@ set(INC
     include/named.hpp
     include/scoped.hpp
     include/signed.hpp
-    include/sign.hpp
     include/type.hpp
     include/variant.hpp
 
@@ -61,7 +60,6 @@ set(SRC
     src/named.cpp
     src/scoped.cpp
     src/signed.cpp
-    src/sign.cpp
     src/type.cpp
     src/variant.cpp
 
@@ -89,8 +87,6 @@ set(SRC
     src/impl/named.hpp
     src/impl/scoped.hpp
     src/impl/signed.hpp
-    src/impl/sign.hpp
-    src/impl/signBuilder.hpp
     src/impl/type.hpp
     src/impl/variant.hpp
     src/impl/library.hpp
@@ -118,8 +114,6 @@ set(SRC
     src/impl/named.cpp
     src/impl/scoped.cpp
     src/impl/signed.cpp
-    src/impl/sign.cpp
-    src/impl/signBuilder.cpp
     src/impl/type.cpp
     src/impl/variant.cpp
     src/impl/library.cpp
@@ -145,6 +139,7 @@ add_library(${PROJECT} SHARED
 target_link_libraries(${PROJECT}
     dci-himpl
     dci-mm
+    dci-couple-runtime
     dci-logger)
 
 set_property(TARGET ${PROJECT} PROPERTY CXX_STANDARD 14)
@@ -178,7 +173,6 @@ mkHimplLayouts(${PROJECT}
         ${CMAKE_CURRENT_SOURCE_DIR}/src/impl/named.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/impl/scoped.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/impl/signed.hpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/impl/sign.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/impl/type.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/impl/variant.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/impl/library.hpp
@@ -220,7 +214,6 @@ mkHimplLayouts(${PROJECT}
         ::dci::couple::meta::impl::Named
         ::dci::couple::meta::impl::Scoped
         ::dci::couple::meta::impl::Signed
-        ::dci::couple::meta::impl::Sign
         ::dci::couple::meta::impl::Type
         ::dci::couple::meta::impl::Variant
         ::dci::couple::meta::impl::Library

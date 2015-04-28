@@ -4,7 +4,7 @@
 #include "enum.hpp"
 #include "alias.hpp"
 #include "iface.hpp"
-#include "signBuilder.hpp"
+#include <dci/couple/runtime/signBuilder.hpp>
 
 #include <cassert>
 
@@ -22,7 +22,7 @@ namespace dci { namespace couple { namespace meta { namespace impl
 
     void Scope::makeSign()
     {
-        SignBuilder s;
+        runtime::SignBuilder s;
 
         s.add("scope");
         s.add(name());

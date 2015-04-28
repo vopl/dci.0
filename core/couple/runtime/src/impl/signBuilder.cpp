@@ -13,7 +13,7 @@
 
 
 
-namespace dci { namespace couple { namespace meta { namespace impl
+namespace dci { namespace couple { namespace runtime { namespace impl
 {
     namespace
     {
@@ -316,7 +316,7 @@ namespace dci { namespace couple { namespace meta { namespace impl
 //    {
 //        int f()
 //        {
-//            SignBuilder s;
+//            runtime::SignBuilder s;
 //            s.add("8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c928d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c9", 127);
 //            assert("72dc2022ddbdad86315cf26432cce90ab0fd29e9c20d3c2515963b86cc7d9654" == s.finish().string());
 //            exit(0);

@@ -11,26 +11,102 @@
 
 namespace dci { namespace site { namespace impl
 {
+    std::string Module::generateManifest(const std::string &mainBinaryFullPath)
+    {
+        void *mainBinaryHandle = dlopen(mainBinaryFullPath.c_str(), RTLD_LAZY|RTLD_LOCAL);
+
+        if(!mainBinaryHandle)
+        {
+            std::cerr << dlerror();
+            return std::string();
+        }
+
+        void **ppe = (void **)dlsym(mainBinaryHandle, "dciModuleEntry");
+        if(!ppe)
+        {
+            std::cerr<<"loading module \""<<mainBinaryFullPath<<"\": entry point is absent";
+            return std::string();
+        }
+
+        ModuleEntry *entry = static_cast<ModuleEntry*>(*ppe);
+
+        if(!entry)
+        {
+            dlclose(mainBinaryHandle);
+            std::cerr<<"loading module \""<<mainBinaryFullPath<<"\": entry point is damaged";
+            return std::string();
+        }
+
+        const ModuleInfo &info = entry->getInfo();
+
+        boost::property_tree::ptree pt;
+        {
+            pt.add("provider", info._provider);
+            pt.add("id", info._id.toHex());
+
+            if(!info._serviceIds.empty())
+            {
+                boost::property_tree::ptree vals;
+                for(const auto &v : info._serviceIds)
+                {
+                    vals.push_back(std::make_pair("", boost::property_tree::ptree(v.toHex())));
+                }
+                pt.push_back(std::make_pair("serviceIds", vals));
+            }
+
+            pt.add("revision", info._revision);
+            pt.add("name", info._name);
+            pt.add("description", info._description);
+
+            if(!info._tags.empty())
+            {
+                boost::property_tree::ptree vals;
+                for(const auto &v : info._tags)
+                {
+                    vals.push_back(std::make_pair("", boost::property_tree::ptree(v)));
+                }
+                pt.push_back(std::make_pair("tags", vals));
+            }
+
+            if(!info._requiredServiceIds.empty())
+            {
+                boost::property_tree::ptree vals;
+                for(const auto &v : info._requiredServiceIds)
+                {
+                    vals.push_back(std::make_pair("", boost::property_tree::ptree(v.toHex())));
+                }
+                pt.push_back(std::make_pair("requiredServiceIds", vals));
+            }
+
+            if(!info._requiredModuleIds.empty())
+            {
+                boost::property_tree::ptree vals;
+                for(const auto &v : info._requiredModuleIds)
+                {
+                    vals.push_back(std::make_pair("", boost::property_tree::ptree(v.toHex())));
+                }
+                pt.push_back(std::make_pair("requiredModuleIds", vals));
+            }
+
+            pt.add("mainBinary", boost::filesystem::path(mainBinaryFullPath).filename().string());
+        }
+
+        dlclose(mainBinaryHandle);
+
+        std::stringstream ss;
+        boost::property_tree::write_json(ss, pt);
+        return ss.str();
+    }
+
     Module::Module()
-        : _provider{}
-        , _id{}
-        , _serviceIds{}
-
-        , _revision{}
-        , _name{}
-        , _description{}
-        , _tags{}
-
-        , _requiredServiceIds{}
-        , _requiredModuleIds{}
-
-        , _mainBinary{}
+        : _mainBinary{}
 
         , _state{ModuleState::null}
         , _place{}
 
         , _mainBinaryHandle{}
         , _entry{}
+        , _info()
     {
     }
 
@@ -39,49 +115,9 @@ namespace dci { namespace site { namespace impl
         assert(ModuleState::null == _state || ModuleState::attachError == _state);
     }
 
-    const std::string &Module::getProvider() const
+    const ModuleInfo &Module::getInfo() const
     {
-        return _provider;
-    }
-
-    const Mid &Module::getId() const
-    {
-        return _id;
-    }
-
-    const std::vector<couple::runtime::Iid> &Module::getServieceIds() const
-    {
-        return _serviceIds;
-    }
-
-    std::size_t Module::getRevision() const
-    {
-        return _revision;
-    }
-
-    const std::string &Module::getName() const
-    {
-        return _name;
-    }
-
-    const std::string &Module::getDescription() const
-    {
-        return _description;
-    }
-
-    const std::vector<std::string> &Module::getTags() const
-    {
-        return _tags;
-    }
-
-    const std::vector<couple::runtime::Iid> &Module::getRequiredServiceIds() const
-    {
-        return _requiredServiceIds;
-    }
-
-    const std::vector<Mid> &Module::getRequiredModuleIds() const
-    {
-        return _requiredModuleIds;
+        return _info;
     }
 
     ModuleState Module::getState() const
@@ -99,10 +135,10 @@ namespace dci { namespace site { namespace impl
         _place = place;
         _state = ModuleState::attachError;
 
-        boost::property_tree::ptree pt;
+        boost::property_tree::ptree pt, npt;
 
         boost::filesystem::path path(_place.getDir());
-        path /= "index.json";
+        path /= "manifest.json";
 
         try
         {
@@ -117,47 +153,47 @@ namespace dci { namespace site { namespace impl
 
         try
         {
-            _provider = pt.get<std::string>("provider");
-            if(!_id.fromHex(pt.get<std::string>("id")))
+            _info._provider = pt.get<std::string>("provider");
+            if(!_info._id.fromHex(pt.get<std::string>("id")))
             {
                throw std::runtime_error("malformed id: "+pt.get<std::string>("id"));
             }
 
-            _serviceIds.clear();
-            for(auto &v: pt.get_child("serviceIds"))
+            _info._serviceIds.clear();
+            for(auto &v: pt.get_child_optional("serviceIds").get_value_or(npt))
             {
-                _serviceIds.push_back(couple::runtime::Iid{});
-                if(!_serviceIds.back().fromHex(v.second.data()))
+                _info._serviceIds.push_back(couple::runtime::Iid{});
+                if(!_info._serviceIds.back().fromHex(v.second.data()))
                 {
                    throw std::runtime_error("malformed service id: "+v.second.data());
                 }
             }
 
-            _revision = pt.get<std::size_t>("revision");
-            _name = pt.get<std::string>("name");
-            _description = pt.get<std::string>("description");
+            _info._revision = pt.get<std::size_t>("revision");
+            _info._name = pt.get<std::string>("name");
+            _info._description = pt.get<std::string>("description");
 
-            _tags.clear();
-            for(auto &v: pt.get_child("tags"))
+            _info._tags.clear();
+            for(auto &v: pt.get_child_optional("tags").get_value_or(npt))
             {
-                _tags.emplace_back(v.second.data());
+                _info._tags.emplace_back(v.second.data());
             }
 
-            _requiredServiceIds.clear();
-            for(auto &v: pt.get_child("requiredServiceIds"))
+            _info._requiredServiceIds.clear();
+            for(auto &v: pt.get_child_optional("requiredServiceIds").get_value_or(npt))
             {
-                _requiredServiceIds.push_back(couple::runtime::Iid{});
-                if(!_requiredServiceIds.back().fromHex(v.second.data()))
+                _info._requiredServiceIds.push_back(couple::runtime::Iid{});
+                if(!_info._requiredServiceIds.back().fromHex(v.second.data()))
                 {
                    throw std::runtime_error("malformed required service id: "+v.second.data());
                 }
             }
 
-            _requiredModuleIds.clear();
-            for(auto &v: pt.get_child("requiredModuleIds"))
+            _info._requiredModuleIds.clear();
+            for(auto &v: pt.get_child_optional("requiredModuleIds").get_value_or(npt))
             {
-                _requiredModuleIds.push_back(Mid{});
-                if(!_requiredModuleIds.back().fromHex(v.second.data()))
+                _info._requiredModuleIds.push_back(Mid{});
+                if(!_info._requiredModuleIds.back().fromHex(v.second.data()))
                 {
                    throw std::runtime_error("malformed required module id: "+v.second.data());
                 }
@@ -189,17 +225,17 @@ namespace dci { namespace site { namespace impl
             return make_error_code(error::module::wrong_state);
         }
 
-        _provider.clear();
+        _info._provider.clear();
         //_id;
-        _serviceIds.clear();
+        _info._serviceIds.clear();
 
-        _revision=0;
-        _name.clear();
-        _description.clear();
-        _tags.clear();
+        _info._revision=0;
+        _info._name.clear();
+        _info._description.clear();
+        _info._tags.clear();
 
-        _requiredServiceIds.clear();
-        _requiredModuleIds.clear();
+        _info._requiredServiceIds.clear();
+        _info._requiredModuleIds.clear();
 
         _state = ModuleState::null;
         _place.setDir(std::string{});
@@ -257,37 +293,37 @@ namespace dci { namespace site { namespace impl
             void **ppe = (void **)dlsym(_mainBinaryHandle, "dciModuleEntry");
             if(!ppe)
             {
-                LOGE("loading module \""<<_name<<"\": entry point is absent");
+                LOGE("loading module \""<<_info._name<<"\": entry point is absent");
                 _state = ModuleState::loadError;
                 p.resolveError(make_error_code(error::module::unable_load_binary));
                 return;
             }
 
-             _entry = static_cast<ModuleEntry*>(*ppe);
+            _entry = static_cast<ModuleEntry*>(*ppe);
 
-             if(!_entry)
-             {
-                 LOGE("loading module \""<<_name<<"\": entry point is damaged");
-                 _state = ModuleState::loadError;
-                 p.resolveError(make_error_code(error::module::unable_load_binary));
-                 return;
-             }
+            if(!_entry)
+            {
+                LOGE("loading module \""<<_info._name<<"\": entry point is damaged");
+                _state = ModuleState::loadError;
+                p.resolveError(make_error_code(error::module::unable_load_binary));
+                return;
+            }
 
-             auto f = _entry->load(himpl::impl2Face<dci::site::ModulePlace>(_place));
-             if(f.hasError())
-             {
-                 LOGE("loading module \""<<_name<<"\": "<<f.error());
+            auto f = _entry->load(himpl::impl2Face<dci::site::ModulePlace>(_place));
+            if(f.hasError())
+            {
+                LOGE("loading module \""<<_info._name<<"\": "<<f.error());
 
-                 _entry  = nullptr;
+                _entry  = nullptr;
 
-                 assert(_mainBinaryHandle);
-                 dlclose(_mainBinaryHandle);
-                 _mainBinaryHandle = nullptr;
+                assert(_mainBinaryHandle);
+                dlclose(_mainBinaryHandle);
+                _mainBinaryHandle = nullptr;
 
-                 _state = ModuleState::loadError;
-                 p.resolveError(f.detachError());
-                 return;
-             }
+                _state = ModuleState::loadError;
+                p.resolveError(f.detachError());
+                return;
+            }
 
             _state = ModuleState::loaded;
             p.resolveValue();
@@ -318,7 +354,7 @@ namespace dci { namespace site { namespace impl
                 auto f = _entry->unload(himpl::impl2Face<dci::site::ModulePlace>(_place));
                 if(f.hasError())
                 {
-                    LOGE("unloading module \""<<_name<<"\": "<<f.error());
+                    LOGE("unloading module \""<<_info._name<<"\": "<<f.error());
                     //ignore error
                 }
             }
@@ -357,7 +393,7 @@ namespace dci { namespace site { namespace impl
             auto f = _entry->start(himpl::impl2Face<dci::site::ModulePlace>(_place));
             if(f.hasError())
             {
-                LOGE("starting module \""<<_name<<"\": "<<f.error());
+                LOGE("starting module \""<<_info._name<<"\": "<<f.error());
                 _state = ModuleState::startError;
                 p.resolveError(f.detachError());
                 return;
@@ -391,7 +427,7 @@ namespace dci { namespace site { namespace impl
             auto f = _entry->stop(himpl::impl2Face<dci::site::ModulePlace>(_place));
             if(f.hasError())
             {
-                LOGE("stopping module \""<<_name<<"\": "<<f.error());
+                LOGE("stopping module \""<<_info._name<<"\": "<<f.error());
                 //ignore error
             }
 

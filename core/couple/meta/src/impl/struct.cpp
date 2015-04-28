@@ -1,5 +1,5 @@
 #include "struct.hpp"
-#include "signBuilder.hpp"
+#include <dci/couple/runtime/signBuilder.hpp>
 
 namespace dci { namespace couple { namespace meta { namespace impl
 {
@@ -17,7 +17,7 @@ namespace dci { namespace couple { namespace meta { namespace impl
     {
         Scope::makeSign();
 
-        SignBuilder s;
+        runtime::SignBuilder s;
 
         s.add("struct");
         s.add(sign());

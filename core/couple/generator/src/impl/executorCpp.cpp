@@ -36,8 +36,8 @@ namespace dci { namespace couple { namespace generator { namespace impl
             return false;
         }
 
-        _wireName = "wire_"+lib.sign().string(8)+"_"+name;
-        _bodyName = "body_"+lib.sign().string(8)+"_"+name;
+        _wireName = "wire_"+lib.sign().toHex(8)+"_"+name;
+        _bodyName = "body_"+lib.sign().toHex(8)+"_"+name;
 
         boost::filesystem::path dir(dir_);
 

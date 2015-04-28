@@ -43,18 +43,10 @@ dciUseIdl(${PROJECT}
 
 
 include(DciDefineModule)
-dciDefineModule(${PROJECT}
-
-    PROVIDER            "dci internal"
-    ID                  d177db226be58114ea371999c30b55ef845172e366eda44dfc3b32dc1f5e3c6d
-    SERVICEIDS          ${netHostId}
-    REVISION            0
-    NAME                "net"
-    DESCRIPTION         "network module"
-    TAGS
-    REQUIREDSERVICEIDS
-    REQUIREDMODULEIDS
-    MAINBINARY          net.so
-    IDL                 ${IDL}
+message("${PROJECT}")
+dciDefineModule(net
+    MAINTARGET      ${PROJECT}
+    IMPLTARGETS
+    IDL             ${IDL}
 )
 

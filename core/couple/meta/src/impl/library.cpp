@@ -1,5 +1,5 @@
 #include "library.hpp"
-#include "signBuilder.hpp"
+#include <dci/couple/runtime/signBuilder.hpp>
 
 namespace dci { namespace couple { namespace meta { namespace impl
 {
@@ -50,7 +50,7 @@ namespace dci { namespace couple { namespace meta { namespace impl
         }
 
         template <class T>
-        void collectSign4Items(SignBuilder &s, const std::set<T *> &items)
+        void collectSign4Items(runtime::SignBuilder &s, const std::set<T *> &items)
         {
             for(T *v : items)
             {
@@ -78,7 +78,7 @@ namespace dci { namespace couple { namespace meta { namespace impl
         makeSign4Items(_lc.items<Alias>());
         makeSign4Items(_lc.items<Enum>());
 
-        SignBuilder s;
+        runtime::SignBuilder s;
 
         collectSign4Items(s, _lc.items<Scope>());
         collectSign4Items(s, _lc.items<List>());

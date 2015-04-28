@@ -1,6 +1,6 @@
 #include "scoped.hpp"
 #include "scope.hpp"
-#include "signBuilder.hpp"
+#include <dci/couple/runtime/signBuilder.hpp>
 
 namespace dci { namespace couple { namespace meta { namespace impl
 {
@@ -24,7 +24,7 @@ namespace dci { namespace couple { namespace meta { namespace impl
 
     void Scoped::makeSign()
     {
-        SignBuilder s;
+        runtime::SignBuilder s;
 
         s.add("scoped");
 

@@ -1,4 +1,4 @@
-#include <dci/site/moduleEntryFunctions.hpp>
+#include <dci/site/moduleEntry.hpp>
 #include <dci/logger/logger.hpp>
 
 #include "talk.hpp"
@@ -46,6 +46,11 @@ struct Entry
 
     ~Entry()
     {
+    }
+
+    const dci::site::ModuleInfo &getInfo() override
+    {
+        assert(0);
     }
 
     dci::async::Future<std::error_code> install(const dci::site::ModulePlace &place) override

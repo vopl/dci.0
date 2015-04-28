@@ -257,7 +257,7 @@ namespace dci { namespace site { namespace impl
                 std::error_code ec = c->detach();
                 if(ec)
                 {
-                    LOGE("unable detach module \""<<c->getName()<<"\": "<<ec);
+                    LOGE("unable detach module \""<<c->getInfo()._name<<"\": "<<ec);
                     hasErrors = true;
                 }
             }
@@ -290,7 +290,7 @@ namespace dci { namespace site { namespace impl
             {
                 if(std::get<1>(r).hasError())
                 {
-                    LOGE(name<<" module \""<<std::get<0>(r)->getName()<<"\": "<<std::get<1>(r).error());
+                    LOGE(name<<" module \""<<std::get<0>(r)->getInfo()._name<<"\": "<<std::get<1>(r).error());
                     hasErrors = true;
                 }
             }

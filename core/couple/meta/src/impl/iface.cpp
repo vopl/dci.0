@@ -1,5 +1,5 @@
 #include "iface.hpp"
-#include "signBuilder.hpp"
+#include <dci/couple/runtime/signBuilder.hpp>
 
 #include <iostream>
 
@@ -19,7 +19,7 @@ namespace dci { namespace couple { namespace meta { namespace impl
     {
         Scope::makeSign();
 
-        SignBuilder s;
+        runtime::SignBuilder s;
 
         s.add("iface");
         s.add(sign());

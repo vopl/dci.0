@@ -23,7 +23,6 @@ namespace dci { namespace couple { namespace meta
     class Named;
     class Scoped;
     class Signed;
-    class Sign;
     class Type;
     class Variant;
 
@@ -54,7 +53,6 @@ namespace dci { namespace couple { namespace meta { namespace impl
     class Named;
     class Scoped;
     class Signed;
-    class Sign;
     class Type;
     class Variant;
 

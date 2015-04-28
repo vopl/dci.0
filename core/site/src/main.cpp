@@ -1,6 +1,7 @@
 #include <cstdlib>
 
 #include "impl/instance.hpp"
+#include "impl/module.hpp"
 #include <dci/async/functions.hpp>
 #include <dci/logger/logger.hpp>
 
@@ -67,6 +68,11 @@ int main(int argc, char *argv[])
     desc.add_options()
             ("help", "produce help message")
             ("version", "print version info")
+            (
+                "genmanifest",
+                po::value<std::string>(),
+                "generate manifest file for module shared library"
+            )
             ;
 
     ////////////////////////////////////////////////////////////////////////////////
@@ -96,6 +102,19 @@ int main(int argc, char *argv[])
     if(vars.count("help"))
     {
         std::cout << desc << std::endl;
+        return EXIT_SUCCESS;
+    }
+
+    if(vars.count("genmanifest"))
+    {
+        std::string content = dci::site::impl::Module::generateManifest(vars["genmanifest"].as<std::string>());
+
+        if(content.empty())
+        {
+            return EXIT_FAILURE;
+        }
+
+        std::cout<<content;
         return EXIT_SUCCESS;
     }
 

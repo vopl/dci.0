@@ -6,7 +6,8 @@ set(INC
     include/error.hpp
     include/moduleId.hpp
     include/modulePlace.hpp
-    include/moduleEntryFunctions.hpp
+    include/moduleEntry.hpp
+    include/moduleInfo.hpp
     include/layoutProvider.hpp
 )
 
@@ -66,6 +67,7 @@ target_link_libraries(${PROJECT}
     dci-mm
     dci-async
     dci-io
+    dci-couple-runtime
     dl
 )
 

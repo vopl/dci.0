@@ -7,6 +7,8 @@ set(INC
     include/error.hpp
     include/idl.hpp
 
+    include/sign.hpp
+    include/signBuilder.hpp
     include/hub.hpp
     include/identifier.hpp
     include/iface.hpp
@@ -26,13 +28,20 @@ set(INC
 set(SRC
     src/error.cpp
 
+    src/sign.cpp
+    src/signBuilder.cpp
+    src/hub.cpp
     src/iface.cpp
     src/ifaceWire.cpp
-    src/hub.cpp
 
     src/impl/hub.hpp
-
     src/impl/hub.cpp
+
+    src/impl/sign.hpp
+    src/impl/sign.cpp
+
+    src/impl/signBuilder.hpp
+    src/impl/signBuilder.cpp
 )
 
 
@@ -66,9 +75,13 @@ mkHimplLayouts(${PROJECT}
 
     HEADERS
         ${CMAKE_CURRENT_SOURCE_DIR}/src/impl/hub.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/impl/sign.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/impl/signBuilder.hpp
 
     CLASSES
         ::dci::couple::runtime::impl::Hub
+        ::dci::couple::runtime::impl::Sign
+        ::dci::couple::runtime::impl::SignBuilder
 )
 
 

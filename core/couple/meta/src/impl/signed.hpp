@@ -1,6 +1,6 @@
 #pragma once
 
-#include "sign.hpp"
+#include <dci/couple/runtime/sign.hpp>
 
 namespace dci { namespace couple { namespace meta { namespace impl
 {
@@ -10,13 +10,14 @@ namespace dci { namespace couple { namespace meta { namespace impl
         Signed();
         ~Signed();
 
-        const Sign &sign() const;
-        void setSign(const Sign &s);
+        const runtime::Sign &sign() const;
+        void setSign(const runtime::Sign &s);
 
         void makeSign() = delete;
 
     private:
-        Sign _sign;
+        runtime::Sign _sign;
+        int k;
     };
 
 }}}}

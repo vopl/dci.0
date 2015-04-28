@@ -8,8 +8,8 @@ namespace dci { namespace himpl
     struct LayoutProvider;
 }}
 
-#if GENERATE_LAYOUTPROVIDER
-#   define LAYOUTPROVIDERFILE(x) <dci/himpl/layoutProviderDefault.hpp>
-#else
+//#if GENERATE_LAYOUTPROVIDER
+//#   define LAYOUTPROVIDERFILE(x) <dci/himpl/layoutProviderDefault.hpp>
+//#else
 #   define LAYOUTPROVIDERFILE(x) x
-#endif
+//#endif

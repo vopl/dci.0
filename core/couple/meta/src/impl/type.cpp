@@ -29,7 +29,7 @@ namespace dci { namespace couple { namespace meta { namespace impl
         return _concrete;
     }
 
-    const Sign &Type::concreteSign() const
+    const runtime::Sign &Type::concreteSign() const
     {
         switch(concrete())
         {

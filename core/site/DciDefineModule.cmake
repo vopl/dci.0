@@ -1,80 +1,39 @@
 
-function(dciDefineModule target)
+function(dciDefineModule name)
 
     include(CMakeParseArguments)
-    cmake_parse_arguments(OPTS "" "PROVIDER;ID;REVISION;NAME;DESCRIPTION;MAINBINARY" "SERVICEIDS;TAGS;REQUIREDSERVICEIDS;REQUIREDMODULEIDS;IDL" ${ARGN})
+    cmake_parse_arguments(OPTS "" "MAINTARGET" "IMPLTARGETS;IDL" ${ARGN})
 
 
-    set(manifest "${CMAKE_CURRENT_BINARY_DIR}/index.json")
-
-    file(WRITE ${manifest} "{\n")
-
-    file(APPEND ${manifest} "  \"provider\": \"${OPTS_PROVIDER}\",\n")
-    file(APPEND ${manifest} "  \"id\": \"${OPTS_ID}\",\n")
-
-    file(APPEND ${manifest} "  \"serviceIds\": [")
-    set(f TRUE)
-    foreach(i ${OPTS_SERVICEIDS})
-        if(NOT f)
-            file(APPEND ${manifest} ",")
-        endif()
-        set(f)
-        file(APPEND ${manifest} "\"${i}\"")
-    endforeach()
-    file(APPEND ${manifest} "],\n")
-
-    file(APPEND ${manifest} "  \"revision\": \"${OPTS_REVISION}\",\n")
-    file(APPEND ${manifest} "  \"name\": \"${OPTS_NAME}\",\n")
-    file(APPEND ${manifest} "  \"description\": \"${OPTS_DESCRIPTION}\",\n")
-
-    file(APPEND ${manifest} "  \"tags\": [")
-    set(f TRUE)
-    foreach(i ${OPTS_TAGS})
-        if(NOT f)
-            file(APPEND ${manifest} ",")
-        endif()
-        set(f)
-        file(APPEND ${manifest} "\"${i}\"")
-    endforeach()
-    file(APPEND ${manifest} "],\n")
-
-    file(APPEND ${manifest} "  \"requiredServiceIds\": [")
-    set(f TRUE)
-    foreach(i ${OPTS_REQUIREDSERVICEIDS})
-        if(NOT f)
-            file(APPEND ${manifest} ",")
-        endif()
-        set(f)
-        file(APPEND ${manifest} "\"${i}\"")
-    endforeach()
-    file(APPEND ${manifest} "],\n")
-
-    file(APPEND ${manifest} "  \"requiredModuleIds\": [")
-    set(f TRUE)
-    foreach(i ${OPTS_REQUIREDMODULEIDS})
-        if(NOT f)
-            file(APPEND ${manifest} ",")
-        endif()
-        set(f)
-        file(APPEND ${manifest} "\"${i}\"")
-    endforeach()
-    file(APPEND ${manifest} "],\n")
-
-    file(APPEND ${manifest} "  \"mainBinary\": \"${OPTS_MAINBINARY}\"\n")
-    file(APPEND ${manifest} "}\n")
 
     ######################
-    add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${OPTS_MAINBINARY}
-        COMMAND ${CMAKE_COMMAND} -E create_symlink $<TARGET_FILE:${target}> ${OPTS_MAINBINARY}
-        DEPENDS ${target})
+    add_dependencies(${OPTS_MAINTARGET} dci-site)
 
-    add_dependencies(${target} dci-site)
+    set(manifest ${CMAKE_CURRENT_BINARY_DIR}/manifest.json)
+    add_custom_command(OUTPUT ${manifest}
+        COMMAND dci-site --genmanifest $<TARGET_FILE:${OPTS_MAINTARGET}> >${manifest}
+        DEPENDS ${OPTS_MAINTARGET} dci-site)
+
+    set_target_properties(${OPTS_MAINTARGET} PROPERTIES LIBRARY_OUTPUT_NAME ${name})
+    set_target_properties(${OPTS_MAINTARGET} PROPERTIES PREFIX "")
+    set_target_properties(${OPTS_MAINTARGET} PROPERTIES SUFFIX ".main")
+
+    foreach(impltarget ${OPTS_IMPLTARGETS})
+        set_target_properties(${impltarget} PROPERTIES PREFIX "")
+        set_target_properties(${impltarget} PROPERTIES SUFFIX ".impl")
+    endforeach()
+
 
     if(COMMAND localinstall)
-        localinstall(${target} share/dci-modules/${OPTS_NAME} DROP_PREFIX ${CMAKE_CURRENT_BINARY_DIR}/ ${manifest})
-        localinstall(${target} share/dci-modules/${OPTS_NAME} DROP_PREFIX ${CMAKE_CURRENT_BINARY_DIR}/ ${CMAKE_CURRENT_BINARY_DIR}/${OPTS_MAINBINARY})
+        set_target_properties(${OPTS_MAINTARGET} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${LOCALINSTALL_DIR}/share/dci-modules/${name})
+
+        foreach(impltarget ${OPTS_IMPLTARGETS})
+            set_target_properties(${impltarget} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${LOCALINSTALL_DIR}/share/dci-modules/${name})
+        endforeach()
+
+        localinstall(${OPTS_MAINTARGET} share/dci-modules/${name} DROP_PREFIX ${CMAKE_CURRENT_BINARY_DIR}/ ${manifest})
         if(OPTS_IDL)
-            localinstall(${target} idl DROP_PREFIX idl/ ${OPTS_IDL})
+            localinstall(${OPTS_MAINTARGET} idl DROP_PREFIX idl/ ${OPTS_IDL})
         endif()
     endif()
 

@@ -1,6 +1,10 @@
 #pragma once
 
-#include "sign.hpp"
+#include <dci/himpl/layoutProvider.hpp>
+#include LAYOUTPROVIDERFILE("layoutProvider.hpp")
+#include <dci/himpl/faceLayout.hpp>
+
+#include <dci/couple/runtime/sign.hpp>
 
 namespace dci { namespace couple { namespace meta
 {
@@ -12,7 +16,7 @@ namespace dci { namespace couple { namespace meta
         Signed();
         ~Signed();
 
-        const Sign &sign() const;
+        const runtime::Sign &sign() const;
 
     };
 

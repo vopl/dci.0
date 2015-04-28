@@ -1,5 +1,5 @@
 #include "primitive.hpp"
-#include "signBuilder.hpp"
+#include <dci/couple/runtime/signBuilder.hpp>
 
 namespace dci { namespace couple { namespace meta { namespace impl
 {
@@ -25,7 +25,7 @@ namespace dci { namespace couple { namespace meta { namespace impl
 
     void Primitive::makeSign()
     {
-        SignBuilder s;
+        runtime::SignBuilder s;
 
         s.add("primitive");
         s.add((std::uint32_t)_kind);

@@ -3,7 +3,7 @@
 #include <string>
 #include <cstdint>
 
-namespace dci { namespace couple { namespace meta { namespace impl
+namespace dci { namespace couple { namespace runtime { namespace impl
 {
     class Sign
     {
@@ -15,7 +15,8 @@ namespace dci { namespace couple { namespace meta { namespace impl
         char *data();
         const char *data() const;
 
-        std::string string(std::size_t chars=_size*2) const;
+        std::string toHex(std::size_t chars=_size*2) const;
+        bool fromHex(const std::string &txt);
 
     private:
         union Data

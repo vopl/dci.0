@@ -1,5 +1,5 @@
 #include "enumValue.hpp"
-#include "signBuilder.hpp"
+#include <dci/couple/runtime/signBuilder.hpp>
 
 #include <cassert>
 
@@ -17,7 +17,7 @@ namespace dci { namespace couple { namespace meta { namespace impl
 
     void EnumValue::makeSign()
     {
-        SignBuilder s;
+        runtime::SignBuilder s;
 
         s.add("enumValue");
         s.add(_name);

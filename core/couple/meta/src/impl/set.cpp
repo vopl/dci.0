@@ -1,5 +1,5 @@
 #include "set.hpp"
-#include "signBuilder.hpp"
+#include <dci/couple/runtime/signBuilder.hpp>
 
 namespace dci { namespace couple { namespace meta { namespace impl
 {
@@ -15,7 +15,7 @@ namespace dci { namespace couple { namespace meta { namespace impl
 
     void Set::makeSign()
     {
-        SignBuilder s;
+        runtime::SignBuilder s;
 
         s.add("set");
         s.add(_elementType->concreteSign());
