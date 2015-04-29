@@ -49,6 +49,11 @@ namespace dci { namespace async
         const E &error();
         E &&detachError();
 
+        template <class F>
+        void then(F &&);
+
+        template <class Et, class... Tt, class F>
+        Future<Et, Tt...> thenTransform(F &&);
     };
 
     template <class E, class... T>
@@ -174,6 +179,77 @@ namespace dci { namespace async
         wait();
         return std::move(this->instance().error());
     }
+
+    template <class E, class... T>
+    template <class F>
+    void Future<E, T...>::then(F &&f)
+    {
+        struct Then
+            : details::FutureThenBase<E, T...>
+        {
+            Then(F &&call, const Future<E, T...> &srcFuture)
+                : _call(std::forward<F>(call))
+                , _srcFuture(srcFuture)
+            {
+            }
+
+            void call(E *err, T *... vals) override
+            {
+                _call(err, vals...);
+            }
+
+            void destroy() override
+            {
+                this->~Then();
+                mm::free<sizeof(Then)>(this);
+            }
+
+            std::decay_t<F>                 _call;
+            Future<E, T...>                 _srcFuture;
+        } *then = new(mm::alloc<sizeof(Then)>()) Then(std::forward<F>(f), *this);
+
+        this->instance().pushThen(then);
+    }
+
 }}
 
 #include "promise.hpp"
+
+namespace dci { namespace async
+{
+    template <class E, class... T>
+    template <class Et, class... Tt, class F>
+    Future<Et, Tt...> Future<E, T...>::thenTransform(F &&f)
+    {
+        struct Then
+            : details::FutureThenBase<E, T...>
+        {
+            Then(F &&call, const Future<E, T...> &srcFuture)
+                : _call(std::forward<F>(call))
+                , _srcFuture(srcFuture)
+            {
+            }
+
+            void call(E *err, T *... vals) override
+            {
+                _call(err, vals..., _dstPromise);
+            }
+
+            void destroy() override
+            {
+                this->~Then();
+                mm::free<sizeof(Then)>(this);
+            }
+
+            std::decay_t<F>                 _call;
+            Future<E, T...>                 _srcFuture;
+            dci::async::Promise<Et, Tt...>  _dstPromise;
+        } *then = new(mm::alloc<sizeof(Then)>()) Then(std::forward<F>(f), *this);
+
+        auto res = then->_dstPromise.future();
+        this->instance().pushThen(then);
+        return res;
+    }
+
+}}
+

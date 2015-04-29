@@ -17,8 +17,8 @@ function(dciUseIdl target)
     set(outDir ${CMAKE_CURRENT_BINARY_DIR}/idl)
     set(outFile ${outDir}/${NAME}.hpp)
     add_custom_command(OUTPUT ${outFile}
-                        COMMAND dci-couple-translator --generate ${OPTS_GEN} --outdir ${outDir} --outname ${NAME} --include ${CMAKE_CURRENT_SOURCE_DIR} --include ${CMAKE_SOURCE_DIR}/idl ${OPTS_SOURCES}
-                        DEPENDS dci-couple-translator ${OPTS_SOURCES}
+                        COMMAND dci-couple-translator --generate ${OPTS_GEN} --outdir ${outDir} --outname ${NAME} --include ${CMAKE_CURRENT_SOURCE_DIR} --include ${LOCALINSTALL_DIR}/idl ${OPTS_SOURCES}
+                        DEPENDS dci-couple-translator
     )
 
     add_custom_target(${target}_${NAME} DEPENDS ${outFile})

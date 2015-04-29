@@ -98,12 +98,11 @@ namespace dci { namespace site { namespace impl
         return ss.str();
     }
 
-    Module::Module()
-        : _mainBinary{}
-
+    Module::Module(Instance *site)
+        : _site{site}
+        , _mainBinary{}
         , _state{ModuleState::null}
         , _place{}
-
         , _mainBinaryHandle{}
         , _entry{}
         , _info()
@@ -390,7 +389,7 @@ namespace dci { namespace site { namespace impl
             assert(ModuleState::starting == _state);
             assert(_entry);
 
-            auto f = _entry->start(himpl::impl2Face<dci::site::ModulePlace>(_place));
+            auto f = _entry->start(*himpl::impl2Face<dci::site::Instance>(_site), himpl::impl2Face<dci::site::ModulePlace>(_place));
             if(f.hasError())
             {
                 LOGE("starting module \""<<_info._name<<"\": "<<f.error());

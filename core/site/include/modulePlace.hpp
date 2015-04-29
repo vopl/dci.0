@@ -1,7 +1,6 @@
 #pragma once
 
 #include <dci/himpl/faceLayout.hpp>
-
 #include <dci/himpl/layoutProvider.hpp>
 #include LAYOUTPROVIDERFILE("layoutProvider.hpp")
 

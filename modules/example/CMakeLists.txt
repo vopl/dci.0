@@ -34,20 +34,17 @@ dciUseIdl(${PROJECT}
     GEN cpp
     SOURCES idl/talk.idl
 )
+dciUseIdl(${PROJECT}
+    GEN cpp
+    SOURCES net.idl
+)
 
 
-#include(DciDefineModule)
-#dciDefineModule(${PROJECT}
-
-#    PROVIDER            "dci internal"
-#    ID                  ae014f8e04b222312e3e4750597d9d1b5f9a8f53
-#    SERVICEIDS
-#    REVISION            0
-#    NAME                "example"
-#    DESCRIPTION         "example module"
-#    TAGS
-#    REQUIREDSERVICEIDS
-#    REQUIREDMODULEIDS
-#    MAINBINARY          example.so
-#)
+include(DciDefineModule)
+message("${PROJECT}")
+dciDefineModule(example
+    MAINTARGET      ${PROJECT}
+    IMPLTARGETS
+    IDL             ${IDL}
+)
 

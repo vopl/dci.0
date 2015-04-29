@@ -98,6 +98,10 @@ namespace dci { namespace couple { namespace generator { namespace impl
                 _hpp<< undent;
                 _hpp<< "};"<<el;
 
+                if(lib.rootScope())
+                {
+                    writeIid(lib.rootScope());
+                }
 
                 _hpp<< undent;
                 _hpp<< "}}}}"<<el;
@@ -216,6 +220,8 @@ namespace dci { namespace couple { namespace generator { namespace impl
         _hpp<< undent;
         _hpp<< "{"<<el;
         _hpp<< indent;
+
+        _hpp<< "static const Iid _iid;"<<el;
 
         //ctor
         {
@@ -396,6 +402,39 @@ namespace dci { namespace couple { namespace generator { namespace impl
         writeIfaceBody(v, true);
     }
 
+    void ExecutorCpp::writeIid(const dci::couple::meta::Scope *v)
+    {
+        for(auto child : v->ifaces())   writeIid(child);
+        for(auto child : v->structs())  writeIid(child);
+        for(auto child : v->variants()) writeIid(child);
+        for(auto child : v->scopes())   writeIid(child);
+    }
+
+    void ExecutorCpp::writeIid(const Iface *v)
+    {
+        writeIid(static_cast<const Scope *>(v));
+
+        auto writer = [&](const std::string &target){
+            _hpp<< "template <int i> const Iid "<<target<<"::_iid{{";
+
+            auto s = v->sign().toHex();
+            for(std::size_t i(0); i<16; ++i)
+            {
+                if(i)
+                {
+                    _hpp<< ",";
+                }
+                _hpp<< "0x"<<s[i*2]<<s[i*2+1];
+            }
+
+            _hpp<< "}};"<<el;
+        };
+
+        writer(typeName(v, inWire|ignoreTemplateTypename));
+        writer(typeName(v, ignoreTemplateTypename));
+        writer(typeName(v, ignoreTemplateTypename)+"Opposite");
+    }
+
     void ExecutorCpp::writeTarget(const Scope *scope)
     {
         if(!scope->name().empty())
@@ -454,6 +493,8 @@ namespace dci { namespace couple { namespace generator { namespace impl
 
         _hpp<< "{"<<el;
         _hpp<< indent;
+
+        _hpp<< "static const Iid _iid;"<<el;
 
         writeBody(static_cast<const Scope *>(v), false);
 

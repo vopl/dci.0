@@ -224,17 +224,19 @@ namespace dci { namespace couple { namespace runtime { namespace impl
         transform((std::uint32_t*)_buffer);
 
         Sign digest;
+        static_assert(digest._size <= DIGEST_LENGTH, "Sign is too big as a digest here");
+
 #if BYTE_ORDER == LITTLE_ENDIAN
         {
             std::uint32_t *d = (std::uint32_t*)digest.data();
-            for(int j = 0; j < 8; j++)
+            for(std::size_t j = 0; j < digest._size/4; j++)
             {
                 _state[j] = REVERSE32(_state[j]);
                 *d++ = _state[j];
             }
         }
 #else
-        memcpy(digest.data(), state, DIGEST_LENGTH);
+        memcpy(digest.data(), state, digest._size);
 #endif
 
         return digest;

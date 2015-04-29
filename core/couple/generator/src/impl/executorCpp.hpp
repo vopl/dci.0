@@ -36,6 +36,10 @@ namespace dci { namespace couple { namespace generator { namespace impl
         void writeBody(const dci::couple::meta::Iface *v);
 
     private:
+        void writeIid(const dci::couple::meta::Scope *v);
+        void writeIid(const dci::couple::meta::Iface *v);
+
+    private:
         void writeTarget(const dci::couple::meta::Scope *scope);
 
         template <class T>

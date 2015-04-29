@@ -8,8 +8,18 @@ namespace dci { namespace couple { namespace runtime
     {
     }
 
+    Sign::Sign(const std::uint8_t (&data)[16])
+        : ThisFaceLayout(data)
+    {
+    }
+
     Sign::Sign(const Sign &from)
         : ThisFaceLayout(from.impl())
+    {
+    }
+
+    Sign::Sign(Sign &&from)
+        : ThisFaceLayout(std::move(from.impl()))
     {
     }
 
@@ -23,6 +33,12 @@ namespace dci { namespace couple { namespace runtime
         return *this;
     }
 
+    Sign &Sign::operator=(Sign &&from)
+    {
+        impl() = std::move(from.impl());
+        return *this;
+    }
+
     std::string Sign::toHex(std::size_t chars) const
     {
         return impl().toHex(chars);
@@ -32,4 +48,10 @@ namespace dci { namespace couple { namespace runtime
     {
         return impl().fromHex(txt);
     }
+
+    void Sign::fromRnd()
+    {
+        impl().fromRnd();
+    }
+
 }}}

@@ -9,8 +9,8 @@ struct Info
     Info()
     {
         _provider = "dci";
-        //_id = net::Host::_sign;
-        //_serviceIds;
+        _id.fromHex("874ca4fbf31985170b2ce0efbb20a5a5");
+        _serviceIds.push_back(net::Host::_iid);
 
         _revision = 1;
         _name = "net";
@@ -64,8 +64,9 @@ struct Entry
         return dci::async::Future<std::error_code>();
     }
 
-    dci::async::Future<std::error_code> start(const dci::site::ModulePlace &place) override
+    dci::async::Future<std::error_code> start(dci::site::Instance &site, const dci::site::ModulePlace &place) override
     {
+        (void)site;
         (void)place;
         return dci::async::Future<std::error_code>();
     }

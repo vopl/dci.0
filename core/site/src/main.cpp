@@ -4,6 +4,7 @@
 #include "impl/module.hpp"
 #include <dci/async/functions.hpp>
 #include <dci/logger/logger.hpp>
+#include <dci/couple/runtime/sign.hpp>
 
 #include <csignal>
 #include <boost/program_options.hpp>
@@ -73,6 +74,10 @@ int main(int argc, char *argv[])
                 po::value<std::string>(),
                 "generate manifest file for module shared library"
             )
+            (
+                "rndsign",
+                "generate new random sign"
+            )
             ;
 
     ////////////////////////////////////////////////////////////////////////////////
@@ -114,7 +119,15 @@ int main(int argc, char *argv[])
             return EXIT_FAILURE;
         }
 
-        std::cout<<content;
+        std::cout<<content<<std::endl;
+        return EXIT_SUCCESS;
+    }
+
+    if(vars.count("rndsign"))
+    {
+        dci::couple::runtime::Sign s;
+        s.fromRnd();
+        std::cout<<s.toHex()<<std::endl;
         return EXIT_SUCCESS;
     }
 

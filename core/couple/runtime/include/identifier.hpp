@@ -12,18 +12,7 @@ namespace dci { namespace couple { namespace runtime
         : public Sign
     {
     public:
-        Identifier();
-        ~Identifier();
+        using Sign::Sign;
     };
-
-    template <class Tag>
-    Identifier<Tag>::Identifier()
-    {
-    }
-
-    template <class Tag>
-    Identifier<Tag>::~Identifier()
-    {
-    }
 
 }}}

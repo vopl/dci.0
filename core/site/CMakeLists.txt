@@ -4,6 +4,7 @@ project(${PROJECT})
 
 set(INC
     include/error.hpp
+    include/instance.hpp
     include/moduleId.hpp
     include/modulePlace.hpp
     include/moduleEntry.hpp
@@ -14,6 +15,7 @@ set(INC
 set(SRC
     src/main.cpp
     src/error.cpp
+    src/instance.cpp
     src/modulePlace.cpp
 
     src/impl/instance.hpp
@@ -55,9 +57,11 @@ mkHimplLayouts(${PROJECT}
 
     HEADERS
         ${CMAKE_CURRENT_SOURCE_DIR}/src/impl/modulePlace.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/impl/instance.hpp
 
     CLASSES
         ::dci::site::impl::ModulePlace
+        ::dci::site::impl::Instance
 )
 
 

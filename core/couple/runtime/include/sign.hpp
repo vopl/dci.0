@@ -18,14 +18,17 @@ namespace dci { namespace couple { namespace runtime
         : public himpl::FaceLayout<impl::Sign>
     {
     public:
-        using ThisFaceLayout::ThisFaceLayout;
         Sign();
+        Sign(const std::uint8_t (&data)[16]);
         Sign(const Sign &from);
+        Sign(Sign &&from);
         ~Sign();
 
         Sign &operator=(const Sign &from);
+        Sign &operator=(Sign &&from);
 
-        std::string toHex(std::size_t chars=64) const;
+        std::string toHex(std::size_t chars=32) const;
         bool fromHex(const std::string &txt);
+        void fromRnd();
     };
 }}}

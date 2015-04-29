@@ -9,11 +9,10 @@ namespace dci { namespace couple { namespace runtime
     {
         Iface() = delete;
 
-    protected:
+    public:
         Iface(IfaceWire *wire, bool fwd);
         Iface(Iface &&from);
 
-    protected:
         ~Iface();
 
         Iface &operator=(Iface &&from);

@@ -1,6 +1,5 @@
 #pragma once
 
-#include <dci/couple/runtime/identifier.hpp>
 #include <dci/couple/runtime/iface.hpp>
 #include "moduleState.hpp"
 #include <modulePlace.hpp>
@@ -14,13 +13,15 @@
 
 namespace dci { namespace site { namespace impl
 {
+    class Instance;
+
     class Module
     {
     public:
         static std::string generateManifest(const std::string &mainBinaryFullPath);
 
     public:
-        Module();
+        Module(Instance *site);
         ~Module();
 
         ////////////// identify
@@ -51,7 +52,7 @@ namespace dci { namespace site { namespace impl
         async::Future<std::error_code, couple::runtime::Iface> getServiceInstance(const couple::runtime::Iid &iid);
 
     private:
-
+        Instance *      _site;
         std::string     _mainBinary;
 
         ModuleState     _state;

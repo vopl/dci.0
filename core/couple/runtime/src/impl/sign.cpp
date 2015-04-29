@@ -1,16 +1,29 @@
 #include "sign.hpp"
 #include <cassert>
+#include <cstring>
+#include <random>
 
 namespace dci { namespace couple { namespace runtime { namespace impl
 {
-    Sign::Data::Data()
-        : _by8{0,0,0,0}
+    Sign::Sign()
+        : _data{}
     {
+
     }
 
-    Sign::Sign()
+    Sign::Sign(const std::uint8_t (&data)[_size])
     {
+        memcpy(this->data(), data, _size);
+    }
 
+    Sign::Sign(const Sign &from)
+    {
+        memcpy(data(), from.data(), _size);
+    }
+
+    Sign::Sign(Sign &&from)
+    {
+        memcpy(data(), from.data(), _size);
     }
 
     Sign::~Sign()
@@ -18,21 +31,33 @@ namespace dci { namespace couple { namespace runtime { namespace impl
 
     }
 
+    Sign &Sign::operator=(const Sign &from)
+    {
+        memcpy(data(), from.data(), _size);
+        return *this;
+    }
+
+    Sign &Sign::operator=(Sign &&from)
+    {
+        memcpy(data(), from.data(), _size);
+        return *this;
+    }
+
     char *Sign::data()
     {
-        return (char *)_data._by8;
+        return (char *)_data;
     }
 
     const char *Sign::data() const
     {
-        return (const char *)_data._by8;
+        return (const char *)_data;
     }
 
     std::string Sign::toHex(std::size_t chars) const
     {
-        if(chars > 64)
+        if(chars > _size*2)
         {
-            chars = 64;
+            chars = _size*2;
         }
 
         std::string res;
@@ -40,7 +65,7 @@ namespace dci { namespace couple { namespace runtime { namespace impl
 
         for(std::size_t c(0); c<chars; ++c)
         {
-            std::uint8_t u = _data._by8[c/2];
+            std::uint8_t u = _data[c/2];
             if(c & 1)
             {
                 u &= 0x0f;
@@ -65,12 +90,12 @@ namespace dci { namespace couple { namespace runtime { namespace impl
 
     bool Sign::fromHex(const std::string &txt)
     {
-        if(txt.size() < 64)
+        if(txt.size() < _size*2)
         {
             return false;
         }
 
-        for(std::size_t i(0); i<32; ++i)
+        for(std::size_t i(0); i<_size; ++i)
         {
             unsigned int h = static_cast<unsigned char>(txt[i*2+0]);
             unsigned int l = static_cast<unsigned char>(txt[i*2+1]);
@@ -85,10 +110,20 @@ namespace dci { namespace couple { namespace runtime { namespace impl
             else if(l >= '0' && l <='9') l -= '0';
             else return false;
 
-            _data._by8[i] = h<<4 | l;
+            _data[i] = h<<4 | l;
         }
 
         return true;
+    }
+
+    void Sign::fromRnd()
+    {
+        static std::random_device rd;
+        std::uniform_int_distribution<std::uint8_t> dist;
+        for(std::size_t i(0); i<_size; ++i)
+        {
+            _data[i] = dist(rd);
+        }
     }
 
 }}}}

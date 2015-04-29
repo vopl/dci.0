@@ -1,47 +1,33 @@
 #include <dci/site/moduleEntry.hpp>
 #include <dci/logger/logger.hpp>
 
-#include "talk.hpp"
+#include "net.hpp"
+
+struct Info
+    : dci::site::ModuleInfo
+{
+    Info()
+    {
+        _provider = "dci";
+        _id.fromHex("8785599b2e858e7d0f55a888b87127ed");
+        //_serviceIds;
+
+        _revision = 1;
+        _name = "example";
+        _description = "example or victim module";
+        //_tags;
+
+        //_requiredServiceIds;
+        //_requiredModuleIds;
+    }
+
+} info;
 
 struct Entry
     : dci::site::ModuleEntry
 {
     Entry()
     {
-        talk::Peer p;
-        talk::PeerOpposite op(p);
-
-
-
-
-        op.setId().connect([](dci::couple::runtime::call::ValuePorter<talk::Peer::Id> &&id)->dci::async::Future<dci::couple::runtime::call::Error>{
-
-            (void)id;
-            return dci::async::Future<dci::couple::runtime::call::Error>();
-        });
-
-        op.setStatus().connect([](const talk::Peer::Status &s){
-
-            (void)s;
-            return dci::async::Future<dci::couple::runtime::call::Error>();
-        });
-
-
-        talk::Peer::Id id;
-
-        dci::async::Future<dci::couple::runtime::call::Error> f = p.setId(std::move(id));
-
-        if(f.hasError())
-        {
-            LOGT(f.error());
-        }
-
-        f = p.setStatus(talk::Peer::Status::busy);
-
-        if(f.hasError())
-        {
-            LOGT(f.error());
-        }
     }
 
     ~Entry()
@@ -50,7 +36,7 @@ struct Entry
 
     const dci::site::ModuleInfo &getInfo() override
     {
-        assert(0);
+        return info;
     }
 
     dci::async::Future<std::error_code> install(const dci::site::ModulePlace &place) override
@@ -77,9 +63,14 @@ struct Entry
         return dci::async::Future<std::error_code>();
     }
 
-    dci::async::Future<std::error_code> start(const dci::site::ModulePlace &place) override
+    dci::async::Future<std::error_code> start(dci::site::Instance &site, const dci::site::ModulePlace &place) override
     {
         (void)place;
+
+        auto netHost = site.getServiceInstance<net::Host>();
+
+        netHost.wait();
+
         return dci::async::Future<std::error_code>();
     }
 

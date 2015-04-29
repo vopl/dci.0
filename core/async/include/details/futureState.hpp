@@ -14,6 +14,17 @@ namespace dci { namespace async
 
 namespace dci { namespace async { namespace details
 {
+
+    template <class E, class... T>
+    struct FutureThenBase
+    {
+        FutureThenBase *_next;
+        virtual void call(E *err, T *... vals) = 0;
+        virtual void destroy() = 0;
+    };
+
+
+    /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
     template <class E, class... T>
     struct FutureState
     {
@@ -33,6 +44,21 @@ namespace dci { namespace async { namespace details
         Value &value();
         E &error();
 
+        void pushThen(FutureThenBase<E, T...> *then);
+
+    private:
+        void execThens();
+        void destroyThens();
+
+    private:
+
+        template <std::size_t... indices>
+        static void expandCall(FutureThenBase<E, T...> *then, E &e, std::index_sequence<indices...>);
+
+        template <std::size_t... indices>
+        static void expandCall(FutureThenBase<E, T...> *then, Value &e, std::index_sequence<indices...>);
+
+
     private:
         Event       _readyEvent;
 
@@ -49,6 +75,8 @@ namespace dci { namespace async { namespace details
             error,
             value,
         } _dataState;
+
+        FutureThenBase<E, T...> *_then;
     };
 
     struct FutureStateAccessor
@@ -66,6 +94,7 @@ namespace dci { namespace async { namespace details
     FutureState<E, T...>::FutureState()
         : _readyEvent(false)
         , _dataState(DataState::null)
+        , _then(nullptr)
     {
     }
 
@@ -83,6 +112,7 @@ namespace dci { namespace async { namespace details
         default:
             break;
         }
+        destroyThens();
     }
 
     template <class E, class... T>
@@ -111,6 +141,7 @@ namespace dci { namespace async { namespace details
         new(&_data._place) Value {std::forward<T>(val)...};
         _dataState = DataState::value;
         _readyEvent.set();
+        execThens();
     }
 
     template <class E, class... T>
@@ -120,6 +151,7 @@ namespace dci { namespace async { namespace details
         new(&_data._place) E {std::forward<E>(err)};
         _dataState = DataState::error;
         _readyEvent.set();
+        execThens();
     }
 
     template <class E, class... T>
@@ -139,4 +171,66 @@ namespace dci { namespace async { namespace details
     {
         return *reinterpret_cast<E*>(&_data._place);
     }
+
+    template <class E, class... T>
+    void FutureState<E, T...>::pushThen(FutureThenBase<E, T...> *then)
+    {
+        then->_next = _then;
+        _then = then;
+
+        if(DataState::null != _dataState)
+        {
+            execThens();
+        }
+    }
+
+    template <class E, class... T>
+    void FutureState<E, T...>::execThens()
+    {
+        while(_then)
+        {
+            FutureThenBase<E, T...> *then = _then;
+            _then = _then->_next;
+
+            switch(_dataState)
+            {
+            case DataState::value:
+                expandCall(then, value(), std::index_sequence_for<T...>());
+                break;
+            case DataState::error:
+                expandCall(then, error(), std::index_sequence_for<T...>());
+                break;
+            default:
+                break;
+            }
+
+            then->destroy();
+        }
+    }
+
+    template <class E, class... T>
+    void FutureState<E, T...>::destroyThens()
+    {
+        while(_then)
+        {
+            FutureThenBase<E, T...> *then = _then;
+            _then = _then->_next;
+            then->destroy();
+        }
+    }
+
+    template <class E, class... T>
+    template <std::size_t... indices>
+    void FutureState<E, T...>::expandCall(FutureThenBase<E, T...> *then, E &e, std::index_sequence<indices...>)
+    {
+        then->call(&e, (std::tuple_element_t<indices, Value> *)nullptr...);
+    }
+
+    template <class E, class... T>
+    template <std::size_t... indices>
+    void FutureState<E, T...>::expandCall(FutureThenBase<E, T...> *then, Value &v, std::index_sequence<indices...>)
+    {
+        then->call(nullptr, &std::get<indices>(v)...);
+    }
+
 }}}

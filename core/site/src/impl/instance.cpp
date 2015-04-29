@@ -166,7 +166,7 @@ namespace dci { namespace site { namespace impl
             {
                 if(fs::is_directory(*diter))
                 {
-                    ModulePtr c{new Module};
+                    ModulePtr c{new Module{this}};
                     std::error_code ec = c->attach(diter->path().string());
                     if(ec)
                     {
