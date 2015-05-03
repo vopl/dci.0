@@ -1,4 +1,4 @@
-#include <endpoint.hpp>
+#include <dci/io/endpoint.hpp>
 #include <boost/spirit/include/qi.hpp>
 
 #include <string>

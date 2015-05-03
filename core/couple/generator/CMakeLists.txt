@@ -6,7 +6,7 @@ project(${PROJECT})
 
 ############################################################
 set(INC
-    include/executor.hpp
+    include/dci/couple/generator/executor.hpp
 )
 
 
@@ -62,5 +62,5 @@ target_link_libraries(${PROJECT} ${Boost_FILESYSTEM_LIBRARY} ${Boost_SYSTEM_LIBR
 
 
 if(COMMAND localinstall)
-    localinstall(${PROJECT} include/dci/couple/generator DROP_PREFIX include/ ${INC})
+    localinstall(${PROJECT} include DROP_PREFIX include/ ${INC})
 endif()

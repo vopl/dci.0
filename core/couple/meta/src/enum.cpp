@@ -1,4 +1,4 @@
-#include <enum.hpp>
+#include <dci/couple/meta/enum.hpp>
 #include "impl/enum.hpp"
 namespace dci { namespace couple { namespace meta
 {

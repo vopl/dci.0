@@ -1,6 +1,6 @@
 
 #include "stream.hpp"
-#include <stream.hpp>
+#include <dci/io/stream.hpp>
 
 #include <sys/socket.h>
 #include <sys/types.h>

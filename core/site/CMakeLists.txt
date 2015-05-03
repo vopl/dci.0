@@ -3,13 +3,13 @@ set(PROJECT dci-site)
 project(${PROJECT})
 
 set(INC
-    include/error.hpp
-    include/instance.hpp
-    include/moduleId.hpp
-    include/modulePlace.hpp
-    include/moduleEntry.hpp
-    include/moduleInfo.hpp
-    include/layoutProvider.hpp
+    include/dci/site/error.hpp
+    include/dci/site/instance.hpp
+    include/dci/site/moduleId.hpp
+    include/dci/site/modulePlace.hpp
+    include/dci/site/moduleEntry.hpp
+    include/dci/site/moduleInfo.hpp
+    include/dci/site/layoutProvider.hpp
 )
 
 set(SRC
@@ -53,7 +53,7 @@ set_property(TARGET ${PROJECT} PROPERTY CXX_STANDARD_REQUIRED ON)
 include(DciHimpl)
 mkHimplLayouts(${PROJECT}
     OUTPUT
-        ${CMAKE_CURRENT_SOURCE_DIR}/include/layoutProvider.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/dci/site/layoutProvider.hpp
 
     HEADERS
         ${CMAKE_CURRENT_SOURCE_DIR}/src/impl/modulePlace.hpp
@@ -76,6 +76,6 @@ target_link_libraries(${PROJECT}
 )
 
 if(COMMAND localinstall)
-    localinstall(${PROJECT} include/dci/site DROP_PREFIX include/ ${INC})
+    localinstall(${PROJECT} include DROP_PREFIX include/ ${INC})
     localinstall(${PROJECT} share/cmake/Modules DciDefineModule.cmake)
 endif()

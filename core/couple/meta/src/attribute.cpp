@@ -1,6 +1,6 @@
-#include <attribute.hpp>
+#include <dci/couple/meta/attribute.hpp>
 #include "impl/attribute.hpp"
-#include <type.hpp>
+#include <dci/couple/meta/type.hpp>
 #include "impl/type.hpp"
 
 namespace dci { namespace couple { namespace meta

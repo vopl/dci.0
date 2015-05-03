@@ -1,5 +1,5 @@
 #include "loop.hpp"
-#include <error.hpp>
+#include <dci/io/error.hpp>
 #include <dci/async/functions.hpp>
 
 #include <cassert>

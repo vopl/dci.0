@@ -1,6 +1,6 @@
 #pragma once
 
-#include <executor.hpp>
+#include <dci/couple/generator/executor.hpp>
 #include "out.hpp"
 
 namespace dci { namespace couple { namespace generator { namespace impl

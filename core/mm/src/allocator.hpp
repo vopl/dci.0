@@ -1,7 +1,7 @@
 #pragma once
 
-#include <config.hpp>
-#include <stack.hpp>
+#include <dci/mm/config.hpp>
+#include <dci/mm/stack.hpp>
 
 #include "allocator/blocksHolder.hpp"
 #include "allocator/bitIndex.hpp"

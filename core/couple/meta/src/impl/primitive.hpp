@@ -2,7 +2,7 @@
 
 #include "type.hpp"
 #include "signed.hpp"
-#include <primitive.hpp>
+#include <dci/couple/meta/primitive.hpp>
 
 namespace dci { namespace couple { namespace meta { namespace impl
 {

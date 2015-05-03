@@ -2,7 +2,7 @@
 
 #include <dci/himpl/faceLayout.hpp>
 #include <dci/himpl/layoutProvider.hpp>
-#include LAYOUTPROVIDERFILE(<layoutProvider.hpp>)
+#include LAYOUTPROVIDERFILE(<dci/io/layoutProvider.hpp>)
 
 #include <string>
 

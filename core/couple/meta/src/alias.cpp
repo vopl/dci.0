@@ -1,4 +1,4 @@
-#include <alias.hpp>
+#include <dci/couple/meta/alias.hpp>
 #include "impl/alias.hpp"
 
 namespace dci { namespace couple { namespace meta

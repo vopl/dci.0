@@ -1,5 +1,5 @@
 #include "writer.hpp"
-#include <error.hpp>
+#include <dci/io/error.hpp>
 
 #include <sys/uio.h>
 

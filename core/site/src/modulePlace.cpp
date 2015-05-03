@@ -1,4 +1,4 @@
-#include <modulePlace.hpp>
+#include <dci/site/modulePlace.hpp>
 #include "impl/modulePlace.hpp"
 
 namespace dci { namespace site

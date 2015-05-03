@@ -4,23 +4,23 @@ project(${PROJECT})
 
 ############################################################
 set(INC
-    include/error.hpp
-    include/idl.hpp
+    include/dci/couple/runtime/error.hpp
+    include/dci/couple/runtime/idl.hpp
 
-    include/sign.hpp
-    include/signBuilder.hpp
-    include/hub.hpp
-    include/identifier.hpp
-    include/iface.hpp
-    include/ifaceId.hpp
-    include/ifaceWire.hpp
+    include/dci/couple/runtime/sign.hpp
+    include/dci/couple/runtime/signBuilder.hpp
+    include/dci/couple/runtime/hub.hpp
+    include/dci/couple/runtime/identifier.hpp
+    include/dci/couple/runtime/iface.hpp
+    include/dci/couple/runtime/ifaceId.hpp
+    include/dci/couple/runtime/ifaceWire.hpp
 
-    include/call/error.hpp
-    include/call/valuePorter.hpp
-    include/call/signal.hpp
-    include/call/wire.hpp
+    include/dci/couple/runtime/call/error.hpp
+    include/dci/couple/runtime/call/valuePorter.hpp
+    include/dci/couple/runtime/call/signal.hpp
+    include/dci/couple/runtime/call/wire.hpp
 
-    include/layoutProvider.hpp
+    include/dci/couple/runtime/layoutProvider.hpp
 )
 
 
@@ -71,7 +71,7 @@ target_link_libraries(${PROJECT}
 include(DciHimpl)
 mkHimplLayouts(${PROJECT}
     OUTPUT
-        ${CMAKE_CURRENT_SOURCE_DIR}/include/layoutProvider.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/dci/couple/runtime/layoutProvider.hpp
 
     HEADERS
         ${CMAKE_CURRENT_SOURCE_DIR}/src/impl/hub.hpp
@@ -89,5 +89,5 @@ mkHimplLayouts(${PROJECT}
 
 
 if(COMMAND localinstall)
-    localinstall(${PROJECT} include/dci/couple/runtime DROP_PREFIX include/ ${INC})
+    localinstall(${PROJECT} include DROP_PREFIX include/ ${INC})
 endif()

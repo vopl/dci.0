@@ -1,4 +1,4 @@
-#include <iface.hpp>
+#include <dci/couple/meta/iface.hpp>
 #include "impl/iface.hpp"
 #include <cassert>
 

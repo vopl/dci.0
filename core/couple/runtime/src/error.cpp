@@ -1,4 +1,4 @@
-#include <error.hpp>
+#include <dci/couple/runtime/error.hpp>
 
 namespace dci { namespace couple { namespace runtime { namespace error
 {

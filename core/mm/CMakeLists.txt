@@ -7,11 +7,11 @@ cmake_minimum_required(VERSION 3.1.0 FATAL_ERROR)
 
 ############################################################
 set(INC
-    include/functions.hpp
-    include/config.hpp
-    include/stack.hpp
-    include/sharedInstance.hpp
-    include/newDelete.hpp
+    include/dci/mm/functions.hpp
+    include/dci/mm/config.hpp
+    include/dci/mm/stack.hpp
+    include/dci/mm/sharedInstance.hpp
+    include/dci/mm/newDelete.hpp
 )
 
 ############################################################
@@ -76,5 +76,5 @@ set_target_properties(${PROJECT} PROPERTIES CXX_STANDARD_REQUIRED ON)
 
 
 if(COMMAND localinstall)
-    localinstall(${PROJECT} include/dci/mm DROP_PREFIX include/ ${INC})
+    localinstall(${PROJECT} include DROP_PREFIX include/ ${INC})
 endif()

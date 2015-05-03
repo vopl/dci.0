@@ -1,4 +1,4 @@
-#include <struct.hpp>
+#include <dci/couple/meta/struct.hpp>
 #include "impl/struct.hpp"
 
 namespace dci { namespace couple { namespace meta

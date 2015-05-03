@@ -2,7 +2,7 @@
 
 #include <dci/himpl/layoutProvider.hpp>
 
-#include "predecl.hpp"
+#include "/home/vopl/projects/dci/core/couple/meta/include/dci/couple/meta/predecl.hpp"
 
 namespace dci { namespace himpl {
     template <> struct LayoutProvider< ::dci::couple::meta::impl::Alias > { static const std::size_t _size=56; static const std::size_t _align=8; static const bool _polymorphic=0; };

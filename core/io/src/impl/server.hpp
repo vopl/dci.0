@@ -1,9 +1,9 @@
 #pragma once
 
-#include <endpoint.hpp>
+#include <dci/io/endpoint.hpp>
 #include <system_error>
 #include <dci/async/future.hpp>
-#include <stream.hpp>
+#include <dci/io/stream.hpp>
 #include <dci/mm/newDelete.hpp>
 
 

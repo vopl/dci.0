@@ -1,4 +1,4 @@
-#include <errorInfo.hpp>
+#include <dci/couple/parser/errorInfo.hpp>
 
 namespace dci { namespace couple { namespace parser
 {

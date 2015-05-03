@@ -6,35 +6,35 @@ project(${PROJECT})
 
 ############################################################
 set(INC
-    include/alias.hpp
-    include/array.hpp
-    include/attribute.hpp
-    include/compound.hpp
-    include/container1.hpp
-    include/container2.hpp
-    include/enum.hpp
-    include/enumValue.hpp
-    include/iface.hpp
-    include/inheritable.hpp
-    include/list.hpp
-    include/map.hpp
-    include/method.hpp
-    include/ptr.hpp
-    include/primitive.hpp
-    include/scope.hpp
-    include/set.hpp
-    include/struct.hpp
-    include/named.hpp
-    include/scoped.hpp
-    include/signed.hpp
-    include/type.hpp
-    include/variant.hpp
+    include/dci/couple/meta/alias.hpp
+    include/dci/couple/meta/array.hpp
+    include/dci/couple/meta/attribute.hpp
+    include/dci/couple/meta/compound.hpp
+    include/dci/couple/meta/container1.hpp
+    include/dci/couple/meta/container2.hpp
+    include/dci/couple/meta/enum.hpp
+    include/dci/couple/meta/enumValue.hpp
+    include/dci/couple/meta/iface.hpp
+    include/dci/couple/meta/inheritable.hpp
+    include/dci/couple/meta/list.hpp
+    include/dci/couple/meta/map.hpp
+    include/dci/couple/meta/method.hpp
+    include/dci/couple/meta/ptr.hpp
+    include/dci/couple/meta/primitive.hpp
+    include/dci/couple/meta/scope.hpp
+    include/dci/couple/meta/set.hpp
+    include/dci/couple/meta/struct.hpp
+    include/dci/couple/meta/named.hpp
+    include/dci/couple/meta/scoped.hpp
+    include/dci/couple/meta/signed.hpp
+    include/dci/couple/meta/type.hpp
+    include/dci/couple/meta/variant.hpp
 
-    include/layoutProvider.hpp
-    include/predecl.hpp
+    include/dci/couple/meta/layoutProvider.hpp
+    include/dci/couple/meta/predecl.hpp
 
-    include/library.hpp
-    include/libraryBuilder.hpp
+    include/dci/couple/meta/library.hpp
+    include/dci/couple/meta/libraryBuilder.hpp
 )
 
 ############################################################
@@ -149,7 +149,7 @@ set_property(TARGET ${PROJECT} PROPERTY CXX_STANDARD_REQUIRED ON)
 include(DciHimpl)
 mkHimplLayouts(${PROJECT}
     OUTPUT
-        ${CMAKE_CURRENT_SOURCE_DIR}/include/layoutProvider.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/dci/couple/meta/layoutProvider.hpp
 
     HEADERS
         ${CMAKE_CURRENT_SOURCE_DIR}/src/impl/alias.hpp
@@ -179,7 +179,7 @@ mkHimplLayouts(${PROJECT}
         ${CMAKE_CURRENT_SOURCE_DIR}/src/impl/libraryBuilder.hpp
 
     PREDECL
-        predecl.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/dci/couple/meta/predecl.hpp
 
     CLASSES
         ::dci::couple::meta::impl::Alias
@@ -222,7 +222,7 @@ mkHimplLayouts(${PROJECT}
 
 
 if(COMMAND localinstall)
-    localinstall(${PROJECT} include/dci/couple/meta DROP_PREFIX include/ ${INC})
+    localinstall(${PROJECT} include DROP_PREFIX include/ ${INC})
 endif()
 
 

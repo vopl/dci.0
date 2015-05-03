@@ -1,4 +1,4 @@
-#include <method.hpp>
+#include <dci/couple/meta/method.hpp>
 #include "impl/method.hpp"
 
 namespace dci { namespace couple { namespace meta

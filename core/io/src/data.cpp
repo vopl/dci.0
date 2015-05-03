@@ -1,6 +1,6 @@
 #include <dci/himpl/layoutProvider.hpp>
-#include LAYOUTPROVIDERFILE(<layoutProvider.hpp>)
-#include <data.hpp>
+#include LAYOUTPROVIDERFILE(<dci/io/layoutProvider.hpp>)
+#include <dci/io/data.hpp>
 #include "impl/data.hpp"
 #include <cstring>
 

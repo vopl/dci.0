@@ -1,7 +1,7 @@
-#include <compound.hpp>
+#include <dci/couple/meta/compound.hpp>
 #include "impl/compound.hpp"
-#include <scope.hpp>
-#include <type.hpp>
+#include <dci/couple/meta/scope.hpp>
+#include <dci/couple/meta/type.hpp>
 
 namespace dci { namespace couple { namespace meta
 {

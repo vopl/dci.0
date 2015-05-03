@@ -1,4 +1,4 @@
-#include <ifaceWire.hpp>
+#include <dci/couple/runtime/ifaceWire.hpp>
 #include <cassert>
 
 namespace dci { namespace couple { namespace runtime

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "details/task.hpp"
+#include <dci/async/details/task.hpp>
 #include <thread>
 
 namespace dci { namespace async { namespace impl

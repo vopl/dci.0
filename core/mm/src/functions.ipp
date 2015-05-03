@@ -1,6 +1,6 @@
 #pragma once
 
-#include <functions.hpp>
+#include <dci/mm/functions.hpp>
 
 #include "allocator.hpp"
 #include "system.hpp"

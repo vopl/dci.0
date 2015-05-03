@@ -2,9 +2,9 @@
 
 #include <dci/couple/runtime/iface.hpp>
 #include "moduleState.hpp"
-#include <modulePlace.hpp>
+#include <dci/site/modulePlace.hpp>
 #include "modulePlace.hpp"
-#include <moduleEntry.hpp>
+#include <dci/site/moduleEntry.hpp>
 
 #include <dci/async/future.hpp>
 

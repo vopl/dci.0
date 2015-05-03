@@ -1,4 +1,4 @@
-#include <scope.hpp>
+#include <dci/couple/meta/scope.hpp>
 #include "impl/scope.hpp"
 #include <cassert>
 

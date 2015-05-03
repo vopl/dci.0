@@ -1,6 +1,6 @@
 #pragma once
 
-#include <endpoint.hpp>
+#include <dci/io/endpoint.hpp>
 
 #include <type_traits>
 #include <netinet/in.h>

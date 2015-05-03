@@ -1,4 +1,4 @@
-#include <error.hpp>
+#include <dci/io/error.hpp>
 
 namespace dci { namespace io { namespace error
 {

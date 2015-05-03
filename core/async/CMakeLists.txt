@@ -132,18 +132,18 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
 ############################################################
 set(INC
-    include/functions.hpp
-    include/mutex.hpp
-    include/event.hpp
-    include/acquire.hpp
-    include/future.hpp
-    include/promise.hpp
-    include/details/futureState.hpp
-    include/details/task.hpp
-    include/details/taskInstance.hpp
-    include/details/taskPromiseProcessor.hpp
-    include/details/acquire.hpp
-    include/layoutProvider.hpp
+    include/dci/async/functions.hpp
+    include/dci/async/mutex.hpp
+    include/dci/async/event.hpp
+    include/dci/async/acquire.hpp
+    include/dci/async/future.hpp
+    include/dci/async/promise.hpp
+    include/dci/async/details/futureState.hpp
+    include/dci/async/details/task.hpp
+    include/dci/async/details/taskInstance.hpp
+    include/dci/async/details/taskPromiseProcessor.hpp
+    include/dci/async/details/acquire.hpp
+    include/dci/async/layoutProvider.hpp
 )
 
 ############################################################
@@ -260,7 +260,7 @@ target_link_libraries(${PROJECT} ${Boost_SYSTEM_LIBRARY})
 include(DciHimpl)
 mkHimplLayouts(${PROJECT}
     OUTPUT
-        ${CMAKE_CURRENT_SOURCE_DIR}/include/layoutProvider.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/dci/async/layoutProvider.hpp
 
     HEADERS
         ${CMAKE_CURRENT_SOURCE_DIR}/src/impl/scheduler.hpp
@@ -280,7 +280,7 @@ mkHimplLayouts(${PROJECT}
 
 
 if(COMMAND localinstall)
-    localinstall(${PROJECT} include/dci/async DROP_PREFIX include/ ${INC})
+    localinstall(${PROJECT} include DROP_PREFIX include/ ${INC})
 endif()
 
 

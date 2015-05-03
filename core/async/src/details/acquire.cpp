@@ -1,4 +1,4 @@
-#include <details/acquire.hpp>
+#include <dci/async/details/acquire.hpp>
 #include "../impl/mutex.hpp"
 #include "../impl/event.hpp"
 #include "../impl/syncronizerWaiter.hpp"

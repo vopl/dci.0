@@ -1,4 +1,4 @@
-#include <inheritable.hpp>
+#include <dci/couple/meta/inheritable.hpp>
 #include "impl/inheritable.hpp"
 
 namespace dci { namespace couple { namespace meta

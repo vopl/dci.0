@@ -1,4 +1,4 @@
-#include <errorInfo.hpp>
+#include <dci/couple/parser/errorInfo.hpp>
 #include "../ast.hpp"
 #include <dci/couple/meta/libraryBuilder.hpp>
 #include <algorithm>

@@ -2,7 +2,7 @@
 
 #include <dci/async/future.hpp>
 #include "base.hpp"
-#include <endpoint.hpp>
+#include <dci/io/endpoint.hpp>
 #include <dci/mm/newDelete.hpp>
 
 #include <system_error>

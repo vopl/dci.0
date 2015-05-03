@@ -4,7 +4,7 @@
 #include "compound.hpp"
 #include "attribute.hpp"
 #include "type.hpp"
-#include <method.hpp>
+#include <dci/couple/meta/method.hpp>
 
 namespace dci { namespace couple { namespace meta { namespace impl
 {

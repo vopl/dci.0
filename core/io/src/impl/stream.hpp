@@ -1,7 +1,7 @@
 #pragma once
 
 #include <dci/async/future.hpp>
-#include <data.hpp>
+#include <dci/io/data.hpp>
 #include <system_error>
 
 namespace dci { namespace io { namespace impl

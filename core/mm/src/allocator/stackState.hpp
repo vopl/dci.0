@@ -1,8 +1,7 @@
 #pragma once
 
-#include <config.hpp>
-
-#include <stack.hpp>
+#include <dci/mm/config.hpp>
+#include <dci/mm/stack.hpp>
 
 namespace dci { namespace mm { namespace allocator
 {

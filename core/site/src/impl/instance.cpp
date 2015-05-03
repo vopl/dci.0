@@ -1,5 +1,5 @@
 #include "instance.hpp"
-#include <error.hpp>
+#include <dci/site/error.hpp>
 #include <dci/io/loop.hpp>
 #include <dci/async/acquire.hpp>
 #include <dci/async/functions.hpp>

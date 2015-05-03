@@ -16,9 +16,9 @@ include_directories(${Boost_INCLUDE_DIRS})
 
 ############################################################
 set(INC
-    include/exec.hpp
-    include/config.hpp
-    include/errorInfo.hpp
+    include/dci/couple/parser/exec.hpp
+    include/dci/couple/parser/config.hpp
+    include/dci/couple/parser/errorInfo.hpp
 
 )
 
@@ -112,5 +112,5 @@ include(DciPch)
 use_pch(${PROJECT} ${CMAKE_CURRENT_SOURCE_DIR}/src/pch.hpp ${SRC})
 
 if(COMMAND localinstall)
-    localinstall(${PROJECT} include/dci/couple/parser DROP_PREFIX include/ ${INC})
+    localinstall(${PROJECT} include DROP_PREFIX include/ ${INC})
 endif()

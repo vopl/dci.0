@@ -1,5 +1,5 @@
 
-#include <loop.hpp>
+#include <dci/io/loop.hpp>
 #include "impl/loop.hpp"
 
 namespace dci { namespace io { namespace loop

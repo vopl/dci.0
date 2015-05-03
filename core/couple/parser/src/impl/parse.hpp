@@ -1,7 +1,7 @@
 #pragma once
 
-#include <config.hpp>
-#include <errorInfo.hpp>
+#include <dci/couple/parser/config.hpp>
+#include <dci/couple/parser/errorInfo.hpp>
 #include "ast.hpp"
 #include "parseState.hpp"
 

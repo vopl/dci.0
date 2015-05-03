@@ -1,4 +1,4 @@
-#include <mutex.hpp>
+#include <dci/async/mutex.hpp>
 #include "impl/mutex.hpp"
 
 namespace dci { namespace async

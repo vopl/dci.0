@@ -6,16 +6,16 @@ project(${PROJECT})
 
 ############################################################
 set(INC
-    include/loop.hpp
-    include/stream.hpp
-    include/server.hpp
-    include/client.hpp
-    include/endpoint.hpp
-    include/poller.hpp
-    include/timer.hpp
-    include/data.hpp
-    include/error.hpp
-    include/layoutProvider.hpp
+    include/dci/io/loop.hpp
+    include/dci/io/stream.hpp
+    include/dci/io/server.hpp
+    include/dci/io/client.hpp
+    include/dci/io/endpoint.hpp
+    include/dci/io/poller.hpp
+    include/dci/io/timer.hpp
+    include/dci/io/data.hpp
+    include/dci/io/error.hpp
+    include/dci/io/layoutProvider.hpp
 )
 
 ############################################################
@@ -87,7 +87,7 @@ target_link_libraries(${PROJECT}
 include(DciHimpl)
 mkHimplLayouts(${PROJECT}
     OUTPUT
-        ${CMAKE_CURRENT_SOURCE_DIR}/include/layoutProvider.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/dci/io/layoutProvider.hpp
 
     HEADERS
         ${CMAKE_CURRENT_SOURCE_DIR}/src/impl/stream.hpp
@@ -105,5 +105,5 @@ mkHimplLayouts(${PROJECT}
 
 
 if(COMMAND localinstall)
-    localinstall(${PROJECT} include/dci/io DROP_PREFIX include/ ${INC})
+    localinstall(${PROJECT} include DROP_PREFIX include/ ${INC})
 endif()

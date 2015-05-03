@@ -1,4 +1,4 @@
-#include <array.hpp>
+#include <dci/couple/meta/array.hpp>
 #include "impl/array.hpp"
 
 #include <type_traits>

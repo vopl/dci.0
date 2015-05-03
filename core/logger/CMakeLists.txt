@@ -4,7 +4,7 @@ project(${PROJECT})
 
 ############################################################
 set(INC
-    include/logger.hpp
+    include/dci/logger/logger.hpp
 )
 
 set(SRC
@@ -17,7 +17,7 @@ add_library(${PROJECT} SHARED
 
 
 if(COMMAND localinstall)
-    localinstall(${PROJECT} include/dci/logger DROP_PREFIX include/ ${INC})
+    localinstall(${PROJECT} include DROP_PREFIX include/ ${INC})
 endif()
 
 

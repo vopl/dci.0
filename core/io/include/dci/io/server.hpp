@@ -1,8 +1,8 @@
 #pragma once
 
-#include <endpoint.hpp>
+#include <dci/io/endpoint.hpp>
 #include <dci/async/future.hpp>
-#include <stream.hpp>
+#include <dci/io/stream.hpp>
 
 #include <system_error>
 

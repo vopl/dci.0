@@ -1,5 +1,5 @@
 #include "module.hpp"
-#include <error.hpp>
+#include <dci/site/error.hpp>
 #include <dci/logger/logger.hpp>
 #include <dci/async/functions.hpp>
 

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <libraryBuilder.hpp>
+#include <dci/couple/meta/libraryBuilder.hpp>
 #include "libraryContent.hpp"
 
 namespace dci { namespace couple { namespace meta { namespace impl

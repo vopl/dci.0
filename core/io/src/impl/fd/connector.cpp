@@ -1,8 +1,8 @@
 #include "connector.hpp"
 #include "stream.hpp"
 #include "../stream.hpp"
-#include <stream.hpp>
-#include <error.hpp>
+#include <dci/io/stream.hpp>
+#include <dci/io/error.hpp>
 #include "../utils/sockaddr.hpp"
 
 #include <unistd.h>

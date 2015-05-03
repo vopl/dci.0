@@ -1,6 +1,6 @@
 #pragma once
 
-#include <config.hpp>
+#include <dci/mm/config.hpp>
 
 #include "../utils/intrusiveDeque.hpp"
 

@@ -1,6 +1,6 @@
 #include "stream.hpp"
 #include "fd/stream.hpp"
-#include <error.hpp>
+#include <dci/io/error.hpp>
 
 namespace dci { namespace io { namespace impl
 {

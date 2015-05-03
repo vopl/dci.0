@@ -2,8 +2,8 @@
 
 #include "dci/async/future.hpp"
 #include <system_error>
-#include <stream.hpp>
-#include <endpoint.hpp>
+#include <dci/io/stream.hpp>
+#include <dci/io/endpoint.hpp>
 
 namespace dci { namespace io { namespace impl
 {

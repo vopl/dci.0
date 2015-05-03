@@ -1,6 +1,6 @@
-#include <libraryBuilder.hpp>
+#include <dci/couple/meta/libraryBuilder.hpp>
 #include "impl/libraryBuilder.hpp"
-#include <library.hpp>
+#include <dci/couple/meta/library.hpp>
 #include "impl/library.hpp"
 
 namespace dci { namespace couple { namespace meta

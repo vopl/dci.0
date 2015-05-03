@@ -1,6 +1,6 @@
 #include <dci/himpl/layoutProvider.hpp>
-#include LAYOUTPROVIDERFILE(<layoutProvider.hpp>)
-#include <stream.hpp>
+#include LAYOUTPROVIDERFILE(<dci/io/layoutProvider.hpp>)
+#include <dci/io/stream.hpp>
 #include "impl/stream.hpp"
 
 namespace dci { namespace io

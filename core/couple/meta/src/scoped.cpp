@@ -1,7 +1,7 @@
-#include <scoped.hpp>
+#include <dci/couple/meta/scoped.hpp>
 #include "impl/scoped.hpp"
 
-#include <scope.hpp>
+#include <dci/couple/meta/scope.hpp>
 #include "impl/scope.hpp"
 
 namespace dci { namespace couple { namespace meta
