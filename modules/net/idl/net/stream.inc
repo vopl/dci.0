@@ -4,39 +4,39 @@ scope stream
     /////////////////////////////////////////////////////////
     iface Host
     {
-        in Server mkServer();
-        in Client mkClient();
+        out Server mkServer();
+        out Client mkClient();
     }
 
     /////////////////////////////////////////////////////////
     iface Server
     {
-        in void bind(Address v);
-        in void listen();
-        in Stream accept();
-        out void accepted(Stream v);
-        in void close();
+        out void bind(Address v);
+        out void listen();
+        out Stream accept();
+        in void accepted(Stream v);
+        out void close();
     }
 
     /////////////////////////////////////////////////////////
     iface Client
     {
-        in void bind(Address v);
-        in Stream connect(Address v);
-        in void abort();
+        out void bind(Address v);
+        out Stream connect(Address v);
+        out void abort();
     }
 
     /////////////////////////////////////////////////////////
     iface Stream
     {
-        in Address ownAddress();
-        in Address peerAddress();
+        out Address ownAddress();
+        out Address peerAddress();
         
-        in Data read();
-        out void readed(Data v);
+        out Data read();
+        in void readed(Data v);
         
-        in void write(Data v);
+        out void write(Data v);
         
-        in void close();
+        out void close();
     }
 }

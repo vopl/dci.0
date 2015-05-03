@@ -4,7 +4,7 @@ scope datagram
     /////////////////////////////////////////////////////////
     iface Host
     {
-        in Socket mkSocket();
+        out Socket mkSocket();
     }
 
     /////////////////////////////////////////////////////////
@@ -17,14 +17,14 @@ scope datagram
     /////////////////////////////////////////////////////////
     iface Socket
     {
-        in void bind(Address v);
+        out void bind(Address v);
         
-        in Data receiveData();
-        in Datagram receive();
-        out void received(Datagram v);
+        out Data receiveData();
+        out Datagram receive();
+        in void received(Datagram v);
         
-        in void send(Data d, Address a);
+        out void send(Data d, Address a);
         
-        in void close();
+        out void close();
     }
 }

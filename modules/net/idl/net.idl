@@ -9,33 +9,33 @@ scope net
     /////////////////////////////////////////////////////////
     iface Host
     {
-        in list<Interface> interfaces();
-        out void interfaceAdded(Interface v);
-        out void interfaceRemoved(Interface v);
+        out list<Interface> interfaces();
+        in void interfaceAdded(Interface v);
+        in void interfaceRemoved(Interface v);
 
-        in ip4::stream::Host ip4StreamHost();
-        in ip4::datagram::Host ip4DatagramHost();
+        out ip4::stream::Host ip4StreamHost();
+        out ip4::datagram::Host ip4DatagramHost();
 
-        in ip6::stream::Host ip6StreamHost();
-        in ip6::datagram::Host ip6DatagramHost();
+        out ip6::stream::Host ip6StreamHost();
+        out ip6::datagram::Host ip6DatagramHost();
 
-        in local::stream::Host localStreamHost();
+        out local::stream::Host localStreamHost();
     }
 
     /////////////////////////////////////////////////////////
     iface Interface
     {
-        in uint32 flags();
-        out void flagsChanged();
+        out uint32 flags();
+        in void flagsChanged();
         
-        in string name();
-        out void nameChanged();
+        out string name();
+        in void nameChanged();
         
-        in list<ip4::Interface> ip4Interfaces();
-        out void ip4InterfacesChanged();
+        out list<ip4::Interface> ip4Interfaces();
+        in void ip4InterfacesChanged();
         
-        in list<ip6::Interface> ip6Interfaces();
-        out void ip6InterfacesChanged();
+        out list<ip6::Interface> ip6Interfaces();
+        in void ip6InterfacesChanged();
     }
 
     /////////////////////////////////////////////////////////
