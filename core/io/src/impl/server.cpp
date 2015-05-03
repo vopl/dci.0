@@ -44,6 +44,8 @@ namespace dci { namespace io { namespace impl
     {
         (void)from;
         assert(0);
+
+        return *this;
     }
 
     std::error_code Server::listen(const Endpoint &endpoint)
@@ -105,6 +107,7 @@ namespace dci { namespace io { namespace impl
     std::error_code Server::close()
     {
         assert(0);
+        return std::error_code();
     }
 
     template <class Address>
@@ -169,6 +172,8 @@ namespace dci { namespace io { namespace impl
     {
         (void)address;
         assert(0);
+
+        return std::error_code();
     }
 
     void Server::fdEvent(int typeFlags)

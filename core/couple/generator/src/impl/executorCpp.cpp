@@ -1,6 +1,7 @@
 #include "executorCpp.hpp"
 
 #include <boost/filesystem.hpp>
+#include <iostream>
 #include <cassert>
 
 namespace dci { namespace couple { namespace generator { namespace impl

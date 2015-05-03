@@ -277,6 +277,8 @@ namespace dci { namespace io { namespace impl
     {
         (void)size;
         assert(0);
+
+        return Data();
     }
 
     std::string Data::toString()

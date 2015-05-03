@@ -60,23 +60,28 @@ namespace dci { namespace async { namespace details
 
 
     private:
-        Event       _readyEvent;
-
-        union
+        union Data
         {
-            std::aligned_storage_t<sizeof(E), alignof(E)>   _error;
-            std::aligned_storage_t<sizeof(Value), alignof(Value)>   _value;
-            char _place[1];
-        } _data;
+            E       _error;
+            Value   _value;
+
+            Data();
+            ~Data();
+        };
 
         enum class DataState
         {
             null,
             error,
             value,
-        } _dataState;
+        };
 
-        FutureThenBase<E, T...> *_then;
+    private:
+        Event                       _readyEvent;
+        FutureThenBase<E, T...> *   _then;
+        DataState                   _dataState;
+        Data                        _data;
+
     };
 
     struct FutureStateAccessor
@@ -93,8 +98,9 @@ namespace dci { namespace async { namespace details
     template <class E, class... T>
     FutureState<E, T...>::FutureState()
         : _readyEvent(false)
-        , _dataState(DataState::null)
         , _then(nullptr)
+        , _dataState(DataState::null)
+        , _data()
     {
     }
 
@@ -138,7 +144,7 @@ namespace dci { namespace async { namespace details
     void FutureState<E, T...>::resolveValue(T &&... val)
     {
         assert(!resolved());
-        new(&_data._place) Value {std::forward<T>(val)...};
+        new(&_data._value) Value {std::forward<T>(val)...};
         _dataState = DataState::value;
         _readyEvent.set();
         execThens();
@@ -148,7 +154,7 @@ namespace dci { namespace async { namespace details
     void FutureState<E, T...>::resolveError(E && err)
     {
         assert(!resolved());
-        new(&_data._place) E {std::forward<E>(err)};
+        new(&_data._error) E {std::forward<E>(err)};
         _dataState = DataState::error;
         _readyEvent.set();
         execThens();
@@ -163,13 +169,13 @@ namespace dci { namespace async { namespace details
     template <class E, class... T>
     typename FutureState<E, T...>::Value &FutureState<E, T...>::value()
     {
-        return *reinterpret_cast<Value*>(&_data._place);
+        return _data._value;
     }
 
     template <class E, class... T>
     E &FutureState<E, T...>::error()
     {
-        return *reinterpret_cast<E*>(&_data._place);
+        return _data._error;
     }
 
     template <class E, class... T>
@@ -232,5 +238,16 @@ namespace dci { namespace async { namespace details
     {
         then->call(nullptr, &std::get<indices>(v)...);
     }
+
+    template <class E, class... T>
+    FutureState<E, T...>::Data::Data()
+    {
+    }
+
+    template <class E, class... T>
+    FutureState<E, T...>::Data::~Data()
+    {
+    }
+
 
 }}}

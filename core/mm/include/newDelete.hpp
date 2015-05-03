@@ -12,6 +12,7 @@ namespace dci { namespace mm
         void* operator new(size_t sz)
         {
             assert(sz == sizeof(T));
+            (void)sz;
 
             return ::dci::mm::alloc<sizeof(T)>();
         }
