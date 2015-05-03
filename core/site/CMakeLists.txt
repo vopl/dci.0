@@ -4,7 +4,7 @@ project(${PROJECT})
 
 set(INC
     include/dci/site/error.hpp
-    include/dci/site/instance.hpp
+    include/dci/site/manager.hpp
     include/dci/site/moduleId.hpp
     include/dci/site/modulePlace.hpp
     include/dci/site/moduleEntry.hpp
@@ -15,15 +15,15 @@ set(INC
 set(SRC
     src/main.cpp
     src/error.cpp
-    src/instance.cpp
+    src/manager.cpp
     src/modulePlace.cpp
 
-    src/impl/instance.hpp
+    src/impl/manager.hpp
     src/impl/module.hpp
     src/impl/modulePlace.hpp
     src/impl/moduleState.hpp
 
-    src/impl/instance.cpp
+    src/impl/manager.cpp
     src/impl/module.cpp
     src/impl/modulePlace.cpp
 )
@@ -57,11 +57,11 @@ mkHimplLayouts(${PROJECT}
 
     HEADERS
         ${CMAKE_CURRENT_SOURCE_DIR}/src/impl/modulePlace.hpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/impl/instance.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/impl/manager.hpp
 
     CLASSES
         ::dci::site::impl::ModulePlace
-        ::dci::site::impl::Instance
+        ::dci::site::impl::Manager
 )
 
 

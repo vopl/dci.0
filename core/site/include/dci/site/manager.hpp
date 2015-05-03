@@ -12,15 +12,15 @@ namespace dci { namespace site
 {
     namespace impl
     {
-        class Instance;
+        class Manager;
     }
 
-    class Instance
-        : public himpl::FaceLayout<impl::Instance>
+    class Manager
+        : public himpl::FaceLayout<impl::Manager>
     {
-        Instance() = delete;
-        ~Instance() = delete;
-        void operator=(const Instance &) = delete;
+        Manager() = delete;
+        ~Manager() = delete;
+        void operator=(const Manager &) = delete;
 
     public:
         async::Future<std::error_code, couple::runtime::Iface> getServiceInstance(const couple::runtime::Iid &iid);
@@ -31,7 +31,7 @@ namespace dci { namespace site
 
 
     template <class TIface>
-    async::Future<std::error_code, TIface> Instance::getServiceInstance()
+    async::Future<std::error_code, TIface> Manager::getServiceInstance()
     {
         return getServiceInstance(TIface::_iid).template thenTransform<std::error_code, TIface>([](auto *srcErr, auto *srcValue, auto &dst){
             if(srcErr) dst.resolveError(std::move(*srcErr));

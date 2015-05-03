@@ -1,4 +1,4 @@
-#include "instance.hpp"
+#include "manager.hpp"
 #include <dci/site/error.hpp>
 #include <dci/io/loop.hpp>
 #include <dci/async/acquire.hpp>
@@ -16,7 +16,7 @@ namespace fs = boost::filesystem;
 
 namespace dci { namespace site { namespace impl
 {
-    Instance::Instance()
+    Manager::Manager()
         : _modulesInitialized{false}
         , _modulesLoaded{false}
         , _modulesStarted{false}
@@ -24,11 +24,11 @@ namespace dci { namespace site { namespace impl
     {
     }
 
-    Instance::~Instance()
+    Manager::~Manager()
     {
     }
 
-    std::error_code Instance::run()
+    std::error_code Manager::run()
     {
         switch(_workState)
         {
@@ -76,7 +76,7 @@ namespace dci { namespace site { namespace impl
         return dci::io::loop::run();
     }
 
-    async::Future<std::error_code> Instance::stop()
+    async::Future<std::error_code> Manager::stop()
     {
         switch(_workState)
         {
@@ -144,7 +144,7 @@ namespace dci { namespace site { namespace impl
         });
     }
 
-    std::error_code Instance::initializeModules()
+    std::error_code Manager::initializeModules()
     {
         if(!_modulesInitialized)
         {
@@ -188,7 +188,7 @@ namespace dci { namespace site { namespace impl
         return std::error_code{};
     }
 
-    async::Future<std::error_code> Instance::loadModules()
+    async::Future<std::error_code> Manager::loadModules()
     {
         if(!_modulesLoaded)
         {
@@ -202,7 +202,7 @@ namespace dci { namespace site { namespace impl
         return async::Future<std::error_code>();
     }
 
-    async::Future<std::error_code> Instance::startModules()
+    async::Future<std::error_code> Manager::startModules()
     {
         if(!_modulesStarted)
         {
@@ -216,7 +216,7 @@ namespace dci { namespace site { namespace impl
         return async::Future<std::error_code>();
     }
 
-    async::Future<std::error_code> Instance::stopModules()
+    async::Future<std::error_code> Manager::stopModules()
     {
         if(_modulesStarted)
         {
@@ -230,7 +230,7 @@ namespace dci { namespace site { namespace impl
         return async::Future<std::error_code>();
     }
 
-    async::Future<std::error_code> Instance::unloadModules()
+    async::Future<std::error_code> Manager::unloadModules()
     {
         if(_modulesLoaded)
         {
@@ -244,7 +244,7 @@ namespace dci { namespace site { namespace impl
         return async::Future<std::error_code>();
     }
 
-    std::error_code Instance::deinitializeModules()
+    std::error_code Manager::deinitializeModules()
     {
         if(_modulesInitialized)
         {
@@ -273,7 +273,7 @@ namespace dci { namespace site { namespace impl
     }
 
     template <class F>
-    async::Future<std::error_code> Instance::massModulesOperation(const std::string &name, F operation)
+    async::Future<std::error_code> Manager::massModulesOperation(const std::string &name, F operation)
     {
         return async::spawn([this, name, operation](async::Promise<std::error_code> p) mutable {
 

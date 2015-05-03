@@ -43,7 +43,6 @@ dciUseIdl(${PROJECT}
 
 
 include(DciDefineModule)
-message("${PROJECT}")
 dciDefineModule(net
     MAINTARGET      ${PROJECT}
     IMPLTARGETS

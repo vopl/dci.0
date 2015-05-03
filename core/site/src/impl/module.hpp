@@ -13,7 +13,7 @@
 
 namespace dci { namespace site { namespace impl
 {
-    class Instance;
+    class Manager;
 
     class Module
     {
@@ -21,7 +21,7 @@ namespace dci { namespace site { namespace impl
         static std::string generateManifest(const std::string &mainBinaryFullPath);
 
     public:
-        Module(Instance *site);
+        Module(Manager *site);
         ~Module();
 
         ////////////// identify
@@ -52,7 +52,7 @@ namespace dci { namespace site { namespace impl
         async::Future<std::error_code, couple::runtime::Iface> getServiceInstance(const couple::runtime::Iid &iid);
 
     private:
-        Instance *      _site;
+        Manager *       _manager;
         std::string     _mainBinary;
 
         ModuleState     _state;

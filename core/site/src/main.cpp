@@ -1,6 +1,6 @@
 #include <cstdlib>
 
-#include "impl/instance.hpp"
+#include "impl/manager.hpp"
 #include "impl/module.hpp"
 #include <dci/async/functions.hpp>
 #include <dci/logger/logger.hpp>
@@ -16,7 +16,7 @@
 namespace po = boost::program_options;
 namespace fs = boost::filesystem;
 
-dci::site::impl::Instance *instance = nullptr;
+dci::site::impl::Manager *manager = nullptr;
 
 void signalHandler(int signum)
 {
@@ -24,10 +24,10 @@ void signalHandler(int signum)
     {
     case SIGINT:
     case SIGTERM:
-        if(instance)
+        if(manager)
         {
             dci::async::spawn([](){
-                auto f = instance->stop();
+                auto f = manager->stop();
                 if(f.hasError())
                 {
                     LOGE("stop: "<<f.error());
@@ -133,12 +133,12 @@ int main(int argc, char *argv[])
 
     ////////////////////////////////////////////////////////////////////////////////
     {
-        instance = new dci::site::impl::Instance{};
+        manager = new dci::site::impl::Manager{};
 
         signal(SIGINT,  signalHandler);
         signal(SIGTERM, signalHandler);
 
-        std::error_code ec = instance->run();
+        std::error_code ec = manager->run();
         if(ec)
         {
             LOGE("run: "<<ec);
@@ -147,8 +147,8 @@ int main(int argc, char *argv[])
         signal(SIGINT,  SIG_DFL);
         signal(SIGTERM, SIG_DFL);
 
-        delete instance;
-        instance = nullptr;
+        delete manager;
+        manager = nullptr;
 
         if(ec)
         {

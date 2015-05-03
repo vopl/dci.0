@@ -64,9 +64,9 @@ struct Entry
         return dci::async::Future<std::error_code>();
     }
 
-    dci::async::Future<std::error_code> start(dci::site::Instance &site, const dci::site::ModulePlace &place) override
+    dci::async::Future<std::error_code> start(dci::site::Manager &manager, const dci::site::ModulePlace &place) override
     {
-        (void)site;
+        (void)manager;
         (void)place;
         return dci::async::Future<std::error_code>();
     }

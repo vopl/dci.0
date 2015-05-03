@@ -13,11 +13,11 @@ namespace dci { namespace site { namespace impl
         stopping,
     };
 
-    class Instance
+    class Manager
     {
     public:
-        Instance();
-        ~Instance();
+        Manager();
+        ~Manager();
 
         std::error_code run();
         async::Future<std::error_code> stop();
