@@ -179,7 +179,7 @@ mkHimplLayouts(${PROJECT}
         ${CMAKE_CURRENT_SOURCE_DIR}/src/impl/libraryBuilder.hpp
 
     PREDECL
-        ${CMAKE_CURRENT_SOURCE_DIR}/include/dci/couple/meta/predecl.hpp
+        dci/couple/meta/predecl.hpp
 
     CLASSES
         ::dci::couple::meta::impl::Alias
