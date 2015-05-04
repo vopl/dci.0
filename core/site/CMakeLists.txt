@@ -47,6 +47,7 @@ add_executable(${PROJECT}
     ${INC}  ${SRC}
     DciDefineModule.cmake
 )
+set_property(TARGET ${PROJECT} PROPERTY ENABLE_EXPORTS ON)
 set_property(TARGET ${PROJECT} PROPERTY CXX_STANDARD 14)
 set_property(TARGET ${PROJECT} PROPERTY CXX_STANDARD_REQUIRED ON)
 

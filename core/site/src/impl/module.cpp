@@ -24,6 +24,7 @@ namespace dci { namespace site { namespace impl
         void **ppe = (void **)dlsym(mainBinaryHandle, "dciModuleEntry");
         if(!ppe)
         {
+            dlclose(mainBinaryHandle);
             std::cerr<<"loading module \""<<mainBinaryFullPath<<"\": entry point is absent";
             return std::string();
         }

@@ -14,6 +14,8 @@ function(dciDefineModule name)
         COMMAND dci-site --genmanifest $<TARGET_FILE:${OPTS_MAINTARGET}> >${manifest}
         DEPENDS ${OPTS_MAINTARGET} dci-site)
 
+    target_sources(${OPTS_MAINTARGET} PUBLIC ${manifest})
+
     set_target_properties(${OPTS_MAINTARGET} PROPERTIES LIBRARY_OUTPUT_NAME ${name})
     set_target_properties(${OPTS_MAINTARGET} PROPERTIES PREFIX "")
     set_target_properties(${OPTS_MAINTARGET} PROPERTIES SUFFIX ".main")
