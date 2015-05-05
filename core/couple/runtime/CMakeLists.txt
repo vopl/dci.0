@@ -4,21 +4,18 @@ project(${PROJECT})
 
 ############################################################
 set(INC
+    include/dci/couple/runtime.hpp
     include/dci/couple/runtime/error.hpp
-    include/dci/couple/runtime/idl.hpp
 
     include/dci/couple/runtime/sign.hpp
     include/dci/couple/runtime/signBuilder.hpp
-    include/dci/couple/runtime/hub.hpp
     include/dci/couple/runtime/identifier.hpp
     include/dci/couple/runtime/iface.hpp
     include/dci/couple/runtime/ifaceId.hpp
     include/dci/couple/runtime/ifaceWire.hpp
 
-    include/dci/couple/runtime/call/error.hpp
-    include/dci/couple/runtime/call/valuePorter.hpp
-    include/dci/couple/runtime/call/signal.hpp
-    include/dci/couple/runtime/call/wire.hpp
+    include/dci/couple/runtime/signal.hpp
+    include/dci/couple/runtime/wire.hpp
 
     include/dci/couple/runtime/layoutProvider.hpp
 )
@@ -30,12 +27,8 @@ set(SRC
 
     src/sign.cpp
     src/signBuilder.cpp
-    src/hub.cpp
     src/iface.cpp
     src/ifaceWire.cpp
-
-    src/impl/hub.hpp
-    src/impl/hub.cpp
 
     src/impl/sign.hpp
     src/impl/sign.cpp
@@ -74,12 +67,10 @@ mkHimplLayouts(${PROJECT}
         ${CMAKE_CURRENT_SOURCE_DIR}/include/dci/couple/runtime/layoutProvider.hpp
 
     HEADERS
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/impl/hub.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/impl/sign.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/impl/signBuilder.hpp
 
     CLASSES
-        ::dci::couple::runtime::impl::Hub
         ::dci::couple::runtime::impl::Sign
         ::dci::couple::runtime::impl::SignBuilder
 )

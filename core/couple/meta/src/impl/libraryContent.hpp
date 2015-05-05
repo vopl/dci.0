@@ -14,7 +14,6 @@
 #include "variant.hpp"
 
 
-#include <vector>
 #include <set>
 #include <memory>
 #include <cassert>
@@ -74,7 +73,6 @@ namespace dci { namespace couple { namespace meta { namespace impl
         Items<Method>       _methods;
         Items<Attribute>    _attributes;
         Items<EnumValue>    _enumValues;
-
     };
 
     template <class T>

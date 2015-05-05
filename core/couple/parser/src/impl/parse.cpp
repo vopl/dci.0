@@ -110,6 +110,11 @@ namespace  dci { namespace couple { namespace parser { namespace impl
             return Scope();
         }
 
+        if(parseState._cfg._printSourceFiles)
+        {
+            std::cout << "source file: "<<fileName<<std::endl;
+        }
+
         //check cyclic
         if(parseState._currentFiles.end() != parseState._currentFiles.find(fileName))
         {

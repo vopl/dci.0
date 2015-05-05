@@ -57,7 +57,7 @@ namespace dci { namespace couple { namespace generator { namespace impl
 
             {
                 _hpp<< "#pragma once"<<el;
-                _hpp<< "#include <dci/couple/runtime/idl.hpp>"<<el;
+                _hpp<< "#include <dci/couple/runtime.hpp>"<<el;
                 _hpp<< el;
                 _hpp<< "namespace dci { namespace couple { namespace runtime { namespace generated"<<el;
                 _hpp<< "{"<<el;
@@ -241,11 +241,11 @@ namespace dci { namespace couple { namespace generator { namespace impl
         {
             //_hpp<< "//method "<<m->name()<<el;
 
-            _hpp<< _idlNamespace+"::Wire< ";
+            _hpp<< _runtimeNamespace+"::Wire< ";
 
             if(m->nowait())
             {
-                _hpp<< _idlNamespace+"::nowaitvoid";
+                _hpp<< _runtimeNamespace+"::nowaitvoid";
             }
             else
             {
@@ -342,7 +342,7 @@ namespace dci { namespace couple { namespace generator { namespace impl
         _hpp<< "struct "<<v->name()<<el;
 
         _hpp<< indent;
-        _hpp<< ": "<<_idlNamespace<<"::variant<"<<el;
+        _hpp<< ": "<<_runtimeNamespace<<"::variant<"<<el;
 
         _hpp<< indent;
         bool first = true;
@@ -580,7 +580,7 @@ namespace dci { namespace couple { namespace generator { namespace impl
 
             if(in)
             {
-                _hpp<< _idlNamespace<<"::Signal< "<<typeName(m->resultType())<<"("<<methodArgiments(m,false)<<")> &"<<m->name()<<"()"<<el;
+                _hpp<< _runtimeNamespace<<"::Signal< "<<typeName(m->resultType())<<"("<<methodArgiments(m,false)<<")> &"<<m->name()<<"()"<<el;
 
                 _hpp<< "{"<<el;
                 _hpp<< indent;
@@ -603,7 +603,7 @@ namespace dci { namespace couple { namespace generator { namespace impl
                     if(first) first = false;
                     else _hpp<< ", ";
 
-                    _hpp<< "std::forward< "<<_idlNamespace+"::ValuePorter< "<<typeName(a->type())<<">>("<<a->name()<<")";
+                    _hpp<< "std::forward< "<<typeName(a->type())<<">("<<a->name()<<")";
                 }
                 _hpp<< ");"<<el;
 
@@ -654,51 +654,51 @@ namespace dci { namespace couple { namespace generator { namespace impl
         case TypeConcrete::array:
             {
                 auto vc = static_cast<const Array *>(v);
-                return _idlNamespace+"::array< " + typeName(vc->elementType(), flags) + ", " + std::to_string(vc->size()) + ">";
+                return _runtimeNamespace+"::array< " + typeName(vc->elementType(), flags) + ", " + std::to_string(vc->size()) + ">";
             }
         case TypeConcrete::list:
             {
                 auto vc = static_cast<const List *>(v);
-                return _idlNamespace+"::list< " + typeName(vc->elementType(), flags) + ">";
+                return _runtimeNamespace+"::list< " + typeName(vc->elementType(), flags) + ">";
             }
         case TypeConcrete::ptr:
             {
                 auto vc = static_cast<const Ptr *>(v);
-                return _idlNamespace+"::ptr< " + typeName(vc->elementType(), flags) + ">";
+                return _runtimeNamespace+"::ptr< " + typeName(vc->elementType(), flags) + ">";
             }
         case TypeConcrete::set:
             {
                 auto vc = static_cast<const Set *>(v);
-                return _idlNamespace+"::set< " + typeName(vc->elementType(), flags) + ">";
+                return _runtimeNamespace+"::set< " + typeName(vc->elementType(), flags) + ">";
             }
         case TypeConcrete::map:
             {
                 auto vc = static_cast<const Map *>(v);
-                return _idlNamespace+"::map< " + typeName(vc->elementType1(), flags) + ", " + typeName(vc->elementType2(), flags) + ">";
+                return _runtimeNamespace+"::map< " + typeName(vc->elementType1(), flags) + ", " + typeName(vc->elementType2(), flags) + ">";
             }
         case TypeConcrete::primitive:
             {
                 auto vc = static_cast<const Primitive *>(v);
                 switch(vc->kind())
                 {
-                case PrimitiveKind::void_:  return _idlNamespace+"::void_";
+                case PrimitiveKind::void_:  return _runtimeNamespace+"::void_";
 
-                case PrimitiveKind::bool_:  return _idlNamespace+"::bool_";
+                case PrimitiveKind::bool_:  return _runtimeNamespace+"::bool_";
 
-                case PrimitiveKind::string: return _idlNamespace+"::string";
+                case PrimitiveKind::string: return _runtimeNamespace+"::string";
 
-                case PrimitiveKind::int8:   return _idlNamespace+"::int8";
-                case PrimitiveKind::int16:  return _idlNamespace+"::int16";
-                case PrimitiveKind::int32:  return _idlNamespace+"::int32";
-                case PrimitiveKind::int64:  return _idlNamespace+"::int64";
+                case PrimitiveKind::int8:   return _runtimeNamespace+"::int8";
+                case PrimitiveKind::int16:  return _runtimeNamespace+"::int16";
+                case PrimitiveKind::int32:  return _runtimeNamespace+"::int32";
+                case PrimitiveKind::int64:  return _runtimeNamespace+"::int64";
 
-                case PrimitiveKind::uint8:  return _idlNamespace+"::uint8";
-                case PrimitiveKind::uint16: return _idlNamespace+"::uint16";
-                case PrimitiveKind::uint32: return _idlNamespace+"::uint32";
-                case PrimitiveKind::uint64: return _idlNamespace+"::uint64";
+                case PrimitiveKind::uint8:  return _runtimeNamespace+"::uint8";
+                case PrimitiveKind::uint16: return _runtimeNamespace+"::uint16";
+                case PrimitiveKind::uint32: return _runtimeNamespace+"::uint32";
+                case PrimitiveKind::uint64: return _runtimeNamespace+"::uint64";
 
-                case PrimitiveKind::real32: return _idlNamespace+"::uint32";
-                case PrimitiveKind::real64: return _idlNamespace+"::uint64";
+                case PrimitiveKind::real32: return _runtimeNamespace+"::uint32";
+                case PrimitiveKind::real64: return _runtimeNamespace+"::uint64";
                 }
 
                 abort();
@@ -736,9 +736,8 @@ namespace dci { namespace couple { namespace generator { namespace impl
             if(first) first = false;
             else res+= ", ";
 
-            if(forOutput) res+= _idlNamespace+"::ValuePorter< ";
             res+= typeName(a->type());
-            if(forOutput) res+= "> &&";
+            res+= " &&";
             if(forOutput) res+= a->name();
         }
 
@@ -749,7 +748,7 @@ namespace dci { namespace couple { namespace generator { namespace impl
     {
         std::string res;
 
-        res+= _idlNamespace+"::Future< ";
+        res+= _runtimeNamespace+"::Future< ";
 
         const Type *rt = m->resultType();
         if(TypeConcrete::primitive != rt->concrete() || PrimitiveKind::void_ != static_cast<const Primitive *>(rt)->kind())

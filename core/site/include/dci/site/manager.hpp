@@ -6,7 +6,7 @@
 
 #include <dci/async/future.hpp>
 #include <dci/couple/runtime/iface.hpp>
-#include <system_error>
+#include "error.hpp"
 
 namespace dci { namespace site
 {
@@ -23,25 +23,36 @@ namespace dci { namespace site
         void operator=(const Manager &) = delete;
 
     public:
-        async::Future<std::error_code, couple::runtime::Iface> getServiceInstance(const couple::runtime::Iid &iid);
+        //outFuture is async::Future<std::error_code, ConcreteIface>
+        std::error_code createService(void *outFuture, const couple::runtime::Iid &iid);
 
         template <class TIface>
-        async::Future<std::error_code, TIface> getServiceInstance();
+        async::Future<std::error_code, TIface> createService();
     };
 
 
     template <class TIface>
-    async::Future<std::error_code, TIface> Manager::getServiceInstance()
+    async::Future<std::error_code, TIface> Manager::createService()
     {
-        return getServiceInstance(TIface::_iid).template thenTransform<std::error_code, TIface>([](auto *srcErr, auto *srcValue, auto &dst){
-            if(srcErr) dst.resolveError(std::move(*srcErr));
-            else
-            {
-                assert(0);
-                //dst.resolveValue(TIface(srcValue));
-                dst.resolveValue(TIface());
-            }
-        });
+//        return createService(TIface::_iid).template thenTransform<std::error_code, TIface>([](auto *srcErr, auto *srcValue, auto &dst){
+//            if(srcErr) dst.resolveError(std::move(*srcErr));
+//            else
+//            {
+//                assert(0);
+//                //dst.resolveValue(TIface(srcValue));
+//                dst.resolveValue(TIface());
+//            }
+//        });
+
+        async::Future<std::error_code, TIface> res{async::FutureNullInitializer()};
+
+        std::error_code ec = createService(&res, TIface::_iid);
+        if(ec)
+        {
+            return async::Future<std::error_code, TIface>(std::move(ec));
+        }
+
+        return res;
     }
 
 }}

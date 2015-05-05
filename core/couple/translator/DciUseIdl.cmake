@@ -1,30 +1,73 @@
 
-function(dciUseIdl target)
+if(dciUseIdlParseIncludes)
 
-    include(CMakeParseArguments)
-    cmake_parse_arguments(OPTS "" "GEN;SOURCES" "NAME" ${ARGN})
+    file(STRINGS ${dciUseIdlParseIncludes} src REGEX "source file: .*")
 
-    if(OPTS_NAME)
-        set(NAME ${OPTS_NAME})
+    set(content "//fake cpp source for dependency scanning for idl translation\n")
+    foreach(line ${src})
+        string(REGEX REPLACE "source file: (.*)" "\\1" file ${line})
+        set(content "${content}#include <${file}>\n")
+    endforeach()
+
+    if(EXISTS ${dciUseIdlWriteIncludes})
+        file(READ ${dciUseIdlWriteIncludes} targetContent)
     else()
-        list(GET OPTS_SOURCES 0 NAME)
-        if(NOT NAME)
-            set(NAME generated)
-        endif()
-        get_filename_component(NAME ${NAME} NAME_WE)
+        set(targetContent)
     endif()
 
-    set(outDir ${CMAKE_CURRENT_BINARY_DIR}/idl)
-    set(outFile ${outDir}/${NAME}.hpp)
-    add_custom_command(OUTPUT ${outFile}
-                        COMMAND dci-couple-translator --generate ${OPTS_GEN} --outdir ${outDir} --outname ${NAME} --include ${CMAKE_CURRENT_SOURCE_DIR} --include ${LOCALINSTALL_DIR}/idl ${OPTS_SOURCES}
-                        DEPENDS dci-couple-translator
-    )
+    if(NOT targetContent STREQUAL content)
+        file(WRITE ${dciUseIdlWriteIncludes} ${content})
+    endif()
 
-    add_custom_target(${target}_${NAME} DEPENDS ${outFile})
-    set_source_files_properties(${outFile} PROPERTIES GENERATED TRUE)
-    add_dependencies(${target} ${target}_${NAME})
+else()
+    set(dciUseIdlScript ${CMAKE_CURRENT_LIST_FILE})
 
-    include_directories(${outDir})
+    function(dciUseIdl target)
 
-endfunction()
+        include(CMakeParseArguments)
+        cmake_parse_arguments(OPTS "" "GEN;SOURCES" "NAME;INCLUDE" ${ARGN})
+
+        if(OPTS_NAME)
+            set(NAME ${OPTS_NAME})
+        else()
+            list(GET OPTS_SOURCES 0 NAME)
+            if(NOT NAME)
+                set(NAME generated)
+            endif()
+            get_filename_component(NAME ${NAME} NAME_WE)
+        endif()
+
+        set(outDir ${CMAKE_CURRENT_BINARY_DIR}/idl)
+        set(outFile ${outDir}/${NAME}.hpp)
+
+        set(fakeDepsCxx ${CMAKE_CURRENT_BINARY_DIR}/fakeDeps-${NAME}.cpp)
+
+        set_source_files_properties(${outFile} PROPERTIES GENERATED TRUE)
+        set_source_files_properties(${fakeDepsCxx} PROPERTIES GENERATED TRUE)
+
+        if(NOT EXISTS ${fakeDepsCxx})
+            file(WRITE ${fakeDepsCxx} "//initial stub")
+        endif()
+
+        set(include --include ${LOCALINSTALL_DIR}/idl)
+        if(OPTS_INCLUDE)
+            set(include ${include} --include ${OPTS_INCLUDE})
+        endif()
+
+        set(translatorStdoutFile ${CMAKE_CURRENT_BINARY_DIR}/translate-${NAME}.out)
+
+
+        add_custom_command(OUTPUT ${outFile}
+            COMMAND dci-couple-translator --generate ${OPTS_GEN} --outdir ${outDir} --outname ${NAME} --print-source-files ${include} ${OPTS_SOURCES} > ${translatorStdoutFile}
+            COMMAND ${CMAKE_COMMAND} -DdciUseIdlParseIncludes=${translatorStdoutFile} -DdciUseIdlWriteIncludes=${fakeDepsCxx} -P ${dciUseIdlScript}
+            DEPENDS dci-couple-translator
+            IMPLICIT_DEPENDS CXX ${fakeDepsCxx}
+        )
+
+        add_custom_target(${target}-idl-${NAME} DEPENDS ${outFile})
+        add_dependencies(${target} ${target}-idl-${NAME})
+
+        include_directories(${outDir})
+
+    endfunction()
+endif()

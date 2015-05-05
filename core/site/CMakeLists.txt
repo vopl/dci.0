@@ -9,6 +9,7 @@ set(INC
     include/dci/site/modulePlace.hpp
     include/dci/site/moduleEntry.hpp
     include/dci/site/moduleInfo.hpp
+    include/dci/site/serviceFactory.hpp
     include/dci/site/layoutProvider.hpp
 )
 

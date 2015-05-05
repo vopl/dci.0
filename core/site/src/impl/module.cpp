@@ -436,10 +436,16 @@ namespace dci { namespace site { namespace impl
         });
     }
 
-    async::Future<std::error_code, couple::runtime::Iface> Module::getServiceInstance(const couple::runtime::Iid &iid)
+    ServiceFactory *Module::allocServiceFactory(const couple::runtime::Iid &iid)
     {
-        (void)iid;
-        assert(0);
+        assert(_entry);
+        return _entry->allocServiceFactory(iid);
+    }
+
+    void Module::freeServiceFactory(const couple::runtime::Iid &iid, ServiceFactory *factory)
+    {
+        assert(_entry);
+        return _entry->freeServiceFactory(iid, factory);
     }
 
 }}}

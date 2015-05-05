@@ -63,6 +63,10 @@ int main(int argc, const char **argv)
                 "outname,n",
                 po::value<std::string>(),
                 "output name"
+            )
+            (
+                "print-source-files",
+                "print absolute pathnames to source files parsed"
             );
 
     desc.add(descOutput);
@@ -109,6 +113,11 @@ int main(int argc, const char **argv)
         if(vars.count("include"))
         {
             cfg._includeDirectories = vars["include"].as<std::vector<std::string>>();
+        }
+
+        if(vars.count("print-source-files"))
+        {
+            cfg._printSourceFiles = true;
         }
 
         std::vector<std::string> idlFiles;

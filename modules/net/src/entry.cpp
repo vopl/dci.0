@@ -3,14 +3,18 @@
 
 #include "net.hpp"
 
+using namespace dci::couple::runtime;
+using namespace dci::site;
+using namespace net;
+
 struct Info
-    : dci::site::ModuleInfo
+    : ModuleInfo
 {
     Info()
     {
         _provider = "dci";
         _id.fromHex("874ca4fbf31985170b2ce0efbb20a5a5");
-        _serviceIds.push_back(net::Host::_iid);
+        _serviceIds.push_back(Host::_iid);
 
         _revision = 1;
         _name = "net";
@@ -25,7 +29,7 @@ struct Info
 
 
 struct Entry
-    : dci::site::ModuleEntry
+    : ModuleEntry
 {
     Entry()
     {
@@ -35,56 +39,121 @@ struct Entry
     {
     }
 
-    const dci::site::ModuleInfo &getInfo() override
+    const ModuleInfo &getInfo() override
     {
         return info;
     }
 
-    dci::async::Future<std::error_code> install(const dci::site::ModulePlace &place) override
+    dci::async::Future<std::error_code> install(const ModulePlace &place) override
     {
         (void)place;
         return dci::async::Future<std::error_code>();
     }
 
-    dci::async::Future<std::error_code> uninstall(const dci::site::ModulePlace &place) override
+    dci::async::Future<std::error_code> uninstall(const ModulePlace &place) override
     {
         (void)place;
         return dci::async::Future<std::error_code>();
     }
 
-    dci::async::Future<std::error_code> load(const dci::site::ModulePlace &place) override
+    dci::async::Future<std::error_code> load(const ModulePlace &place) override
     {
         (void)place;
         return dci::async::Future<std::error_code>();
     }
 
-    dci::async::Future<std::error_code> unload(const dci::site::ModulePlace &place) override
+    dci::async::Future<std::error_code> unload(const ModulePlace &place) override
     {
         (void)place;
         return dci::async::Future<std::error_code>();
     }
 
-    dci::async::Future<std::error_code> start(dci::site::Manager &manager, const dci::site::ModulePlace &place) override
+    dci::async::Future<std::error_code> start(Manager &manager, const ModulePlace &place) override
     {
         (void)manager;
         (void)place;
         return dci::async::Future<std::error_code>();
     }
 
-    dci::async::Future<std::error_code> stop(const dci::site::ModulePlace &place) override
+    dci::async::Future<std::error_code> stop(const ModulePlace &place) override
     {
         (void)place;
         return dci::async::Future<std::error_code>();
     }
 
-    dci::async::Future<std::error_code, dci::couple::runtime::Iface> getServiceInstance(const dci::couple::runtime::Iid &iid) override
+    //TODO интерфейсам автоматическое время жизни по ссылкам из сетки
+    template <class Service>
+    struct NetHostServiceHelper
+        : public HostOpposite
     {
-        (void)iid;
-        assert(0);
+    protected:
+        NetHostServiceHelper()
+        {
+            //connect
+            bool b;
+            b = wire()->interfaces.connect(&Service::interfaces, static_cast<Service *>(this));
+            assert(b);
+        }
+
+        ~NetHostServiceHelper()
+        {
+            //disconnect
+            wire()->interfaces.disconnect();
+        }
+
+    private://in
+        Future<list< Interface>> interfaces();
+
+    private://out
+//        idl::Future< > interfaceAdded(Interface v)
+//        {
+//            return _iface.interfaceAdded(v);
+//        }
+
+
+
+    };
+
+    struct NetHostService
+        : NetHostServiceHelper<NetHostService>
+    {
+        Future<list<Interface>> interfaces()
+        {
+            //do impl
+            //assert(0);
+
+            list<Interface> l;
+
+            return Future<list<Interface>>(std::move(l));
+        }
+
+    };
+
+    struct NetHostFactory
+        : ServiceFactory
+    {
+        void createService(void *outFuture) override
+        {
+            dci::async::Future<std::error_code, Host> *res = static_cast<dci::async::Future<std::error_code, Host> *>(outFuture);
+            *res = dci::async::Future<std::error_code, Host>(Host(* new NetHostService));
+        }
+    };
+
+    ServiceFactory *allocServiceFactory(const Iid &iid) override
+    {
+        assert(iid == info._serviceIds[0]);
+        return new NetHostFactory();
     }
+
+    void freeServiceFactory(const Iid &iid, ServiceFactory *factory) override
+    {
+        assert(iid == info._serviceIds[0]);
+        delete factory;
+    }
+
 } entry;
 
 extern "C"
 {
-    dci::site::ModuleEntry *dciModuleEntry = &entry;
+    ModuleEntry *dciModuleEntry = &entry;
 }

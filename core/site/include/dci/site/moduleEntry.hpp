@@ -3,6 +3,7 @@
 #include "modulePlace.hpp"
 #include "moduleInfo.hpp"
 #include "manager.hpp"
+#include "serviceFactory.hpp"
 #include <dci/async/future.hpp>
 #include <dci/couple/runtime/iface.hpp>
 
@@ -24,6 +25,7 @@ namespace dci { namespace site
         virtual async::Future<std::error_code> start(Manager &manager, const ModulePlace &place) = 0;
         virtual async::Future<std::error_code> stop(const ModulePlace &place) = 0;
 
-        virtual async::Future<std::error_code, couple::runtime::Iface> getServiceInstance(const couple::runtime::Iid &iid) = 0;
+        virtual ServiceFactory *allocServiceFactory(const couple::runtime::Iid &iid) = 0;
+        virtual void freeServiceFactory(const couple::runtime::Iid &iid, ServiceFactory *factory) = 0;
     };
 }}

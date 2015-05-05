@@ -67,8 +67,8 @@ namespace dci { namespace couple { namespace generator { namespace impl
         std::string _wireName;
         std::string _bodyName;
 
-        //const std::string _idlNamespace = "::dci::couple::runtime::idl";
-        const std::string _idlNamespace = "idl";
+        //const std::string _runtimeNamespace = "::dci::couple::runtime";
+        const std::string _runtimeNamespace = "::dci::couple::runtime";
 
         Out _hpp;
     };

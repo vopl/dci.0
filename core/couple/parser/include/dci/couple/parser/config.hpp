@@ -7,7 +7,8 @@ namespace dci { namespace couple { namespace parser
 {
     struct Config
     {
-        std::vector<std::string> _includeDirectories;
+        std::vector<std::string>    _includeDirectories;
+        bool                        _printSourceFiles = false;
 
     };
 }}}

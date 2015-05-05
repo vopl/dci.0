@@ -54,4 +54,34 @@ namespace dci { namespace couple { namespace runtime
         impl().fromRnd();
     }
 
+    bool Sign::operator<(const Sign &with) const
+    {
+        return impl() < with.impl();
+    }
+
+    bool Sign::operator>(const Sign &with) const
+    {
+        return impl() > with.impl();
+    }
+
+    bool Sign::operator<=(const Sign &with) const
+    {
+        return impl() <= with.impl();
+    }
+
+    bool Sign::operator>=(const Sign &with) const
+    {
+        return impl() >= with.impl();
+    }
+
+    bool Sign::operator==(const Sign &with) const
+    {
+        return impl() == with.impl();
+    }
+
+    bool Sign::operator!=(const Sign &with) const
+    {
+        return impl() != with.impl();
+    }
+
 }}}

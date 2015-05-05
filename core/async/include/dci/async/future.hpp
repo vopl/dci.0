@@ -6,6 +6,8 @@ namespace dci { namespace async
 {
     template <class E, class... T> class Promise;
 
+    struct FutureNullInitializer{};
+
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
     template <class E, class... T>
@@ -21,8 +23,9 @@ namespace dci { namespace async
         using Promise = dci::async::Promise<E, T...>;
 
     public:
-        Future(E && err);
-        Future(T &&... vals);
+        explicit Future(FutureNullInitializer);
+        explicit Future(E && err);
+        explicit Future(T &&... vals);
         Future(const Future &other);
         Future(Future &&other);
         ~Future();
@@ -55,6 +58,12 @@ namespace dci { namespace async
         template <class Et, class... Tt, class F>
         Future<Et, Tt...> thenTransform(F &&);
     };
+
+    template <class E, class... T>
+    Future<E, T...>::Future(FutureNullInitializer)
+        : StateInstance(dci::mm::SharedInstanceNullInitializer())
+    {
+    }
 
     template <class E, class... T>
     Future<E, T...>::Future(E && err)
@@ -163,7 +172,7 @@ namespace dci { namespace async
     typename std::tuple_element<idx, std::tuple<T...> >::type &&Future<E, T...>::detachValue()
     {
         wait();
-        return std::get<idx>(std::forward<class details::FutureState<T...>::Value>(this->instance().value()));
+        return std::get<idx>(std::forward<typename details::FutureState<E, T...>::Value>(this->instance().value()));
     }
 
     template <class E, class... T>

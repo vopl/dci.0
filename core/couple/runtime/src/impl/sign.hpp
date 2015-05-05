@@ -27,6 +27,13 @@ namespace dci { namespace couple { namespace runtime { namespace impl
         bool fromHex(const std::string &txt);
         void fromRnd();
 
+        bool operator<(const Sign &with) const;
+        bool operator>(const Sign &with) const;
+        bool operator<=(const Sign &with) const;
+        bool operator>=(const Sign &with) const;
+        bool operator==(const Sign &with) const;
+        bool operator!=(const Sign &with) const;
+
     private:
         std::uint8_t _data[_size];
     };

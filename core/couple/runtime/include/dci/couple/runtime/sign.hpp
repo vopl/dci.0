@@ -30,5 +30,12 @@ namespace dci { namespace couple { namespace runtime
         std::string toHex(std::size_t chars=32) const;
         bool fromHex(const std::string &txt);
         void fromRnd();
+
+        bool operator<(const Sign &with) const;
+        bool operator>(const Sign &with) const;
+        bool operator<=(const Sign &with) const;
+        bool operator>=(const Sign &with) const;
+        bool operator==(const Sign &with) const;
+        bool operator!=(const Sign &with) const;
     };
 }}}

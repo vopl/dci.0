@@ -10,6 +10,8 @@
 namespace dci { namespace mm
 {
 
+    struct SharedInstanceNullInitializer{};
+
     template <class T>
     class SharedInstance
     {
@@ -17,6 +19,8 @@ namespace dci { namespace mm
         using Instance = typename std::decay<T>::type;
 
     public:
+        SharedInstance(SharedInstanceNullInitializer);
+
         template <class... Args>
         SharedInstance(Args &&... args);
 
@@ -53,6 +57,11 @@ namespace dci { namespace mm
     };
 
 
+    template <class T>
+    SharedInstance<T>::SharedInstance(SharedInstanceNullInitializer)
+        : _state(nullptr)
+    {
+    }
 
     template <class T>
     template <class... Args>

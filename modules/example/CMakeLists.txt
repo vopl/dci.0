@@ -33,7 +33,8 @@ set_property(TARGET ${PROJECT} PROPERTY CXX_STANDARD_REQUIRED ON)
 include(DciUseIdl)
 dciUseIdl(${PROJECT}
     GEN cpp
-    SOURCES idl/talk.idl
+    INCLUDE ${CMAKE_CURRENT_SOURCE_DIR}/idl
+    SOURCES talk.idl
 )
 dciUseIdl(${PROJECT}
     GEN cpp

@@ -49,7 +49,8 @@ namespace dci { namespace site { namespace impl
 
 
         //////////////// use
-        async::Future<std::error_code, couple::runtime::Iface> getServiceInstance(const couple::runtime::Iid &iid);
+        ServiceFactory *allocServiceFactory(const couple::runtime::Iid &iid);
+        void freeServiceFactory(const couple::runtime::Iid &iid, ServiceFactory *factory);
 
     private:
         Manager *       _manager;

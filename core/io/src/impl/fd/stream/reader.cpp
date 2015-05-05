@@ -49,7 +49,7 @@ namespace dci { namespace io { namespace impl { namespace fd { namespace stream
         if(_buffer.size() >= min)
         {
             //return async::mkResolvedFuture<std::error_code, io::Data>(_buffer.detachFirst(std::min(_buffer.size(), max)));
-            return _buffer.detachFirst(std::min(_buffer.size(), max));
+            return async::Future<std::error_code, io::Data>(_buffer.detachFirst(std::min(_buffer.size(), max)));
         }
 
         if(!_requestsFirst)

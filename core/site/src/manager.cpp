@@ -1,16 +1,13 @@
 #include <dci/site/manager.hpp>
+#include "impl/manager.hpp"
+
 #include <dci/async/functions.hpp>
 
 namespace dci { namespace site
 {
-    async::Future<std::error_code, couple::runtime::Iface> Manager::getServiceInstance(const couple::runtime::Iid &iid)
+    std::error_code Manager::createService(void *outFuture, const couple::runtime::Iid &iid)
     {
-        assert(0);
-
-        //return async::Future<std::error_code, couple::runtime::Iface>(std::error_code());
-
-        return async::spawn([] (async::Promise<std::error_code, couple::runtime::Iface> p) {
-            p.resolveError(std::error_code());
-        });
+        return impl().createService(outFuture, iid);
     }
+
 }}

@@ -14,6 +14,7 @@ namespace dci { namespace site { namespace error
         modules_directory_absent,
         failed,
         partial_failed,
+        not_found,
     };
 
     enum class module

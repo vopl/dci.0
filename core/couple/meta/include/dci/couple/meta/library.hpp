@@ -15,6 +15,7 @@
 #include "variant.hpp"
 
 #include <string>
+#include <vector>
 #include <system_error>
 
 namespace dci { namespace couple { namespace meta

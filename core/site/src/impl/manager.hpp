@@ -1,7 +1,9 @@
 #pragma once
 
 #include <system_error>
+#include <map>
 #include "module.hpp"
+#include <dci/site/serviceFactory.hpp>
 
 namespace dci { namespace site { namespace impl
 {
@@ -21,6 +23,10 @@ namespace dci { namespace site { namespace impl
 
         std::error_code run();
         async::Future<std::error_code> stop();
+
+    public:
+        //outFuture is async::Future<std::error_code, ConcreteIface>
+        std::error_code createService(void *outFuture, const couple::runtime::Iid &iid);
 
     private:
         std::error_code initializeModules();
@@ -43,5 +49,14 @@ namespace dci { namespace site { namespace impl
         //TODO: состояние по проинсталированным модулям
         std::vector<ModulePtr> _modules;
 
+    private:
+        struct ServiceFactoryEntry
+        {
+            Module *            _module;
+            ServiceFactory *    _factory;
+        };
+
+        using ServiceFactories = std::map<couple::runtime::Iid, ServiceFactoryEntry>;
+        ServiceFactories _serviceFactories;
     };
 }}}

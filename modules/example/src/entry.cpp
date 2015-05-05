@@ -67,9 +67,23 @@ struct Entry
     {
         (void)place;
 
-        auto netHost = manager.getServiceInstance<net::Host>();
+        dci::async::Future<std::error_code, net::Host> netHost = manager.createService<net::Host>();
 
         netHost.wait();
+        if(netHost.hasError())
+        {
+            LOGD(netHost.error());
+        }
+        else
+        {
+            LOGD("service acuired");
+            auto nh = netHost.detachValue<0>();
+            auto ifs = nh.interfaces().detachValue<0>();
+
+            std::size_t x = ifs.size();
+
+            int k = 220;
+        }
 
         return dci::async::Future<std::error_code>();
     }
@@ -80,9 +94,13 @@ struct Entry
         return dci::async::Future<std::error_code>();
     }
 
-    dci::async::Future<std::error_code, dci::couple::runtime::Iface> getServiceInstance(const dci::couple::runtime::Iid &iid) override
+    dci::site::ServiceFactory *allocServiceFactory(const dci::couple::runtime::Iid &iid) override
     {
-        (void)iid;
+        assert(0);
+    }
+
+    void freeServiceFactory(const dci::couple::runtime::Iid &iid, dci::site::ServiceFactory *factory) override
+    {
         assert(0);
     }
 } entry;

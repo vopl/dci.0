@@ -126,4 +126,35 @@ namespace dci { namespace couple { namespace runtime { namespace impl
         }
     }
 
+    bool Sign::operator<(const Sign &with) const
+    {
+        return memcmp(data(), with.data(), _size) < 0;
+    }
+
+    bool Sign::operator>(const Sign &with) const
+    {
+        return memcmp(data(), with.data(), _size) > 0;
+    }
+
+    bool Sign::operator<=(const Sign &with) const
+    {
+        return memcmp(data(), with.data(), _size) <= 0;
+    }
+
+    bool Sign::operator>=(const Sign &with) const
+    {
+        return memcmp(data(), with.data(), _size) >= 0;
+    }
+
+    bool Sign::operator==(const Sign &with) const
+    {
+        return memcmp(data(), with.data(), _size) == 0;
+    }
+
+    bool Sign::operator!=(const Sign &with) const
+    {
+        return memcmp(data(), with.data(), _size) != 0;
+    }
+
+
 }}}}

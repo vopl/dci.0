@@ -144,6 +144,19 @@ namespace dci { namespace site { namespace impl
         });
     }
 
+    std::error_code Manager::createService(void *outFuture, const couple::runtime::Iid &iid)
+    {
+        ServiceFactories::const_iterator iter = _serviceFactories.find(iid);
+        if(_serviceFactories.end() == iter)
+        {
+            return make_error_code(error::general::not_found);
+        }
+
+        iter->second._factory->createService(outFuture);
+
+        return std::error_code();
+    }
+
     std::error_code Manager::initializeModules()
     {
         if(!_modulesInitialized)
@@ -194,8 +207,28 @@ namespace dci { namespace site { namespace impl
         {
             _modulesLoaded = true;
 
-            return massModulesOperation("load", [](const ModulePtr &c)->async::Future<std::error_code> {
-                return c->load();
+            return massModulesOperation("load", [this](const ModulePtr &c)->async::Future<std::error_code> {
+                auto f = c->load();
+                if(f.hasError())
+                {
+                    return f;
+                }
+
+
+                for(const couple::runtime::Iid &iid : c->getInfo()._serviceIds)
+                {
+                    ServiceFactoryEntry sfe;
+                    sfe._module = c.get();
+                    sfe._factory = c->allocServiceFactory(iid);
+                    if(!sfe._factory)
+                    {
+                        LOGE("unable to obtain service factory for "<<iid.toHex()<<", module "<<c->getInfo()._name);
+                        continue;
+                    }
+                    _serviceFactories.insert(std::make_pair(iid, sfe));
+                }
+
+                return f;
             });
         }
 
@@ -221,6 +254,12 @@ namespace dci { namespace site { namespace impl
         if(_modulesStarted)
         {
             _modulesStarted = false;
+
+            for(const ServiceFactories::value_type &f : _serviceFactories)
+            {
+                f.second._module->freeServiceFactory(f.first, f.second._factory);
+            }
+            _serviceFactories.clear();
 
             return massModulesOperation("stop", [](const ModulePtr &c)->async::Future<std::error_code> {
                 return c->stop();
