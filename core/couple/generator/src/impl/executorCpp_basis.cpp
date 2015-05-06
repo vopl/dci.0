@@ -496,7 +496,17 @@ namespace dci { namespace couple { namespace generator { namespace impl
         {
             if(CallDirection::in == m->direction())
             {
-                _hpp<< runtimeNamespace()<<"::Signal< "<<typeName(m->resultType(), inBody)<<"("<<methodArgiments(m,false, inBody)<<")> &"<<m->name()<<"()"<<el;
+
+                _hpp<< runtimeNamespace()<<"::Signal< ";
+                if(m->nowait())
+                {
+                    _hpp<< runtimeNamespace()+"::nowaitvoid";
+                }
+                else
+                {
+                    _hpp<< typeName(m->resultType(), inBody);
+                }
+                _hpp<< "("<<methodArgiments(m,false, inBody)<<")> &"<<m->name()<<"()"<<el;
 
                 _hpp<< "{"<<el;
                 _hpp<< indent;

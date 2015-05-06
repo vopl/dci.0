@@ -16,6 +16,7 @@ namespace dci { namespace couple { namespace runtime
 {
     struct S{};
 
+    struct nowaitvoid {};
     using void_     = void;
     using bool_     = bool;
     using string    = std::string;

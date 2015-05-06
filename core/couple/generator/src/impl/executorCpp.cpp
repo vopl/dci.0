@@ -179,14 +179,20 @@ namespace dci { namespace couple { namespace generator { namespace impl
     {
         std::string res;
 
-        res+= _runtimeNamespace+"::Future< ";
-
         const Type *rt = m->resultType();
-        if(TypeConcrete::primitive != rt->concrete() || PrimitiveKind::void_ != static_cast<const Primitive *>(rt)->kind())
+        if(m->nowait())
         {
-            res+= typeName(rt, typesFlags);
+            res+= _runtimeNamespace+"::nowaitvoid ";
         }
-        res+= "> ";
+        else
+        {
+            res+= _runtimeNamespace+"::Future< ";
+            if(TypeConcrete::primitive != rt->concrete() || PrimitiveKind::void_ != static_cast<const Primitive *>(rt)->kind())
+            {
+                res+= typeName(rt, typesFlags);
+            }
+            res+= "> ";
+        }
 
         if(i) res += typeName(i, typesFlags);
 

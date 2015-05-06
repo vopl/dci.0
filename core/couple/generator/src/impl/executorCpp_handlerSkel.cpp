@@ -99,11 +99,11 @@ namespace dci { namespace couple { namespace generator { namespace impl
         _hpp<< "// "<<"handler skeleton for "<<v->name()<<el;
 
 
-        _hpp<< "template <class Service>"<<el;
+        _hpp<< "template <class Handler>"<<el;
         _hpp<< "struct "<<v->name()<<el;
         _hpp<< indent;
         _hpp<< ": public "<<typeName(v->opposite(), inTarget)<<el;
-        _hpp<< ", public dci::mm::NewDelete<Service>"<<el;
+        _hpp<< ", public dci::mm::NewDelete<Handler>"<<el;
         _hpp<< undent;
         _hpp<< "{"<<el;
         _hpp<< indent;
@@ -117,24 +117,26 @@ namespace dci { namespace couple { namespace generator { namespace impl
         {
             _hpp<< "//constructor"<<el;
 
-            _hpp<< v->name()<<"()"<<el;
+            _hpp<< v->name()<<"(bool deleteSelfWhenUninvolved=true)"<<el;
             _hpp<< "{"<<el;
             _hpp<< indent;
-            _hpp<< "wire()->listenUninvolve(true, [](void *userData){delete static_cast<Service*>(userData);}, static_cast<Service*>(this));"<<el;
+            _hpp<< "if(deleteSelfWhenUninvolved) wire()->listenUninvolve(true, [](void *userData){delete static_cast<Handler*>(userData);}, static_cast<Handler*>(this));"<<el;
+            _hpp<< el;
 
-            _hpp<< "//connect"<<el;
+            _hpp<< "//connect 'in' methods"<<el;
             _hpp<< "bool b; (void)b;"<<el;
             for(const Method *m : v->methods())
             {
                 if(CallDirection::out == m->direction())
                 {
-                    _hpp<< "b = wire()->"<<m->name()<<".connect(&Service::"<<m->name()<<", static_cast<Service *>(this));"<<el;
+                    _hpp<< "b = "<<typeName(v->opposite(), inTarget)<<"::"<<m->name()<<"().connect(&Handler::"<<m->name()<<", static_cast<Handler *>(this));"<<el;
                     _hpp<< "assert(b);"<<el;
                 }
             }
             _hpp<< undent;
-            _hpp<< "};"<<el;
+            _hpp<< "}"<<el;
         }
+        _hpp<< el;
 
         {
             _hpp<< "//destructor"<<el;
@@ -143,31 +145,37 @@ namespace dci { namespace couple { namespace generator { namespace impl
             _hpp<< "{"<<el;
             _hpp<< indent;
 
-            _hpp<< "//disconnect"<<el;
+            _hpp<< "//disconnect 'in' methods"<<el;
             for(const Method *m : v->methods())
             {
                 if(CallDirection::out == m->direction())
                 {
-                    _hpp<< "wire()->"<<m->name()<<".disconnect();"<<el;
+                    _hpp<< typeName(v->opposite(), inTarget)<<"::"<<m->name()<<"().disconnect();"<<el;
                 }
             }
             _hpp<< undent;
-            _hpp<< "};"<<el;
+            _hpp<< "}"<<el;
         }
+        _hpp<< el;
 
         {
-            _hpp<< "//method prototypes"<<el;
+            _hpp<< "//methods, deleted 'in' for implementation and commented 'out' for use"<<el;
             for(const Method *m : v->methods())
             {
                 if(CallDirection::out == m->direction())
                 {
                     _hpp<< methodSignature(m, inTarget)<<" = delete;"<<el;
                 }
+                else
+                {
+                    _hpp<< "//"<<methodSignature(m, inTarget)<<";"<<el;
+                }
             }
         }
 
         _hpp<< undent;
         _hpp<< "};"<<el;
+        _hpp<< el;
 
         return true;
     }
