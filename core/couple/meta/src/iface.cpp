@@ -9,9 +9,14 @@ namespace dci { namespace couple { namespace meta
         return Compound<Method>::elements();
     }
 
-    bool Iface::forward() const
+    bool Iface::primary() const
     {
-        assert(0);
+        return impl().primary();
+    }
+
+    const Iface *Iface::opposite() const
+    {
+        return himpl::impl2Face<Iface>(impl().opposite());
     }
 
 }}}

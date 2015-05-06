@@ -77,8 +77,9 @@ struct Entry
         else
         {
             LOGD("service acuired");
-            auto nh = netHost.detachValue<0>();
+            net::Host nh = netHost.detachValue<0>();
             auto ifs = nh.interfaces().detachValue<0>();
+            //nh.ip4StreamHost();
 
             std::size_t x = ifs.size();
 

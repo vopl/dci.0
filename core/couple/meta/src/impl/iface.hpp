@@ -22,6 +22,16 @@ namespace dci { namespace couple { namespace meta { namespace impl
         using Scope::add;
 
         void makeSign();
+
+        void setPrimary(bool v);
+        bool primary() const;
+
+        void setOpposite(Iface *v);
+        const Iface *opposite() const;
+
+    private:
+        bool    _primary{true};
+        Iface * _opposite{nullptr};
     };
 
 }}}}

@@ -44,6 +44,7 @@ namespace  dci { namespace couple { namespace parser { namespace impl { namespac
             res &= checkFields(v.get());
             res &= checkParams(v.get());
             res &= checkChildren(v.get());
+            res &= checkOpposite(v.get());
             return res;
         }
 
@@ -173,6 +174,28 @@ namespace  dci { namespace couple { namespace parser { namespace impl { namespac
                 NamesChecker(_errs).exec(v->decls),
                 [&](bool v, const Method &d)->bool{return NamesChecker(_errs)(d) && v;}
             );
+        }
+
+    private:
+        bool checkOpposite(...)
+        {
+            return true;
+        }
+
+        bool checkOpposite(const SIface *v)
+        {
+            const Name &name = v->name;
+            if(name->value.size()-8 == name->value.find("Opposite"))
+            {
+                _errs.emplace_back(ErrorInfo {
+                                      name->pos.begin().file(),
+                                      static_cast<int>(name->pos.begin().line()),
+                                      static_cast<int>(name->pos.begin().column()),
+                                      "'Opposite' suffix is not allowed for ifaces"});
+                return false;
+            }
+
+            return true;
         }
     };
 

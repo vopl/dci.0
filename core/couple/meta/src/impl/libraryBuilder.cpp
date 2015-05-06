@@ -281,6 +281,48 @@ namespace dci { namespace couple { namespace meta { namespace impl
         (void)errors;
         //TODO: check errors
 
+        //create opposite ifaces
+        {
+            auto ifaces = _lc.items<Iface>();
+            for(Iface *v : ifaces)
+            {
+                Iface *o = addIface(const_cast<Scope *>(v->scope()), v->name()+"Opposite");
+
+                v->setPrimary(true);
+                v->setOpposite(o);
+
+                o->setPrimary(false);
+                o->setOpposite(v);
+
+                fillOppositeIfaceScope(o, v);
+
+                for(const Method *m : v->Compound<Method>::elements())
+                {
+                    Method *om = addMethod(o, m->name());
+
+                    setMethodNowait(om, m->nowait());
+                    setMethodDirection(om, CallDirection::in == m->direction() ? CallDirection::out : CallDirection::in);
+                    setResultType(om, const_cast<Type *>(m->resultType()));
+
+                    for(const Attribute *a : m->Compound<Attribute>::elements())
+                    {
+                        Attribute *oa = addAttribute(om, a->name());
+                        setType(oa, const_cast<Type *>(a->type()));
+                    }
+                }
+            }
+
+
+            for(Iface *v : ifaces)
+            {
+                Iface *o = const_cast<Iface *>(v->opposite());
+                for(const Iface *b : v->bases())
+                {
+                    addBase(o, const_cast<Iface *>(b->opposite()));
+                }
+            }
+        }
+
         lib = std::move(_lc);
         _lc.clear();
         return true;
@@ -289,6 +331,21 @@ namespace dci { namespace couple { namespace meta { namespace impl
     void LibraryBuilder::rollbackChanges()
     {
         _lc.clear();
+    }
+
+    void LibraryBuilder::fillOppositeIfaceScope(Scope *o, Scope *v)
+    {
+        for(auto *c : v->Compound<Struct>::elements())  setType(addAlias(o, c->name()), const_cast<Struct *>(c));
+        for(auto *c : v->Compound<Variant>::elements()) setType(addAlias(o, c->name()), const_cast<Variant *>(c));
+        for(auto *c : v->Compound<Enum>::elements())    setType(addAlias(o, c->name()), const_cast<Enum *>(c));
+        for(auto *c : v->Compound<Alias>::elements())   setType(addAlias(o, c->name()), const_cast<Alias *>(c));
+        for(auto *c : v->Compound<Iface>::elements())   setType(addAlias(o, c->name()), const_cast<Iface *>(c));
+
+        for(auto *c : v->Compound<Scope>::elements())
+        {
+            Scope *s = addScope(o, c->name());
+            fillOppositeIfaceScope(s, const_cast<Scope *>(c));
+        }
     }
 
 }}}}

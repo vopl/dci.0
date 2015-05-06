@@ -25,7 +25,7 @@ else()
     function(dciUseIdl target)
 
         include(CMakeParseArguments)
-        cmake_parse_arguments(OPTS "" "GEN;SOURCES" "NAME;INCLUDE" ${ARGN})
+        cmake_parse_arguments(OPTS "" "" "SOURCES;GEN;NAME;INCLUDE" ${ARGN})
 
         if(OPTS_NAME)
             set(NAME ${OPTS_NAME})
@@ -56,10 +56,20 @@ else()
 
         set(translatorStdoutFile ${CMAKE_CURRENT_BINARY_DIR}/translate-${NAME}.out)
 
+        set(gens)
+        foreach(g ${OPTS_GEN})
+            set(gens ${gens} --generate ${g})
+        endforeach()
+
+        set(sources)
+        foreach(s ${OPTS_SOURCES})
+            set(sources ${sources} --in ${s})
+        endforeach()
 
         add_custom_command(OUTPUT ${outFile}
-            COMMAND dci-couple-translator --generate ${OPTS_GEN} --outdir ${outDir} --outname ${NAME} --print-source-files ${include} ${OPTS_SOURCES} > ${translatorStdoutFile}
+            COMMAND dci-couple-translator ${gens} ${include} ${sources} --outdir ${outDir} --outname ${NAME} --print-source-files > ${translatorStdoutFile}
             COMMAND ${CMAKE_COMMAND} -DdciUseIdlParseIncludes=${translatorStdoutFile} -DdciUseIdlWriteIncludes=${fakeDepsCxx} -P ${dciUseIdlScript}
+            VERBATIM
             DEPENDS dci-couple-translator
             IMPLICIT_DEPENDS CXX ${fakeDepsCxx}
         )

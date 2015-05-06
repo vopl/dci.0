@@ -21,6 +21,12 @@ set(SRC
 
     src/impl/executorCpp.hpp
     src/impl/executorCpp.cpp
+
+    src/impl/executorCpp_basis.hpp
+    src/impl/executorCpp_basis.cpp
+
+    src/impl/executorCpp_handlerSkel.hpp
+    src/impl/executorCpp_handlerSkel.cpp
 )
 
 

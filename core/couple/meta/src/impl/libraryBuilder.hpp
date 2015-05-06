@@ -62,6 +62,9 @@ namespace dci { namespace couple { namespace meta { namespace impl
         void rollbackChanges();
 
     private:
+        void fillOppositeIfaceScope(Scope *o, Scope *v);
+
+    private:
         LibraryContent _lc;
     };
 

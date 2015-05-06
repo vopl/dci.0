@@ -20,7 +20,8 @@ namespace dci { namespace couple { namespace meta
 
         const std::vector<const Method *> &methods() const;
 
-        bool forward() const;
+        bool primary() const;
+        const Iface *opposite() const;
     };
 
 }}}

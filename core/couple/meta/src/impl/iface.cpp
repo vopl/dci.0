@@ -39,4 +39,24 @@ namespace dci { namespace couple { namespace meta { namespace impl
         setSign(s.finish());
     }
 
+    void Iface::setPrimary(bool v)
+    {
+        _primary = v;
+    }
+
+    bool Iface::primary() const
+    {
+        return _primary;
+    }
+
+    void Iface::setOpposite(Iface *v)
+    {
+        _opposite = v;
+    }
+
+    const Iface *Iface::opposite() const
+    {
+        return _opposite;
+    }
+
 }}}}

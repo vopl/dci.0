@@ -36,7 +36,7 @@ set_property(TARGET ${PROJECT} PROPERTY CXX_STANDARD_REQUIRED ON)
 
 include(DciUseIdl)
 dciUseIdl(${PROJECT}
-    GEN cpp
+    GEN cpp_basis cpp_handler_skel
     INCLUDE ${CMAKE_CURRENT_SOURCE_DIR}/idl
     SOURCES net.idl
 )
