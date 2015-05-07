@@ -185,7 +185,7 @@ namespace  dci { namespace couple { namespace parser { namespace impl { namespac
         bool checkOpposite(const SIface *v)
         {
             const Name &name = v->name;
-            if(name->value.size()-8 == name->value.find("Opposite"))
+            if(name->value.size()>=8 && name->value.size()-8 == name->value.find("Opposite"))
             {
                 _errs.emplace_back(ErrorInfo {
                                       name->pos.begin().file(),

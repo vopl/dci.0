@@ -157,7 +157,7 @@ namespace dci { namespace couple { namespace generator { namespace impl
                 "<"+(flags&instantiated ? "0" : "i")+">"+scopedName;
     }
 
-    std::string ExecutorCpp::methodArgiments(const Method *v, bool forOutput, int typesFlags)
+    std::string ExecutorCpp::methodArgiments(const Method *v, bool forRealMethod, int typesFlags)
     {
         std::string res;
 
@@ -168,8 +168,11 @@ namespace dci { namespace couple { namespace generator { namespace impl
             else res+= ", ";
 
             res+= typeName(a->type(), typesFlags);
-            res+= " &&";
-            if(forOutput) res+= a->name();
+            if(forRealMethod)
+            {
+                res+= " &&";
+                res+= a->name();
+            }
         }
 
         return res;
@@ -182,7 +185,7 @@ namespace dci { namespace couple { namespace generator { namespace impl
         const Type *rt = m->resultType();
         if(m->nowait())
         {
-            res+= _runtimeNamespace+"::nowaitvoid ";
+            res+= _runtimeNamespace+"::void_ ";
         }
         else
         {
@@ -196,7 +199,7 @@ namespace dci { namespace couple { namespace generator { namespace impl
 
         if(i) res += typeName(i, typesFlags);
 
-        res+= m->name()+"("+methodArgiments(m,true, typesFlags)+")";
+        res+= m->name()+"("+methodArgiments(m, true, typesFlags)+")";
 
         return res;
     }

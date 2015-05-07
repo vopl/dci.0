@@ -19,32 +19,41 @@ namespace dci { namespace couple { namespace runtime
         void operator=(const Wire &) = delete;
 
     public:
-        Wire();
-        ~Wire();
-
-        typename Signal<R(Args...)>::Future operator()(Args &&... args);
+        Wire() = default;
+        typename Signal<R(Args...)>::Result operator()(Args &&... args);
     };
 
 
-    template <class R, class... Args>
-    Wire<R(Args...)>::Wire()
+    template <class... Args>
+    class Wire<nowaitvoid(Args...)>
+        : public Signal<nowaitvoid(Args...)>
     {
-    }
+        Wire(const Wire &) = delete;
+        void operator=(const Wire &) = delete;
+
+    public:
+        Wire() = default;
+        typename Signal<nowaitvoid(Args...)>::Result operator()(Args &&... args);
+    };
 
     template <class R, class... Args>
-    Wire<R(Args...)>::~Wire()
-    {
-    }
-
-    template <class R, class... Args>
-    typename Signal<R(Args...)>::Future Wire<R(Args...)>::operator()(Args &&... args)
+    typename Signal<R(Args...)>::Result Wire<R(Args...)>::operator()(Args &&... args)
     {
         if(Signal<R(Args...)>::_call)
         {
             return Signal<R(Args...)>::_call(std::forward<Args>(args)...);
         }
 
-        return typename Signal<R(Args...)>::Future(make_error_code(error::general::call_not_connected));
+        return typename Signal<R(Args...)>::Result(make_error_code(error::general::call_not_connected));
+    }
+
+    template <class... Args>
+    typename Signal<nowaitvoid(Args...)>::Result Wire<nowaitvoid(Args...)>::operator()(Args &&... args)
+    {
+        if(Signal<nowaitvoid(Args...)>::_call)
+        {
+            Signal<nowaitvoid(Args...)>::_call(std::forward<Args>(args)...);
+        }
     }
 
 }}}

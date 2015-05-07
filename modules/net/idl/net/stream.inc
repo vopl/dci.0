@@ -13,8 +13,8 @@ scope stream
     {
         out void bind(Address v);
         out void listen();
-        out Stream accept();
-        in void accepted(Stream v);
+        out Channel accept();
+        in void accepted(Channel v);
         out void close();
     }
 
@@ -22,12 +22,12 @@ scope stream
     iface Client
     {
         out void bind(Address v);
-        out Stream connect(Address v);
+        out Channel connect(Address v);
         out void abort();
     }
 
     /////////////////////////////////////////////////////////
-    iface Stream
+    iface Channel
     {
         out Address ownAddress();
         out Address peerAddress();

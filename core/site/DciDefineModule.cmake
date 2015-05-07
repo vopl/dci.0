@@ -11,7 +11,7 @@ function(dciDefineModule name)
 
     set(manifest ${CMAKE_CURRENT_BINARY_DIR}/manifest.json)
     add_custom_command(OUTPUT ${manifest}
-        COMMAND dci-site --genmanifest $<TARGET_FILE:${OPTS_MAINTARGET}> >${manifest}
+        COMMAND dci-site --genmanifest $<TARGET_FILE:${OPTS_MAINTARGET}> --outfile ${manifest}
         DEPENDS ${OPTS_MAINTARGET} dci-site)
 
     target_sources(${OPTS_MAINTARGET} PUBLIC ${manifest})

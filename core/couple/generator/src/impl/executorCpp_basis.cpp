@@ -506,7 +506,7 @@ namespace dci { namespace couple { namespace generator { namespace impl
                 {
                     _hpp<< typeName(m->resultType(), inBody);
                 }
-                _hpp<< "("<<methodArgiments(m,false, inBody)<<")> &"<<m->name()<<"()"<<el;
+                _hpp<< "("<<methodArgiments(m, false, inBody)<<")> &"<<m->name()<<"()"<<el;
 
                 _hpp<< "{"<<el;
                 _hpp<< indent;

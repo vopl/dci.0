@@ -1,6 +1,7 @@
 #pragma once
 
 #include <dci/async/future.hpp>
+#include <dci/mm/newDelete.hpp>
 
 #include <system_error>
 #include <functional>
@@ -8,6 +9,8 @@
 
 namespace dci { namespace couple { namespace runtime
 {
+    struct nowaitvoid;
+
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
     template<int> struct BindPlaceholder {};
 
@@ -28,14 +31,17 @@ namespace dci { namespace couple { namespace runtime
         bool disconnect();
 
     protected:
-        using Future = std::conditional_t<
-            std::is_same<void, R>::value,
-            dci::async::Future<std::error_code>,
-            dci::async::Future<std::error_code, R>>;
+        using Result = std::conditional_t<
+            std::is_same<nowaitvoid, R>::value,
+            void,
+            std::conditional_t<
+                std::is_same<void, R>::value,
+                dci::async::Future<std::error_code>,
+                dci::async::Future<std::error_code, R>
+            >
+        >;
 
-        using Promise = typename Future::Promise;
-
-        using Call = std::function<Future(Args &&...)>;
+        using Call = std::function<Result(Args &&...)>;
         Call _call;
     };
 
@@ -54,9 +60,22 @@ namespace dci { namespace couple { namespace runtime
 
     namespace details
     {
+        template <class Bind>
+        struct CallableWrapper
+            : Bind
+            , dci::mm::NewDelete<CallableWrapper<Bind>>
+        {
+            using Bind::Bind;
+
+            CallableWrapper(Bind &&b)
+                : Bind(std::forward<Bind>(b))
+            {
+            }
+        };
+
         template <class F, class... LocalArgs, int... phi>
-        decltype(std::bind(std::declval<F>(), std::declval<LocalArgs>()..., BindPlaceholder<phi>{}...))
-            mkCall(std::integer_sequence<int, phi...>, F &&f, LocalArgs &&... localArgs)
+        CallableWrapper<decltype(std::bind(std::declval<F>(), std::declval<LocalArgs>()..., BindPlaceholder<phi>{}...))>
+            mkCallable(std::integer_sequence<int, phi...>, F &&f, LocalArgs &&... localArgs)
         {
             return std::bind(std::forward<F>(f), std::forward<LocalArgs>(localArgs)..., BindPlaceholder<phi>{}...);
         }
@@ -73,7 +92,7 @@ namespace dci { namespace couple { namespace runtime
             return false;
         }
 
-        _call = details::mkCall(
+        _call = details::mkCallable(
                         std::make_integer_sequence<int, sizeof... (Args)>{},
                         std::forward<F>(f),
                         std::forward<LocalArgs>(localArgs)...);

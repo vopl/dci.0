@@ -7,6 +7,7 @@
 #include <dci/couple/runtime/sign.hpp>
 
 #include <csignal>
+#include <fstream>
 #include <boost/program_options.hpp>
 #include <boost/program_options/parsers.hpp>
 
@@ -41,6 +42,7 @@ void signalHandler(int signum)
     }
 }
 
+bool printoutput(const po::variables_map &vars, const std::string &content);
 
 int main(int argc, char *argv[])
 {
@@ -77,6 +79,11 @@ int main(int argc, char *argv[])
             (
                 "rndsign",
                 "generate new random sign"
+            )
+            (
+                "outfile",
+                po::value<std::string>(),
+                "output file name for genmanifest, rndsign"
             )
             ;
 
@@ -119,16 +126,14 @@ int main(int argc, char *argv[])
             return EXIT_FAILURE;
         }
 
-        std::cout<<content<<std::endl;
-        return EXIT_SUCCESS;
+        return printoutput(vars, content) ? EXIT_SUCCESS : EXIT_FAILURE;
     }
 
     if(vars.count("rndsign"))
     {
         dci::couple::runtime::Sign s;
         s.fromRnd();
-        std::cout<<s.toHex()<<std::endl;
-        return EXIT_SUCCESS;
+        return printoutput(vars, s.toHex()) ? EXIT_SUCCESS : EXIT_FAILURE;
     }
 
     ////////////////////////////////////////////////////////////////////////////////
@@ -158,4 +163,23 @@ int main(int argc, char *argv[])
     }
 
     return EXIT_SUCCESS;
+}
+
+bool printoutput(const po::variables_map &vars, const std::string &content)
+{
+    if(vars.count("outfile"))
+    {
+        std::ofstream out(vars["outfile"].as<std::string>());
+        if(!out)
+        {
+            std::cerr<<strerror(errno)<<std::endl;
+            return false;
+        }
+
+        out.write(content.data(), content.size());
+        return true;
+    }
+
+    std::cout.write(content.data(), content.size());
+    return true;
 }

@@ -10,8 +10,8 @@ scope net
     iface Host
     {
         out list<Interface> interfaces();
-        in void interfaceAdded(Interface v);
-        in void interfaceRemoved(Interface v);
+        in nowait void interfaceAdded(Interface v);
+        in nowait void interfaceRemoved(Interface v);
 
         out ip4::stream::Host ip4StreamHost();
         out ip4::datagram::Host ip4DatagramHost();
@@ -26,16 +26,19 @@ scope net
     iface Interface
     {
         out uint32 flags();
-        in void flagsChanged();
-        
+        in nowait void flagsChanged();
+
+        out uint32 mtu();
+        in nowait void mtuChanged();
+
         out string name();
-        in void nameChanged();
+        in nowait void nameChanged();
         
-        out list<ip4::Interface> ip4Interfaces();
-        in void ip4InterfacesChanged();
+        out list<ip4::Net> ip4Nets();
+        in nowait void ip4NetsChanged();
         
-        out list<ip6::Interface> ip6Interfaces();
-        in void ip6InterfacesChanged();
+        out list<ip6::Net> ip6Nets();
+        in nowait void ip6NetsChanged();
     }
 
     /////////////////////////////////////////////////////////
@@ -51,7 +54,7 @@ scope net
             uint16 port;
         }
 
-        struct Interface
+        struct Net
         {
             Ip address;
             Ip netmask;
@@ -75,10 +78,11 @@ scope net
             uint16 port;
         }
 
-        struct Interface
+        struct Net
         {
             Ip address;
             uint16 prefixLength;
+            uint32 scopeId;
         }
         
         include "net/stream.inc";

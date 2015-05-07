@@ -24,8 +24,8 @@ namespace dci { namespace async
 
     public:
         explicit Future(FutureNullInitializer);
-        explicit Future(E && err);
-        explicit Future(T &&... vals);
+        Future(E && err);
+        Future(T &&... vals);
         Future(const Future &other);
         Future(Future &&other);
         ~Future();

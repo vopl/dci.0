@@ -174,8 +174,11 @@ namespace dci { namespace couple { namespace parser { namespace impl
     //    primitive
     struct SPrimitive
     {
-        meta::PrimitiveKind   kind;
-        meta::Primitive *meta{nullptr};
+        meta::PrimitiveKind kind{meta::PrimitiveKind::void_};
+        meta::Primitive     *meta{nullptr};
+
+        SPrimitive() {}
+        SPrimitive(meta::PrimitiveKind kind) : kind{kind} {}
     };
 
     //    list

@@ -4,7 +4,7 @@ scope datagram
     /////////////////////////////////////////////////////////
     iface Host
     {
-        out Socket mkSocket();
+        out Channel mkChannel();
     }
 
     /////////////////////////////////////////////////////////
@@ -15,7 +15,7 @@ scope datagram
     }
 
     /////////////////////////////////////////////////////////
-    iface Socket
+    iface Channel
     {
         out void bind(Address v);
         
