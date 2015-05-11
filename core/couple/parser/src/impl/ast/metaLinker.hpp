@@ -75,10 +75,18 @@ namespace  dci { namespace couple { namespace parser { namespace impl { namespac
                 vs.end(),
                 [&](const Method &v) {
                     _lb.setMethodDirection(v->meta, MethodDirection::in==v->direction ? meta::CallDirection::in : meta::CallDirection::out);
-                    _lb.setMethodNowait(v->meta, v->nowait);
-                    _lb.setResultType(v->meta, typeUse2Meta(v->resultType));
-                    exec(v->params);
-                    boost::apply_visitor(*this, v->resultType);
+                    exec(v->query);
+
+                    _lb.setMethodNoreply(v->meta, v->noreply);
+
+                    std::for_each(
+                        v->reply.begin(),
+                        v->reply.end(),
+                        [&](TypeUse &t) {
+                            boost::apply_visitor(*this, t);
+                            _lb.addReplyArg(v->meta, typeUse2Meta(t));
+                        }
+                    );
                 }
             );
         }
@@ -150,7 +158,7 @@ namespace  dci { namespace couple { namespace parser { namespace impl { namespac
             }
 
             exec(v->decls);
-            exec(v->fields);
+            exec(v->methods);
         }
 
         void operator()(SScope *v)

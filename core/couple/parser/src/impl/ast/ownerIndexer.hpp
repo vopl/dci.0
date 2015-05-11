@@ -99,7 +99,7 @@ namespace  dci { namespace couple { namespace parser { namespace impl { namespac
                     v->owner = _iface;
 
                     CurrentSetter<SMethod> csm(_method, v.get());
-                    exec(v->params);
+                    exec(v->query);
                 }
             );
         }
@@ -170,7 +170,7 @@ namespace  dci { namespace couple { namespace parser { namespace impl { namespac
             CurrentSetter<SIface> csi(_iface, v);
             CurrentSetter<SScope> css(_scope, v);
             exec(v->decls);
-            exec(v->fields);
+            exec(v->methods);
         }
 
         void operator()(SScope *v)

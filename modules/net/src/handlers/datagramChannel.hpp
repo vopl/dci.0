@@ -11,8 +11,6 @@ namespace handlers
     struct DatagramChannelHandler
         : ScopeSelector<Address>::datagram::template ChannelHandlerSkel<DatagramChannelHandler<Address>>
     {
-        using Datagram = typename ScopeSelector<Address>::datagram::Datagram;
-
         Future< > bind(Address &&v)
         {
             assert(0);
@@ -23,7 +21,7 @@ namespace handlers
             assert(0);
         }
 
-        Future< Datagram> receive()
+        Future< Data, Address> receive()
         {
             assert(0);
         }

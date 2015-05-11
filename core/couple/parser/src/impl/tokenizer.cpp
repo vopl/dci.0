@@ -14,11 +14,11 @@ namespace dci { namespace couple { namespace parser { namespace impl
         , dcolon    {"\"::\""}
         , colon     {':'}
         , eq        {'='}
+        , arrow     {"\"->\""}
 
         , quotedString {"\\\"((\\\\\\\")|[^\\\"])*\\\""}
         , uint      {"\\d+"}
 
-        , kwvoid    {"\"void\""}
         , kwbool    {"\"bool\""}
         , kwstring  {"\"string\""}
         , kwint8    {"\"int8\""}
@@ -75,12 +75,12 @@ namespace dci { namespace couple { namespace parser { namespace impl
             | dcolon
             | colon
             | eq
+            | arrow
 
             | quotedString
 
             | uint
 
-            | kwvoid
             | kwbool
             | kwstring
             | kwint8

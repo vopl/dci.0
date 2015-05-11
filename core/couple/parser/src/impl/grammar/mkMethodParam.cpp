@@ -9,7 +9,8 @@ namespace dci { namespace couple { namespace parser { namespace impl
             typeUse
                 [qi::_val = phx::construct<MethodParam>(phx::new_<SMethodParam>())]
                 [phx::bind(&SMethodParam::type, deref(qi::_val)) = qi::_1] >
-            (name[phx::bind(&SMethodParam::name, deref(qi::_val)) = qi::_1] | error(+"argument name expected"));
+            //(name[phx::bind(&SMethodParam::name, deref(qi::_val)) = qi::_1] | error(+"argument name expected"));
+            (-name[phx::bind(&SMethodParam::name, deref(qi::_val)) = qi::_1]);
     }
 
 }}}}

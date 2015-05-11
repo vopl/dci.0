@@ -11,6 +11,7 @@ namespace dci { namespace couple { namespace meta
         return this->impl().elements();
     }
 
+    template class Compound<Type>;
     template class Compound<Struct>;
     template class Compound<Variant>;
     template class Compound<Enum>;

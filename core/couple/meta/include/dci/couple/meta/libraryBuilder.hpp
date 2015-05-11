@@ -47,7 +47,6 @@ namespace dci { namespace couple { namespace meta
         Ptr         *addPtr();
         Array       *addArray();
 
-
         Scope       *addScope(Scope *parent, const std::string &name);
         Alias       *addAlias(Scope *parent, const std::string &name);
         Struct      *addStruct(Scope *parent, const std::string &name);
@@ -67,7 +66,6 @@ namespace dci { namespace couple { namespace meta
 
         void setType(Attribute *target, Type *type);
         void setType(Alias *target, Type *type);
-        void setResultType(Method *target, Type *type);
 
         void setElementType(Set *target, Type *type);
         void setElementType(List *target, Type *type);
@@ -77,7 +75,8 @@ namespace dci { namespace couple { namespace meta
         void setElementType(Map *target, Type *keyType, Type *valueType);
 
         void setMethodDirection(Method *target, CallDirection direction);
-        void setMethodNowait(Method *target, bool nowait);
+        void setMethodNoreply(Method *target, bool noreply);
+        void addReplyArg(Method *target, Type *type);
 
         void setArraySize(Array *target, std::uint32_t size);
 

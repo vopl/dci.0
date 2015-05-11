@@ -33,7 +33,8 @@ namespace dci { namespace couple { namespace generator { namespace impl
         std::string typeName(const dci::couple::meta::Type *v, int flags);
         std::string typeName(const dci::couple::meta::Scope *v, const std::string &name, int flags);
 
-        std::string methodArgiments(const dci::couple::meta::Method *v, bool forRealMethod, int typesFlags);
+        std::string methodArgiments(const dci::couple::meta::Method *m, bool forRealMethod, int typesFlags);
+        std::string methodReplyTypes(const dci::couple::meta::Method *m, int typesFlags);
         std::string methodSignature(const dci::couple::meta::Method *m, int typesFlags, const dci::couple::meta::Iface *i=nullptr);
 
         const std::string &wireName() const;

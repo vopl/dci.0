@@ -25,12 +25,12 @@ namespace dci { namespace couple { namespace parser { namespace impl
         TokenDef dcolon;        // ::
         TokenDef colon;         // :
         TokenDef eq;            // =
+        TokenDef arrow;         // ->
 
         TokenDef quotedString;
 
         TokenDef uint;
 
-        TokenDef kwvoid;
         TokenDef kwbool;
 
         TokenDef kwstring;

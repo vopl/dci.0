@@ -7,7 +7,6 @@ namespace dci { namespace couple { namespace parser { namespace impl
         ////////////////////////////////////////////////////////////////////////////////
         primitive =
             (
-                toks.kwvoid     [qi::_a = meta::PrimitiveKind::void_    ] |
                 toks.kwbool     [qi::_a = meta::PrimitiveKind::bool_    ] |
                 toks.kwstring   [qi::_a = meta::PrimitiveKind::string   ] |
                 toks.kwint8     [qi::_a = meta::PrimitiveKind::int8     ] |

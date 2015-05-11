@@ -208,13 +208,6 @@ namespace dci { namespace couple { namespace meta { namespace impl
         target->setType(type);
     }
 
-    void LibraryBuilder::setResultType(Method *target, Type *type)
-    {
-        _lc.checkPresense(target);
-        _lc.checkPresense(type);
-        target->setResultType(type);
-    }
-
     void LibraryBuilder::setElementType(Set *target, Type *type)
     {
         _lc.checkPresense(target);
@@ -258,10 +251,17 @@ namespace dci { namespace couple { namespace meta { namespace impl
         target->setDirection(direction);
     }
 
-    void LibraryBuilder::setMethodNowait(Method *target, bool nowait)
+    void LibraryBuilder::addReplyArg(Method *target, Type *type)
     {
         _lc.checkPresense(target);
-        target->setNowait(nowait);
+        _lc.checkPresense(type);
+        target->add(type);
+    }
+
+    void LibraryBuilder::setMethodNoreply(Method *target, bool noreply)
+    {
+        _lc.checkPresense(target);
+        target->setNoreply(noreply);
     }
 
     void LibraryBuilder::setArraySize(Array *target, std::uint32_t size)
@@ -280,6 +280,29 @@ namespace dci { namespace couple { namespace meta { namespace impl
     {
         (void)errors;
         //TODO: check errors
+
+        //give a names to unnamed method arguments
+        {
+            for(Iface *i : _lc.items<Iface>())
+            {
+                for(const Method *cm : i->Compound<Method>::elements())
+                {
+                    std::set<std::string> usedNames;
+                    usedNames.insert(std::string());
+                    std::size_t indexGen = 0;
+
+                    for(const Attribute *ca : cm->Compound<Attribute>::elements())
+                    {
+                        Attribute *a = const_cast<Attribute *>(ca);
+                        while(usedNames.end() != usedNames.find(a->name()))
+                        {
+                            a->setName("unnamed_"+std::to_string(indexGen++));
+                        }
+                        usedNames.insert(a->name());
+                    }
+                }
+            }
+        }
 
         //create opposite ifaces
         {
@@ -300,14 +323,18 @@ namespace dci { namespace couple { namespace meta { namespace impl
                 {
                     Method *om = addMethod(o, m->name());
 
-                    setMethodNowait(om, m->nowait());
                     setMethodDirection(om, CallDirection::in == m->direction() ? CallDirection::out : CallDirection::in);
-                    setResultType(om, const_cast<Type *>(m->resultType()));
+                    setMethodNoreply(om, m->noreply());
 
                     for(const Attribute *a : m->Compound<Attribute>::elements())
                     {
                         Attribute *oa = addAttribute(om, a->name());
                         setType(oa, const_cast<Type *>(a->type()));
+                    }
+
+                    for(const Type *t : m->Compound<Type>::elements())
+                    {
+                        addReplyArg(om, const_cast<Type *>(t));
                     }
                 }
             }

@@ -9,8 +9,6 @@
 
 namespace dci { namespace couple { namespace runtime
 {
-    struct nowaitvoid;
-
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
     template<int> struct BindPlaceholder {};
 
@@ -31,17 +29,7 @@ namespace dci { namespace couple { namespace runtime
         bool disconnect();
 
     protected:
-        using Result = std::conditional_t<
-            std::is_same<nowaitvoid, R>::value,
-            void,
-            std::conditional_t<
-                std::is_same<void, R>::value,
-                dci::async::Future<std::error_code>,
-                dci::async::Future<std::error_code, R>
-            >
-        >;
-
-        using Call = std::function<Result(Args &&...)>;
+        using Call = std::function<R(Args &&...)>;
         Call _call;
     };
 

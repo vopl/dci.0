@@ -18,7 +18,6 @@ namespace handlers
 
         struct datagram
         {
-            using Datagram = ip4::datagram::Datagram;
             using Channel = ip4::datagram::Channel;
 
             template <class H>
@@ -55,7 +54,6 @@ namespace handlers
 
         struct datagram
         {
-            using Datagram = ip6::datagram::Datagram;
             using Channel = ip6::datagram::Channel;
 
             template <class H>

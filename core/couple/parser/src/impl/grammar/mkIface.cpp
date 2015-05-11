@@ -25,7 +25,7 @@ namespace dci { namespace couple { namespace parser { namespace impl
                     )
                 ] |
 
-                method[phx::push_back(phx::bind(&SIface::fields, deref(qi::_val)), qi::_1)]
+                method[phx::push_back(phx::bind(&SIface::methods, deref(qi::_val)), qi::_1)]
             ) >
             (toks.ccb | error(+"'}' expected"));
     }

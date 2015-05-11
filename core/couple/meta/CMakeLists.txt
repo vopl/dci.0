@@ -185,6 +185,7 @@ mkHimplLayouts(${PROJECT}
         ::dci::couple::meta::impl::Alias
         ::dci::couple::meta::impl::Array
         ::dci::couple::meta::impl::Attribute
+        "::dci::couple::meta::impl::Compound< ::dci::couple::meta::Type>"
         "::dci::couple::meta::impl::Compound< ::dci::couple::meta::Attribute>"
         "::dci::couple::meta::impl::Compound< ::dci::couple::meta::EnumValue>"
         "::dci::couple::meta::impl::Compound< ::dci::couple::meta::Method>"

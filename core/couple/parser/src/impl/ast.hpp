@@ -384,10 +384,10 @@ namespace dci { namespace couple { namespace parser { namespace impl
         SIface                      *owner{nullptr};
 
         MethodDirection             direction{MethodDirection::out};
-        TypeUse                     resultType;
-        bool                        nowait{false};
         Name                        name;
-        std::vector<MethodParam>    params;
+        std::vector<MethodParam>    query;
+        bool                        noreply{false};
+        std::vector<TypeUse>        reply;
 
         meta::Method                *meta{nullptr};
     };
@@ -397,7 +397,7 @@ namespace dci { namespace couple { namespace parser { namespace impl
         : SScope
     {
         BaseIfaces              bases;
-        std::vector<Method>     fields;
+        std::vector<Method>     methods;
 
         meta::Iface             *meta{nullptr};
     };

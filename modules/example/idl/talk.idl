@@ -15,28 +15,28 @@ scope talk
             busy;
         }
         
-        out void setId(Id id);
-        out void setStatus(Status status);
+        out setId: (Id id);
+        out setStatus: (Status status);
         
-        out bool joinChat(Chat chat);
+        out joinChat: (Chat chat) -> bool;
     }
     
     
     
     iface Chat
     {
-        out void setMembers(list<Peer::Id> ids);
+        out setMembers: (list<Peer::Id> ids);
 
-        out void addMember(Peer::Id id);
-        out void delMember(Peer::Id id);
+        out addMember: (Peer::Id id);
+        out delMember: (Peer::Id id);
         
-        out void exhibitVoice(VoiceTrain voice);
-        out void exhibitVideo(VideoTrain video);
-        out FilesReceiver getFiles(FilesInfo::Id id);
+        out exhibitVoice: (VoiceTrain voice);
+        out exhibitVideo: (VideoTrain video);
+        out getFiles: (FilesInfo::Id id) -> FilesReceiver ;
 
-        out void typing(bool v);
-        out void message(Message msg);
-        in  void wantMessageReply(Message::Id from, Message::Id to);
+        out typing: (bool v);
+        out message: (Message msg);
+        in  wantMessageReply: (Message::Id from, Message::Id to);
 
     }
     
@@ -90,25 +90,25 @@ scope talk
     
     iface FilesReceiver
     {
-        in void abort();
-        out void abort2();
+        in abort: ();
+        out abort: ();//тут одинаковое имя
         
         struct Entry
         {
             variant SizeOrVoid
             {
                 uint64 size;
-                void;
+                bool void_;
             }
 
             string name;
             SizeOrVoid sizeOrVoid;
         }
         
-        in void list(list<FilesReceiver::Entry> entries);
-        in void content(list<int8> bytes);
+        in list: (list<FilesReceiver::Entry> entries);
+        in content: (list<int8> bytes);
 
-        in void finish();
+        in finish: ();
     }
     
     iface VoiceTrain

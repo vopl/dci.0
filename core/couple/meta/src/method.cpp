@@ -8,19 +8,19 @@ namespace dci { namespace couple { namespace meta
         return impl().direction();
     }
 
-    bool Method::nowait() const
-    {
-        return impl().nowait();
-    }
-
-    const Type *Method::resultType() const
-    {
-        return himpl::impl2Face<Type>(impl().resultType());
-    }
-
-    const std::vector<const Attribute *> &Method::attributes() const
+    const std::vector<const Attribute *> &Method::query() const
     {
         return Compound<Attribute>::elements();
+    }
+
+    const std::vector<const Type *> &Method::reply() const
+    {
+        return Compound<Type>::elements();
+    }
+
+    bool Method::noreply() const
+    {
+        return impl().noreply();
     }
 
 }}}

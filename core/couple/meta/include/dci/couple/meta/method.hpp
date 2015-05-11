@@ -3,7 +3,6 @@
 #include "named.hpp"
 #include "signed.hpp"
 #include "compound.hpp"
-#include "type.hpp"
 
 namespace dci { namespace couple { namespace meta
 {
@@ -14,7 +13,7 @@ namespace dci { namespace couple { namespace meta
     };
 
     class Method
-        : public himpl::FaceLayout<impl::Method, Named, Signed, Compound<Attribute>>
+        : public himpl::FaceLayout<impl::Method, Named, Signed, Compound<Attribute>, Compound<Type>>
     {
     public:
         using ThisFaceLayout::ThisFaceLayout;
@@ -22,9 +21,10 @@ namespace dci { namespace couple { namespace meta
         ~Method() = delete;
 
         CallDirection direction() const;
-        bool nowait() const;
-        const Type *resultType() const;
-        const std::vector<const Attribute *> &attributes() const;
+        const std::vector<const Attribute *> &query() const;
+        const std::vector<const Type *> &reply() const;
+
+        bool noreply() const;
     };
 
 }}}

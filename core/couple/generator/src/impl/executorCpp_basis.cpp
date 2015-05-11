@@ -198,6 +198,12 @@ namespace dci { namespace couple { namespace generator { namespace impl
 
     bool ExecutorCpp_basis::writeWire(const Iface *v)
     {
+        if(!v->primary())
+        {
+            //opposite ifaces use primary wires
+            return true;
+        }
+
         _hpp<< "// iface "<<v->name()<<el;
         _hpp<< "struct "<<v->name()<<el;
         _hpp<< indent;
@@ -221,25 +227,34 @@ namespace dci { namespace couple { namespace generator { namespace impl
             _hpp<< "}"<<el;
         }
 
-        for(auto *m : v->methods())
+        for(const Method *m : v->methods())
         {
             //_hpp<< "//method "<<m->name()<<el;
 
             _hpp<< runtimeNamespace()+"::Wire< ";
 
-            if(m->nowait())
+            if(m->noreply())
             {
-                _hpp<< runtimeNamespace()+"::nowaitvoid";
+                _hpp<< runtimeNamespace()+"::void_";
             }
             else
             {
-                _hpp<< typeName(m->resultType(), inBody);
+                _hpp<< runtimeNamespace()+"::Future< ";
+                bool first = true;
+                for(auto *t : m->reply())
+                {
+                    if(first) first = false;
+                    else _hpp<< ", ";
+
+                    _hpp<< typeName(t, inBody);
+                }
+                _hpp<< ">";
             }
 
             _hpp<< "(";
 
             bool first = true;
-            for(auto *a : m->attributes())
+            for(auto *a : m->query())
             {
                 if(first) first = false;
                 else _hpp<< ", ";
@@ -247,7 +262,9 @@ namespace dci { namespace couple { namespace generator { namespace impl
                 _hpp<< typeName(a->type(), inBody);
             }
 
-            _hpp<< ") > "<<m->name()<<";"<<el;
+            _hpp<< ") > ";
+            _hpp<< (CallDirection::in == m->direction() ? "in" : "out")<<"_";
+            _hpp<< m->name()<<";"<<el;
         }
 
         _hpp<< undent;
@@ -424,7 +441,7 @@ namespace dci { namespace couple { namespace generator { namespace impl
         {
             _hpp<< v->name()<<"()"<<el;
             _hpp<< indent;
-            _hpp<< ": Iface(new "<<typeName(v, inWire)<<", "<<(v->primary()?"true":"false")<<")"<<el;
+            _hpp<< ": Iface(new "<<typeName(v->primary() ? v : v->opposite(), inWire)<<", "<<(v->primary()?"true":"false")<<")"<<el;
             _hpp<< undent;
             _hpp<< "{"<<el;
             _hpp<< "}"<<el;
@@ -483,10 +500,12 @@ namespace dci { namespace couple { namespace generator { namespace impl
 
         //wire access
         {
-            _hpp<< typeName(v, inWire)<<" *wire()"<<el;
+            _hpp<< typeName(v->primary() ? v : v->opposite(), inWire)<<" *wire()"<<el;
             _hpp<< "{"<<el;
             _hpp<< indent;
-            _hpp<< "return static_cast< "<<typeName(v, inWire)<<" *>(Iface::wire());"<<el;
+            _hpp<< "return static_cast< ";
+            _hpp<< typeName(v->primary() ? v : v->opposite(), inWire);
+            _hpp<< " *>(Iface::wire());"<<el;
             _hpp<< undent;
             _hpp<< "}"<<el;
         }
@@ -494,23 +513,23 @@ namespace dci { namespace couple { namespace generator { namespace impl
 
         for(const Method *m : v->methods())
         {
-            if(CallDirection::in == m->direction())
+            if(CallDirection::out == m->direction())
             {
 
                 _hpp<< runtimeNamespace()<<"::Signal< ";
-                if(m->nowait())
+                if(m->noreply())
                 {
-                    _hpp<< runtimeNamespace()+"::nowaitvoid";
+                    _hpp<< runtimeNamespace()+"::void_";
                 }
                 else
                 {
-                    _hpp<< typeName(m->resultType(), inBody);
+                    _hpp<< runtimeNamespace()+"::Future< "+methodReplyTypes(m, inBody)+">";
                 }
-                _hpp<< "("<<methodArgiments(m, false, inBody)<<")> &"<<m->name()<<"()"<<el;
+                _hpp<< "("<<methodArgiments(m, false, inBody)<<")> &signal_"<<m->name()<<"()"<<el;
 
                 _hpp<< "{"<<el;
                 _hpp<< indent;
-                _hpp<< "return wire()->"<<m->name()<<";"<<el;
+                _hpp<< "return wire()->"<<(v->primary() ? "out" : "in")<<"_"<<m->name()<<";"<<el;
                 _hpp<< undent;
                 _hpp<< "}"<<el;
             }
@@ -521,10 +540,10 @@ namespace dci { namespace couple { namespace generator { namespace impl
                 _hpp<< "{"<<el;
                 _hpp<< indent;
 
-                _hpp<< "return wire()->"<<m->name()<<"(";
+                _hpp<< "return wire()->"<<(v->primary() ? "in" : "out")<<"_"<<m->name()<<"(";
 
                 bool first = true;
-                for(const Attribute *a : m->attributes())
+                for(const Attribute *a : m->query())
                 {
                     if(first) first = false;
                     else _hpp<< ", ";
@@ -572,7 +591,11 @@ namespace dci { namespace couple { namespace generator { namespace impl
             _hpp<< "}};"<<el;
         };
 
-        writer(typeName(v, inWire|ignoreTemplateTypename));
+        if(v->primary())
+        {
+            writer(typeName(v, inWire|ignoreTemplateTypename));
+        }
+
         writer(typeName(v, ignoreTemplateTypename));
     }
 

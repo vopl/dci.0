@@ -12,28 +12,26 @@ namespace dci { namespace couple { namespace meta { namespace impl
         : public Named
         , public Signed
         , public Compound<Attribute>
+        , public Compound<Type>
     {
     public:
         Method();
         ~Method();
 
         using Compound<Attribute>::add;
+        using Compound<Type>::add;
 
         void setDirection(CallDirection v);
-        void setNowait(bool v);
-        void setResultType(Type *v);
-
         CallDirection direction() const;
-        bool nowait() const;
-        const Type *resultType() const;
+
+        void setNoreply(bool v);
+        bool noreply() const;
 
         void makeSign();
 
     private:
         CallDirection   _direction{CallDirection::in};
-        bool            _nowait{false};
-        Type            *_resultType{nullptr};
-
+        bool _noreply{false};
     };
 
 }}}}

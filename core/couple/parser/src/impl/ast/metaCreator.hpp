@@ -74,8 +74,8 @@ namespace  dci { namespace couple { namespace parser { namespace impl { namespac
                 vs.end(),
                 [&](const Method &v) {
                     v->meta = _lb.addMethod(v->owner->meta, v->name->value);
-                    exec(v->params);
-                    boost::apply_visitor(*this, v->resultType);
+                    exec(v->query);
+                    exec(v->reply);
                 }
             );
         }
@@ -88,6 +88,17 @@ namespace  dci { namespace couple { namespace parser { namespace impl { namespac
                 [&](const MethodParam &v) {
                     v->meta = _lb.addAttribute(v->owner->meta, v->name ? v->name->value : std::string());
                     boost::apply_visitor(*this, v->type);
+                }
+            );
+        }
+
+        void exec(std::vector<TypeUse> &vs)
+        {
+            std::for_each(
+                vs.begin(),
+                vs.end(),
+                [&](TypeUse &v) {
+                    boost::apply_visitor(*this, v);
                 }
             );
         }
@@ -142,7 +153,7 @@ namespace  dci { namespace couple { namespace parser { namespace impl { namespac
             v->SScope::meta = v->meta;
 
             exec(v->decls);
-            exec(v->fields);
+            exec(v->methods);
         }
 
         void operator()(SScope *v)

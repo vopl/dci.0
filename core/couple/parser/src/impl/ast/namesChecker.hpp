@@ -11,7 +11,9 @@ namespace  dci { namespace couple { namespace parser { namespace impl { namespac
     {
         std::vector<ErrorInfo> &_errs;
 
-        std::map<std::string, Name> _typeNames;
+        std::map<std::string, Name> _names;
+        std::map<std::string, Name> _namesMethodIn;
+        std::map<std::string, Name> _namesMethodOut;
 
     public:
         NamesChecker(std::vector<ErrorInfo> &errs)
@@ -40,25 +42,53 @@ namespace  dci { namespace couple { namespace parser { namespace impl { namespac
         bool operator()(const T &v)
         {
             bool res = true;
-            res &= checkTypeName(v.get());
+            res &= checkName(v.get());
             res &= checkFields(v.get());
-            res &= checkParams(v.get());
+            res &= checkQuery(v.get());
             res &= checkChildren(v.get());
             res &= checkOpposite(v.get());
             return res;
         }
 
     private:
-        bool checkTypeName(...)
+        bool checkName(...)
         {
             return true;
         }
 
-        template <class T>
-        typename std::enable_if<sizeof(T::name)!=0, bool>::type checkTypeName(const T *v)
+        bool checkName(const SMethod *v)
         {
             const Name &cur = v->name;
-            auto ires = _typeNames.insert(std::make_pair(cur->value, cur));
+
+            std::map<std::string, Name> &names = MethodDirection::in==v->direction ? _namesMethodIn : _namesMethodOut;
+            auto ires = names.insert(std::make_pair(cur->value, cur));
+            if(!ires.second)
+            {
+                _errs.emplace_back(ErrorInfo {
+                                      cur->pos.begin().file(),
+                                      static_cast<int>(cur->pos.begin().line()),
+                                      static_cast<int>(cur->pos.begin().column()),
+                                      "duplicate name: "+cur->value});
+
+                const Name &prev = ires.first->second;
+
+                _errs.emplace_back(ErrorInfo {
+                                      prev->pos.begin().file(),
+                                      static_cast<int>(prev->pos.begin().line()),
+                                      static_cast<int>(prev->pos.begin().column()),
+                                      "previous declaration of "+prev->value});
+
+                return false;
+            }
+
+            return true;
+        }
+
+        template <class T>
+        typename std::enable_if<sizeof(T::name)!=0, bool>::type checkName(const T *v)
+        {
+            const Name &cur = v->name;
+            auto ires = _names.insert(std::make_pair(cur->value, cur));
             if(!ires.second)
             {
                 _errs.emplace_back(ErrorInfo {
@@ -84,23 +114,23 @@ namespace  dci { namespace couple { namespace parser { namespace impl { namespac
     private:
 
         template <class T>
-        static auto getFieldsOrParams(const T *v)
+        static auto getFieldsOrQuery(const T *v)
         {
             return v->fields;
         }
 
-        static auto getFieldsOrParams(const SMethod *v)
+        static auto getFieldsOrQuery(const SMethod *v)
         {
-            return v->params;
+            return v->query;
         }
 
         template <class T>
-        bool checkFieldsOrParams(const T *v)
+        bool checkFieldsOrQuery(const T *v)
         {
             std::map<std::string, Name> names;
 
             bool res = true;
-            for(const auto &f : getFieldsOrParams(v))
+            for(const auto &f : getFieldsOrQuery(v))
             {
                 const Name &cur = f->name;
 
@@ -139,19 +169,19 @@ namespace  dci { namespace couple { namespace parser { namespace impl { namespac
         template <class T>
         typename std::enable_if<sizeof(T::fields)!=0, bool>::type checkFields(const T *v)
         {
-            return checkFieldsOrParams(v);
+            return checkFieldsOrQuery(v);
         }
 
     private:
-        bool checkParams(...)
+        bool checkQuery(...)
         {
             return true;
         }
 
         template <class T>
-        typename std::enable_if<sizeof(T::params)!=0, bool>::type checkParams(const T *v)
+        typename std::enable_if<sizeof(T::query)!=0, bool>::type checkQuery(const T *v)
         {
-            return checkFieldsOrParams(v);
+            return checkFieldsOrQuery(v);
         }
 
     private:
@@ -168,12 +198,15 @@ namespace  dci { namespace couple { namespace parser { namespace impl { namespac
 
         bool checkChildren(const SIface *v)
         {
+            NamesChecker checker(_errs);
+
             return std::accumulate(
-                v->fields.begin(),
-                v->fields.end(),
-                NamesChecker(_errs).exec(v->decls),
-                [&](bool v, const Method &d)->bool{return NamesChecker(_errs)(d) && v;}
-            );
+                v->methods.begin(),
+                v->methods.end(),
+                checker.exec(v->decls),
+                [&](bool v, const Method &d)->bool{
+                    return checker(d) && v;
+                });
         }
 
     private:

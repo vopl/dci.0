@@ -127,9 +127,9 @@ namespace dci { namespace couple { namespace generator { namespace impl
             _hpp<< "bool b; (void)b;"<<el;
             for(const Method *m : v->methods())
             {
-                if(CallDirection::out == m->direction())
+                if(CallDirection::in == m->direction())
                 {
-                    _hpp<< "b = "<<typeName(v->opposite(), inTarget)<<"::"<<m->name()<<"().connect(&Handler::"<<m->name()<<", static_cast<Handler *>(this));"<<el;
+                    _hpp<< "b = "<<typeName(v->opposite(), inTarget)<<"::signal_"<<m->name()<<"().connect(&Handler::"<<m->name()<<", static_cast<Handler *>(this));"<<el;
                     _hpp<< "assert(b);"<<el;
                 }
             }
@@ -148,9 +148,9 @@ namespace dci { namespace couple { namespace generator { namespace impl
             _hpp<< "//disconnect 'in' methods"<<el;
             for(const Method *m : v->methods())
             {
-                if(CallDirection::out == m->direction())
+                if(CallDirection::in == m->direction())
                 {
-                    _hpp<< typeName(v->opposite(), inTarget)<<"::"<<m->name()<<"().disconnect();"<<el;
+                    _hpp<< typeName(v->opposite(), inTarget)<<"::signal_"<<m->name()<<"().disconnect();"<<el;
                 }
             }
             _hpp<< undent;
@@ -162,7 +162,7 @@ namespace dci { namespace couple { namespace generator { namespace impl
             _hpp<< "//methods, deleted 'in' for implementation and commented 'out' for use"<<el;
             for(const Method *m : v->methods())
             {
-                if(CallDirection::out == m->direction())
+                if(CallDirection::in == m->direction())
                 {
                     _hpp<< methodSignature(m, inTarget)<<" = delete;"<<el;
                 }

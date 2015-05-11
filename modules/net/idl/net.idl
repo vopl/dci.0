@@ -9,36 +9,37 @@ scope net
     /////////////////////////////////////////////////////////
     iface Host
     {
-        out list<Interface> interfaces();
-        in nowait void interfaceAdded(Interface v);
-        in nowait void interfaceRemoved(Interface v);
+        in interfaces:          ()              -> list<Interface>;
 
-        out ip4::stream::Host ip4StreamHost();
-        out ip4::datagram::Host ip4DatagramHost();
+        out interfaceAdded:     (Interface v);
+        out interfaceRemoved:   (Interface v);
 
-        out ip6::stream::Host ip6StreamHost();
-        out ip6::datagram::Host ip6DatagramHost();
+        in ip4StreamHost:       ()              -> ip4::stream::Host;
+        in ip4DatagramHost:     ()              -> ip4::datagram::Host;
 
-        out local::stream::Host localStreamHost();
+        in ip6StreamHost:       ()              -> ip6::stream::Host;
+        in ip6DatagramHost:     ()              -> ip6::datagram::Host;
+
+        in localStreamHost:     ()              -> local::stream::Host;
     }
 
     /////////////////////////////////////////////////////////
     iface Interface
     {
-        out uint32 flags();
-        in nowait void flagsChanged();
+        in flags:           () -> uint32;
+        out flagsChanged:   ();
 
-        out uint32 mtu();
-        in nowait void mtuChanged();
+        in mtu:             () -> uint32;
+        out mtuChanged:     ();
 
-        out string name();
-        in nowait void nameChanged();
+        in name:            () -> string;
+        out nameChanged:    ();
         
-        out list<ip4::Net> ip4Nets();
-        in nowait void ip4NetsChanged();
+        in ip4Nets:         () -> list<ip4::Net>;
+        out ip4NetsChanged: ();
         
-        out list<ip6::Net> ip6Nets();
-        in nowait void ip6NetsChanged();
+        in ip6Nets:         () -> list<ip6::Net>;
+        out ip6NetsChanged: ();
     }
 
     /////////////////////////////////////////////////////////

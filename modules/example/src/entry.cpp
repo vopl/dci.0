@@ -79,7 +79,7 @@ struct Entry
             LOGD("service acuired");
             net::Host nh = netHost.detachValue<0>();
 
-            nh.interfaceAdded().connect([](::net::Interface &&i) {
+            nh.signal_interfaceAdded().connect([](::net::Interface &&i) {
 
                 int k = 220;
             });

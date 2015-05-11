@@ -141,11 +141,6 @@ namespace dci { namespace couple { namespace meta
         return impl().setType(face2Impl(target), face2Impl(type));
     }
 
-    void LibraryBuilder::setResultType(Method *target, Type *type)
-    {
-        return impl().setResultType(face2Impl(target), face2Impl(type));
-    }
-
     void LibraryBuilder::setElementType(Set *target, Type *type)
     {
         return impl().setElementType(face2Impl(target), face2Impl(type));
@@ -176,9 +171,14 @@ namespace dci { namespace couple { namespace meta
         return impl().setMethodDirection(face2Impl(target), direction);
     }
 
-    void LibraryBuilder::setMethodNowait(Method *target, bool nowait)
+    void LibraryBuilder::setMethodNoreply(Method *target, bool noreply)
     {
-        return impl().setMethodNowait(face2Impl(target), nowait);
+        return impl().setMethodNoreply(face2Impl(target), noreply);
+    }
+
+    void LibraryBuilder::addReplyArg(Method *target, Type *type)
+    {
+        return impl().addReplyArg(face2Impl(target), face2Impl(type));
     }
 
     void LibraryBuilder::setArraySize(Array *target, std::uint32_t size)

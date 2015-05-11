@@ -13,29 +13,35 @@ namespace dci { namespace couple { namespace parser { namespace impl
                 [qi::_val = phx::construct<Method>(phx::new_<SMethod>())]
                 [phx::bind(&SMethod::direction, deref(qi::_val)) = qi::_a] >
             (
-                (
-                    (
-                        toks.kwnowait >
-                        (
-                            toks.kwvoid |
-                            error(+"only 'void' result type can be 'nowait'")
-                        )
-                    )
-                        [phx::bind(&SMethod::nowait, deref(qi::_val)) = true]
-                        [phx::bind(&SMethod::resultType, deref(qi::_val)) = phx::construct<Primitive>(phx::new_<SPrimitive>(meta::PrimitiveKind::void_))]
-                ) |
-                typeUse[phx::bind(&SMethod::resultType, deref(qi::_val)) = qi::_1] |
-                error(+"method result type expected")
-            ) >
-            (
                 name[phx::bind(&SMethod::name, deref(qi::_val)) = qi::_1] |
                 error(+"method name expected")
             ) >
-            (toks.ob | error(+"'(' expected")) >
+            (toks.colon | error(+"':' expected")) >
             (
-                -(methodParam[phx::push_back(phx::bind(&SMethod::params, deref(qi::_val)), qi::_1)] % toks.comma)
+                (toks.ob | error(+"'(' expected")) >
+                (
+                    -(methodParam[phx::push_back(phx::bind(&SMethod::query, deref(qi::_val)), qi::_1)] % toks.comma)
+                ) >
+                (toks.cb | error(+"')' expected"))
             ) >
-            (toks.cb | error(+"')' expected")) >
+            (
+                (
+                    toks.arrow >
+                    (
+                        typeUse[phx::push_back(phx::bind(&SMethod::reply, deref(qi::_val)), qi::_1)] |
+                        (
+                            (toks.ob | error(+"'(' expected")) >
+                            (
+                                -(typeUse[phx::push_back(phx::bind(&SMethod::reply, deref(qi::_val)), qi::_1)] % toks.comma)
+                            ) >
+                            (toks.cb | error(+"')' expected"))
+                        )
+                    )
+                )
+                    [phx::bind(&SMethod::noreply, deref(qi::_val)) = false] |
+                qi::eps
+                    [phx::bind(&SMethod::noreply, deref(qi::_val)) = true]
+            ) >
             (toks.semi | error(+"';' expected"));
     }
 

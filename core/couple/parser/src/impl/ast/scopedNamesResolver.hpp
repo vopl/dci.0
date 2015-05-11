@@ -78,8 +78,15 @@ namespace  dci { namespace couple { namespace parser { namespace impl { namespac
                 vs.end(),
                 true,
                 [&](bool state, const Method &v)->bool {
-                    state &= resolve(v->owner, v->resultType);
-                    state &= exec(v->params);
+                    state &= exec(v->query);
+                    state &= std::accumulate(
+                                    v->reply.begin(),
+                                    v->reply.end(),
+                                    state,
+                                    [&](bool state, TypeUse &t)->bool {
+                                        return resolve(v->owner->owner, t) && state;
+                                    }
+                                );
                     return state;
                 }
             );
@@ -221,6 +228,7 @@ namespace  dci { namespace couple { namespace parser { namespace impl { namespac
             res &= beginResolveScope(v.get(), outerScope);
             res &= resolveBases(v.get());
             res &= resolveFields(v.get());
+            res &= resolveMethods(v.get());
             res &= resolveAlias(v.get());
 
             res &= resolveElementType(v.get());
@@ -311,6 +319,18 @@ namespace  dci { namespace couple { namespace parser { namespace impl { namespac
         typename std::enable_if<sizeof(T::fields)!=0, bool>::type resolveFields(T *v)
         {
             return exec(v->fields);
+        }
+
+        /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
+        bool resolveMethods(...)
+        {
+            return true;
+        }
+
+        template <class T>
+        typename std::enable_if<sizeof(T::methods)!=0, bool>::type resolveMethods(T *v)
+        {
+            return exec(v->methods);
         }
 
         /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7

@@ -6,8 +6,7 @@ namespace dci { namespace couple { namespace parser { namespace impl
     {
         ////////////////////////////////////////////////////////////////////////////////
         name =
-            (  toks.kwvoid
-               | toks.kwbool
+            (    toks.kwbool
                | toks.kwstring
                | toks.kwint8
                | toks.kwint16

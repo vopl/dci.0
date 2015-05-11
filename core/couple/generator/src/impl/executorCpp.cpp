@@ -157,12 +157,12 @@ namespace dci { namespace couple { namespace generator { namespace impl
                 "<"+(flags&instantiated ? "0" : "i")+">"+scopedName;
     }
 
-    std::string ExecutorCpp::methodArgiments(const Method *v, bool forRealMethod, int typesFlags)
+    std::string ExecutorCpp::methodArgiments(const Method *m, bool forRealMethod, int typesFlags)
     {
         std::string res;
 
         bool first = true;
-        for(const Attribute *a : v->attributes())
+        for(const Attribute *a : m->query())
         {
             if(first) first = false;
             else res+= ", ";
@@ -178,23 +178,34 @@ namespace dci { namespace couple { namespace generator { namespace impl
         return res;
     }
 
+    std::string ExecutorCpp::methodReplyTypes(const dci::couple::meta::Method *m, int typesFlags)
+    {
+        std::string res;
+
+        bool first = true;
+        for(const Type *t : m->reply())
+        {
+            if(first) first = false;
+            else res+= ", ";
+
+            res+= typeName(t, typesFlags);
+        }
+
+        return res;
+    }
+
+
     std::string ExecutorCpp::methodSignature(const Method *m, int typesFlags, const Iface *i)
     {
         std::string res;
 
-        const Type *rt = m->resultType();
-        if(m->nowait())
+        if(m->noreply())
         {
             res+= _runtimeNamespace+"::void_ ";
         }
         else
         {
-            res+= _runtimeNamespace+"::Future< ";
-            if(TypeConcrete::primitive != rt->concrete() || PrimitiveKind::void_ != static_cast<const Primitive *>(rt)->kind())
-            {
-                res+= typeName(rt, typesFlags);
-            }
-            res+= "> ";
+            res+= _runtimeNamespace+"::Future< " + methodReplyTypes(m, typesFlags) + "> ";
         }
 
         if(i) res += typeName(i, typesFlags);

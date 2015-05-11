@@ -4,27 +4,20 @@ scope datagram
     /////////////////////////////////////////////////////////
     iface Host
     {
-        out Channel mkChannel();
-    }
-
-    /////////////////////////////////////////////////////////
-    struct Datagram
-    {
-        Address peer;
-        Data data;
+        in mkChannel:   () -> Channel;
     }
 
     /////////////////////////////////////////////////////////
     iface Channel
     {
-        out void bind(Address v);
+        in bind:            (Address v)         -> ();
         
-        out Data receiveData();
-        out Datagram receive();
-        in void received(Datagram v);
+        in receiveData:     ()                  -> Data;
+        in receive:         ()                  -> (Data, Address);
+        out received:       (Data, Address)     -> ();
         
-        out void send(Data d, Address a);
+        in send:            (Data, Address)     -> ();
         
-        out void close();
+        in close:           ()                  -> ();
     }
 }
