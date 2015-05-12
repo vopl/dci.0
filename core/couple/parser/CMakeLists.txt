@@ -67,6 +67,8 @@ set(SRC
     src/impl/grammar/mkStruct.cpp
     src/impl/grammar/mkEnumField.cpp
     src/impl/grammar/mkEnum.cpp
+    src/impl/grammar/mkErrcField.cpp
+    src/impl/grammar/mkErrc.cpp
     src/impl/grammar/mkMethodParam.cpp
     src/impl/grammar/mkMethod.cpp
     src/impl/grammar/mkIface.cpp

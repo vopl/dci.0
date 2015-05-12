@@ -91,6 +91,11 @@ namespace dci { namespace couple { namespace meta
         return impl2Face<Enum>(impl().addEnum(face2Impl(parent), name));
     }
 
+    Errc *LibraryBuilder::addErrc(Scope *parent, const std::string &name)
+    {
+        return impl2Face<Errc>(impl().addErrc(face2Impl(parent), name));
+    }
+
     Iface *LibraryBuilder::addIface(Scope *parent, const std::string &name)
     {
         return impl2Face<Iface>(impl().addIface(face2Impl(parent), name));
@@ -119,6 +124,11 @@ namespace dci { namespace couple { namespace meta
     EnumValue *LibraryBuilder::addEnumValue(Enum *parent, const std::string &name)
     {
         return impl2Face<EnumValue>(impl().addEnumValue(face2Impl(parent), name));
+    }
+
+    ErrcValue *LibraryBuilder::addErrcValue(Errc *parent, const std::string &name)
+    {
+        return impl2Face<ErrcValue>(impl().addErrcValue(face2Impl(parent), name));
     }
 
     void LibraryBuilder::addBase(Struct *target, Struct *base)
@@ -189,6 +199,11 @@ namespace dci { namespace couple { namespace meta
     void LibraryBuilder::setPrimitiveKind(Primitive *target, PrimitiveKind kind)
     {
         return impl().setPrimitiveKind(face2Impl(target), kind);
+    }
+
+    void LibraryBuilder::setDescription(ErrcValue *target, const std::string &description)
+    {
+        return impl().setDescription(face2Impl(target), description);
     }
 
     bool LibraryBuilder::commitChanges(Library &lib, std::vector<CommitError> &errors)

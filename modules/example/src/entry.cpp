@@ -3,11 +3,38 @@
 
 #include "net.hpp"
 
+
+
+
+
+
+
+
+
+
 struct Info
     : dci::site::ModuleInfo
 {
     Info()
     {
+        //using namespace ns;
+        {
+            std::error_code code(net::general::no_interface);
+
+            bool b1 = code == net::general::no_interface;
+            (void)b1;
+            bool b2 = net::general::channel_closed == code;
+            (void)b2;
+
+            int k = 220;
+            (void)k;
+
+            LOGD(code);
+        }
+
+
+
+
         _provider = "dci";
         _id.fromHex("8785599b2e858e7d0f55a888b87127ed");
         //_serviceIds;
@@ -81,15 +108,20 @@ struct Entry
 
             nh.signal_interfaceAdded().connect([](::net::Interface &&i) {
 
+                (void)i;
+
                 int k = 220;
+                (void)k;
             });
 
 
             auto ifs = nh.interfaces().detachValue<0>();
 
             std::size_t x = ifs.size();
+            (void)x;
 
             int k = 220;
+            (void)k;
         }
 
         return dci::async::Future<std::error_code>();
@@ -103,11 +135,14 @@ struct Entry
 
     dci::site::ServiceFactory *allocServiceFactory(const dci::couple::runtime::Iid &iid) override
     {
+        (void)iid;
         assert(0);
     }
 
     void freeServiceFactory(const dci::couple::runtime::Iid &iid, dci::site::ServiceFactory *factory) override
     {
+        (void)iid;
+        (void)factory;
         assert(0);
     }
 } entry;

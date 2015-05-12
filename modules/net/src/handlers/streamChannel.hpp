@@ -29,6 +29,7 @@ namespace handlers
 
         Future< > write(::Data &&v)
         {
+            (void)v;
             assert(0);
         }
 

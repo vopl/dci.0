@@ -25,6 +25,8 @@ namespace dci { namespace couple { namespace meta { namespace impl
 
     void Alias::makeSign()
     {
+        Scoped::makeSign();
+
         runtime::SignBuilder s;
 
         s.add("alias");

@@ -22,9 +22,12 @@ namespace dci { namespace couple { namespace meta { namespace impl
 
     void Scope::makeSign()
     {
+        Scoped::makeSign();
+
         runtime::SignBuilder s;
 
         s.add("scope");
+        s.add(sign());
         s.add(name());
 
         setSign(s.finish());

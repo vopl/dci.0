@@ -67,6 +67,17 @@ namespace  dci { namespace couple { namespace parser { namespace impl { namespac
             );
         }
 
+        void exec(std::vector<ErrcField> &vs)
+        {
+            std::for_each(
+                vs.begin(),
+                vs.end(),
+                [&](const ErrcField &v) {
+                    v->meta = _lb.addErrcValue(v->owner->meta, v->name->value);
+                }
+            );
+        }
+
         void exec(std::vector<Method> &vs)
         {
             std::for_each(
@@ -143,6 +154,13 @@ namespace  dci { namespace couple { namespace parser { namespace impl { namespac
         void operator()(SEnum *v)
         {
             v->meta = _lb.addEnum(v->owner->meta, v->name->value);
+
+            exec(v->fields);
+        }
+
+        void operator()(SErrc *v)
+        {
+            v->meta = _lb.addErrc(v->owner->meta, v->name->value);
 
             exec(v->fields);
         }

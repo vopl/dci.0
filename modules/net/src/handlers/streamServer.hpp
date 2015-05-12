@@ -16,6 +16,7 @@ namespace handlers
 
         Future< > bind(Address &&v)
         {
+            (void)v;
             assert(0);
         }
 

@@ -37,6 +37,8 @@ namespace dci { namespace couple { namespace parser { namespace impl
         void mkStruct();
         void mkEnumField();
         void mkEnum();
+        void mkErrcField();
+        void mkErrc();
         void mkMethodParam();
         void mkMethod();
         void mkIface();
@@ -47,6 +49,7 @@ namespace dci { namespace couple { namespace parser { namespace impl
         void mkFile();
 
         std::vector<Decl> doInclude(const Token::token_value_type &str);
+        static std::string extractStringFromQuoted(const Token::token_value_type &str);
 
     private:
         qi::rule<TokIterator, Primitive(), qi::locals<meta::PrimitiveKind>> primitive;
@@ -67,6 +70,8 @@ namespace dci { namespace couple { namespace parser { namespace impl
         qi::rule<TokIterator, Struct()>                                     struct_;
         qi::rule<TokIterator, EnumField()>                                  enumField;
         qi::rule<TokIterator, Enum()>                                       enum_;
+        qi::rule<TokIterator, ErrcField()>                                  errcField;
+        qi::rule<TokIterator, Errc()>                                       errc;
         qi::rule<TokIterator, MethodParam()>                                methodParam;
         qi::rule<TokIterator, Method(), qi::locals<MethodDirection>>        method;
         qi::rule<TokIterator, Iface()>                                      iface;

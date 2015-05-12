@@ -1,30 +1,30 @@
-#include "enum.hpp"
+#include "errc.hpp"
 #include <dci/couple/runtime/signBuilder.hpp>
 
 namespace dci { namespace couple { namespace meta { namespace impl
 {
-    Enum::Enum()
-        : Type(TypeConcrete::enum_)
+    Errc::Errc()
+        : Type(TypeConcrete::errc)
     {
     }
 
-    Enum::~Enum()
+    Errc::~Errc()
     {
 
     }
 
-    void Enum::makeSign()
+    void Errc::makeSign()
     {
         Scoped::makeSign();
 
         runtime::SignBuilder s;
 
-        s.add("enum");
+        s.add("errc");
         s.add(sign());
         s.add(_name);
 
-        s.add(Compound<EnumValue>::elements().size());
-        for(auto v : Compound<EnumValue>::elements())
+        s.add(Compound<ErrcValue>::elements().size());
+        for(auto v : Compound<ErrcValue>::elements())
         {
             s.add(v->sign());
         }

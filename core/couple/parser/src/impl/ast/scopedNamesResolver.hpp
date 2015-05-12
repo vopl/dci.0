@@ -47,6 +47,11 @@ namespace  dci { namespace couple { namespace parser { namespace impl { namespac
             return true;
         }
 
+        bool exec(std::vector<ErrcField> &)
+        {
+            return true;
+        }
+
         bool exec(std::vector<VariantField> &vs)
         {
             return std::accumulate(
@@ -156,6 +161,11 @@ namespace  dci { namespace couple { namespace parser { namespace impl { namespac
             }
 
             if(resolveOne(scope->enums, nameValue, scopedName))
+            {
+                return true;
+            }
+
+            if(resolveOne(scope->errcs, nameValue, scopedName))
             {
                 return true;
             }

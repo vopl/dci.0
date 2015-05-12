@@ -10,6 +10,8 @@ namespace dci { namespace couple { namespace meta
     class Container2;
     class Enum;
     class EnumValue;
+    class Errc;
+    class ErrcValue;
     class Iface;
     template <class B> class Inheritable;
     class List;
@@ -40,6 +42,8 @@ namespace dci { namespace couple { namespace meta { namespace impl
     class Container2;
     class Enum;
     class EnumValue;
+    class Errc;
+    class ErrcValue;
     class Iface;
     template <class B> class Inheritable;
     class List;

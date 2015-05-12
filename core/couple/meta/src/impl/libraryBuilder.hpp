@@ -27,6 +27,7 @@ namespace dci { namespace couple { namespace meta { namespace impl
         Struct      *addStruct(Scope *parent, const std::string &name);
         Variant     *addVariant(Scope *parent, const std::string &name);
         Enum        *addEnum(Scope *parent, const std::string &name);
+        Errc        *addErrc(Scope *parent, const std::string &name);
         Iface       *addIface(Scope *parent, const std::string &name);
 
         Method      *addMethod(Iface *parent, const std::string &name);
@@ -35,6 +36,7 @@ namespace dci { namespace couple { namespace meta { namespace impl
         Attribute   *addAttribute(Variant *parent, const std::string &name);
         Attribute   *addAttribute(Method *parent, const std::string &name);
         EnumValue   *addEnumValue(Enum *parent, const std::string &name);
+        ErrcValue   *addErrcValue(Errc *parent, const std::string &name);
 
         void addBase(Struct *target, Struct *base);
         void addBase(Iface *target, Iface *base);
@@ -56,6 +58,8 @@ namespace dci { namespace couple { namespace meta { namespace impl
         void setArraySize(Array *target, std::uint32_t size);
 
         void setPrimitiveKind(Primitive *target, PrimitiveKind kind);
+
+        void setDescription(ErrcValue *target, const std::string &description);
 
     public:// commit
         bool commitChanges(Library &lib, std::vector<meta::CommitError> &errors);

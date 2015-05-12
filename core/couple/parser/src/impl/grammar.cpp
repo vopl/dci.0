@@ -26,6 +26,8 @@ namespace dci { namespace couple { namespace parser { namespace impl
         mkStruct();
         mkEnumField();
         mkEnum();
+        mkErrcField();
+        mkErrc();
         mkMethodParam();
         mkMethod();
         mkIface();
@@ -37,6 +39,25 @@ namespace dci { namespace couple { namespace parser { namespace impl
 
         ////////////////////////////////////////////////////////////////////////////////
         error = boost::spirit::repository::qi::iter_pos[ phx::throw_(phx::construct<GrammarError>(qi::_1, qi::_r1))];
+    }
+
+    std::string Grammar::extractStringFromQuoted(const Token::token_value_type &str)
+    {
+        std::string content(std::begin(str), std::end(str));
+
+        assert(content.size() >= 2);
+        assert('"' == content[0] && '"' == content[content.size()-1]);
+
+        content.erase(content.begin());
+        content.erase(content.end()-1);
+
+        std::size_t pos{0};
+        while(std::string::npos != (pos = content.find("\\\"", pos, 2)))
+        {
+            content.erase(content.begin() + pos);
+        }
+
+        return content;
     }
 
 }}}}

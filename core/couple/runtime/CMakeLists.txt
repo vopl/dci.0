@@ -17,6 +17,9 @@ set(INC
     include/dci/couple/runtime/signal.hpp
     include/dci/couple/runtime/wire.hpp
 
+    include/dci/couple/runtime/errcCategoryProvider.hpp
+    include/dci/couple/runtime/errcInitializer.hpp
+
     include/dci/couple/runtime/layoutProvider.hpp
 )
 
@@ -29,12 +32,17 @@ set(SRC
     src/signBuilder.cpp
     src/iface.cpp
     src/ifaceWire.cpp
+    src/errcCategoryProvider.cpp
 
     src/impl/sign.hpp
     src/impl/sign.cpp
 
     src/impl/signBuilder.hpp
     src/impl/signBuilder.cpp
+
+    src/impl/errcCategory.hpp
+    src/impl/errcCategory.cpp
+
 )
 
 

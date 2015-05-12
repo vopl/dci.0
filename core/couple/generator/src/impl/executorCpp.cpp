@@ -71,6 +71,11 @@ namespace dci { namespace couple { namespace generator { namespace impl
                 auto vv = static_cast<const Enum *>(v);
                 return typeName(vv->scope(), vv->name(), flags);
             }
+        case TypeConcrete::errc:
+            {
+                auto vv = static_cast<const Errc *>(v);
+                return typeName(vv->scope(), vv->name(), flags);
+            }
         case TypeConcrete::iface:
             {
                 auto vv = static_cast<const Iface *>(v);
@@ -228,6 +233,25 @@ namespace dci { namespace couple { namespace generator { namespace impl
     const std::string &ExecutorCpp::runtimeNamespace() const
     {
         return _runtimeNamespace;
+    }
+
+    std::string ExecutorCpp::signInitializer(const runtime::Sign &sign)
+    {
+        std::string res = "{{";
+
+        auto hex = sign.toHex();
+        for(std::size_t i(0); i<16; ++i)
+        {
+            if(i)
+            {
+                res += ",";
+            }
+            res += std::string("0x") + hex[i*2] + hex[i*2+1];
+        }
+
+        res += "}}";
+
+        return res;
     }
 
 }}}}

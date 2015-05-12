@@ -3,6 +3,7 @@
 #include "alias.hpp"
 #include "array.hpp"
 #include "enum.hpp"
+#include "errc.hpp"
 #include "iface.hpp"
 #include "list.hpp"
 #include "map.hpp"
@@ -41,6 +42,8 @@ namespace dci { namespace couple { namespace meta { namespace impl
             return static_cast<const Array *>(this)->sign();
         case TypeConcrete::enum_:
             return static_cast<const Enum *>(this)->sign();
+        case TypeConcrete::errc:
+            return static_cast<const Errc *>(this)->sign();
         case TypeConcrete::iface:
             return static_cast<const Iface *>(this)->sign();
         case TypeConcrete::list:

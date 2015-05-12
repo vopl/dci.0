@@ -113,6 +113,18 @@ namespace dci { namespace couple { namespace meta { namespace impl
         return res;
     }
 
+    Errc *LibraryBuilder::addErrc(Scope *parent, const std::string &name)
+    {
+        auto res = _lc.create<Errc>();
+        res->setName(name);
+
+        _lc.checkPresense(parent);
+        parent->add(res);
+        res->setScope(parent);
+
+        return res;
+    }
+
     Iface *LibraryBuilder::addIface(Scope *parent, const std::string &name)
     {
         auto res = _lc.create<Iface>();
@@ -172,6 +184,17 @@ namespace dci { namespace couple { namespace meta { namespace impl
     EnumValue *LibraryBuilder::addEnumValue(Enum *parent, const std::string &name)
     {
         auto res = _lc.create<EnumValue>();
+        res->setName(name);
+
+        _lc.checkPresense(parent);
+        parent->add(res);
+
+        return res;
+    }
+
+    ErrcValue *LibraryBuilder::addErrcValue(Errc *parent, const std::string &name)
+    {
+        auto res = _lc.create<ErrcValue>();
         res->setName(name);
 
         _lc.checkPresense(parent);
@@ -274,6 +297,12 @@ namespace dci { namespace couple { namespace meta { namespace impl
     {
         _lc.checkPresense(target);
         target->setKind(kind);
+    }
+
+    void LibraryBuilder::setDescription(ErrcValue *target, const std::string &description)
+    {
+        _lc.checkPresense(target);
+        target->setDescription(description);
     }
 
     bool LibraryBuilder::commitChanges(Library &lib, std::vector<CommitError> &errors)

@@ -13,6 +13,7 @@ namespace  dci { namespace couple { namespace parser { namespace impl { namespac
         SIface      *_iface;
         SMethod     *_method;
         SEnum       *_enum;
+        SErrc       *_errc;
 
         template <class T>
         class CurrentSetter
@@ -90,6 +91,17 @@ namespace  dci { namespace couple { namespace parser { namespace impl { namespac
             );
         }
 
+        void exec(std::vector<ErrcField> &vs)
+        {
+            std::for_each(
+                vs.begin(),
+                vs.end(),
+                [&](const ErrcField &v)->void {
+                    v->owner = _errc;
+                }
+            );
+        }
+
         void exec(std::vector<Method> &vs)
         {
             std::for_each(
@@ -158,6 +170,15 @@ namespace  dci { namespace couple { namespace parser { namespace impl { namespac
             _scope->enums.insert(std::make_pair(v->name->value, v));
 
             CurrentSetter<SEnum> cse(_enum, v);
+            exec(v->fields);
+        }
+
+        void operator()(SErrc *v)
+        {
+            v->owner = _scope;
+            _scope->errcs.insert(std::make_pair(v->name->value, v));
+
+            CurrentSetter<SErrc> cse(_errc, v);
             exec(v->fields);
         }
 

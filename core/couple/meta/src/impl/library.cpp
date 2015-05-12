@@ -74,9 +74,11 @@ namespace dci { namespace couple { namespace meta { namespace impl
         makeSign4Items(_lc.items<Method>());
         makeSign4Items(_lc.items<Attribute>());
         makeSign4Items(_lc.items<EnumValue>());
+        makeSign4Items(_lc.items<ErrcValue>());
 
         makeSign4Items(_lc.items<Alias>());
         makeSign4Items(_lc.items<Enum>());
+        makeSign4Items(_lc.items<Errc>());
 
         runtime::SignBuilder s;
 
@@ -88,6 +90,7 @@ namespace dci { namespace couple { namespace meta { namespace impl
         collectSign4Items(s, _lc.items<Array>());
         collectSign4Items(s, _lc.items<Alias>());
         collectSign4Items(s, _lc.items<Enum>());
+        collectSign4Items(s, _lc.items<Errc>());
 
         setSign(s.finish());
     }

@@ -41,6 +41,8 @@ namespace dci { namespace couple { namespace generator { namespace impl
         const std::string &bodyName() const;
         const std::string &runtimeNamespace() const;
 
+        static std::string signInitializer(const runtime::Sign &sign);
+
     private:
         std::string _wireName;
         std::string _bodyName;

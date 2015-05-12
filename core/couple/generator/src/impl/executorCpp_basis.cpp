@@ -3,6 +3,7 @@
 #include <boost/filesystem.hpp>
 #include <iostream>
 #include <cassert>
+#include <boost/algorithm/string/replace.hpp>
 
 namespace dci { namespace couple { namespace generator { namespace impl
 {
@@ -98,6 +99,7 @@ namespace dci { namespace couple { namespace generator { namespace impl
             if(lib.rootScope())
             {
                 writeTarget(lib.rootScope());
+                writeErrcSpares(lib.rootScope());
             }
         }
         catch(const std::runtime_error &e)
@@ -107,18 +109,6 @@ namespace dci { namespace couple { namespace generator { namespace impl
         }
 
         return true;
-    }
-
-    template <>
-    void ExecutorCpp_basis::writeTarget<Iface>(const Iface *v)
-    {
-        _hpp<< "using "<<v->name()<<" = "<<typeName(v, inBody|forGlobalScope|instantiated)<<";"<<el;
-    }
-
-    template <class T>
-    void ExecutorCpp_basis::writeTarget(const T *v)
-    {
-        _hpp<< "using "<<v->name()<<" = "<<typeName(v, inBody|forGlobalScope|instantiated)<<";"<<el;
     }
 
     bool ExecutorCpp_basis::writeWire(const Scope *v)
@@ -286,6 +276,7 @@ namespace dci { namespace couple { namespace generator { namespace impl
         for(auto child : scope->structs())  writeBody(child);
         for(auto child : scope->variants()) writeBody(child);
         for(auto child : scope->enums())    writeBody(child);
+        for(auto child : scope->errcs())    writeBody(child);
         for(auto child : scope->aliases())  writeBody(child);
         for(auto child : scope->ifaces())   writeBody(child);
         for(auto child : scope->scopes())   writeBody(child, true);
@@ -390,6 +381,12 @@ namespace dci { namespace couple { namespace generator { namespace impl
 
         _hpp<< undent;
         _hpp<< "};"<<el;
+    }
+
+    void ExecutorCpp_basis::writeBody(const Errc *v)
+    {
+        (void)v;
+        //nothing here
     }
 
     void ExecutorCpp_basis::writeBody(const Alias *v)
@@ -576,19 +573,7 @@ namespace dci { namespace couple { namespace generator { namespace impl
         writeIid(static_cast<const Scope *>(v));
 
         auto writer = [&](const std::string &target){
-            _hpp<< "template <int i> const Iid "<<target<<"::_iid{{";
-
-            auto s = v->sign().toHex();
-            for(std::size_t i(0); i<16; ++i)
-            {
-                if(i)
-                {
-                    _hpp<< ",";
-                }
-                _hpp<< "0x"<<s[i*2]<<s[i*2+1];
-            }
-
-            _hpp<< "}};"<<el;
+            _hpp<< "template <int i> const Iid "<<target<<"::_iid"<<signInitializer(v->sign())<<";"<<el;
         };
 
         if(v->primary())
@@ -597,6 +582,70 @@ namespace dci { namespace couple { namespace generator { namespace impl
         }
 
         writer(typeName(v, ignoreTemplateTypename));
+    }
+
+    template <>
+    void ExecutorCpp_basis::writeTarget<Iface>(const Iface *v)
+    {
+        _hpp<< "using "<<v->name()<<" = "<<typeName(v, inBody|forGlobalScope|instantiated)<<";"<<el;
+    }
+
+    template <>
+    void ExecutorCpp_basis::writeTarget<Errc>(const Errc *v)
+    {
+        _hpp<< "// errc "<<v->name()<<el;
+        _hpp<< "enum class "<<v->name()<<el;
+
+        _hpp<< "{"<<el;
+        _hpp<< indent;
+
+        int idx = 0;
+        for(auto f : v->values())
+        {
+            _hpp<< f->name()<<(!idx++ ? "=1":"") <<",";
+            if(!f->description().empty() && f->description()!=f->name())
+            {
+                _hpp<< " //"<<f->description();
+            }
+            _hpp<< el;
+        }
+
+        _hpp<< undent;
+        _hpp<< "};"<<el;
+
+        // make_error_code
+        _hpp<< "inline std::error_code make_error_code("<<v->name()<<" e)"<<el;
+        _hpp<< "{"<<el;
+        _hpp<< indent;
+
+        _hpp <<"static const std::error_category& category = "<<runtimeNamespace()<<"::errcCategory("<<el;
+        _hpp<< indent;
+        _hpp<< signInitializer(v->sign())<<","<<el;
+        _hpp<< "\""<<typeName(v, inTarget)<<"\","<<el;
+        _hpp <<"{"<<el;
+        _hpp<< indent;
+
+        for(auto f : v->values())
+        {
+            std::string descr = f->description();
+            boost::replace_all(descr, "\\", "\\\\");
+            boost::replace_all(descr, "\"", "\\\"");
+            _hpp<< "{static_cast<int>("<<v->name()<<"::"<<f->name()<<"), \""<<descr<<"\"},"<<el;
+        }
+
+        _hpp<< undent;
+        _hpp<< "});"<<el;
+        _hpp<< undent;
+
+        _hpp<< "return std::error_code(static_cast<int>(e), category);"<<el;
+        _hpp<< undent;
+        _hpp<< "}"<<el;
+    }
+
+    template <class T>
+    void ExecutorCpp_basis::writeTarget(const T *v)
+    {
+        _hpp<< "using "<<v->name()<<" = "<<typeName(v, inBody|forGlobalScope|instantiated)<<";"<<el;
     }
 
     void ExecutorCpp_basis::writeTarget(const Scope *scope)
@@ -611,6 +660,7 @@ namespace dci { namespace couple { namespace generator { namespace impl
         for(auto child : scope->structs())  writeTarget(child);
         for(auto child : scope->variants()) writeTarget(child);
         for(auto child : scope->enums())    writeTarget(child);
+        for(auto child : scope->errcs())    writeTarget(child);
         for(auto child : scope->aliases())  writeTarget(child);
         for(auto child : scope->ifaces())   writeTarget(child);
         for(auto child : scope->scopes())   writeTarget(child);
@@ -620,6 +670,23 @@ namespace dci { namespace couple { namespace generator { namespace impl
             _hpp<<undent;
             _hpp<< "}"<<el;
         }
+    }
+
+    void ExecutorCpp_basis::writeErrcSpares(const dci::couple::meta::Scope *scope)
+    {
+        for(auto child : scope->structs())  writeErrcSpares(child);
+        for(auto child : scope->errcs())    writeErrcSpares(child);
+        for(auto child : scope->ifaces())   writeErrcSpares(child);
+        for(auto child : scope->scopes())   writeErrcSpares(child);
+    }
+
+    void ExecutorCpp_basis::writeErrcSpares(const dci::couple::meta::Errc *v)
+    {
+        //is_error_code_enum
+        _hpp<< "namespace std { template<> struct is_error_code_enum< "<<typeName(v, inTarget)<<"> : public true_type {}; }"<<el;
+
+        //initializer
+        _hpp<< "template class "<<runtimeNamespace()<<"::ErrcInitializer< "<<typeName(v, inTarget)<<">;"<<el;
     }
 
 }}}}

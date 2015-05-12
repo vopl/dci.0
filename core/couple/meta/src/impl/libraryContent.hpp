@@ -3,6 +3,7 @@
 #include "alias.hpp"
 #include "array.hpp"
 #include "enum.hpp"
+#include "errc.hpp"
 #include "iface.hpp"
 #include "list.hpp"
 #include "map.hpp"
@@ -69,10 +70,12 @@ namespace dci { namespace couple { namespace meta { namespace impl
         Items<Struct>       _structs;
         Items<Variant>      _variants;
         Items<Enum>         _enums;
+        Items<Errc>         _errcs;
         Items<Iface>        _ifaces;
         Items<Method>       _methods;
         Items<Attribute>    _attributes;
         Items<EnumValue>    _enumValues;
+        Items<ErrcValue>    _errcValues;
     };
 
     template <class T>
@@ -121,10 +124,12 @@ namespace dci { namespace couple { namespace meta { namespace impl
         locateConvertible(p, items<Struct>());
         locateConvertible(p, items<Variant>());
         locateConvertible(p, items<Enum>());
+        locateConvertible(p, items<Errc>());
         locateConvertible(p, items<Iface>());
         locateConvertible(p, items<Method>());
         locateConvertible(p, items<Attribute>());
         locateConvertible(p, items<EnumValue>());
+        locateConvertible(p, items<ErrcValue>());
     }
 
     template <class T>

@@ -31,6 +31,7 @@ namespace dci { namespace couple { namespace generator { namespace impl
         void writeBody(const dci::couple::meta::Struct *v);
         void writeBody(const dci::couple::meta::Variant *v);
         void writeBody(const dci::couple::meta::Enum *v);
+        void writeBody(const dci::couple::meta::Errc *v);
         void writeBody(const dci::couple::meta::Alias *v);
         void writeBody(const dci::couple::meta::Iface *v);
 
@@ -39,10 +40,14 @@ namespace dci { namespace couple { namespace generator { namespace impl
         void writeIid(const dci::couple::meta::Iface *v);
 
     private:
-        void writeTarget(const dci::couple::meta::Scope *scope);
-
         template <class T>
         void writeTarget(const T *v);
+
+        void writeTarget(const dci::couple::meta::Scope *v);
+
+    private:
+        void writeErrcSpares(const dci::couple::meta::Scope *scope);
+        void writeErrcSpares(const dci::couple::meta::Errc *v);
 
     private:
         Out _hpp;

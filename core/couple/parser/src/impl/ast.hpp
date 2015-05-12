@@ -38,6 +38,9 @@ namespace dci { namespace couple { namespace parser { namespace impl
         enumField
         enum_
 
+        errcField
+        errc
+
         methodParam
         method
         iface
@@ -46,7 +49,7 @@ namespace dci { namespace couple { namespace parser { namespace impl
 
         include
 
-        decl = alias | variant | struct | enum | iface | scope
+        decl = alias | variant | struct | enum | errc | iface | scope
 
         decls = *decl | include
 
@@ -137,6 +140,14 @@ namespace dci { namespace couple { namespace parser { namespace impl
     struct SEnum;
     using Enum = std::shared_ptr<SEnum>;
 
+    //    errcField
+    struct SErrcField;
+    using ErrcField = std::shared_ptr<SErrcField>;
+
+    //    errc
+    struct SErrc;
+    using Errc = std::shared_ptr<SErrc>;
+
     //    methodParam
     struct SMethodParam;
     using MethodParam = std::shared_ptr<SMethodParam>;
@@ -157,12 +168,13 @@ namespace dci { namespace couple { namespace parser { namespace impl
 
     //    include
 
-    //    decl = alias | variant | struct | enum | iface | scope
+    //    decl = alias | variant | struct | enum | errc | iface | scope
     using Decl = boost::variant<
           Alias
         , Variant
         , Struct
         , Enum
+        , Errc
         , Iface
         , Scope
     >;
@@ -242,6 +254,7 @@ namespace dci { namespace couple { namespace parser { namespace impl
             , SVariant *
             , SStruct *
             , SEnum *
+            , SErrc *
             , SIface *
         > asDecl;
 
@@ -277,6 +290,7 @@ namespace dci { namespace couple { namespace parser { namespace impl
         std::map<std::string, SStruct *>    structs;
         std::map<std::string, SVariant *>   variants;
         std::map<std::string, SEnum *>      enums;
+        std::map<std::string, SErrc *>      errcs;
         std::map<std::string, SIface *>     ifaces;
         std::map<std::string, SScope *>     scopes;
 
@@ -362,6 +376,26 @@ namespace dci { namespace couple { namespace parser { namespace impl
         meta::Enum              *meta{nullptr};
     };
 
+    //    errcField
+    struct SErrcField
+    {
+        SErrc           *owner{nullptr};
+        Name            name;
+
+        std::string     description;
+
+        meta::ErrcValue *meta{nullptr};
+    };
+
+    //    errc
+    struct SErrc
+        : SScopeEntry
+    {
+        std::vector<ErrcField>  fields;
+
+        meta::Errc              *meta{nullptr};
+    };
+
     //    methodParam
     struct SMethodParam
     {
@@ -404,7 +438,7 @@ namespace dci { namespace couple { namespace parser { namespace impl
 
     //    include
 
-    //    decl = alias | variant | struct | enum | iface
+    //    decl = alias | variant | struct | enum | errc | iface
 
     //    decls = *(decl | include)
 

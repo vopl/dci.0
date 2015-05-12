@@ -19,6 +19,11 @@ namespace dci { namespace couple { namespace meta
         return Compound<Enum>::elements();
     }
 
+    const std::vector<const Errc *> &Scope::errcs() const
+    {
+        return Compound<Errc>::elements();
+    }
+
     const std::vector<const Alias *> &Scope::aliases() const
     {
         return Compound<Alias>::elements();

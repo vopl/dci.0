@@ -16,6 +16,8 @@ namespace dci { namespace couple { namespace meta
     template class Compound<Variant>;
     template class Compound<Enum>;
     template class Compound<EnumValue>;
+    template class Compound<Errc>;
+    template class Compound<ErrcValue>;
     template class Compound<Alias>;
     template class Compound<Iface>;
     template class Compound<Method>;

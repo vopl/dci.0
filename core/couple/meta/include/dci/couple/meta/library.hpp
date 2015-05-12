@@ -4,6 +4,7 @@
 #include "alias.hpp"
 #include "array.hpp"
 #include "enum.hpp"
+#include "errc.hpp"
 #include "iface.hpp"
 #include "list.hpp"
 #include "map.hpp"

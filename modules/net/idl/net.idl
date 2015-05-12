@@ -6,6 +6,12 @@ alias Data = list<uint8>;
 
 scope net
 {
+    errc general
+    {
+        no_interface: "tratata \"pumpum\"";
+        channel_closed;
+    }
+
     /////////////////////////////////////////////////////////
     iface Host
     {

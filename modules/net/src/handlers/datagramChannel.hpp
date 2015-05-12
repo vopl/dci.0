@@ -13,6 +13,7 @@ namespace handlers
     {
         Future< > bind(Address &&v)
         {
+            (void)v;
             assert(0);
         }
 
@@ -28,6 +29,8 @@ namespace handlers
 
         Future< > send(::Data &&d, Address &&a)
         {
+            (void)d;
+            (void)a;
             assert(0);
         }
 

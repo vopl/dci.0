@@ -23,10 +23,12 @@ namespace dci { namespace couple { namespace meta { namespace impl
         , _structs(std::move(from._structs))
         , _variants(std::move(from._variants))
         , _enums(std::move(from._enums))
+        , _errcs(std::move(from._errcs))
         , _ifaces(std::move(from._ifaces))
         , _methods(std::move(from._methods))
         , _attributes(std::move(from._attributes))
         , _enumValues(std::move(from._enumValues))
+        , _errcValues(std::move(from._errcValues))
     {
     }
 
@@ -49,10 +51,12 @@ namespace dci { namespace couple { namespace meta { namespace impl
         _structs = (std::move(from._structs));
         _variants = (std::move(from._variants));
         _enums = (std::move(from._enums));
+        _errcs = (std::move(from._errcs));
         _ifaces = (std::move(from._ifaces));
         _methods = (std::move(from._methods));
         _attributes = (std::move(from._attributes));
         _enumValues = (std::move(from._enumValues));
+        _errcValues = (std::move(from._errcValues));
 
         return *this;
     }
@@ -130,6 +134,12 @@ namespace dci { namespace couple { namespace meta { namespace impl
     }
 
     template <>
+    LibraryContent::Items<Errc> &LibraryContent::items<Errc>()
+    {
+        return _errcs;
+    }
+
+    template <>
     LibraryContent::Items<Iface> &LibraryContent::items<Iface>()
     {
         return _ifaces;
@@ -153,6 +163,12 @@ namespace dci { namespace couple { namespace meta { namespace impl
         return _enumValues;
     }
 
+    template <>
+    LibraryContent::Items<ErrcValue> &LibraryContent::items<ErrcValue>()
+    {
+        return _errcValues;
+    }
+
     void LibraryContent::clear()
     {
         _lists.clear();
@@ -166,10 +182,12 @@ namespace dci { namespace couple { namespace meta { namespace impl
         _structs.clear();
         _variants.clear();
         _enums.clear();
+        _errcs.clear();
         _ifaces.clear();
         _methods.clear();
         _attributes.clear();
-        _enumValues.clear();
+        _enums.clear();
+        _errcs.clear();
 
         _holders.clear();
     }

@@ -56,6 +56,12 @@ namespace  dci { namespace couple { namespace parser { namespace impl { namespac
             return false;
         }
 
+        bool operator()(const Errc &v)
+        {
+            (void)v;
+            return false;
+        }
+
         template <class TScope>
         bool operator()(const TScope &v)
         {

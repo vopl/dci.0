@@ -32,6 +32,7 @@ namespace dci { namespace couple { namespace parser { namespace impl
                | toks.kwvariant
                | toks.kwiface
                | toks.kwenum
+               | toks.kwerrc
                | toks.kwin
                | toks.kwout
                | toks.kwnowait

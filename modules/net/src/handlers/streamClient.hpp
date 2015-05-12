@@ -16,11 +16,13 @@ namespace handlers
 
         Future< > bind(Address &&v)
         {
+            (void)v;
             assert(0);
         }
 
         Future< Channel> connect(Address &&address)
         {
+            (void)address;
             assert(0);
 
             auto *v = new StreamChannelHandler<Address>;

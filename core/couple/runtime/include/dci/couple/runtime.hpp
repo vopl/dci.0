@@ -3,6 +3,9 @@
 #include "runtime/iface.hpp"
 #include "runtime/signal.hpp"
 #include "runtime/wire.hpp"
+#include "runtime/errcCategoryProvider.hpp"
+#include "runtime/errcInitializer.hpp"
+
 #include <dci/async/future.hpp>
 
 #include <cstdint>
