@@ -1,6 +1,7 @@
 #pragma once
 
 #include <system_error>
+#include <map>
 #include <set>
 #include <memory>
 
@@ -27,11 +28,16 @@ namespace impl
         void registerHandler(handlers::Host *handler);
         void unregisterHandler(handlers::Host *handler);
 
-        const std::set<std::unique_ptr<Interface>> &interfaces() const;
+        const std::map<std::string, std::unique_ptr<Interface>> &interfaces() const;
+
+    private:
+        void update();
 
     private:
         static Host *_instance;
         std::set<handlers::Host *> _handlers;
-        std::set<std::unique_ptr<Interface>> _interfaces;
+
+        using Interfaces = std::map<std::string, std::unique_ptr<Interface>>;
+        Interfaces _interfaces;
     };
 }

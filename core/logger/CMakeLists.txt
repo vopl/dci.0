@@ -4,6 +4,7 @@ project(${PROJECT})
 
 ############################################################
 set(INC
+    include/dci/logger.hpp
     include/dci/logger/logger.hpp
 )
 

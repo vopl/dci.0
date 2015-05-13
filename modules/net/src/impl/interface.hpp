@@ -16,7 +16,7 @@ namespace impl
     class Interface
     {
     public:
-        Interface();
+        Interface(const string &name);
         ~Interface();
 
         void registerHandler(handlers::Interface *handler);
@@ -27,6 +27,11 @@ namespace impl
         const string &name() const;
         const list< ip4::Net> &ip4Nets() const;
         const list< ip6::Net> &ip6Nets() const;
+
+        void setFlags(uint32 v);
+        void setMtu(uint32 v);
+        void setIp4Nets(const list< ip4::Net> &v);
+        void setIp6Nets(const list< ip6::Net> &v);
 
     private:
         std::set<handlers::Interface *> _handlers;

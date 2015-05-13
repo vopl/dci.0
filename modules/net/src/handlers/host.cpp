@@ -45,7 +45,7 @@ namespace handlers
         res.reserve(_impl->interfaces().size());
         for(const auto &i : _impl->interfaces())
         {
-            res.emplace_back(* new Interface(i.get()));
+            res.emplace_back(* new Interface(i.second.get()));
         }
 
         return std::move(res);

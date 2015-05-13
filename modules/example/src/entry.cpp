@@ -97,9 +97,45 @@ struct Entry
 
                 list<net::Interface> ifs = nh.interfaces().detachValue<0>();
 
+                auto printInterface = [&](net::Interface &i)
+                {
+                    LOGD("-------------------------------------");
+                    LOGD("name:  "<<i.name().value<0>());
+                    LOGD("flags: 0x"<<std::hex<<i.flags().value<0>()<<std::dec);
+                    LOGD("mtu:   "<<i.mtu().value<0>());
+
+                    auto x4 = i.ip4Nets().value<0>();
+                    for(net::ip4::Net n : x4)
+                    {
+                        const auto &octets = n.address.octets;
+                        const auto &mask = n.netmask.octets;
+                        const auto &broadcast = n.broadcast.octets;
+                        LOGD("ip4 net: "
+                            <<"ip: "<<(unsigned)octets[0]<<"."<<(unsigned)octets[1]<<"."<<(unsigned)octets[2]<<"."<<(unsigned)octets[3]<<", "
+                            <<"mask: "<<(unsigned)mask[0]<<"."<<(unsigned)mask[1]<<"."<<(unsigned)mask[2]<<"."<<(unsigned)mask[3]<<", "
+                            <<"broadcast: "<<(unsigned)broadcast[0]<<"."<<(unsigned)broadcast[1]<<"."<<(unsigned)broadcast[2]<<"."<<(unsigned)broadcast[3]);
+                    }
+
+                    auto x6 = i.ip6Nets().value<0>();
+                    for(const net::ip6::Net &n : x6)
+                    {
+                        const auto &octets = n.address.octets;
+                        LOGD("ip6 net: "
+                            <<"ip: "<<(unsigned)octets[0]<<"."<<(unsigned)octets[1]<<"."<<(unsigned)octets[2]<<"."<<(unsigned)octets[3]<<"..., "
+                            <<"prefixLength: "<<n.prefixLength<<", "
+                            <<"scopeId: "<<n.scopeId);
+                    }
+                };
+
                 auto printInterfaces = [&]()
                 {
                     LOGD("interfaces amount: "<<ifs.size());
+
+                    for(net::Interface &i : ifs)
+                    {
+                        printInterface(i);
+                    }
+
                 };
 
                 auto useInterface = [&](::net::Interface &i, bool printAll)
@@ -115,6 +151,33 @@ struct Entry
                         });
                         printInterfaces();
                     });
+
+                    i.signal_flagsChanged().connect([&]()
+                    {
+                        LOGD("interface flags changed: "<<i.name().value<0>());
+                        printInterface(i);
+                    });
+                    i.signal_ip4NetsChanged().connect([&]()
+                    {
+                        LOGD("interface nets4 changed: "<<i.name().value<0>());
+                        printInterface(i);
+                    });
+                    i.signal_ip6NetsChanged().connect([&]()
+                    {
+                        LOGD("interface nets6 changed: "<<i.name().value<0>());
+                        printInterface(i);
+                    });
+                    i.signal_mtuChanged().connect([&]()
+                    {
+                        LOGD("interface mtu changed: "<<i.name().value<0>());
+                        printInterface(i);
+                    });
+                    i.signal_nameChanged().connect([&]()
+                    {
+                        LOGD("interface name changed: "<<i.name().value<0>());
+                        printInterface(i);
+                    });
+
 
                     if(printAll)
                     {
