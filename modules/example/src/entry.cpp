@@ -19,11 +19,11 @@ struct Info
     {
         //using namespace ns;
         {
-            std::error_code code(net::general::no_interface);
+            std::error_code code(net::error::general::no_interface);
 
-            bool b1 = code == net::general::no_interface;
+            bool b1 = code == net::error::general::no_interface;
             (void)b1;
-            bool b2 = net::general::channel_closed == code;
+            bool b2 = net::error::general::channel_closed == code;
             (void)b2;
 
             int k = 220;

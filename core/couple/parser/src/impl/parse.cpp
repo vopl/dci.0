@@ -243,7 +243,11 @@ namespace  dci { namespace couple { namespace parser { namespace impl
         }
 
         //index owners
-        ast::OwnerIndexer().exec(res);
+        ast::OwnerIndexer(errs).exec(res);
+        if(!errs.empty())
+        {
+            return Scope();
+        }
 
         //resolve typeUse.scopedName
         if(!ast::ScopedNamesResolver(errs).exec(res))

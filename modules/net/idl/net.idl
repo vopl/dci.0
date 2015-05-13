@@ -6,10 +6,13 @@ alias Data = list<uint8>;
 
 scope net
 {
-    errc general
+    scope error
     {
-        no_interface: "tratata \"pumpum\"";
-        channel_closed;
+        errc general
+        {
+            no_interface: "tratata \"pumpum\"";
+            channel_closed;
+        }
     }
 
     /////////////////////////////////////////////////////////

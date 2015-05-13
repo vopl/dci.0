@@ -7,13 +7,15 @@ namespace  dci { namespace couple { namespace parser { namespace impl { namespac
     class OwnerIndexer
         : public boost::static_visitor<>
     {
-        SScope      *_scope;
-        SStruct     *_struct;
-        SVariant    *_variant;
-        SIface      *_iface;
-        SMethod     *_method;
-        SEnum       *_enum;
-        SErrc       *_errc;
+        std::vector<ErrorInfo> &_errs;
+
+        SScope      *_scope     {nullptr};
+        SStruct     *_struct    {nullptr};
+        SVariant    *_variant   {nullptr};
+        SIface      *_iface     {nullptr};
+        SMethod     *_method    {nullptr};
+        SEnum       *_enum      {nullptr};
+        SErrc       *_errc      {nullptr};
 
         template <class T>
         class CurrentSetter
@@ -37,7 +39,8 @@ namespace  dci { namespace couple { namespace parser { namespace impl { namespac
         };
 
     public:
-        OwnerIndexer()
+        OwnerIndexer(std::vector<ErrorInfo> &errs)
+            : _errs(errs)
         {
         }
 
@@ -177,6 +180,36 @@ namespace  dci { namespace couple { namespace parser { namespace impl { namespac
         {
             v->owner = _scope;
             _scope->errcs.insert(std::make_pair(v->name->value, v));
+
+            {
+                auto errPusher = [&](SScopeEntry *place)
+                {
+                    _errs.emplace_back(ErrorInfo {
+                                          v->name->pos.begin().file(),
+                                          static_cast<int>(v->name->pos.begin().line()),
+                                          static_cast<int>(v->name->pos.begin().column()),
+                                          "errc can be placed only in pure scope"});
+
+                    _errs.emplace_back(ErrorInfo {
+                                          place->name->pos.begin().file(),
+                                          static_cast<int>(place->name->pos.begin().line()),
+                                          static_cast<int>(place->name->pos.begin().column()),
+                                          "declaration of non pure scope "+place->name->value});
+                };
+
+                if(_iface)
+                {
+                    errPusher(_iface);
+                }
+                if(_struct)
+                {
+                    errPusher(_struct);
+                }
+                if(_variant)
+                {
+                    errPusher(_variant);
+                }
+            }
 
             CurrentSetter<SErrc> cse(_errc, v);
             exec(v->fields);
