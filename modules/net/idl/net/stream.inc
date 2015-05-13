@@ -16,6 +16,7 @@ scope stream
         in accept:      ()          -> Channel;
         out accepted:   (Channel v) -> ();
         in close:       ()          -> ();
+        out closed:     ();
     }
 
     /////////////////////////////////////////////////////////
@@ -38,5 +39,6 @@ scope stream
         in write:       (Data v)    -> ();
         
         in close:       ()          -> ();
+        out closed:     ();
     }
 }

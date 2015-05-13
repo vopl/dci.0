@@ -1,30 +1,82 @@
 #include "interface.hpp"
 
+#include "../impl/interface.hpp"
+
 namespace handlers
 {
-    Future< uint32> InterfaceHandler::flags()
+    Interface::Interface(::impl::Interface *impl)
+        : _impl(impl)
     {
-        assert(0);
+        if(_impl)
+        {
+            _impl->registerHandler(this);
+        }
     }
 
-    Future< uint32> InterfaceHandler::mtu()
+    Interface::~Interface()
     {
-        assert(0);
+        if(_impl)
+        {
+            _impl->unregisterHandler(this);
+        }
     }
 
-    Future< string> InterfaceHandler::name()
+    void Interface::dropImpl()
     {
-        assert(0);
+        if(_impl)
+        {
+            _impl = nullptr;
+        }
     }
 
-    Future< list< ip4::Net>> InterfaceHandler::ip4Nets()
+    Future< uint32> Interface::flags()
     {
-        assert(0);
+        if(!_impl)
+        {
+            return std::error_code(::net::error::general::implementation_down);
+        }
+
+        return _impl->flags();
     }
 
-    Future< list< ip6::Net>> InterfaceHandler::ip6Nets()
+    Future< uint32> Interface::mtu()
     {
-        assert(0);
+        if(!_impl)
+        {
+            return std::error_code(::net::error::general::implementation_down);
+        }
+
+        return _impl->mtu();
+    }
+
+    Future< string> Interface::name()
+    {
+        if(!_impl)
+        {
+            return std::error_code(::net::error::general::implementation_down);
+        }
+
+        return string(_impl->name());
+    }
+
+    Future< list< ip4::Net>> Interface::ip4Nets()
+    {
+        if(!_impl)
+        {
+            return std::error_code(::net::error::general::implementation_down);
+        }
+
+        return list< ip4::Net>(_impl->ip4Nets());
+    }
+
+    Future< list< ip6::Net>> Interface::ip6Nets()
+    {
+        if(!_impl)
+        {
+            return std::error_code(::net::error::general::implementation_down);
+        }
+
+        return list< ip6::Net>(_impl->ip6Nets());
     }
 
 }

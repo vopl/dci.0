@@ -278,7 +278,7 @@ namespace dci { namespace site { namespace impl
             mainBinaryPath /= _mainBinary;
 
             assert(!_mainBinaryHandle);
-            _mainBinaryHandle = dlopen(mainBinaryPath.string().c_str(), RTLD_LAZY|RTLD_LOCAL);
+            _mainBinaryHandle = dlopen(mainBinaryPath.string().c_str(), RTLD_NOW|RTLD_LOCAL);
 
             if(!_mainBinaryHandle)
             {

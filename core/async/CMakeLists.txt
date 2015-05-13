@@ -132,6 +132,7 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
 ############################################################
 set(INC
+    include/dci/async.hpp
     include/dci/async/functions.hpp
     include/dci/async/mutex.hpp
     include/dci/async/event.hpp

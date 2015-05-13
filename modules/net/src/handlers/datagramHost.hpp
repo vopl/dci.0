@@ -9,14 +9,14 @@ namespace handlers
     using namespace net;
 
     template <class Address>
-    struct DatagramHostHandler
-        : ScopeSelector<Address>::datagram::template HostHandlerSkel<DatagramHostHandler<Address>>
+    struct DatagramHost
+        : ScopeSelector<Address>::datagram::template HostHandlerSkel<DatagramHost<Address>>
     {
         using Channel = typename ScopeSelector<Address>::datagram::Channel;
 
         Future< Channel> mkChannel()
         {
-            auto *v = new DatagramChannelHandler<Address>;
+            auto *v = new DatagramChannel<Address>;
             return Channel(*v);
         }
     };

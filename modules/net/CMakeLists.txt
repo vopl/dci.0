@@ -27,6 +27,12 @@ set(SRC
     src/handlers/streamClient.hpp
     src/handlers/streamHost.hpp
     src/handlers/streamServer.hpp
+
+    src/impl/host.hpp
+    src/impl/host.cpp
+
+    src/impl/interface.hpp
+    src/impl/interface.cpp
 )
 
 

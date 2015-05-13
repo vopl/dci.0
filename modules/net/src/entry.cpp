@@ -2,6 +2,7 @@
 #include <dci/logger/logger.hpp>
 
 #include "handlers/host.hpp"
+#include "impl/host.hpp"
 
 using namespace dci::couple::runtime;
 using namespace dci::site;
@@ -59,12 +60,26 @@ struct Entry
     dci::async::Future<std::error_code> load(const ModulePlace &place) override
     {
         (void)place;
+
+        auto ec = ::impl::Host::startup();
+        if(ec)
+        {
+            return std::move(ec);
+        }
+
         return dci::async::Future<std::error_code>();
     }
 
     dci::async::Future<std::error_code> unload(const ModulePlace &place) override
     {
         (void)place;
+
+        auto ec = ::impl::Host::shutdown();
+        if(ec)
+        {
+            return std::move(ec);
+        }
+
         return dci::async::Future<std::error_code>();
     }
 

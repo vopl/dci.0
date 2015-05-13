@@ -10,6 +10,8 @@ scope net
     {
         errc general
         {
+            implementation_down: "исполняющий слой отключен (например при перезагрузке модуля, или соответствующий девайс вдруг отключился)";
+
             no_interface: "tratata \"pumpum\"";
             channel_closed;
         }
@@ -21,7 +23,6 @@ scope net
         in interfaces:          ()              -> list<Interface>;
 
         out interfaceAdded:     (Interface v);
-        out interfaceRemoved:   (Interface v);
 
         in ip4StreamHost:       ()              -> ip4::stream::Host;
         in ip4DatagramHost:     ()              -> ip4::datagram::Host;
@@ -35,6 +36,8 @@ scope net
     /////////////////////////////////////////////////////////
     iface Interface
     {
+        out removed:        ();
+
         in flags:           () -> uint32;
         out flagsChanged:   ();
 

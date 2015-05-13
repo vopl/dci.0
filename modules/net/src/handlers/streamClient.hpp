@@ -9,8 +9,8 @@ namespace handlers
     using namespace net;
 
     template <class Address>
-    struct StreamClientHandler
-        : ScopeSelector<Address>::stream::template ClientHandlerSkel<StreamClientHandler<Address>>
+    struct StreamClient
+        : ScopeSelector<Address>::stream::template ClientHandlerSkel<StreamClient<Address>>
     {
         using Channel = typename ScopeSelector<Address>::stream::Channel;
 
@@ -25,7 +25,7 @@ namespace handlers
             (void)address;
             assert(0);
 
-            auto *v = new StreamChannelHandler<Address>;
+            auto *v = new StreamChannel<Address>;
             return Channel(*v);
         }
 

@@ -1,6 +1,8 @@
 #include <dci/site/moduleEntry.hpp>
+#include <dci/async.hpp>
 #include <dci/logger/logger.hpp>
 
+#include <algorithm>
 #include "net.hpp"
 
 
@@ -17,24 +19,6 @@ struct Info
 {
     Info()
     {
-        //using namespace ns;
-        {
-            std::error_code code(net::error::general::no_interface);
-
-            bool b1 = code == net::error::general::no_interface;
-            (void)b1;
-            bool b2 = net::error::general::channel_closed == code;
-            (void)b2;
-
-            int k = 220;
-            (void)k;
-
-            LOGD(code);
-        }
-
-
-
-
         _provider = "dci";
         _id.fromHex("8785599b2e858e7d0f55a888b87127ed");
         //_serviceIds;
@@ -94,35 +78,65 @@ struct Entry
     {
         (void)place;
 
-        dci::async::Future<std::error_code, net::Host> netHost = manager.createService<net::Host>();
+        _stopEvent.reset();
 
-        netHost.wait();
-        if(netHost.hasError())
+        dci::async::spawn([&]()
         {
-            LOGD(netHost.error());
-        }
-        else
-        {
-            LOGD("service acuired");
-            net::Host nh = netHost.detachValue<0>();
+            using namespace ::dci::couple::runtime;
 
-            nh.signal_interfaceAdded().connect([](::net::Interface &&i) {
+            dci::async::Future<std::error_code, net::Host> netHost = manager.createService<net::Host>();
 
-                (void)i;
+            if(netHost.hasError())
+            {
+                LOGD(netHost.error());
+            }
+            else
+            {
+                LOGD("start net watching");
+                net::Host nh = netHost.detachValue<0>();
 
-                int k = 220;
-                (void)k;
-            });
+                list<net::Interface> ifs = nh.interfaces().detachValue<0>();
 
+                auto printInterfaces = [&]()
+                {
+                    LOGD("interfaces amount: "<<ifs.size());
+                };
 
-            auto ifs = nh.interfaces().detachValue<0>();
+                auto useInterface = [&](::net::Interface &i, bool printAll)
+                {
+                    LOGD("interface added: "<<i.name().value<0>());
 
-            std::size_t x = ifs.size();
-            (void)x;
+                    i.signal_removed().connect([&]()
+                    {
+                        LOGD("interface removed: "<<i.name().value<0>());
+                        std::remove_if(ifs.begin(), ifs.end(), [&](const net::Interface &v)
+                        {
+                            return &v == &i;
+                        });
+                        printInterfaces();
+                    });
 
-            int k = 220;
-            (void)k;
-        }
+                    if(printAll)
+                    {
+                        printInterfaces();
+                    }
+                };
+
+                for(net::Interface &i : ifs)
+                {
+                    useInterface(i, false);
+                }
+
+                nh.signal_interfaceAdded().connect([&](::net::Interface &&i) {
+                    ifs.emplace_back(std::move(i));
+                    useInterface(ifs.back(), true);
+                });
+
+                printInterfaces();
+                _stopEvent.acquire();
+                LOGD("stop net watching");
+            }
+        });
 
         return dci::async::Future<std::error_code>();
     }
@@ -130,6 +144,9 @@ struct Entry
     dci::async::Future<std::error_code> stop(const dci::site::ModulePlace &place) override
     {
         (void)place;
+
+        _stopEvent.set();
+
         return dci::async::Future<std::error_code>();
     }
 
@@ -145,6 +162,9 @@ struct Entry
         (void)factory;
         assert(0);
     }
+
+private:
+    dci::async::Event _stopEvent;
 } entry;
 
 extern "C"

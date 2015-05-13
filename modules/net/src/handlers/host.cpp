@@ -4,55 +4,112 @@
 #include "datagramHost.hpp"
 #include "streamHost.hpp"
 
+#include "../impl/host.hpp"
+#include "../impl/interface.hpp"
+
 namespace handlers
 {
-    Future<list<Interface>> HostHandler::interfaces()
+    Host::Host(::impl::Host *impl)
+        : _impl(impl)
     {
-        InterfaceHandler* i = new InterfaceHandler;
-        this->interfaceAdded(std::forward<Interface>(*i));
-
-        //do impl
-        assert(0);
-
-        list<Interface> l;
-
-        return std::move(l);
+        if(_impl)
+        {
+            _impl->registerHandler(this);
+        }
     }
 
-    Future< ip4::stream::Host> HostHandler::ip4StreamHost()
+    Host::~Host()
     {
-        auto *v = new StreamHostHandler<ip4::Address>;
+        if(_impl)
+        {
+            _impl->unregisterHandler(this);
+        }
+    }
+
+    void Host::dropImpl()
+    {
+        if(_impl)
+        {
+            _impl = nullptr;
+        }
+    }
+
+    Future<list< ::net::Interface>> Host::interfaces()
+    {
+        if(!_impl)
+        {
+            return std::error_code(::net::error::general::implementation_down);
+        }
+
+        list< ::net::Interface> res;
+        res.reserve(_impl->interfaces().size());
+        for(const auto &i : _impl->interfaces())
+        {
+            res.emplace_back(* new Interface(i.get()));
+        }
+
+        return std::move(res);
+    }
+
+    Future< ip4::stream::Host> Host::ip4StreamHost()
+    {
+        if(!_impl)
+        {
+            return std::error_code(::net::error::general::implementation_down);
+        }
+
+        auto *v = new StreamHost<ip4::Address>;
         return ip4::stream::Host(*v);
     }
 
-    Future< ip4::datagram::Host> HostHandler::ip4DatagramHost()
+    Future< ip4::datagram::Host> Host::ip4DatagramHost()
     {
-        auto *v = new DatagramHostHandler<ip4::Address>;
+        if(!_impl)
+        {
+            return std::error_code(::net::error::general::implementation_down);
+        }
+
+        auto *v = new DatagramHost<ip4::Address>;
         return ip4::datagram::Host(*v);
     }
 
-    Future< ip6::stream::Host> HostHandler::ip6StreamHost()
+    Future< ip6::stream::Host> Host::ip6StreamHost()
     {
-        auto *v = new StreamHostHandler<ip6::Address>;
+        if(!_impl)
+        {
+            return std::error_code(::net::error::general::implementation_down);
+        }
+
+        auto *v = new StreamHost<ip6::Address>;
         return ip6::stream::Host(*v);
     }
 
-    Future< ip6::datagram::Host> HostHandler::ip6DatagramHost()
+    Future< ip6::datagram::Host> Host::ip6DatagramHost()
     {
-        auto *v = new DatagramHostHandler<ip6::Address>;
+        if(!_impl)
+        {
+            return std::error_code(::net::error::general::implementation_down);
+        }
+
+        auto *v = new DatagramHost<ip6::Address>;
         return ip6::datagram::Host(*v);
     }
 
-    Future< local::stream::Host> HostHandler::localStreamHost()
+    Future< local::stream::Host> Host::localStreamHost()
     {
-        auto *v = new StreamHostHandler<local::Address>;
+        if(!_impl)
+        {
+            return std::error_code(::net::error::general::implementation_down);
+        }
+
+        auto *v = new StreamHost<local::Address>;
         return local::stream::Host(*v);
     }
 
     void HostHandlerFactory::createService(void *outFuture)
     {
-        auto *res = static_cast<dci::async::Future<std::error_code, Host> *>(outFuture);
-        *res = Host(* new HostHandler);
+        auto *res = static_cast<dci::async::Future<std::error_code, ::net::Host> *>(outFuture);
+        *res = ::net::Host(* new Host(::impl::Host::instance()));
     }
 
 }

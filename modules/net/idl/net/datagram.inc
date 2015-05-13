@@ -19,5 +19,6 @@ scope datagram
         in send:            (Data, Address)     -> ();
         
         in close:           ()                  -> ();
+        out closed:         ();
     }
 }

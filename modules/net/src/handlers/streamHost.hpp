@@ -10,21 +10,21 @@ namespace handlers
     using namespace net;
 
     template <class Address>
-    struct StreamHostHandler
-        : ScopeSelector<Address>::stream::template HostHandlerSkel<StreamHostHandler<Address>>
+    struct StreamHost
+        : ScopeSelector<Address>::stream::template HostHandlerSkel<StreamHost<Address>>
     {
         using Server = typename ScopeSelector<Address>::stream::Server;
         using Client = typename ScopeSelector<Address>::stream::Client;
 
         Future< Server> mkServer()
         {
-            auto *v = new StreamServerHandler<Address>;
+            auto *v = new StreamServer<Address>;
             return Server(*v);
         }
 
         Future< Client> mkClient()
         {
-            auto *v = new StreamClientHandler<Address>;
+            auto *v = new StreamClient<Address>;
             return Client(*v);
         }
     };

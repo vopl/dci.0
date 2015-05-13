@@ -8,8 +8,8 @@ namespace handlers
     using namespace net;
 
     template <class Address>
-    struct DatagramChannelHandler
-        : ScopeSelector<Address>::datagram::template ChannelHandlerSkel<DatagramChannelHandler<Address>>
+    struct DatagramChannel
+        : ScopeSelector<Address>::datagram::template ChannelHandlerSkel<DatagramChannel<Address>>
     {
         Future< > bind(Address &&v)
         {

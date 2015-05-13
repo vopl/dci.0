@@ -8,8 +8,8 @@ namespace handlers
     using namespace net;
 
     template <class Address>
-    struct StreamChannelHandler
-        : ScopeSelector<Address>::stream::template ChannelHandlerSkel<StreamChannelHandler<Address>>
+    struct StreamChannel
+        : ScopeSelector<Address>::stream::template ChannelHandlerSkel<StreamChannel<Address>>
     {
 
         Future< Address> ownAddress()
