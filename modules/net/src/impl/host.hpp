@@ -1,9 +1,8 @@
 #pragma once
 
+#include "engine.hpp"
 #include <system_error>
-#include <map>
 #include <set>
-#include <memory>
 
 namespace handlers
 {
@@ -12,32 +11,36 @@ namespace handlers
 
 namespace impl
 {
-    class Interface;
+    class Link;
 
     class Host
     {
     private:
         Host();
-        ~Host();
 
     public:
-        static std::error_code startup();
-        static std::error_code shutdown();
+        ~Host();
+
+        static dci::async::Future<std::error_code> startup();
+        static dci::async::Future<std::error_code> shutdown();
         static Host *instance();
+
+        bool valid() const;
 
         void registerHandler(handlers::Host *handler);
         void unregisterHandler(handlers::Host *handler);
 
-        const std::map<std::string, std::unique_ptr<Interface>> &interfaces() const;
+        const Engine::Links &links() const;
+
+        void onLinkAdded(Link *link);
 
     private:
-        void update();
+        static std::unique_ptr<Host> _instance;
 
+        using Handlers = std::set<handlers::Host *>;
+        Handlers _handlers;
+
+        std::unique_ptr<Engine> _engine;
     private:
-        static Host *_instance;
-        std::set<handlers::Host *> _handlers;
-
-        using Interfaces = std::map<std::string, std::unique_ptr<Interface>>;
-        Interfaces _interfaces;
     };
 }

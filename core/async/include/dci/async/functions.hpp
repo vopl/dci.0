@@ -17,12 +17,4 @@ namespace dci { namespace async
         return task->getSpawnerResult();
     }
 
-    template<class F, class... Args>
-    typename details::TaskInstance<F, Args...>::SpawnerResultType spawn(const F& f, Args&&... args)
-    {
-        auto task = details::TaskInstance<F, Args...>::alloc(f, std::forward<Args>(args)...);
-        spawnTask(task);
-        return task->getSpawnerResult();
-    }
-
 }}

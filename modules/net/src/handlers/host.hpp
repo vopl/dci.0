@@ -23,7 +23,7 @@ namespace handlers
 
         void dropImpl();
 
-        Future<list< ::net::Interface>> interfaces();
+        Future<list< ::net::Link>> links();
         Future< ip4::stream::Host> ip4StreamHost();
         Future< ip4::datagram::Host> ip4DatagramHost();
         Future< ip6::stream::Host> ip6StreamHost();

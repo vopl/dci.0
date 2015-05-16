@@ -1,26 +1,29 @@
 #include "host.hpp"
-#include "interface.hpp"
+#include "link.hpp"
 #include "../handlers/host.hpp"
-#include "../handlers/interface.hpp"
+#include "../handlers/link.hpp"
+
+#include "engineRtnetlink.hpp"
 
 #include <dci/logger.hpp>
 #include <dci/async.hpp>
 
-#include <cassert>
-#include <cstring>
-#include <functional>
-
-#include <sys/types.h>
-#include <sys/ioctl.h>
-#include <net/if.h>
-#include <netinet/in.h>
-#include <ifaddrs.h>
+//#include <cassert>
+//#include <cstring>
 
 namespace impl
 {
     Host::Host()
     {
-        update();
+        if(!_engine)
+        {
+            _engine.reset(new Rtnetlink(this));
+
+            if(!_engine->valid())
+            {
+                _engine.reset();
+            }
+        }
     }
 
     Host::~Host()
@@ -30,37 +33,52 @@ namespace impl
             h->dropImpl();
         }
         _handlers.clear();
+        _engine.reset();
     }
 
-    std::error_code Host::startup()
+    dci::async::Future<std::error_code> Host::startup()
     {
         assert(!_instance);
 
-        if(!_instance)
-        {
-            _instance = new Host;
-        }
+        return dci::async::spawn([](dci::async::Promise<std::error_code> p){
+            Host *host = new Host;
+            if(!host->valid())
+            {
+                delete host;
+                p.resolveError(std::make_error_code(std::errc::network_unreachable));
+                return;
+            }
 
-        return std::error_code();
+            if(_instance)
+            {
+                delete host;
+                p.resolveError(std::make_error_code(std::errc::already_connected));
+                return;
+            }
+
+            _instance.reset(host);
+            p.resolveValue();
+        });
     }
 
-    std::error_code Host::shutdown()
+    dci::async::Future<std::error_code> Host::shutdown()
     {
         assert(_instance);
 
-        if(_instance)
-        {
-            Host *instance = _instance;
-            _instance = nullptr;
-            delete instance;
-        }
-
-        return std::error_code();
+        return dci::async::spawn([](dci::async::Promise<std::error_code> p){
+           _instance.reset();
+           p.resolveValue();
+        });
     }
 
     Host *Host::instance()
     {
-        return _instance;
+        return _instance.get();
+    }
+
+    bool Host::valid() const
+    {
+        return _engine && _engine->valid();
     }
 
     void Host::registerHandler(handlers::Host *handler)
@@ -73,135 +91,32 @@ namespace impl
         _handlers.erase(handler);
     }
 
-    const Host::Interfaces &Host::interfaces() const
+    const Engine::Links &Host::links() const
     {
-        return _interfaces;
+        if(_engine)
+        {
+            return _engine->links();
+        }
+
+        static Engine::Links stub;
+        return stub;
     }
 
-    namespace
+    void Host::onLinkAdded(Link *link)
     {
-        void updateInterfaceParams(::impl::Interface *i)
+        for(handlers::Host *h : _handlers)
         {
-            int fd = socket(AF_INET, SOCK_DGRAM, 0);
+            net::Link linkIface(* new handlers::Link(link));
 
-            struct ifreq ifr;
-            ifr.ifr_addr.sa_family = AF_INET;
-            memcpy(ifr.ifr_name, i->name().data(), i->name().size()+1);
-
-            if(ioctl(fd, SIOCGIFFLAGS, (caddr_t)&ifr))
+            dci::async::spawn([linkIface(std::move(linkIface)), h]() mutable
             {
-                LOGE("ioctl SIOCGIFFLAGS: "<<strerror(errno));
-                ifr.ifr_ifru.ifru_flags = 0;
-            }
-            i->setFlags(ifr.ifr_ifru.ifru_flags);
+                h->linkAdded(std::move(linkIface));
+            });
 
-            if(ioctl(fd, SIOCGIFMTU, (caddr_t)&ifr))
-            {
-                LOGE("ioctl SIOCGIFMTU: "<<strerror(errno));
-                ifr.ifr_ifru.ifru_mtu = 0;
-            }
-            i->setMtu(ifr.ifr_ifru.ifru_mtu);
-
-            close(fd);
+            //dci::async::spawn(&handlers::HostOpposite::linkAdded, std::move(h), std::move(linkIface));
         }
     }
 
-    void Host::update()
-    {
-        ifaddrs *all;
-        if(getifaddrs(&all))
-        {
-            LOGE("getifaddrs: "<<strerror(errno));
-            _interfaces.clear();
-            return;
-        }
-
-        Interfaces newInterfaces;
-        std::map<std::string, list< ip4::Net>> ip4Nets;
-        std::map<std::string, list< ip6::Net>> ip6Nets;
-
-        for(ifaddrs *one = all; one; one = one->ifa_next)
-        {
-            Interface *interfaceImpl{nullptr};
-            std::string name = one->ifa_name;
-
-            switch(one->ifa_addr->sa_family)
-            {
-            case AF_PACKET:
-                continue;
-            case AF_INET:
-                {
-                    ip4::Net a;
-
-                    memcpy(&a.address.octets, &((sockaddr_in *)one->ifa_addr)->sin_addr.s_addr, 4);
-                    memcpy(&a.netmask.octets, &((sockaddr_in *)one->ifa_netmask)->sin_addr.s_addr, 4);
-                    memcpy(&a.broadcast.octets, &((sockaddr_in *)one->ifa_ifu.ifu_broadaddr)->sin_addr.s_addr, 4);
-                    ip4Nets[name].emplace_back(a);
-                }
-                break;
-            case AF_INET6:
-                {
-                    ip6::Net a;
-
-                    memcpy(&a.address.octets, &((sockaddr_in6 *)one->ifa_addr)->sin6_addr.__in6_u.__u6_addr8, 16);
-                    a.scopeId = ((sockaddr_in6 *)one->ifa_addr)->sin6_scope_id;
-
-                    a.prefixLength = 0;
-                    for(int i(0); i<16; i++)
-                    {
-                        uint8 v = ((sockaddr_in6 *)one->ifa_netmask)->sin6_addr.__in6_u.__u6_addr8[i];
-                        while(v & 1)
-                        {
-                            a.prefixLength++;
-                            v >>= 1;
-                        }
-                    }
-
-                    ip6Nets[name].emplace_back(a);
-                }
-                break;
-            default:
-                assert(0);
-            }
-
-            Interfaces::iterator iter = _interfaces.find(name);
-            if(_interfaces.end() == iter)
-            {
-                interfaceImpl = new Interface(name);
-                newInterfaces.insert(std::make_pair(name, std::unique_ptr<Interface>(interfaceImpl)));
-            }
-        }
-
-        freeifaddrs(all);
-
-        for(const auto &i : newInterfaces)
-        {
-            updateInterfaceParams(i.second.get());
-            i.second->setIp4Nets(ip4Nets[i.second->name()]);
-            i.second->setIp6Nets(ip6Nets[i.second->name()]);
-        }
-
-        for(const auto &i : _interfaces)
-        {
-            updateInterfaceParams(i.second.get());
-            i.second->setIp4Nets(ip4Nets[i.second->name()]);
-            i.second->setIp6Nets(ip6Nets[i.second->name()]);
-        }
-
-        for(auto &i : newInterfaces)
-        {
-            for(handlers::Host *h : _handlers)
-            {
-                dci::async::spawn([&]()
-                {
-                    h->interfaceAdded(* new handlers::Interface(i.second.get()));
-                });
-            }
-
-            _interfaces.emplace(std::move(i));
-        }
-    }
-
-    Host *Host::_instance {nullptr};
+    std::unique_ptr<Host> Host::_instance {nullptr};
 
 }

@@ -3,6 +3,7 @@
 #include <dci/logger/logger.hpp>
 
 #include <algorithm>
+#include <iomanip>
 #include "net.hpp"
 
 
@@ -95,17 +96,17 @@ struct Entry
                 LOGD("start net watching");
                 net::Host nh = netHost.detachValue<0>();
 
-                list<net::Interface> ifs = nh.interfaces().detachValue<0>();
+                list<net::Link> ifs = nh.links().detachValue<0>();
 
-                auto printInterface = [&](net::Interface &i)
+                auto printLink = [&](net::Link &i)
                 {
                     LOGD("-------------------------------------");
                     LOGD("name:  "<<i.name().value<0>());
                     LOGD("flags: 0x"<<std::hex<<i.flags().value<0>()<<std::dec);
                     LOGD("mtu:   "<<i.mtu().value<0>());
 
-                    auto x4 = i.ip4Nets().value<0>();
-                    for(net::ip4::Net n : x4)
+                    auto x4 = i.ip4().value<0>();
+                    for(net::ip4::LinkAddress n : x4)
                     {
                         const auto &octets = n.address.octets;
                         const auto &mask = n.netmask.octets;
@@ -116,86 +117,104 @@ struct Entry
                             <<"broadcast: "<<(unsigned)broadcast[0]<<"."<<(unsigned)broadcast[1]<<"."<<(unsigned)broadcast[2]<<"."<<(unsigned)broadcast[3]);
                     }
 
-                    auto x6 = i.ip6Nets().value<0>();
-                    for(const net::ip6::Net &n : x6)
+                    auto x6 = i.ip6().value<0>();
+                    for(const net::ip6::LinkAddress &n : x6)
                     {
                         const auto &octets = n.address.octets;
                         LOGD("ip6 net: "
-                            <<"ip: "<<(unsigned)octets[0]<<"."<<(unsigned)octets[1]<<"."<<(unsigned)octets[2]<<"."<<(unsigned)octets[3]<<"..., "
+                            <<"ip: "<<std::hex<<std::setfill('0')<<std::setw(2)
+                                <<(unsigned)octets[0]<<""
+                                <<(unsigned)octets[1]<<"."
+                                <<(unsigned)octets[2]<<""
+                                <<(unsigned)octets[3]<<"."
+                                <<(unsigned)octets[4]<<""
+                                <<(unsigned)octets[5]<<"."
+                                <<(unsigned)octets[6]<<""
+                                <<(unsigned)octets[7]<<"."
+                                <<(unsigned)octets[8]<<""
+                                <<(unsigned)octets[9]<<"."
+                                <<(unsigned)octets[10]<<""
+                                <<(unsigned)octets[11]<<"."
+                                <<(unsigned)octets[12]<<""
+                                <<(unsigned)octets[13]<<"."
+                                <<(unsigned)octets[14]<<""
+                                <<(unsigned)octets[15]<<", "
+                            <<std::dec
                             <<"prefixLength: "<<n.prefixLength<<", "
-                            <<"scopeId: "<<n.scopeId);
+                            //<<"scopeId: "<<n.scopeId
+                        );
                     }
                 };
 
-                auto printInterfaces = [&]()
+                auto printLinks = [&]()
                 {
-                    LOGD("interfaces amount: "<<ifs.size());
+                    LOGD("links amount: "<<ifs.size());
 
-                    for(net::Interface &i : ifs)
+                    for(net::Link &i : ifs)
                     {
-                        printInterface(i);
+                        printLink(i);
                     }
 
                 };
 
-                auto useInterface = [&](::net::Interface &i, bool printAll)
+                auto useLink = [&](::net::Link &i, bool printAll)
                 {
-                    LOGD("interface added: "<<i.name().value<0>());
+                    LOGD("link added: "<<i.name().value<0>());
 
                     i.signal_removed().connect([&]()
                     {
-                        LOGD("interface removed: "<<i.name().value<0>());
-                        std::remove_if(ifs.begin(), ifs.end(), [&](const net::Interface &v)
+                        LOGD("link removed: "<<i.name().value<0>());
+                        std::remove_if(ifs.begin(), ifs.end(), [&](const net::Link &v)
                         {
                             return &v == &i;
                         });
-                        printInterfaces();
+                        printLinks();
                     });
 
                     i.signal_flagsChanged().connect([&]()
                     {
-                        LOGD("interface flags changed: "<<i.name().value<0>());
-                        printInterface(i);
+                        LOGD("link flags changed: "<<i.name().value<0>());
+                        printLink(i);
                     });
-                    i.signal_ip4NetsChanged().connect([&]()
+                    i.signal_ip4Changed().connect([&]()
                     {
-                        LOGD("interface nets4 changed: "<<i.name().value<0>());
-                        printInterface(i);
+                        LOGD("link nets4 changed: "<<i.name().value<0>());
+                        printLink(i);
                     });
-                    i.signal_ip6NetsChanged().connect([&]()
+                    i.signal_ip6Changed().connect([&]()
                     {
-                        LOGD("interface nets6 changed: "<<i.name().value<0>());
-                        printInterface(i);
+                        LOGD("link nets6 changed: "<<i.name().value<0>());
+                        printLink(i);
                     });
                     i.signal_mtuChanged().connect([&]()
                     {
-                        LOGD("interface mtu changed: "<<i.name().value<0>());
-                        printInterface(i);
+                        LOGD("link mtu changed: "<<i.name().value<0>());
+                        printLink(i);
                     });
                     i.signal_nameChanged().connect([&]()
                     {
-                        LOGD("interface name changed: "<<i.name().value<0>());
-                        printInterface(i);
+                        LOGD("link name changed: "<<i.name().value<0>());
+                        printLink(i);
                     });
 
 
                     if(printAll)
                     {
-                        printInterfaces();
+                        printLinks();
                     }
                 };
 
-                for(net::Interface &i : ifs)
+                for(net::Link &i : ifs)
                 {
-                    useInterface(i, false);
+                    useLink(i, false);
                 }
 
-                nh.signal_interfaceAdded().connect([&](::net::Interface &&i) {
+                nh.signal_linkAdded().connect([&](::net::Link &&i) {
                     ifs.emplace_back(std::move(i));
-                    useInterface(ifs.back(), true);
+                    useLink(ifs.back(), true);
                 });
 
-                printInterfaces();
+                printLinks();
                 _stopEvent.acquire();
                 LOGD("stop net watching");
             }

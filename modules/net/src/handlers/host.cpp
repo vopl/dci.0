@@ -1,11 +1,11 @@
 #include "host.hpp"
-#include "interface.hpp"
+#include "link.hpp"
 
 #include "datagramHost.hpp"
 #include "streamHost.hpp"
 
 #include "../impl/host.hpp"
-#include "../impl/interface.hpp"
+#include "../impl/link.hpp"
 
 namespace handlers
 {
@@ -34,18 +34,18 @@ namespace handlers
         }
     }
 
-    Future<list< ::net::Interface>> Host::interfaces()
+    Future<list< ::net::Link>> Host::links()
     {
         if(!_impl)
         {
             return std::error_code(::net::error::general::implementation_down);
         }
 
-        list< ::net::Interface> res;
-        res.reserve(_impl->interfaces().size());
-        for(const auto &i : _impl->interfaces())
+        list< ::net::Link> res;
+        res.reserve(_impl->links().size());
+        for(const auto &i : _impl->links())
         {
-            res.emplace_back(* new Interface(i.second.get()));
+            res.emplace_back(* new Link(i.second.get()));
         }
 
         return std::move(res);

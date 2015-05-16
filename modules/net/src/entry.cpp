@@ -61,26 +61,14 @@ struct Entry
     {
         (void)place;
 
-        auto ec = ::impl::Host::startup();
-        if(ec)
-        {
-            return std::move(ec);
-        }
-
-        return dci::async::Future<std::error_code>();
+        return ::impl::Host::startup();
     }
 
     dci::async::Future<std::error_code> unload(const ModulePlace &place) override
     {
         (void)place;
 
-        auto ec = ::impl::Host::shutdown();
-        if(ec)
-        {
-            return std::move(ec);
-        }
-
-        return dci::async::Future<std::error_code>();
+        return ::impl::Host::shutdown();
     }
 
     dci::async::Future<std::error_code> start(Manager &manager, const ModulePlace &place) override

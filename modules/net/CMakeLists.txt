@@ -15,8 +15,8 @@ set(SRC
 
     src/handlers/host.hpp
     src/handlers/host.cpp
-    src/handlers/interface.hpp
-    src/handlers/interface.cpp
+    src/handlers/link.hpp
+    src/handlers/link.cpp
 
     src/handlers/scopeSelector.hpp
 
@@ -31,8 +31,14 @@ set(SRC
     src/impl/host.hpp
     src/impl/host.cpp
 
-    src/impl/interface.hpp
-    src/impl/interface.cpp
+    src/impl/link.hpp
+    src/impl/link.cpp
+
+    src/impl/engine.hpp
+    src/impl/engine.cpp
+
+    src/impl/engineRtnetlink.hpp
+    src/impl/engineRtnetlink.cpp
 )
 
 

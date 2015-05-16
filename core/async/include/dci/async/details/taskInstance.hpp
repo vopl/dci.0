@@ -67,11 +67,26 @@ namespace dci { namespace async { namespace details
         mm::free<sizeof(TaskInstance)>(self);
     }
 
+    namespace
+    {
+        template <class F>
+        auto forwardTaskInstanceFunctor(std::enable_if_t<!std::is_member_function_pointer<F>::value, F> &f) -> F &&
+        {
+            return std::forward<F>(f);
+        }
+
+        template <class F>
+        auto forwardTaskInstanceFunctor(std::enable_if_t<std::is_member_function_pointer<F>::value, F> &f) -> decltype(std::mem_fn(f))
+        {
+            return std::mem_fn(std::forward<F>(f));
+        }
+    }
+
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
     template<class F, class... Args>
     TaskInstance<F, Args...>::TaskInstance(F &&f, Args &&...args)
         : Task(&TaskInstance::callExecutor, &TaskInstance::freeExecutor)
-        , _call(std::forward<F>(f), std::forward<Args>(args)...)
+        , _call(forwardTaskInstanceFunctor<F>(f), std::forward<Args>(args)...)
     {
     }
 

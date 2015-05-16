@@ -64,7 +64,7 @@ namespace dci { namespace async { namespace details
             template <int... phi>
             struct Expander<std::integer_sequence<int, phi...>>
             {
-                using result = decltype(std::bind(std::declval<F>(), std::declval<Args>()..., BindPlaceholder<phi>{}...));
+                using result = decltype(std::bind(std::move(std::declval<F>()), std::move(std::declval<Args>())..., BindPlaceholder<phi>{}...));
             };
 
             using result = typename Expander<std::make_integer_sequence<int, std::tuple_size<Promises>::value>>::result;

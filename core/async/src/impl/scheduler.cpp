@@ -38,9 +38,15 @@ namespace dci { namespace async { namespace impl
         assert(_currentCoro);
         ctx::Coro *coro = _currentCoro;
 
-        _readyCoros.enqueue(coro);
+        ctx::Coro *next = dequeueReadyCoro();
 
-        switchToNext();
+        if(next && next != coro)
+        {
+            _readyCoros.enqueue(coro);
+
+            _currentCoro = next;
+            coro->switchTo(next);
+        }
     }
 
     void Scheduler::hold()

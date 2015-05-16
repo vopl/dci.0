@@ -1,10 +1,10 @@
-#include "interface.hpp"
+#include "link.hpp"
 
-#include "../impl/interface.hpp"
+#include "../impl/link.hpp"
 
 namespace handlers
 {
-    Interface::Interface(::impl::Interface *impl)
+    Link::Link(::impl::Link *impl)
         : _impl(impl)
     {
         if(_impl)
@@ -13,7 +13,7 @@ namespace handlers
         }
     }
 
-    Interface::~Interface()
+    Link::~Link()
     {
         if(_impl)
         {
@@ -21,7 +21,7 @@ namespace handlers
         }
     }
 
-    void Interface::dropImpl()
+    void Link::dropImpl()
     {
         if(_impl)
         {
@@ -29,27 +29,17 @@ namespace handlers
         }
     }
 
-    Future< uint32> Interface::flags()
+    Future< uint32> Link::id()
     {
         if(!_impl)
         {
             return std::error_code(::net::error::general::implementation_down);
         }
 
-        return _impl->flags();
+        return _impl->id();
     }
 
-    Future< uint32> Interface::mtu()
-    {
-        if(!_impl)
-        {
-            return std::error_code(::net::error::general::implementation_down);
-        }
-
-        return _impl->mtu();
-    }
-
-    Future< string> Interface::name()
+    Future< string> Link::name()
     {
         if(!_impl)
         {
@@ -59,24 +49,44 @@ namespace handlers
         return string(_impl->name());
     }
 
-    Future< list< ip4::Net>> Interface::ip4Nets()
+    Future< uint32> Link::flags()
     {
         if(!_impl)
         {
             return std::error_code(::net::error::general::implementation_down);
         }
 
-        return list< ip4::Net>(_impl->ip4Nets());
+        return _impl->flags();
     }
 
-    Future< list< ip6::Net>> Interface::ip6Nets()
+    Future< uint32> Link::mtu()
     {
         if(!_impl)
         {
             return std::error_code(::net::error::general::implementation_down);
         }
 
-        return list< ip6::Net>(_impl->ip6Nets());
+        return _impl->mtu();
+    }
+
+    Future< list< ip4::LinkAddress>> Link::ip4()
+    {
+        if(!_impl)
+        {
+            return std::error_code(::net::error::general::implementation_down);
+        }
+
+        return list< ip4::LinkAddress>(_impl->ip4());
+    }
+
+    Future< list< ip6::LinkAddress>> Link::ip6()
+    {
+        if(!_impl)
+        {
+            return std::error_code(::net::error::general::implementation_down);
+        }
+
+        return list< ip6::LinkAddress>(_impl->ip6());
     }
 
 }

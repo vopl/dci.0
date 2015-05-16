@@ -20,9 +20,9 @@ scope net
     /////////////////////////////////////////////////////////
     iface Host
     {
-        in interfaces:          ()              -> list<Interface>;
+        in links:               ()              -> list<Link>;
 
-        out interfaceAdded:     (Interface v);
+        out linkAdded:          (Link v);
 
         in ip4StreamHost:       ()              -> ip4::stream::Host;
         in ip4DatagramHost:     ()              -> ip4::datagram::Host;
@@ -34,9 +34,14 @@ scope net
     }
 
     /////////////////////////////////////////////////////////
-    iface Interface
+    iface Link
     {
         out removed:        ();
+
+        in id:              () -> uint32;
+
+        in name:            () -> string;
+        out nameChanged:    ();
 
         in flags:           () -> uint32;
         out flagsChanged:   ();
@@ -44,14 +49,11 @@ scope net
         in mtu:             () -> uint32;
         out mtuChanged:     ();
 
-        in name:            () -> string;
-        out nameChanged:    ();
+        in ip4:             () -> list<ip4::LinkAddress>;
+        out ip4Changed:     ();
         
-        in ip4Nets:         () -> list<ip4::Net>;
-        out ip4NetsChanged: ();
-        
-        in ip6Nets:         () -> list<ip6::Net>;
-        out ip6NetsChanged: ();
+        in ip6:             () -> list<ip6::LinkAddress>;
+        out ip6Changed:     ();
     }
 
     /////////////////////////////////////////////////////////
@@ -67,7 +69,7 @@ scope net
             uint16 port;
         }
 
-        struct Net
+        struct LinkAddress
         {
             Ip address;
             Ip netmask;
@@ -91,11 +93,20 @@ scope net
             uint16 port;
         }
 
-        struct Net
+        struct LinkAddress
         {
             Ip address;
             uint16 prefixLength;
-            uint32 scopeId;
+
+            enum Scope
+            {
+                null;
+                host;
+                link;
+                global;
+            }
+
+            Scope scope;
         }
         
         include "net/stream.inc";
