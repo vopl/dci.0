@@ -7,12 +7,12 @@ function(dciDefineModule name)
 
 
     ######################
-    add_dependencies(${OPTS_MAINTARGET} dci-site)
+    add_dependencies(${OPTS_MAINTARGET} dci-site-executable)
 
     set(manifest ${CMAKE_CURRENT_BINARY_DIR}/manifest.json)
     add_custom_command(OUTPUT ${manifest}
-        COMMAND dci-site --genmanifest $<TARGET_FILE:${OPTS_MAINTARGET}> --outfile ${manifest}
-        DEPENDS ${OPTS_MAINTARGET} dci-site)
+        COMMAND dci-site-executable --genmanifest $<TARGET_FILE:${OPTS_MAINTARGET}> --outfile ${manifest}
+        DEPENDS ${OPTS_MAINTARGET} dci-site-executable)
 
     target_sources(${OPTS_MAINTARGET} PUBLIC ${manifest})
 

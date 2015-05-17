@@ -8,9 +8,6 @@
 #include <dci/logger.hpp>
 #include <dci/async.hpp>
 
-//#include <cassert>
-//#include <cstring>
-
 namespace impl
 {
     Host::Host()
@@ -104,16 +101,10 @@ namespace impl
 
     void Host::onLinkAdded(Link *link)
     {
-        for(handlers::Host *h : _handlers)
+        Handlers hs(_handlers);
+        for(handlers::Host *h : hs)
         {
-            net::Link linkIface(* new handlers::Link(link));
-
-            dci::async::spawn([linkIface(std::move(linkIface)), h]() mutable
-            {
-                h->linkAdded(std::move(linkIface));
-            });
-
-            //dci::async::spawn(&handlers::HostOpposite::linkAdded, std::move(h), std::move(linkIface));
+            h->linkAdded(* new handlers::Link(link));
         }
     }
 

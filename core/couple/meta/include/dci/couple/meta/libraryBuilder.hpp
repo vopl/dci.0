@@ -86,6 +86,7 @@ namespace dci { namespace couple { namespace meta
         void setPrimitiveKind(Primitive *target, PrimitiveKind kind);
 
         void setDescription(ErrcValue *target, const std::string &description);
+        void setValue(EnumValue *target, const std::string &value);
 
     public:// commit
         bool commitChanges(Library &lib, std::vector<CommitError> &errors);

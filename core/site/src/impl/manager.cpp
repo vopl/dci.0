@@ -144,6 +144,11 @@ namespace dci { namespace site { namespace impl
         });
     }
 
+    std::string Manager::generateManifest(const std::string &mainBinaryFullPath)
+    {
+        return Module::generateManifest(mainBinaryFullPath);
+    }
+
     std::error_code Manager::createService(void *outFuture, const couple::runtime::Iid &iid)
     {
         ServiceFactories::const_iterator iter = _serviceFactories.find(iid);

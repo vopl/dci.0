@@ -14,7 +14,6 @@ set(INC
 )
 
 set(SRC
-    src/main.cpp
     src/error.cpp
     src/manager.cpp
     src/modulePlace.cpp
@@ -44,13 +43,32 @@ endif()
 include_directories(${Boost_INCLUDE_DIRS})
 
 
-add_executable(${PROJECT}
+add_library(${PROJECT} SHARED
     ${INC}  ${SRC}
     DciDefineModule.cmake
 )
-set_property(TARGET ${PROJECT} PROPERTY ENABLE_EXPORTS ON)
 set_property(TARGET ${PROJECT} PROPERTY CXX_STANDARD 14)
 set_property(TARGET ${PROJECT} PROPERTY CXX_STANDARD_REQUIRED ON)
+
+target_link_libraries(${PROJECT}
+    dci-mm
+    dci-async
+    dci-io
+    dci-couple-runtime
+    dl
+)
+target_link_libraries(${PROJECT} ${Boost_FILESYSTEM_LIBRARY})
+
+
+add_executable(${PROJECT}-executable
+    src/main.cpp
+)
+set_property(TARGET ${PROJECT}-executable PROPERTY OUTPUT_NAME ${PROJECT})
+set_property(TARGET ${PROJECT}-executable PROPERTY CXX_STANDARD 14)
+set_property(TARGET ${PROJECT}-executable PROPERTY CXX_STANDARD_REQUIRED ON)
+target_link_libraries(${PROJECT}-executable ${PROJECT})
+target_link_libraries(${PROJECT}-executable ${Boost_PROGRAM_OPTIONS_LIBRARY})
+
 
 include(DciHimpl)
 mkHimplLayouts(${PROJECT}
@@ -66,16 +84,6 @@ mkHimplLayouts(${PROJECT}
         ::dci::site::impl::Manager
 )
 
-
-target_link_libraries(${PROJECT} ${Boost_PROGRAM_OPTIONS_LIBRARY} ${Boost_FILESYSTEM_LIBRARY})
-
-target_link_libraries(${PROJECT}
-    dci-mm
-    dci-async
-    dci-io
-    dci-couple-runtime
-    dl
-)
 
 if(COMMAND localinstall)
     localinstall(${PROJECT} include DROP_PREFIX include/ ${INC})

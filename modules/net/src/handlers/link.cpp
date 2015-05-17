@@ -25,6 +25,7 @@ namespace handlers
     {
         if(_impl)
         {
+            removed();
             _impl = nullptr;
         }
     }

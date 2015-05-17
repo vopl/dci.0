@@ -60,11 +60,15 @@ namespace impl
 
     Link::~Link()
     {
-        for(auto h : _handlers)
+        while(!_handlers.empty())
         {
-            h->dropImpl();
+            Handlers hs;
+            hs.swap(_handlers);
+            for(handlers::Link *h : hs)
+            {
+                h->dropImpl();
+            }
         }
-        _handlers.clear();
     }
 
     void Link::registerHandler(handlers::Link *handler)
@@ -112,11 +116,7 @@ namespace impl
         if(_name != v)
         {
             _name = v;
-
-            for(handlers::Link *h : _handlers)
-            {
-                dci::async::spawn(&handlers::Link::nameChanged, h);
-            }
+            flushChanges(&handlers::Link::nameChanged);
         }
     }
 
@@ -125,11 +125,7 @@ namespace impl
         if(_flags != v)
         {
             _flags = v;
-
-            for(handlers::Link *h : _handlers)
-            {
-                dci::async::spawn(&handlers::Link::flagsChanged, h);
-            }
+            flushChanges(&handlers::Link::flagsChanged);
         }
     }
 
@@ -138,25 +134,17 @@ namespace impl
         if(_mtu != v)
         {
             _mtu = v;
+            flushChanges(&handlers::Link::mtuChanged);
 
-            for(handlers::Link *h : _handlers)
-            {
-                dci::async::spawn(&handlers::Link::mtuChanged, h);
-            }
         }
     }
-
 
     void Link::setIp4(const list< ip4::LinkAddress> &v)
     {
         if(!std::equal(_ip4.begin(), _ip4.end(), v.begin(), v.end(), &address4Equal))
         {
             _ip4 = v;
-
-            for(handlers::Link *h : _handlers)
-            {
-                dci::async::spawn(&handlers::Link::ip4Changed, h);
-            }
+            flushChanges(&handlers::Link::ip4Changed);
         }
     }
 
@@ -165,11 +153,7 @@ namespace impl
         if(!std::equal(_ip6.begin(), _ip6.end(), v.begin(), v.end(), &address6Equal))
         {
             _ip6 = v;
-
-            for(handlers::Link *h : _handlers)
-            {
-                dci::async::spawn(&handlers::Link::ip6Changed, h);
-            }
+            flushChanges(&handlers::Link::ip6Changed);
         }
     }
 
@@ -181,11 +165,7 @@ namespace impl
         if(_ip4.end() == iter)
         {
             _ip4.emplace_back(std::move(v));
-
-            for(handlers::Link *h : _handlers)
-            {
-                dci::async::spawn(&handlers::Link::ip4Changed, h);
-            }
+            flushChanges(&handlers::Link::ip4Changed);
         }
     }
 
@@ -197,11 +177,7 @@ namespace impl
         if(_ip4.end() != iter)
         {
             _ip4.erase(iter);
-
-            for(handlers::Link *h : _handlers)
-            {
-                dci::async::spawn(&handlers::Link::ip4Changed, h);
-            }
+            flushChanges(&handlers::Link::ip4Changed);
         }
     }
 
@@ -213,11 +189,7 @@ namespace impl
         if(_ip6.end() == iter)
         {
             _ip6.emplace_back(std::move(v));
-
-            for(handlers::Link *h : _handlers)
-            {
-                dci::async::spawn(&handlers::Link::ip6Changed, h);
-            }
+            flushChanges(&handlers::Link::ip6Changed);
         }
     }
 
@@ -229,11 +201,17 @@ namespace impl
         if(_ip6.end() != iter)
         {
             _ip6.erase(iter);
+            flushChanges(&handlers::Link::ip6Changed);
+        }
+    }
 
-            for(handlers::Link *h : _handlers)
-            {
-                dci::async::spawn(&handlers::Link::ip6Changed, h);
-            }
+    template <class M>
+    void Link::flushChanges(M m)
+    {
+        Handlers hs(_handlers);
+        for(handlers::Link *h : hs)
+        {
+            (h->*m)();
         }
     }
 

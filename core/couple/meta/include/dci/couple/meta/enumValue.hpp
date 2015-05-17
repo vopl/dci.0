@@ -13,6 +13,8 @@ namespace dci { namespace couple { namespace meta
         EnumValue() = delete;
         ~EnumValue() = delete;
 
+        const std::string &value() const;
+
     };
 
 }}}

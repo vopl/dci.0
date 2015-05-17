@@ -23,7 +23,7 @@ namespace dci { namespace himpl {
     template <> struct LayoutProvider< ::dci::couple::meta::impl::Container1 > { static const std::size_t _size=16; static const std::size_t _align=8; static const bool _polymorphic=false; };
     template <> struct LayoutProvider< ::dci::couple::meta::impl::Container2 > { static const std::size_t _size=24; static const std::size_t _align=8; static const bool _polymorphic=false; };
     template <> struct LayoutProvider< ::dci::couple::meta::impl::Enum > { static const std::size_t _size=72; static const std::size_t _align=8; static const bool _polymorphic=false; };
-    template <> struct LayoutProvider< ::dci::couple::meta::impl::EnumValue > { static const std::size_t _size=32; static const std::size_t _align=8; static const bool _polymorphic=false; };
+    template <> struct LayoutProvider< ::dci::couple::meta::impl::EnumValue > { static const std::size_t _size=40; static const std::size_t _align=8; static const bool _polymorphic=false; };
     template <> struct LayoutProvider< ::dci::couple::meta::impl::Errc > { static const std::size_t _size=72; static const std::size_t _align=8; static const bool _polymorphic=false; };
     template <> struct LayoutProvider< ::dci::couple::meta::impl::ErrcValue > { static const std::size_t _size=40; static const std::size_t _align=8; static const bool _polymorphic=false; };
     template <> struct LayoutProvider< ::dci::couple::meta::impl::Iface > { static const std::size_t _size=280; static const std::size_t _align=8; static const bool _polymorphic=false; };

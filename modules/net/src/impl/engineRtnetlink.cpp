@@ -6,6 +6,7 @@
 
 #include <linux/rtnetlink.h>
 #include <netinet/in.h>
+#include <net/if.h>
 #include <cstring>
 
 namespace impl
@@ -208,6 +209,10 @@ namespace impl
         //TODO: select _sock or _stop, if _stop - return;
         //ssize_t status = recvmsg(_sock, &_msg, MSG_DONTWAIT);
 
+        if(_stop.tryAcquire())
+        {
+            return false;
+        }
         dci::async::yield();
 
         ssize_t readedSize = recvmsg(_sock, &_msg, MSG_DONTWAIT);
@@ -240,7 +245,18 @@ namespace impl
                         link = addLink(ifi->ifi_index);
                     }
 
-                    link->setFlags(ifi->ifi_flags);
+                    {
+                        uint32 flags = 0;
+
+                        if(ifi->ifi_flags & IFF_UP)         flags |= (uint32)net::Link::Flags::up;
+                        if(ifi->ifi_flags & IFF_RUNNING)    flags |= (uint32)net::Link::Flags::running;
+                        if(ifi->ifi_flags & IFF_BROADCAST)  flags |= (uint32)net::Link::Flags::broadcast;
+                        if(ifi->ifi_flags & IFF_LOOPBACK)   flags |= (uint32)net::Link::Flags::loopback;
+                        if(ifi->ifi_flags & IFF_POINTOPOINT)flags |= (uint32)net::Link::Flags::p2p;
+                        if(ifi->ifi_flags & IFF_MULTICAST)  flags |= (uint32)net::Link::Flags::multicast;
+
+                        link->setFlags(flags);
+                    }
                     fetchRta(IFLA_RTA(ifi), h->nlmsg_len, link);
 
                     if(isNew)

@@ -13,7 +13,6 @@ namespace impl
     {
     }
 
-
     const Engine::Links &Engine::links() const
     {
         return _links;

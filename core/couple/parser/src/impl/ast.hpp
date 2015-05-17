@@ -363,6 +363,7 @@ namespace dci { namespace couple { namespace parser { namespace impl
     {
         SEnum           *owner{nullptr};
         Name            name;
+        std::string     value;
 
         meta::EnumValue *meta{nullptr};
     };

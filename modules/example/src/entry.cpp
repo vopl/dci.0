@@ -101,8 +101,21 @@ struct Entry
                 auto printLink = [&](net::Link &i)
                 {
                     LOGD("-------------------------------------");
+                    LOGD("id:  "<<i.id().value<0>());
                     LOGD("name:  "<<i.name().value<0>());
-                    LOGD("flags: 0x"<<std::hex<<i.flags().value<0>()<<std::dec);
+
+                    std::string flags = "";
+                    {
+                        uint32_t v = i.flags().value<0>();
+                        if(v & (uint32_t)net::Link::Flags::up) flags += " up";
+                        if(v & (uint32_t)net::Link::Flags::running) flags += " running";
+                        if(v & (uint32_t)net::Link::Flags::broadcast) flags += " broadcast";
+                        if(v & (uint32_t)net::Link::Flags::loopback) flags += " loopback";
+                        if(v & (uint32_t)net::Link::Flags::p2p) flags += " p2p";
+                        if(v & (uint32_t)net::Link::Flags::multicast) flags += " multicast";
+
+                    }
+                    LOGD("flags: "<<flags<<std::dec);
                     LOGD("mtu:   "<<i.mtu().value<0>());
 
                     auto x4 = i.ip4().value<0>();
@@ -122,32 +135,33 @@ struct Entry
                     {
                         const auto &octets = n.address.octets;
                         LOGD("ip6 net: "
-                            <<"ip: "<<std::hex<<std::setfill('0')<<std::setw(2)
-                                <<(unsigned)octets[0]<<""
-                                <<(unsigned)octets[1]<<"."
-                                <<(unsigned)octets[2]<<""
-                                <<(unsigned)octets[3]<<"."
-                                <<(unsigned)octets[4]<<""
-                                <<(unsigned)octets[5]<<"."
-                                <<(unsigned)octets[6]<<""
-                                <<(unsigned)octets[7]<<"."
-                                <<(unsigned)octets[8]<<""
-                                <<(unsigned)octets[9]<<"."
-                                <<(unsigned)octets[10]<<""
-                                <<(unsigned)octets[11]<<"."
-                                <<(unsigned)octets[12]<<""
-                                <<(unsigned)octets[13]<<"."
-                                <<(unsigned)octets[14]<<""
-                                <<(unsigned)octets[15]<<", "
+                            <<"ip: "<<std::hex<<std::setfill('0')
+                                <<std::setw(2)<<(unsigned)octets[0]<<""
+                                <<std::setw(2)<<(unsigned)octets[1]<<"."
+                                <<std::setw(2)<<(unsigned)octets[2]<<""
+                                <<std::setw(2)<<(unsigned)octets[3]<<"."
+                                <<std::setw(2)<<(unsigned)octets[4]<<""
+                                <<std::setw(2)<<(unsigned)octets[5]<<"."
+                                <<std::setw(2)<<(unsigned)octets[6]<<""
+                                <<std::setw(2)<<(unsigned)octets[7]<<"."
+                                <<std::setw(2)<<(unsigned)octets[8]<<""
+                                <<std::setw(2)<<(unsigned)octets[9]<<"."
+                                <<std::setw(2)<<(unsigned)octets[10]<<""
+                                <<std::setw(2)<<(unsigned)octets[11]<<"."
+                                <<std::setw(2)<<(unsigned)octets[12]<<""
+                                <<std::setw(2)<<(unsigned)octets[13]<<"."
+                                <<std::setw(2)<<(unsigned)octets[14]<<""
+                                <<std::setw(2)<<(unsigned)octets[15]<<", "
                             <<std::dec
                             <<"prefixLength: "<<n.prefixLength<<", "
-                            //<<"scopeId: "<<n.scopeId
+                            <<"scope: "<<(int)n.scope
                         );
                     }
                 };
 
                 auto printLinks = [&]()
                 {
+                    LOGD("=============================================================");
                     LOGD("links amount: "<<ifs.size());
 
                     for(net::Link &i : ifs)
@@ -164,10 +178,10 @@ struct Entry
                     i.signal_removed().connect([&]()
                     {
                         LOGD("link removed: "<<i.name().value<0>());
-                        std::remove_if(ifs.begin(), ifs.end(), [&](const net::Link &v)
+                        ifs.erase(std::remove_if(ifs.begin(), ifs.end(), [&](net::Link &v)
                         {
-                            return &v == &i;
-                        });
+                            return v.id().value<0>() == i.id().value<0>();
+                        }), ifs.end());
                         printLinks();
                     });
 

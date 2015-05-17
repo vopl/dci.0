@@ -206,6 +206,11 @@ namespace dci { namespace couple { namespace meta
         return impl().setDescription(face2Impl(target), description);
     }
 
+    void LibraryBuilder::setValue(EnumValue *target, const std::string &value)
+    {
+        return impl().setValue(face2Impl(target), value);
+    }
+
     bool LibraryBuilder::commitChanges(Library &lib, std::vector<CommitError> &errors)
     {
         return impl().commitChanges(*face2Impl(&lib), errors);

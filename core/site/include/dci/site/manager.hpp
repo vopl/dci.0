@@ -18,11 +18,18 @@ namespace dci { namespace site
     class Manager
         : public himpl::FaceLayout<impl::Manager>
     {
-        Manager() = delete;
-        ~Manager() = delete;
+        Manager(const Manager &) = delete;
         void operator=(const Manager &) = delete;
 
     public:
+        static std::string generateManifest(const std::string &mainBinaryFullPath);
+
+        Manager();
+        ~Manager();
+
+        std::error_code run();
+        async::Future<std::error_code> stop();
+
         //outFuture is async::Future<std::error_code, ConcreteIface>
         std::error_code createService(void *outFuture, const couple::runtime::Iid &iid);
 

@@ -1,10 +1,9 @@
 #include <cstdlib>
 
-#include "impl/manager.hpp"
-#include "impl/module.hpp"
-#include <dci/async/functions.hpp>
+#include <dci/site/manager.hpp>
+
+#include <dci/async.hpp>
 #include <dci/logger/logger.hpp>
-#include <dci/couple/runtime/sign.hpp>
 
 #include <csignal>
 #include <fstream>
@@ -17,7 +16,7 @@
 namespace po = boost::program_options;
 namespace fs = boost::filesystem;
 
-dci::site::impl::Manager *manager = nullptr;
+dci::site::Manager *manager = nullptr;
 
 void signalHandler(int signum)
 {
@@ -119,7 +118,7 @@ int main(int argc, char *argv[])
 
     if(vars.count("genmanifest"))
     {
-        std::string content = dci::site::impl::Module::generateManifest(vars["genmanifest"].as<std::string>());
+        std::string content = dci::site::Manager::generateManifest(vars["genmanifest"].as<std::string>());
 
         if(content.empty())
         {
@@ -138,7 +137,7 @@ int main(int argc, char *argv[])
 
     ////////////////////////////////////////////////////////////////////////////////
     {
-        manager = new dci::site::impl::Manager{};
+        manager = new dci::site::Manager;
 
         signal(SIGINT,  signalHandler);
         signal(SIGTERM, signalHandler);

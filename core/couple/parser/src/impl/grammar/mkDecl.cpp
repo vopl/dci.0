@@ -5,8 +5,9 @@ namespace dci { namespace couple { namespace parser { namespace impl
     void Grammar::mkDecl()
     {
         ////////////////////////////////////////////////////////////////////////////////
-        decl %=
-            alias | variant | struct_ | enum_ | errc | iface | scope;
+        decl =
+            (alias | variant | struct_ | enum_ | errc | iface | scope)
+                [qi::_val = qi::_1];
     }
 
 }}}}

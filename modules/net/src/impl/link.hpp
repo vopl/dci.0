@@ -43,7 +43,12 @@ namespace impl
         void delIp6(const ip6::LinkAddress &v);
 
     private:
-        std::set<handlers::Link *> _handlers;
+        template <class M>
+        void flushChanges(M m);
+
+    private:
+        using Handlers = std::set<handlers::Link *>;
+        Handlers _handlers;
 
         uint32          _id;
         string          _name;
@@ -51,6 +56,5 @@ namespace impl
         uint32          _mtu;
         list< ip4::LinkAddress> _ip4;
         list< ip6::LinkAddress> _ip6;
-
     };
 }

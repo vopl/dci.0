@@ -15,14 +15,7 @@ add_library(${PROJECT} MODULE
     ${SRC}
     idl/talk.idl
 )
-
-target_link_libraries(${PROJECT}
-    dci-himpl
-    dci-mm
-    dci-async
-    dci-couple-runtime
-    dci-logger
-    dci-site)
+target_link_libraries(${PROJECT} dci-site)
 
 set_property(TARGET ${PROJECT} PROPERTY CXX_STANDARD 14)
 set_property(TARGET ${PROJECT} PROPERTY CXX_STANDARD_REQUIRED ON)

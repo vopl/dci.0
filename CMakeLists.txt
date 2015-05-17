@@ -53,7 +53,7 @@ set(CMAKE_MODULE_PATH ${LOCALINSTALL_DIR}/share/cmake/Modules ${CMAKE_MODULE_PAT
 include_directories(${LOCALINSTALL_DIR}/include)
 
 set(CMAKE_SHARED_LINKER_FLAGS "-Wl,--no-undefined")
-#set(CMAKE_MODULE_LINKER_FLAGS "-Wl,--no-undefined")
+set(CMAKE_MODULE_LINKER_FLAGS "-Wl,--no-undefined")
 
 set(CMAKE_CXX_FLAGS "-Wall -Wextra -Wpedantic -ftemplate-depth-1000")
 

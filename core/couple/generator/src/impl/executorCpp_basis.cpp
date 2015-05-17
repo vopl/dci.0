@@ -376,7 +376,12 @@ namespace dci { namespace couple { namespace generator { namespace impl
 
         for(auto f : v->values())
         {
-            _hpp<< f->name()<<","<<el;
+            _hpp<< f->name();
+            if(!f->value().empty())
+            {
+                _hpp<< " = "<<f->value();
+            }
+            _hpp<< ","<<el;
         }
 
         _hpp<< undent;

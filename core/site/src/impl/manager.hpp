@@ -25,6 +25,8 @@ namespace dci { namespace site { namespace impl
         async::Future<std::error_code> stop();
 
     public:
+        static std::string generateManifest(const std::string &mainBinaryFullPath);
+
         //outFuture is async::Future<std::error_code, ConcreteIface>
         std::error_code createService(void *outFuture, const couple::runtime::Iid &iid);
 

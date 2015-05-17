@@ -48,11 +48,7 @@ add_library(${PROJECT} MODULE
     ${SRC}
 )
 
-target_link_libraries(${PROJECT}
-    dci-mm
-    dci-async
-    dci-couple-runtime
-    dci-logger)
+target_link_libraries(${PROJECT} dci-site)
 
 set_property(TARGET ${PROJECT} PROPERTY CXX_STANDARD 14)
 set_property(TARGET ${PROJECT} PROPERTY CXX_STANDARD_REQUIRED ON)

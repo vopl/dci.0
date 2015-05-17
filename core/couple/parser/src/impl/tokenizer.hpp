@@ -30,6 +30,8 @@ namespace dci { namespace couple { namespace parser { namespace impl
         TokenDef quotedString;
 
         TokenDef uint;
+        TokenDef nint;
+        TokenDef hint;
 
         TokenDef kwbool;
 

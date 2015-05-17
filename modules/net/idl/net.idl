@@ -43,6 +43,16 @@ scope net
         in name:            () -> string;
         out nameChanged:    ();
 
+        enum Flags
+        {
+            up          = 0x1;
+            running     = 0x2;
+            broadcast   = 0x4;
+            loopback    = 0x8;
+            p2p         = 0x10;
+            multicast   = 0x20;
+        }
+
         in flags:           () -> uint32;
         out flagsChanged:   ();
 

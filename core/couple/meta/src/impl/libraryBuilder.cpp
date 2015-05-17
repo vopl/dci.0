@@ -305,6 +305,12 @@ namespace dci { namespace couple { namespace meta { namespace impl
         target->setDescription(description);
     }
 
+    void LibraryBuilder::setValue(EnumValue *target, const std::string &value)
+    {
+        _lc.checkPresense(target);
+        target->setValue(value);
+    }
+
     bool LibraryBuilder::commitChanges(Library &lib, std::vector<CommitError> &errors)
     {
         (void)errors;

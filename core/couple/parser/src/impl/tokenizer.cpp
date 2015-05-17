@@ -18,6 +18,8 @@ namespace dci { namespace couple { namespace parser { namespace impl
 
         , quotedString {"\\\"((\\\\\\\")|[^\\\"])*\\\""}
         , uint      {"\\d+"}
+        , nint      {"-\\d+"}
+        , hint      {"(0x[0-9a-fA-F]*)"}
 
         , kwbool    {"\"bool\""}
         , kwstring  {"\"string\""}
@@ -81,6 +83,8 @@ namespace dci { namespace couple { namespace parser { namespace impl
             | quotedString
 
             | uint
+            | nint
+            | hint
 
             | kwbool
             | kwstring

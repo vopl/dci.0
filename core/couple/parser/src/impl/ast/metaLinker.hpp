@@ -59,13 +59,13 @@ namespace  dci { namespace couple { namespace parser { namespace impl { namespac
 
         void exec(std::vector<EnumField> &vs)
         {
-            (void)vs;
-//            std::for_each(
-//                vs.begin(),
-//                vs.end(),
-//                [&](const EnumField &v) {
-//                }
-//            );
+            std::for_each(
+                vs.begin(),
+                vs.end(),
+                [&](const EnumField &v) {
+                    _lb.setValue(v->meta, v->value);
+                }
+            );
         }
 
         void exec(std::vector<ErrcField> &vs)

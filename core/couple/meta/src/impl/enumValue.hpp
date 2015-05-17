@@ -13,7 +13,13 @@ namespace dci { namespace couple { namespace meta { namespace impl
         EnumValue();
         ~EnumValue();
 
+        const std::string &value() const;
+        void setValue(const std::string &v);
+
         void makeSign();
+
+    private:
+        std::string _value{};
     };
 
 }}}}
