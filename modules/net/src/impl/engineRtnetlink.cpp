@@ -119,17 +119,27 @@ namespace impl
 
     namespace
     {
-        void fetchRta(rtattr *rta, uint32 len, Link *link)
+        struct LinkAttrs
+        {
+            std::string     _name;
+            uint32          _mtu{0};
+            bool            _wireless{false};
+        };
+
+        void fetchRta(rtattr *rta, uint32 len, LinkAttrs &res)
         {
             while(RTA_OK(rta, len))
             {
                 switch(rta->rta_type)
                 {
                 case IFLA_IFNAME:
-                    link->setName((char *)RTA_DATA(rta));
+                    res._name = (char *)RTA_DATA(rta);
                     break;
                 case IFLA_MTU:
-                    link->setMtu(*(int *)RTA_DATA(rta));
+                    res._mtu = *(int *)RTA_DATA(rta);
+                    break;
+                case IFLA_WIRELESS:
+                    res._wireless = true;
                     break;
                 }
 
@@ -240,10 +250,23 @@ namespace impl
                     ifinfomsg *ifi = (ifinfomsg*) NLMSG_DATA(h);
                     Link *link = getLink(ifi->ifi_index);
                     bool isNew = !link;
+
+                    LinkAttrs attrs;
+                    fetchRta(IFLA_RTA(ifi), h->nlmsg_len, attrs);
+
                     if(!link)
                     {
+                        if(!ifi->ifi_change && attrs._wireless)
+                        {
+                            //ignore wireless events for absent devices
+                            continue;
+                        }
+
                         link = addLink(ifi->ifi_index);
                     }
+
+                    link->setName(attrs._name);
+                    link->setMtu(attrs._mtu);
 
                     {
                         uint32 flags = 0;
@@ -257,7 +280,6 @@ namespace impl
 
                         link->setFlags(flags);
                     }
-                    fetchRta(IFLA_RTA(ifi), h->nlmsg_len, link);
 
                     if(isNew)
                     {

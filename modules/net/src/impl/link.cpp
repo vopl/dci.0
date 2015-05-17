@@ -111,7 +111,7 @@ namespace impl
         return _ip6;
     }
 
-    void Link::setName(string v)
+    void Link::setName(const string &v)
     {
         if(_name != v)
         {

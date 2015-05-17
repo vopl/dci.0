@@ -29,7 +29,7 @@ namespace impl
         const list< ip4::LinkAddress> &ip4() const;
         const list< ip6::LinkAddress> &ip6() const;
 
-        void setName(string v);
+        void setName(const string &v);
         void setFlags(uint32 v);
         void setMtu(uint32 v);
 
