@@ -104,7 +104,10 @@ namespace impl
         Handlers hs(_handlers);
         for(handlers::Host *h : hs)
         {
-            h->linkAdded(std::move(id), * new handlers::Link(link));
+            if(_handlers.end() != _handlers.find(h))
+            {
+                h->linkAdded(std::move(id), * new handlers::Link(link));
+            }
         }
     }
 

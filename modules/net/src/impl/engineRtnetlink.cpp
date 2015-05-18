@@ -301,7 +301,11 @@ namespace impl
                 case RTM_DELLINK:
                     {
                         ifinfomsg *ifi = (ifinfomsg*) NLMSG_DATA(h);
-                        delLink(ifi->ifi_index);
+                        Link *link = getLink(ifi->ifi_index);
+                        if(link)
+                        {
+                            delLink(ifi->ifi_index);
+                        }
                     }
                     break;
 
@@ -348,6 +352,7 @@ namespace impl
                                     link->delIp6(address);
                                 }
                             }
+                            break;
                         default:
                             break;
                         }
