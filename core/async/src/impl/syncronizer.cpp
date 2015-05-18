@@ -39,14 +39,12 @@ namespace dci { namespace async { namespace impl
 
     void Syncronizer::unlock()
     {
-        if(!_waiters.empty())
+        while(!_waiters.empty())
         {
-            for(WaiterWithData &syncronizerWaiterWithData : _waiters)
+            WaiterWithData &waiterWithData = _waiters.front();
+            if(waiterWithData._waiter->released(waiterWithData._data))
             {
-                if(syncronizerWaiterWithData._waiter->released(syncronizerWaiterWithData._data))
-                {
-                    return;
-                }
+                return;
             }
         }
     }

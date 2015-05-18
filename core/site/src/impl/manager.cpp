@@ -1,9 +1,8 @@
 #include "manager.hpp"
 #include <dci/site/error.hpp>
-#include <dci/io/loop.hpp>
-#include <dci/async/acquire.hpp>
-#include <dci/async/functions.hpp>
-#include <dci/logger/logger.hpp>
+#include <dci/poller.hpp>
+#include <dci/async.hpp>
+#include <dci/logger.hpp>
 
 #include <boost/filesystem/operations.hpp>
 #include <boost/filesystem/path.hpp>
@@ -49,6 +48,15 @@ namespace dci { namespace site { namespace impl
             abort();
         }
 
+        {
+            std::error_code ec = poller::initialize();
+            if(ec)
+            {
+                return ec;
+            }
+
+        }
+
         _workState = WorkState::starting;
         async::spawn([this](){
 
@@ -73,7 +81,21 @@ namespace dci { namespace site { namespace impl
             _workState = WorkState::started;
         });
 
-        return dci::io::loop::run();
+
+        while(WorkState::stopped != _workState)
+        {
+            dci::async::executeReadyCoros();
+            std::error_code ec = poller::execute();
+            if(ec)
+            {
+                LOGE("poller execute: "<<ec);
+                stop();
+            }
+        }
+        dci::async::executeReadyCoros();
+
+        poller::deinitialize();
+        return std::error_code();
     }
 
     async::Future<std::error_code> Manager::stop()
@@ -126,10 +148,10 @@ namespace dci { namespace site { namespace impl
 
             _workState = WorkState::stopped;
 
-            ec = io::loop::stop();
+            ec = poller::interrupt();
             if(ec)
             {
-                LOGE("stop io loop: "<<ec);
+                LOGE("interrupt poller: "<<ec);
                 hasErrors = true;
             }
 

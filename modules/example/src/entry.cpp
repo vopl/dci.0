@@ -96,10 +96,12 @@ struct Entry
                 LOGD("start net watching");
                 net::Host nh = netHost.detachValue<0>();
 
-                list<net::Link> ifs = nh.links().detachValue<0>();
+                map<uint32, net::Link> ifs = nh.links().detachValue<0>();
 
-                auto printLink = [&](net::Link &i)
+                auto printLink = [&](uint32 id)
                 {
+                    net::Link &i = ifs.find(id)->second;
+
                     LOGD("-------------------------------------");
                     LOGD("id:  "<<i.id().value<0>());
                     LOGD("name:  "<<i.name().value<0>());
@@ -164,51 +166,40 @@ struct Entry
                     LOGD("=============================================================");
                     LOGD("links amount: "<<ifs.size());
 
-                    for(net::Link &i : ifs)
+                    for(auto &i : ifs)
                     {
-                        printLink(i);
+                        printLink(i.first);
                     }
 
                 };
 
-                auto useLink = [&](::net::Link &i, bool printAll)
+                auto useLink = [&](uint32 id, ::net::Link &i, bool printAll)
                 {
-                    LOGD("link added: "<<i.name().value<0>());
-
-                    i.signal_removed().connect([&]()
+                    i.signal_removed().connect([&, id]()
                     {
-                        LOGD("link removed: "<<i.name().value<0>());
-                        ifs.erase(std::remove_if(ifs.begin(), ifs.end(), [&](net::Link &v)
-                        {
-                            return v.id().value<0>() == i.id().value<0>();
-                        }), ifs.end());
+                        ifs.erase(id);
                         printLinks();
                     });
 
                     i.signal_flagsChanged().connect([&]()
                     {
-                        LOGD("link flags changed: "<<i.name().value<0>());
-                        printLink(i);
+                        printLinks();
                     });
                     i.signal_ip4Changed().connect([&]()
                     {
-                        LOGD("link nets4 changed: "<<i.name().value<0>());
-                        printLink(i);
+                        printLinks();
                     });
                     i.signal_ip6Changed().connect([&]()
                     {
-                        LOGD("link nets6 changed: "<<i.name().value<0>());
-                        printLink(i);
+                        printLinks();
                     });
                     i.signal_mtuChanged().connect([&]()
                     {
-                        LOGD("link mtu changed: "<<i.name().value<0>());
-                        printLink(i);
+                        printLinks();
                     });
                     i.signal_nameChanged().connect([&]()
                     {
-                        LOGD("link name changed: "<<i.name().value<0>());
-                        printLink(i);
+                        printLinks();
                     });
 
 
@@ -218,14 +209,14 @@ struct Entry
                     }
                 };
 
-                for(net::Link &i : ifs)
+                for(auto &i : ifs)
                 {
-                    useLink(i, false);
+                    useLink(i.first, i.second, false);
                 }
 
-                nh.signal_linkAdded().connect([&](::net::Link &&i) {
-                    ifs.emplace_back(std::move(i));
-                    useLink(ifs.back(), true);
+                nh.signal_linkAdded().connect([&](uint32 id, ::net::Link &&i) {
+                    useLink(id, i, true);
+                    ifs.emplace(id, std::move(i));
                 });
 
                 printLinks();

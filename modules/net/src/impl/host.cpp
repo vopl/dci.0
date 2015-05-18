@@ -99,12 +99,12 @@ namespace impl
         return stub;
     }
 
-    void Host::onLinkAdded(Link *link)
+    void Host::onLinkAdded(std::uint32_t id, Link *link)
     {
         Handlers hs(_handlers);
         for(handlers::Host *h : hs)
         {
-            h->linkAdded(* new handlers::Link(link));
+            h->linkAdded(std::move(id), * new handlers::Link(link));
         }
     }
 

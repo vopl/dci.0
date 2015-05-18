@@ -32,7 +32,7 @@ namespace impl
 
         const Engine::Links &links() const;
 
-        void onLinkAdded(Link *link);
+        void onLinkAdded(std::uint32_t id, Link *link);
 
     private:
         static std::unique_ptr<Host> _instance;

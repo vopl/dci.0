@@ -8,12 +8,17 @@ project(${PROJECT})
 set(INC
     include/dci/poller.hpp
     include/dci/poller/layoutProvider.hpp
+    include/dci/poller/error.hpp
     include/dci/poller/descriptor.hpp
+    include/dci/poller/functions.hpp
 )
 
 ############################################################
 set(SRC
+    src/error.cpp
+
     src/descriptor.cpp
+    src/functions.cpp
 
     src/impl/descriptor.hpp
     src/impl/descriptor.cpp
@@ -21,8 +26,8 @@ set(SRC
     src/impl/engine.hpp
     src/impl/engine.cpp
 
-    src/impl/engineEpoll.hpp
-    src/impl/engineEpoll.cpp
+    src/impl/epoll.hpp
+    src/impl/epoll.cpp
 )
 
 

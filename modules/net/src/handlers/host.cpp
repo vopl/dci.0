@@ -34,18 +34,17 @@ namespace handlers
         }
     }
 
-    Future<list< ::net::Link>> Host::links()
+    Future<map<uint32, ::net::Link>> Host::links()
     {
         if(!_impl)
         {
             return std::error_code(::net::error::general::implementation_down);
         }
 
-        list< ::net::Link> res;
-        res.reserve(_impl->links().size());
+        map<uint32, ::net::Link> res;
         for(const auto &i : _impl->links())
         {
-            res.emplace_back(* new Link(i.second.get()));
+            res.emplace(i.first, * new Link(i.second.get()));
         }
 
         return std::move(res);

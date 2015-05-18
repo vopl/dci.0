@@ -102,7 +102,7 @@ namespace dci { namespace async { namespace impl
         {
             if(idx == releasedIdx)
             {
-                _syncronizers[_lastReleasedIdx]->unregisterWaiterAndCommitAcquire(this, releasedIdx);
+                _syncronizers[idx]->unregisterWaiterAndCommitAcquire(this, idx);
             }
             else
             {

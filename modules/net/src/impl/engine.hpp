@@ -18,7 +18,7 @@ namespace impl
     class Engine
     {
     public:
-        using Links = std::map<int32_t, std::unique_ptr<Link>>;
+        using Links = std::map<uint32_t, std::unique_ptr<Link>>;
 
     public:
         Engine(Host *host);

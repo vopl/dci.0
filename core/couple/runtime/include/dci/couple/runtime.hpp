@@ -40,6 +40,9 @@ namespace dci { namespace couple { namespace runtime
     template <class T>
     using list = std::vector<T>;
 
+    template <class K, class V>
+    using map = std::map<K, V>;
+
     template <class... TT>
     struct variant
     {

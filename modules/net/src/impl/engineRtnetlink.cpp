@@ -293,7 +293,7 @@ namespace impl
 
                         if(isNew)
                         {
-                            host()->onLinkAdded(link);
+                            host()->onLinkAdded(ifi->ifi_index, link);
                         }
                     }
                     break;
@@ -378,8 +378,6 @@ namespace impl
     {
         bool work = startup();
 
-        _initialized.set();
-
         if(work)
         {
             work &=
@@ -387,7 +385,12 @@ namespace impl
                 read() &&
                 request(RTM_GETADDR) &&
                 read();
+        }
 
+        _initialized.set();
+
+        if(work)
+        {
             while(read());
         }
 

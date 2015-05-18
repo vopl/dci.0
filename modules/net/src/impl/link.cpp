@@ -60,15 +60,8 @@ namespace impl
 
     Link::~Link()
     {
-        while(!_handlers.empty())
-        {
-            Handlers hs;
-            hs.swap(_handlers);
-            for(handlers::Link *h : hs)
-            {
-                h->dropImpl();
-            }
-        }
+        flushChanges(&handlers::Link::dropImpl);
+        _handlers.clear();
     }
 
     void Link::registerHandler(handlers::Link *handler)
@@ -211,7 +204,10 @@ namespace impl
         Handlers hs(_handlers);
         for(handlers::Link *h : hs)
         {
-            (h->*m)();
+            if(_handlers.end() != _handlers.find(h))
+            {
+                (h->*m)();
+            }
         }
     }
 

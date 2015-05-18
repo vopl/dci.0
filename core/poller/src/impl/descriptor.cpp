@@ -94,20 +94,25 @@ namespace dci { namespace poller { namespace impl
     std::error_code Descriptor::install()
     {
         assert(valid());
-        if(engine)
+        assert(engine);
+        if(!engine)
         {
-            return engine->installDescriptor(this);
+            abort();
         }
 
-        return std::make_error_code(std::errc::no_such_device);
+        return engine->installDescriptor(this);
     }
 
     void Descriptor::uninstall()
     {
-        if(engine)
+        assert(valid());
+        assert(engine);
+        if(!engine)
         {
-            engine->uninstallDescriptor(this);
+            abort();
         }
+
+        engine->uninstallDescriptor(this);
     }
 
     void Descriptor::addReadyState(std::uint_fast32_t state)
