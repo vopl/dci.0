@@ -13,7 +13,6 @@ namespace impl
 {
     Rtnetlink::Rtnetlink(Host *host)
         : Engine(host)
-        , _sock(-1)
         , _address()
         , _msgiov()
         , _msg()
@@ -30,17 +29,18 @@ namespace impl
 
     bool Rtnetlink::valid() const
     {
-        return _sock >= 0;
+        return _sock && _sock->valid();
     }
 
     bool Rtnetlink::startup()
     {
         //socket
-        assert(_sock < 0);
-        _sock = socket(AF_NETLINK, SOCK_RAW, NETLINK_ROUTE);
-        if(0 > _sock)
+        assert(!_sock);
+        _sock.reset(new dci::poller::Descriptor(socket(AF_NETLINK, SOCK_RAW, NETLINK_ROUTE)));
+        if(!_sock->valid())
         {
-            LOGE("rtnetlink socket: "<<strerror(errno));
+            _sock.reset();
+            LOGE("rtnetlink invalid socket");
             return false;
         }
 
@@ -48,23 +48,21 @@ namespace impl
         _address.nl_family = AF_NETLINK;
         _address.nl_pid = getpid();
         _address.nl_groups = RTMGRP_LINK | RTMGRP_IPV4_IFADDR | RTMGRP_IPV6_IFADDR;
-        if(0 != bind(_sock, (sockaddr*)&_address, sizeof(_address)))
+        if(0 != bind(*_sock, (sockaddr*)&_address, sizeof(_address)))
         {
             LOGE("rtnetlink bind: "<<strerror(errno));
-            close(_sock);
-            _sock = -1;
+            _sock.reset();
             return false;
         }
 
         //message area
         assert(!_msgiov.iov_base);
-        _msgiov.iov_len = 16384;
+        _msgiov.iov_len = 8192;
         _msgiov.iov_base = malloc(_msgiov.iov_len);
         if(!_msgiov.iov_base)
         {
             LOGE("rtnetlink malloc null");
-            close(_sock);
-            _sock = -1;
+            _sock.reset();
             return false;
         }
 
@@ -108,7 +106,8 @@ namespace impl
         msg.msg_name    = &address;
         msg.msg_namelen = sizeof(address);
 
-        if(0 > sendmsg(_sock, &msg, 0))
+        assert(_sock);
+        if(0 > sendmsg(*_sock, &msg, 0))
         {
             LOGE("rtnetlink send: "<<strerror(errno));
             return false;
@@ -216,136 +215,148 @@ namespace impl
 
     bool Rtnetlink::read()
     {
-        //TODO: select _sock or _stop, if _stop - return;
-        //ssize_t status = recvmsg(_sock, &_msg, MSG_DONTWAIT);
-
-        if(_stop.tryAcquire())
+        assert(_sock);
+        if(0 == dci::async::acquireAny(_stop, _sock->readyEvent()))
         {
             return false;
         }
-        dci::async::yield();
 
-        ssize_t readedSize = recvmsg(_sock, &_msg, MSG_DONTWAIT);
-
-        if(0 >= readedSize)
+        auto sflags = _sock->seizeReadyState();
+        if(dci::poller::Descriptor::rsf_error & sflags)
         {
-            if(EINTR == errno || EAGAIN == errno)
+            LOGE("rtnetlink poll: "<<_sock->error());
+            return false;
+        }
+
+        if(!(dci::poller::Descriptor::rsf_read & sflags))
+        {
+            return true;
+        }
+
+        for(;;)
+        {
+            ssize_t readedSize = recvmsg(*_sock, &_msg, MSG_DONTWAIT);
+
+            if(0 >= readedSize)
             {
-                return true;
+                if(EINTR == errno || EAGAIN == errno)
+                {
+                    return true;
+                }
+
+                LOGE("rtnetlink recvmsg: "<<strerror(errno));
+                return false;
             }
 
-            LOGE("rtnetlink recvmsg: "<<strerror(errno));
-            return false;
-        }
-
-        for(
-            nlmsghdr *h = (nlmsghdr *)_msgiov.iov_base;
-            NLMSG_OK(h, readedSize);
-            h = NLMSG_NEXT(h, readedSize))
-        {
-            switch (h->nlmsg_type)
+            for(
+                nlmsghdr *h = (nlmsghdr *)_msgiov.iov_base;
+                NLMSG_OK(h, readedSize);
+                h = NLMSG_NEXT(h, readedSize))
             {
-            case RTM_NEWLINK:
+                switch (h->nlmsg_type)
                 {
-                    ifinfomsg *ifi = (ifinfomsg*) NLMSG_DATA(h);
-                    Link *link = getLink(ifi->ifi_index);
-                    bool isNew = !link;
-
-                    LinkAttrs attrs;
-                    fetchRta(IFLA_RTA(ifi), h->nlmsg_len, attrs);
-
-                    if(!link)
+                case RTM_NEWLINK:
                     {
-                        if(!ifi->ifi_change && attrs._wireless)
+                        ifinfomsg *ifi = (ifinfomsg*) NLMSG_DATA(h);
+                        Link *link = getLink(ifi->ifi_index);
+                        bool isNew = !link;
+
+                        LinkAttrs attrs;
+                        fetchRta(IFLA_RTA(ifi), h->nlmsg_len, attrs);
+
+                        if(!link)
                         {
-                            //ignore wireless events for absent devices
-                            continue;
+                            if(!ifi->ifi_change && attrs._wireless)
+                            {
+                                //ignore wireless events for absent devices
+                                continue;
+                            }
+
+                            link = addLink(ifi->ifi_index);
                         }
 
-                        link = addLink(ifi->ifi_index);
-                    }
+                        link->setName(attrs._name);
+                        link->setMtu(attrs._mtu);
 
-                    link->setName(attrs._name);
-                    link->setMtu(attrs._mtu);
-
-                    {
-                        uint32 flags = 0;
-
-                        if(ifi->ifi_flags & IFF_UP)         flags |= (uint32)net::Link::Flags::up;
-                        if(ifi->ifi_flags & IFF_RUNNING)    flags |= (uint32)net::Link::Flags::running;
-                        if(ifi->ifi_flags & IFF_BROADCAST)  flags |= (uint32)net::Link::Flags::broadcast;
-                        if(ifi->ifi_flags & IFF_LOOPBACK)   flags |= (uint32)net::Link::Flags::loopback;
-                        if(ifi->ifi_flags & IFF_POINTOPOINT)flags |= (uint32)net::Link::Flags::p2p;
-                        if(ifi->ifi_flags & IFF_MULTICAST)  flags |= (uint32)net::Link::Flags::multicast;
-
-                        link->setFlags(flags);
-                    }
-
-                    if(isNew)
-                    {
-                        host()->onLinkAdded(link);
-                    }
-                }
-                break;
-
-            case RTM_DELLINK:
-                {
-                    ifinfomsg *ifi = (ifinfomsg*) NLMSG_DATA(h);
-                    delLink(ifi->ifi_index);
-                }
-                break;
-
-            case RTM_NEWADDR:
-            case RTM_DELADDR:
-                {
-                    ifaddrmsg *ifa = (ifaddrmsg *) NLMSG_DATA(h);
-                    Link *link = getLink(ifa->ifa_index);
-                    assert(link);
-
-                    if(!link)
-                    {
-                        break;
-                    }
-
-                    switch(ifa->ifa_family)
-                    {
-                    case AF_INET:
                         {
-                            net::ip4::LinkAddress address;
-                            fetchRta(IFA_RTA(ifa), h->nlmsg_len, address, ifa->ifa_prefixlen);
+                            uint32 flags = 0;
 
-                            if(RTM_NEWADDR == h->nlmsg_type)
-                            {
-                                link->addIp4(address);
-                            }
-                            else
-                            {
-                                link->delIp4(address);
-                            }
+                            if(ifi->ifi_flags & IFF_UP)         flags |= (uint32)net::Link::Flags::up;
+                            if(ifi->ifi_flags & IFF_RUNNING)    flags |= (uint32)net::Link::Flags::running;
+                            if(ifi->ifi_flags & IFF_BROADCAST)  flags |= (uint32)net::Link::Flags::broadcast;
+                            if(ifi->ifi_flags & IFF_LOOPBACK)   flags |= (uint32)net::Link::Flags::loopback;
+                            if(ifi->ifi_flags & IFF_POINTOPOINT)flags |= (uint32)net::Link::Flags::p2p;
+                            if(ifi->ifi_flags & IFF_MULTICAST)  flags |= (uint32)net::Link::Flags::multicast;
+
+                            link->setFlags(flags);
                         }
-                        break;
-                    case AF_INET6:
+
+                        if(isNew)
                         {
-                            net::ip6::LinkAddress address;
-                            fetchRta(IFA_RTA(ifa), h->nlmsg_len, address, ifa->ifa_prefixlen, ifa->ifa_scope);
-
-                            if(RTM_NEWADDR == h->nlmsg_type)
-                            {
-                                link->addIp6(address);
-                            }
-                            else
-                            {
-                                link->delIp6(address);
-                            }
+                            host()->onLinkAdded(link);
                         }
-                    default:
-                        break;
                     }
-                }
-                break;
+                    break;
 
-            default:
-                break;
+                case RTM_DELLINK:
+                    {
+                        ifinfomsg *ifi = (ifinfomsg*) NLMSG_DATA(h);
+                        delLink(ifi->ifi_index);
+                    }
+                    break;
+
+                case RTM_NEWADDR:
+                case RTM_DELADDR:
+                    {
+                        ifaddrmsg *ifa = (ifaddrmsg *) NLMSG_DATA(h);
+                        Link *link = getLink(ifa->ifa_index);
+                        assert(link);
+
+                        if(!link)
+                        {
+                            break;
+                        }
+
+                        switch(ifa->ifa_family)
+                        {
+                        case AF_INET:
+                            {
+                                net::ip4::LinkAddress address;
+                                fetchRta(IFA_RTA(ifa), h->nlmsg_len, address, ifa->ifa_prefixlen);
+
+                                if(RTM_NEWADDR == h->nlmsg_type)
+                                {
+                                    link->addIp4(address);
+                                }
+                                else
+                                {
+                                    link->delIp4(address);
+                                }
+                            }
+                            break;
+                        case AF_INET6:
+                            {
+                                net::ip6::LinkAddress address;
+                                fetchRta(IFA_RTA(ifa), h->nlmsg_len, address, ifa->ifa_prefixlen, ifa->ifa_scope);
+
+                                if(RTM_NEWADDR == h->nlmsg_type)
+                                {
+                                    link->addIp6(address);
+                                }
+                                else
+                                {
+                                    link->delIp6(address);
+                                }
+                            }
+                        default:
+                            break;
+                        }
+                    }
+                    break;
+
+                default:
+                    break;
+                }
             }
         }
 
@@ -354,11 +365,7 @@ namespace impl
 
     void Rtnetlink::shutdown()
     {
-        if(0 < _sock)
-        {
-            close(_sock);
-            _sock = -1;
-        }
+        _sock.reset();
 
         if(_msgiov.iov_base)
         {
@@ -373,14 +380,14 @@ namespace impl
 
         _initialized.set();
 
-        work &=
-            request(RTM_GETLINK) &&
-            read() &&
-            request(RTM_GETADDR) &&
-            read();
-
         if(work)
         {
+            work &=
+                request(RTM_GETLINK) &&
+                read() &&
+                request(RTM_GETADDR) &&
+                read();
+
             while(read());
         }
 

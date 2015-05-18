@@ -1,5 +1,6 @@
 #pragma once
 
+#include <dci/poller.hpp>
 #include "engine.hpp"
 
 #include <asm/types.h>
@@ -30,7 +31,8 @@ namespace impl
         dci::async::Event _stop;
         dci::async::Event _stopped;
 
-        int         _sock;
+        using Sock = std::unique_ptr<dci::poller::Descriptor>;
+        Sock        _sock;
         sockaddr_nl _address;
         iovec       _msgiov;
         msghdr      _msg;

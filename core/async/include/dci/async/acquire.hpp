@@ -11,7 +11,7 @@ namespace dci { namespace async
     void acquireAll(Acquirable&... acquirables);
 }}
 
-#include "dci/async/details/acquire.hpp"
+#include "details/acquire.hpp"
 
 namespace dci { namespace async
 {

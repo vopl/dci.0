@@ -7,6 +7,7 @@ cmake_minimum_required(VERSION 3.1.0 FATAL_ERROR)
 
 ############################################################
 set(INC
+    include/dci/mm.hpp
     include/dci/mm/functions.hpp
     include/dci/mm/config.hpp
     include/dci/mm/stack.hpp
