@@ -1,9 +1,9 @@
 #include "engine.hpp"
 #include "epoll.hpp"
-#include <dci/poller/descriptor.hpp>
-#include <dci/poller/error.hpp>
+#include <dci/poll/descriptor.hpp>
+#include <dci/poll/error.hpp>
 
-namespace dci { namespace poller { namespace impl
+namespace dci { namespace poll { namespace impl
 {
     Engine::Engine()
     {
@@ -13,8 +13,9 @@ namespace dci { namespace poller { namespace impl
     {
         while(_descriptors)
         {
-            _descriptors->close();
-            _descriptors->addReadyState(poller::Descriptor::rsf_error);
+            _descriptors->close(false);
+            _descriptors->addReadyState(poll::Descriptor::rsf_error);
+            _descriptors = _descriptors->_nextInEngine;
         }
     }
 
@@ -39,8 +40,53 @@ namespace dci { namespace poller { namespace impl
         return std::error_code();
     }
 
+    std::error_code Engine::run()
+    {
+        if(!_stop)
+        {
+            return make_error_code(error::general::already_started);
+        }
+
+        _stop = false;
+
+        std::chrono::milliseconds timeout;
+        while(!_stop)
+        {
+            do
+            {
+                timeout = _timerEngine.fireTicks();
+            }
+            while(async::executeReadyCoros());
+
+            auto ec = execute(timeout);
+            if(ec)
+            {
+                return ec;
+            }
+        }
+        async::executeReadyCoros();
+
+        return std::error_code();
+    }
+
+    std::error_code Engine::stop()
+    {
+        _stop = true;
+        return interrupt();
+    }
+
+    TimerEngine &Engine::timerEngine()
+    {
+        return _timerEngine;
+    }
+
     std::error_code Engine::deinitialize()
     {
+        if(!_stop)
+        {
+            return make_error_code(error::general::not_stopped);
+        }
+
         assert(engine);
         if(!engine)
         {

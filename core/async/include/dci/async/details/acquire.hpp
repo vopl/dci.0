@@ -2,6 +2,7 @@
 
 #include "../mutex.hpp"
 #include "../event.hpp"
+#include "../pulser.hpp"
 #include "../future.hpp"
 
 #include <cstdint>
@@ -19,6 +20,7 @@ namespace dci { namespace async { namespace details
     ////////////////////////////////////////////////////////////////////////////////////
     impl::SyncronizerPtr syncronizer(Mutex &v);
     impl::SyncronizerPtr syncronizer(Event &v);
+    impl::SyncronizerPtr syncronizer(Pulser &v);
 
     template <class... TT>
     impl::SyncronizerPtr syncronizer(Future<TT...> &v)

@@ -5,7 +5,7 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 
-namespace dci { namespace poller { namespace impl
+namespace dci { namespace poll { namespace impl
 {
     Descriptor::Descriptor(int fd)
         : _fd(fd)
@@ -15,7 +15,7 @@ namespace dci { namespace poller { namespace impl
             std::error_code ec = install();
             if(ec)
             {
-                LOGE("install poller descriptor: "<<ec);
+                LOGE("install poll descriptor: "<<ec);
                 close();
             }
         }
@@ -48,11 +48,14 @@ namespace dci { namespace poller { namespace impl
         return _fd;
     }
 
-    void Descriptor::close()
+    void Descriptor::close(bool withUninstall)
     {
         if(valid())
         {
-            uninstall();
+            if(withUninstall)
+            {
+                uninstall();
+            }
             ::close(_fd);
             _fd = -1;
         }

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <iostream>
+#include <iomanip>
 #include <system_error>
 #include <boost/system/error_code.hpp>
 

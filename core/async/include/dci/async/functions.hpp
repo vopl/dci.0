@@ -6,7 +6,7 @@ namespace dci { namespace async
 {
     void yield();
 
-    void executeReadyCoros();
+    bool executeReadyCoros();
 
     ////////////////////////////////////////////////////////////////////////////////
     template<class F, class... Args>

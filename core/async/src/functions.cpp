@@ -10,7 +10,7 @@ namespace dci { namespace async
     }
 
     ////////////////////////////////////////////////////////////////////////////////
-    void executeReadyCoros()
+    bool executeReadyCoros()
     {
         return impl::Scheduler::instance().executeReadyCoros();
     }

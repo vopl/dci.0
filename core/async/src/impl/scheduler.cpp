@@ -61,7 +61,7 @@ namespace dci { namespace async { namespace impl
         _readyCoros.enqueue(coro);
     }
 
-    void Scheduler::executeReadyCoros()
+    bool Scheduler::executeReadyCoros()
     {
         assert(!_currentCoro);
 
@@ -70,7 +70,10 @@ namespace dci { namespace async { namespace impl
         {
             _currentCoro = next;
             _rootContext.switchTo(next);
+            return true;
         }
+
+        return false;
     }
 
     ctx::Coro *Scheduler::currentCoro()

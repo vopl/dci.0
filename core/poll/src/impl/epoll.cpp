@@ -1,10 +1,12 @@
 #include "epoll.hpp"
-#include <dci/poller/descriptor.hpp>
-#include <dci/poller/error.hpp>
+#include <dci/poll/descriptor.hpp>
+#include <dci/poll/error.hpp>
+#include <dci/logger.hpp>
+
 #include <unistd.h>
 #include <sys/epoll.h>
 
-namespace dci { namespace poller { namespace impl
+namespace dci { namespace poll { namespace impl
 {
     Epoll::Epoll()
     {
@@ -31,10 +33,32 @@ namespace dci { namespace poller { namespace impl
         return std::error_code();
     }
 
-    std::error_code Epoll::execute(std::int32_t timeoutms)
+    std::error_code Epoll::execute(std::chrono::milliseconds timeout)
     {
+        std::chrono::milliseconds timeoutms;
+        if(timeout.count() < 0)
+        {
+            timeoutms = std::chrono::milliseconds(-1);
+        }
+        else if(timeout.count() > 0)
+        {
+            timeoutms = std::chrono::duration_cast<std::chrono::milliseconds>(timeout);
+            if(!timeoutms.count())
+            {
+                timeoutms = std::chrono::milliseconds(1);
+            }
+        }
+        else
+        {
+            timeoutms = std::chrono::milliseconds(0);
+        }
+
         epoll_event eventsBuffer[128];
-        int eventsAmount = epoll_wait(_fd, eventsBuffer, sizeof(eventsBuffer)/sizeof(eventsBuffer[0]), timeoutms);
+        int eventsAmount = epoll_wait(
+            _fd,
+            eventsBuffer,
+            sizeof(eventsBuffer)/sizeof(eventsBuffer[0]),
+            timeoutms.count());
 
         if(-1 == eventsAmount)
         {
@@ -60,9 +84,9 @@ namespace dci { namespace poller { namespace impl
             Descriptor *d = static_cast<Descriptor *>(evt.data.ptr);
 
             std::uint_fast32_t state =
-                    ((evt.events & (EPOLLIN|EPOLLPRI)) ? (std::uint_fast32_t)poller::Descriptor::rsf_read : 0) |
-                    ((evt.events & (EPOLLOUT)) ? (std::uint_fast32_t)poller::Descriptor::rsf_write : 0) |
-                    ((evt.events & (EPOLLERR|EPOLLHUP)) ? (std::uint_fast32_t)poller::Descriptor::rsf_error : 0) |
+                    ((evt.events & (EPOLLIN|EPOLLPRI)) ? (std::uint_fast32_t)poll::Descriptor::rsf_read : 0) |
+                    ((evt.events & (EPOLLOUT)) ? (std::uint_fast32_t)poll::Descriptor::rsf_write : 0) |
+                    ((evt.events & (EPOLLERR|EPOLLHUP)) ? (std::uint_fast32_t)poll::Descriptor::rsf_error : 0) |
                     0;
 
             addReadyState(d, state);

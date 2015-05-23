@@ -136,6 +136,7 @@ set(INC
     include/dci/async/functions.hpp
     include/dci/async/mutex.hpp
     include/dci/async/event.hpp
+    include/dci/async/pulser.hpp
     include/dci/async/acquire.hpp
     include/dci/async/future.hpp
     include/dci/async/promise.hpp
@@ -152,6 +153,7 @@ set(SRC
     src/functions.cpp
     src/mutex.cpp
     src/event.cpp
+    src/pulser.cpp
     src/details/task.cpp
     src/details/acquire.cpp
     
@@ -165,11 +167,13 @@ set(SRC
     src/impl/syncronizer.hpp
     src/impl/mutex.hpp
     src/impl/event.hpp
+    src/impl/pulser.hpp
 
     src/impl/syncronizerWaiter.cpp
     src/impl/syncronizer.cpp
     src/impl/mutex.cpp
     src/impl/event.cpp
+    src/impl/pulser.cpp
 )
 
 
@@ -268,12 +272,14 @@ mkHimplLayouts(${PROJECT}
         ${CMAKE_CURRENT_SOURCE_DIR}/src/impl/task.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/impl/mutex.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/impl/event.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/impl/pulser.hpp
 
     CLASSES
         ::dci::async::impl::Scheduler
         ::dci::async::impl::Task
         ::dci::async::impl::Mutex
         ::dci::async::impl::Event
+        ::dci::async::impl::Pulser
 )
 
 

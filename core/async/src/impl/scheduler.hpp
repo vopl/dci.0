@@ -21,7 +21,7 @@ namespace dci { namespace async { namespace impl
         void yield();
         void hold();
         void ready(ctx::Coro *coro);
-        void executeReadyCoros();
+        bool executeReadyCoros();
 
     public:
         ctx::Coro *currentCoro();

@@ -3,7 +3,7 @@
 #include <dci/async.hpp>
 #include <system_error>
 
-namespace dci { namespace poller { namespace impl
+namespace dci { namespace poll { namespace impl
 {
     class Engine;
 
@@ -18,7 +18,7 @@ namespace dci { namespace poller { namespace impl
 
         int fd() const;
 
-        void close();
+        void close(bool withUninstall = true);
         void detach();
 
         dci::async::Event &readyEvent();

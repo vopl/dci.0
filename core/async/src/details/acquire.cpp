@@ -1,6 +1,7 @@
 #include <dci/async/details/acquire.hpp>
 #include "../impl/mutex.hpp"
 #include "../impl/event.hpp"
+#include "../impl/pulser.hpp"
 #include "../impl/syncronizerWaiter.hpp"
 
 #include <dci/mm/functions.hpp>
@@ -15,6 +16,11 @@ namespace dci { namespace async { namespace details
     }
 
     impl::SyncronizerPtr syncronizer(Event &v)
+    {
+        return v.pimpl();
+    }
+
+    impl::SyncronizerPtr syncronizer(Pulser &v)
     {
         return v.pimpl();
     }

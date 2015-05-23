@@ -53,7 +53,7 @@ set_property(TARGET ${PROJECT} PROPERTY CXX_STANDARD_REQUIRED ON)
 target_link_libraries(${PROJECT}
     dci-mm
     dci-async
-    dci-poller
+    dci-poll
     dci-couple-runtime
     dl
 )

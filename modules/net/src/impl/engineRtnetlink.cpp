@@ -36,7 +36,7 @@ namespace impl
     {
         //socket
         assert(!_sock);
-        _sock.reset(new dci::poller::Descriptor(socket(AF_NETLINK, SOCK_RAW, NETLINK_ROUTE)));
+        _sock.reset(new dci::poll::Descriptor(socket(AF_NETLINK, SOCK_RAW, NETLINK_ROUTE)));
         if(!_sock->valid())
         {
             _sock.reset();
@@ -222,13 +222,13 @@ namespace impl
         }
 
         auto sflags = _sock->seizeReadyState();
-        if(dci::poller::Descriptor::rsf_error & sflags)
+        if(dci::poll::Descriptor::rsf_error & sflags)
         {
             LOGE("rtnetlink poll: "<<_sock->error());
             return false;
         }
 
-        if(!(dci::poller::Descriptor::rsf_read & sflags))
+        if(!(dci::poll::Descriptor::rsf_read & sflags))
         {
             return true;
         }

@@ -2,7 +2,7 @@
 
 #include "engine.hpp"
 
-namespace dci { namespace poller { namespace impl
+namespace dci { namespace poll { namespace impl
 {
     class Epoll
         : public Engine
@@ -13,7 +13,7 @@ namespace dci { namespace poller { namespace impl
 
         virtual std::error_code startup() override;
 
-        virtual std::error_code execute(std::int32_t timeoutms) override;
+        virtual std::error_code execute(std::chrono::milliseconds timeout) override;
         virtual std::error_code interrupt() override;
 
         virtual std::error_code installDescriptor(Descriptor *d) override;

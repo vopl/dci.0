@@ -8,7 +8,7 @@
 #include <dci/mm.hpp>
 #include <system_error>
 
-namespace dci { namespace poller
+namespace dci { namespace poll
 {
     namespace impl
     {

@@ -48,7 +48,7 @@ add_library(${PROJECT} MODULE
     ${SRC}
 )
 
-target_link_libraries(${PROJECT} dci-site dci-poller)
+target_link_libraries(${PROJECT} dci-site dci-poll)
 
 set_property(TARGET ${PROJECT} PROPERTY CXX_STANDARD 14)
 set_property(TARGET ${PROJECT} PROPERTY CXX_STANDARD_REQUIRED ON)

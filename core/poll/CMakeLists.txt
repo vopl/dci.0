@@ -1,4 +1,4 @@
-set(PROJECT dci-poller)
+set(PROJECT dci-poll)
 project(${PROJECT})
 
 
@@ -6,11 +6,12 @@ project(${PROJECT})
 
 ############################################################
 set(INC
-    include/dci/poller.hpp
-    include/dci/poller/layoutProvider.hpp
-    include/dci/poller/error.hpp
-    include/dci/poller/descriptor.hpp
-    include/dci/poller/functions.hpp
+    include/dci/poll.hpp
+    include/dci/poll/layoutProvider.hpp
+    include/dci/poll/error.hpp
+    include/dci/poll/descriptor.hpp
+    include/dci/poll/timer.hpp
+    include/dci/poll/functions.hpp
 )
 
 ############################################################
@@ -18,10 +19,20 @@ set(SRC
     src/error.cpp
 
     src/descriptor.cpp
+    src/timer.cpp
     src/functions.cpp
 
     src/impl/descriptor.hpp
     src/impl/descriptor.cpp
+
+    src/impl/timer.hpp
+    src/impl/timer.cpp
+
+    src/impl/timerEngine.hpp
+    src/impl/timerEngine.cpp
+    src/impl/timerEngine/gridPoint.hpp
+    src/impl/timerEngine/gridPoint.cpp
+    src/impl/timerEngine/grid.hpp
 
     src/impl/engine.hpp
     src/impl/engine.cpp
@@ -55,13 +66,15 @@ target_link_libraries(${PROJECT}
 include(DciHimpl)
 mkHimplLayouts(${PROJECT}
     OUTPUT
-        ${CMAKE_CURRENT_SOURCE_DIR}/include/dci/poller/layoutProvider.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/dci/poll/layoutProvider.hpp
 
     HEADERS
         ${CMAKE_CURRENT_SOURCE_DIR}/src/impl/descriptor.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/impl/timer.hpp
 
     CLASSES
-        ::dci::poller::impl::Descriptor
+        ::dci::poll::impl::Descriptor
+        ::dci::poll::impl::Timer
 )
 
 

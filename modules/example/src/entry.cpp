@@ -1,6 +1,7 @@
 #include <dci/site/moduleEntry.hpp>
 #include <dci/async.hpp>
-#include <dci/logger/logger.hpp>
+#include <dci/logger.hpp>
+#include <dci/poll.hpp>
 
 #include <algorithm>
 #include <iomanip>
@@ -65,6 +66,34 @@ struct Entry
 
     dci::async::Future<std::error_code> load(const dci::site::ModulePlace &place) override
     {
+        dci::async::spawn([this](){
+
+            dci::poll::Timer t(std::chrono::milliseconds(1000), true);
+
+            std::chrono::duration<double> ss2;
+            ss2 = std::chrono::steady_clock::now().time_since_epoch();
+
+            LOGT("start "<<std::setprecision(16)<<ss2.count());
+            t.start();
+
+
+            for(;;)
+            {
+                if(0 == dci::async::acquireAny(_stopEvent, t.pulser()))
+                {
+                    LOGD("timer break");
+                    break;
+                }
+
+                std::chrono::duration<double> ss3;
+                ss3 = std::chrono::steady_clock::now().time_since_epoch();
+
+                LOGD("timer "<<(ss3-ss2).count());
+            }
+
+            LOGD("timer stopped");
+        });
+
         (void)place;
         return dci::async::Future<std::error_code>();
     }
@@ -83,6 +112,7 @@ struct Entry
 
         dci::async::spawn([&]()
         {
+            //return;
             using namespace ::dci::couple::runtime;
 
             dci::async::Future<std::error_code, net::Host> netHost = manager.createService<net::Host>();
@@ -251,7 +281,7 @@ struct Entry
     }
 
 private:
-    dci::async::Event _stopEvent;
+    dci::async::Event _stopEvent{false};
 } entry;
 
 extern "C"

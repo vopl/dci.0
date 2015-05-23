@@ -1,10 +1,12 @@
 #pragma once
 
 #include "descriptor.hpp"
+#include "timerEngine.hpp"
 #include <memory>
 #include <system_error>
+#include <chrono>
 
-namespace dci { namespace poller { namespace impl
+namespace dci { namespace poll { namespace impl
 {
     class Engine
     {
@@ -17,8 +19,13 @@ namespace dci { namespace poller { namespace impl
         static std::error_code initialize();
         std::error_code deinitialize();
 
+        std::error_code run();
+        std::error_code stop();
+
+        TimerEngine &timerEngine();
+
         virtual std::error_code startup() = 0;
-        virtual std::error_code execute(std::int32_t timeoutms) = 0;
+        virtual std::error_code execute(std::chrono::milliseconds timeout) = 0;
         virtual std::error_code interrupt() = 0;
         virtual std::error_code installDescriptor(Descriptor *d) = 0;
         virtual std::error_code uninstallDescriptor(Descriptor *d) = 0;
@@ -31,6 +38,8 @@ namespace dci { namespace poller { namespace impl
 
     private:
         Descriptor *_descriptors{nullptr};
+        TimerEngine _timerEngine;
+        bool        _stop{true};
     };
 
     extern std::unique_ptr<Engine> engine;

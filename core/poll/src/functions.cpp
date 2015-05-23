@@ -1,33 +1,32 @@
-#include <dci/poller/functions.hpp>
+#include <dci/poll/functions.hpp>
+#include <dci/poll/error.hpp>
 #include "impl/engine.hpp"
 
-namespace dci { namespace poller
+namespace dci { namespace poll
 {
     std::error_code initialize()
     {
         return impl::Engine::initialize();
     }
 
-    std::error_code execute(std::int32_t timeoutms)
+    std::error_code run()
     {
-        assert(impl::engine);
         if(!impl::engine)
         {
-            abort();
+            return make_error_code(error::general::not_initialized);
         }
 
-        return impl::engine->execute(timeoutms);
+        return impl::engine->run();
     }
 
-    std::error_code interrupt()
+    std::error_code stop()
     {
-        assert(impl::engine);
         if(!impl::engine)
         {
-            abort();
+            return make_error_code(error::general::not_initialized);
         }
 
-        return impl::engine->interrupt();
+        return impl::engine->stop();
     }
 
     std::error_code deinitialize()

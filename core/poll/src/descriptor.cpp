@@ -1,7 +1,7 @@
-#include <dci/poller/descriptor.hpp>
+#include <dci/poll/descriptor.hpp>
 #include "impl/descriptor.hpp"
 
-namespace dci { namespace poller
+namespace dci { namespace poll
 {
     Descriptor::Descriptor(int fd)
         : himpl::FaceLayout<impl::Descriptor>(fd)

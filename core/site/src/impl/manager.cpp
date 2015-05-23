@@ -1,6 +1,6 @@
 #include "manager.hpp"
 #include <dci/site/error.hpp>
-#include <dci/poller.hpp>
+#include <dci/poll/functions.hpp>
 #include <dci/async.hpp>
 #include <dci/logger.hpp>
 
@@ -49,7 +49,7 @@ namespace dci { namespace site { namespace impl
         }
 
         {
-            std::error_code ec = poller::initialize();
+            std::error_code ec = poll::initialize();
             if(ec)
             {
                 return ec;
@@ -82,20 +82,16 @@ namespace dci { namespace site { namespace impl
         });
 
 
-        while(WorkState::stopped != _workState)
+        std::error_code ec = poll::run();
+        if(ec)
         {
-            dci::async::executeReadyCoros();
-            std::error_code ec = poller::execute();
-            if(ec)
-            {
-                LOGE("poller execute: "<<ec);
-                stop();
-            }
+            LOGE("poll execute: "<<ec);
+            stop().wait();
+            poll::deinitialize();
+            return ec;
         }
-        dci::async::executeReadyCoros();
 
-        poller::deinitialize();
-        return std::error_code();
+        return poll::deinitialize();
     }
 
     async::Future<std::error_code> Manager::stop()
@@ -148,10 +144,10 @@ namespace dci { namespace site { namespace impl
 
             _workState = WorkState::stopped;
 
-            ec = poller::interrupt();
+            ec = poll::stop();
             if(ec)
             {
-                LOGE("interrupt poller: "<<ec);
+                LOGE("stop poll: "<<ec);
                 hasErrors = true;
             }
 
