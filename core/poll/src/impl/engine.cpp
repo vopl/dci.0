@@ -24,7 +24,7 @@ namespace dci { namespace poll { namespace impl
         assert(!engine);
         if(engine)
         {
-            return make_error_code(error::general::already_initialized);
+            return err_general::already_initialized;
         }
 
         engine.reset(new Epoll);
@@ -44,7 +44,7 @@ namespace dci { namespace poll { namespace impl
     {
         if(!_stop)
         {
-            return make_error_code(error::general::already_started);
+            return err_general::already_started;
         }
 
         _stop = false;
@@ -84,13 +84,13 @@ namespace dci { namespace poll { namespace impl
     {
         if(!_stop)
         {
-            return make_error_code(error::general::not_stopped);
+            return err_general::not_stopped;
         }
 
         assert(engine);
         if(!engine)
         {
-            return make_error_code(error::general::not_initialized);
+            return err_general::not_initialized;
         }
 
         engine.reset();

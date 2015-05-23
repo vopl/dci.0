@@ -2,9 +2,9 @@
 
 #include <system_error>
 
-namespace dci { namespace site { namespace error
+namespace dci { namespace site
 {
-    enum class general
+    enum class err_general
     {
         unknown = 1,
         already_started,
@@ -17,7 +17,7 @@ namespace dci { namespace site { namespace error
         not_found,
     };
 
-    enum class module
+    enum class err_module
     {
         unknown = 1,
         busy,
@@ -27,24 +27,20 @@ namespace dci { namespace site { namespace error
         bad_info_file,
     };
 
-    const std::error_category& general_category();
-    const std::error_category& module_category();
+    const std::error_category& err_general_category();
+    const std::error_category& err_module_category();
 
-}}}
+    std::error_code make_error_code(err_general e);
+    std::error_code make_error_code(err_module e);
+}}
 
 namespace std
 {
     template<>
-    struct is_error_code_enum<dci::site::error::general>
+    struct is_error_code_enum<dci::site::err_general>
         : public true_type { };
 
     template<>
-    struct is_error_code_enum<dci::site::error::module>
+    struct is_error_code_enum<dci::site::err_module>
         : public true_type { };
 }
-
-namespace dci { namespace site
-{
-    std::error_code make_error_code(error::general e);
-    std::error_code make_error_code(error::module e);
-}}

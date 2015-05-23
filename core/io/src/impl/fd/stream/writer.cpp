@@ -81,7 +81,7 @@ namespace dci { namespace io { namespace impl { namespace fd { namespace stream
     void Writer::close()
     {
         _buffer.clear();
-        flushError(make_error_code(error::stream::closed));
+        flushError(err_stream::closed);
     }
 
     void Writer::pump(int descriptor)

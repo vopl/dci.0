@@ -1,6 +1,6 @@
 #include <dci/poll/error.hpp>
 
-namespace dci { namespace poll { namespace error
+namespace dci { namespace poll
 {
     namespace
     {
@@ -20,21 +20,21 @@ namespace dci { namespace poll { namespace error
 
             std::string message(int value) const
             {
-                switch(static_cast<general>(value))
+                switch(static_cast<err_general>(value))
                 {
-                case general::unknown:
+                case err_general::unknown:
                     return "unknown";
-                case general::already_initialized:
+                case err_general::already_initialized:
                     return "already initialized";
-                case general::already_started:
+                case err_general::already_started:
                     return "already started";
-                case general::no_engine_available:
+                case err_general::no_engine_available:
                     return "no engine available";
-                case general::not_initialized:
+                case err_general::not_initialized:
                     return "not initialized";
-                case general::not_stopped:
+                case err_general::not_stopped:
                     return "not stopped";
-                case general::bad_descriptor:
+                case err_general::bad_descriptor:
                     return "bad descriptor";
                 }
 
@@ -43,17 +43,13 @@ namespace dci { namespace poll { namespace error
         } generalCatogory;
     }
 
-    const std::error_category& general_category()
+    const std::error_category& err_general_category()
     {
         return generalCatogory;
     }
 
-}}}
-
-namespace dci { namespace poll
-{
-    std::error_code make_error_code(error::general e)
+    std::error_code make_error_code(err_general e)
     {
-        return std::error_code(static_cast<int>(e), error::general_category());
+        return std::error_code(static_cast<int>(e), err_general_category());
     }
 }}

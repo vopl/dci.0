@@ -1,6 +1,6 @@
 #include <dci/io/error.hpp>
 
-namespace dci { namespace io { namespace error
+namespace dci { namespace io
 {
     namespace
     {
@@ -20,21 +20,21 @@ namespace dci { namespace io { namespace error
 
             std::string message(int value) const
             {
-                switch(static_cast<general>(value))
+                switch(static_cast<err_general>(value))
                 {
-                case general::already_runned:
+                case err_general::already_runned:
                     return "already runned";
-                case general::not_runned:
+                case err_general::not_runned:
                     return "not runned";
-                case general::invalid_argument:
+                case err_general::invalid_argument:
                     return "invalid argument";
-                case general::secondary_listen:
+                case err_general::secondary_listen:
                     return "secondary listen";
-                case general::no_listen:
+                case err_general::no_listen:
                     return "no listen";
-                case general::not_implemented:
+                case err_general::not_implemented:
                     return "not implemented";
-                case general::unknown:
+                case err_general::unknown:
                     return "unknown";
                 }
 
@@ -58,11 +58,11 @@ namespace dci { namespace io { namespace error
 
             std::string message(int value) const
             {
-                switch(static_cast<stream>(value))
+                switch(static_cast<err_stream>(value))
                 {
-                case stream::not_connected:
+                case err_stream::not_connected:
                     return "not connected";
-                case stream::closed:
+                case err_stream::closed:
                     return "closed";
                 }
 
@@ -71,27 +71,23 @@ namespace dci { namespace io { namespace error
         } streamCatogory;
     }
 
-    const std::error_category& general_category()
+    const std::error_category& err_general_category()
     {
         return generalCatogory;
     }
 
-    const std::error_category& stream_category()
+    const std::error_category& err_stream_category()
     {
         return streamCatogory;
     }
 
-}}}
-
-namespace dci { namespace io
-{
-    std::error_code make_error_code(error::general e)
+    std::error_code make_error_code(err_general e)
     {
-        return std::error_code(static_cast<int>(e), error::general_category());
+        return std::error_code(static_cast<int>(e), err_general_category());
     }
 
-    std::error_code make_error_code(error::stream e)
+    std::error_code make_error_code(err_stream e)
     {
-        return std::error_code(static_cast<int>(e), error::stream_category());
+        return std::error_code(static_cast<int>(e), err_stream_category());
     }
 }}

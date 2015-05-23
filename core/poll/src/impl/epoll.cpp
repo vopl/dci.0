@@ -99,7 +99,7 @@ namespace dci { namespace poll { namespace impl
     {
         if(-1 == _fd)
         {
-            return make_error_code(error::general::not_initialized);
+            return err_general::not_initialized;
         }
 
         close(_fd);
@@ -128,7 +128,7 @@ namespace dci { namespace poll { namespace impl
     {
         if(!Engine::deregisterDescriptor(d))
         {
-            return make_error_code(error::general::bad_descriptor);
+            return err_general::bad_descriptor;
         }
 
         if(epoll_ctl(_fd, EPOLL_CTL_DEL, d->fd(), nullptr))

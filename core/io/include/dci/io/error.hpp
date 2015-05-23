@@ -2,9 +2,9 @@
 
 #include <system_error>
 
-namespace dci { namespace io { namespace error
+namespace dci { namespace io
 {
-    enum class general
+    enum class err_general
     {
         already_runned = 1,
         not_runned,
@@ -15,30 +15,27 @@ namespace dci { namespace io { namespace error
         unknown,
     };
 
-    enum class stream
+    enum class err_stream
     {
         not_connected = 1,
         closed,
     };
 
-    const std::error_category& general_category();
-    const std::error_category& stream_category();
+    const std::error_category& err_general_category();
+    const std::error_category& err_stream_category();
 
-}}}
+    std::error_code make_error_code(err_general e);
+    std::error_code make_error_code(err_stream e);
+
+}}
 
 namespace std
 {
     template<>
-    struct is_error_code_enum<dci::io::error::general>
+    struct is_error_code_enum<dci::io::err_general>
         : public true_type { };
 
     template<>
-    struct is_error_code_enum<dci::io::error::stream>
+    struct is_error_code_enum<dci::io::err_stream>
         : public true_type { };
 }
-
-namespace dci { namespace io
-{
-    std::error_code make_error_code(error::general e);
-    std::error_code make_error_code(error::stream e);
-}}

@@ -45,7 +45,7 @@ namespace dci { namespace io { namespace impl
         {
         case EngineType::null:
             {
-                return async::Future<std::error_code, io::Data>(make_error_code(error::stream::not_connected));
+                return async::Future<std::error_code, io::Data>(make_error_code(err_stream::not_connected));
             }
         case EngineType::fd:
             return _engine._fd->read(min, max);
@@ -61,7 +61,7 @@ namespace dci { namespace io { namespace impl
         {
         case EngineType::null:
             {
-                return async::Future<std::error_code>(make_error_code(error::stream::not_connected));
+                return async::Future<std::error_code>(make_error_code(err_stream::not_connected));
             }
         case EngineType::fd:
             return _engine._fd->write(std::forward<io::Data>(data));

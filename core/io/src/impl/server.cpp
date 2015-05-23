@@ -37,7 +37,7 @@ namespace dci { namespace io { namespace impl
 
     Server::~Server()
     {
-        flushError(make_error_code(error::stream::closed));
+        flushError(err_stream::closed);
     }
 
     Server &Server::operator=(Server &&from)
@@ -52,7 +52,7 @@ namespace dci { namespace io { namespace impl
     {
         if(getDescriptor() >= 0)
         {
-            return make_error_code(error::general::secondary_listen);
+            return err_general::secondary_listen;
         }
 
         switch(endpoint.scope())
@@ -65,17 +65,17 @@ namespace dci { namespace io { namespace impl
             return listenInet(endpoint.addressIp6(), endpoint.port());
         default:
             assert(!"not impl");
-            return io::make_error_code(io::error::general::not_implemented);
+            return io::err_general::not_implemented;
         }
 
-        return io::make_error_code(io::error::general::not_implemented);
+        return io::err_general::not_implemented;
     }
 
     async::Future<std::error_code, dci::io::Stream> Server::accept()
     {
         if(getDescriptor() < 0)
         {
-            return async::Future<std::error_code, dci::io::Stream>(io::make_error_code(error::general::no_listen));
+            return async::Future<std::error_code, dci::io::Stream>(make_error_code(io::err_general::no_listen));
         }
 
         if(_descriptorReady)

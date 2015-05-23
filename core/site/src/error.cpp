@@ -1,6 +1,6 @@
 #include <dci/site/error.hpp>
 
-namespace dci { namespace site { namespace error
+namespace dci { namespace site
 {
     namespace
     {
@@ -20,25 +20,25 @@ namespace dci { namespace site { namespace error
 
             std::string message(int value) const
             {
-                switch(static_cast<general>(value))
+                switch(static_cast<err_general>(value))
                 {
-                case general::unknown:
+                case err_general::unknown:
                     return "unknown";
-                case general::already_started:
+                case err_general::already_started:
                     return "already started";
-                case general::already_stopped:
+                case err_general::already_stopped:
                     return "already stopped";
-                case general::starting_in_progress:
+                case err_general::starting_in_progress:
                     return "starting in progress";
-                case general::stopping_in_progress:
+                case err_general::stopping_in_progress:
                     return "stopping in progress";
-                case general::modules_directory_absent:
+                case err_general::modules_directory_absent:
                     return "modules directory is absent";
-                case general::failed:
+                case err_general::failed:
                     return "failed";
-                case general::partial_failed:
+                case err_general::partial_failed:
                     return "partial failed";
-                case general::not_found:
+                case err_general::not_found:
                     return "not found";
                 }
 
@@ -63,19 +63,19 @@ namespace dci { namespace site { namespace error
 
             std::string message(int value) const
             {
-                switch(static_cast<module>(value))
+                switch(static_cast<err_module>(value))
                 {
-                case module::unknown:
+                case err_module::unknown:
                     return "unknown";
-                case module::busy:
+                case err_module::busy:
                     return "busy";
-                case module::wrong_state:
+                case err_module::wrong_state:
                     return "wrong state";
-                case module::unable_load_binary:
+                case err_module::unable_load_binary:
                     return "unable to load binary";
-                case module::malformed_binary:
+                case err_module::malformed_binary:
                     return "malformed binary";
-                case module::bad_info_file:
+                case err_module::bad_info_file:
                     return "bad info file";
                 }
 
@@ -85,27 +85,23 @@ namespace dci { namespace site { namespace error
 
     }
 
-    const std::error_category& general_category()
+    const std::error_category& err_general_category()
     {
         return generalCatogory;
     }
 
-    const std::error_category& module_category()
+    const std::error_category& err_module_category()
     {
         return moduleCatogory;
     }
 
-}}}
-
-namespace dci { namespace site
-{
-    std::error_code make_error_code(error::general e)
+    std::error_code make_error_code(err_general e)
     {
-        return std::error_code(static_cast<int>(e), error::general_category());
+        return std::error_code(static_cast<int>(e), err_general_category());
     }
 
-    std::error_code make_error_code(error::module e)
+    std::error_code make_error_code(err_module e)
     {
-        return std::error_code(static_cast<int>(e), error::module_category());
+        return std::error_code(static_cast<int>(e), err_module_category());
     }
 }}

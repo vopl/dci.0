@@ -13,7 +13,7 @@ namespace dci { namespace poll
     {
         if(!impl::engine)
         {
-            return make_error_code(error::general::not_initialized);
+            return err_general::not_initialized;
         }
 
         return impl::engine->run();
@@ -23,7 +23,7 @@ namespace dci { namespace poll
     {
         if(!impl::engine)
         {
-            return make_error_code(error::general::not_initialized);
+            return err_general::not_initialized;
         }
 
         return impl::engine->stop();

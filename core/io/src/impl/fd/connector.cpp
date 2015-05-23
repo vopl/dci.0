@@ -28,7 +28,7 @@ namespace dci { namespace io { namespace impl { namespace fd
             return;
         default:
             assert(!"not impl");
-            _promise.resolveError(io::make_error_code(io::error::general::not_implemented));
+            _promise.resolveError(io::err_general::not_implemented);
             delete this;
             return;
         }
@@ -126,7 +126,7 @@ namespace dci { namespace io { namespace impl { namespace fd
 
         if(!_promise.resolved())
         {
-            resolve(make_error_code(error::stream::closed));
+            resolve(err_stream::closed);
         }
     }
 

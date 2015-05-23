@@ -44,7 +44,7 @@ namespace dci { namespace couple { namespace runtime
             return Signal<R(Args...)>::_call(std::forward<Args>(args)...);
         }
 
-        return R(make_error_code(error::general::call_not_connected));
+        return R(make_error_code(err_general::call_not_connected));
     }
 
     template <class... Args>

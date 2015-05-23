@@ -35,13 +35,13 @@ namespace dci { namespace site { namespace impl
             break;
 
         case WorkState::starting:
-            return make_error_code(error::general::starting_in_progress);
+            return err_general::starting_in_progress;
 
         case WorkState::started:
-            return make_error_code(error::general::already_started);
+            return err_general::already_started;
 
         case WorkState::stopping:
-            return make_error_code(error::general::stopping_in_progress);
+            return err_general::stopping_in_progress;
 
         default:
             assert("unknown work state");
@@ -102,13 +102,13 @@ namespace dci { namespace site { namespace impl
             break;
 
         case WorkState::stopped:
-            return async::Future<std::error_code>(make_error_code(error::general::already_stopped));
+            return async::Future<std::error_code>(make_error_code(err_general::already_stopped));
 
         case WorkState::starting:
-            return async::Future<std::error_code>(make_error_code(error::general::starting_in_progress));
+            return async::Future<std::error_code>(make_error_code(err_general::starting_in_progress));
 
         case WorkState::stopping:
-            return async::Future<std::error_code>(make_error_code(error::general::stopping_in_progress));
+            return async::Future<std::error_code>(make_error_code(err_general::stopping_in_progress));
 
         default:
             assert("unknown work state");
@@ -153,7 +153,7 @@ namespace dci { namespace site { namespace impl
 
             if(hasErrors)
             {
-                p.resolveError(make_error_code(error::general::partial_failed));
+                p.resolveError(err_general::partial_failed);
             }
             else
             {
@@ -172,7 +172,7 @@ namespace dci { namespace site { namespace impl
         ServiceFactories::const_iterator iter = _serviceFactories.find(iid);
         if(_serviceFactories.end() == iter)
         {
-            return make_error_code(error::general::not_found);
+            return err_general::not_found;
         }
 
         iter->second._factory->createService(outFuture);
@@ -191,7 +191,7 @@ namespace dci { namespace site { namespace impl
             if(!fs::exists(modulesDir))
             {
                 LOGE("site initialization: modules direactory is absent");
-                return make_error_code(error::general::modules_directory_absent);
+                return err_general::modules_directory_absent;
             }
 
             bool hasErrors = false;
@@ -217,7 +217,7 @@ namespace dci { namespace site { namespace impl
             }
 
             return hasErrors ?
-                        make_error_code(error::general::partial_failed) :
+                        make_error_code(err_general::partial_failed) :
                         std::error_code{};
         }
 
@@ -327,7 +327,7 @@ namespace dci { namespace site { namespace impl
             _modules.clear();
 
             return hasErrors ?
-                        make_error_code(error::general::partial_failed) :
+                        make_error_code(err_general::partial_failed) :
                         std::error_code{};
         }
 
@@ -359,7 +359,7 @@ namespace dci { namespace site { namespace impl
 
             if(hasErrors)
             {
-                p.resolveError(make_error_code(error::general::partial_failed));
+                p.resolveError(err_general::partial_failed);
             }
             else
             {

@@ -1,6 +1,6 @@
 #include <dci/couple/runtime/error.hpp>
 
-namespace dci { namespace couple { namespace runtime { namespace error
+namespace dci { namespace couple { namespace runtime
 {
     namespace
     {
@@ -20,9 +20,9 @@ namespace dci { namespace couple { namespace runtime { namespace error
 
             std::string message(int value) const
             {
-                switch(static_cast<general>(value))
+                switch(static_cast<err_general>(value))
                 {
-                case general::call_not_connected:
+                case err_general::call_not_connected:
                     return "call is not connected";
                 }
 
@@ -31,17 +31,13 @@ namespace dci { namespace couple { namespace runtime { namespace error
         } generalCatogory;
     }
 
-    const std::error_category& general_category()
+    const std::error_category& err_general_category()
     {
         return generalCatogory;
     }
 
-}}}}
-
-namespace dci { namespace couple { namespace runtime
-{
-    std::error_code make_error_code(error::general e)
+    std::error_code make_error_code(err_general e)
     {
-        return std::error_code(static_cast<int>(e), error::general_category());
+        return std::error_code(static_cast<int>(e), err_general_category());
     }
 }}}

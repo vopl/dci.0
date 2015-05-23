@@ -27,7 +27,7 @@ namespace dci { namespace io { namespace impl { namespace fd { namespace stream
     Reader::~Reader()
     {
         _buffer.clear();
-        flushError(make_error_code(error::stream::closed));
+        flushError(err_stream::closed);
     }
 
     void Reader::error(const std::error_code &err)
@@ -75,7 +75,7 @@ namespace dci { namespace io { namespace impl { namespace fd { namespace stream
     void Reader::close()
     {
         _buffer.clear();
-        flushError(make_error_code(error::stream::closed));
+        flushError(err_stream::closed);
     }
 
     void Reader::flushProcessed(impl::Data &&data)

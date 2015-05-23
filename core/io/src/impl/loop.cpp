@@ -90,7 +90,7 @@ namespace dci { namespace io { namespace impl { namespace loop
         {
             if(fdbFrom->getDescriptor() != fdbTo->getDescriptor())
             {
-                return make_error_code(error::general::invalid_argument);
+                return err_general::invalid_argument;
             }
 
             epoll_event evt{0,{0}};
@@ -170,7 +170,7 @@ namespace dci { namespace io { namespace impl { namespace loop
     {
         if(-1 != g_epollfd)
         {
-            return make_error_code(error::general::already_runned);
+            return err_general::already_runned;
         }
 
         g_epollfd = epoll_create(1);
@@ -238,7 +238,7 @@ namespace dci { namespace io { namespace impl { namespace loop
     {
         if(-1 == g_epollfd)
         {
-            return make_error_code(error::general::not_runned);
+            return err_general::not_runned;
         }
 
         if(g_activeListeners)

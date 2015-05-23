@@ -2,9 +2,9 @@
 
 #include <system_error>
 
-namespace dci { namespace poll { namespace error
+namespace dci { namespace poll
 {
-    enum class general
+    enum class err_general
     {
         unknown = 1,
         already_initialized,
@@ -15,17 +15,14 @@ namespace dci { namespace poll { namespace error
         bad_descriptor,
     };
 
-    const std::error_category& general_category();
-}}}
+    const std::error_category& err_general_category();
+    std::error_code make_error_code(err_general e);
+}}
 
 namespace std
 {
     template<>
-    struct is_error_code_enum<dci::poll::error::general>
+    struct is_error_code_enum<dci::poll::err_general>
         : public true_type { };
 }
 
-namespace dci { namespace poll
-{
-    std::error_code make_error_code(error::general e);
-}}

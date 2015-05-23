@@ -129,7 +129,7 @@ namespace dci { namespace site { namespace impl
     {
         if(ModuleState::null != _state)
         {
-            return make_error_code(error::module::wrong_state);
+            return err_module::wrong_state;
         }
 
         _place = place;
@@ -147,7 +147,7 @@ namespace dci { namespace site { namespace impl
         catch(std::runtime_error &e)
         {
             LOGE("unable to parse module info: "<<e.what());
-            return make_error_code(error::module::bad_info_file);
+            return err_module::bad_info_file;
         }
 
 
@@ -204,7 +204,7 @@ namespace dci { namespace site { namespace impl
         catch(std::runtime_error &e)
         {
             LOGE("unable to interpret module info: "<<e.what());
-            return make_error_code(error::module::bad_info_file);
+            return err_module::bad_info_file;
         }
 
         _state = ModuleState::attached;
@@ -222,7 +222,7 @@ namespace dci { namespace site { namespace impl
             break;
 
         default:
-            return make_error_code(error::module::wrong_state);
+            return err_module::wrong_state;
         }
 
         _info._provider.clear();
@@ -265,7 +265,7 @@ namespace dci { namespace site { namespace impl
             break;
 
         default:
-            return async::Future<std::error_code>(make_error_code(error::module::wrong_state));
+            return async::Future<std::error_code>(make_error_code(err_module::wrong_state));
         }
 
         _state = ModuleState::loading;
@@ -284,7 +284,7 @@ namespace dci { namespace site { namespace impl
             {
                 LOGE(dlerror());
                 _state = ModuleState::loadError;
-                p.resolveError(make_error_code(error::module::unable_load_binary));
+                p.resolveError(err_module::unable_load_binary);
                 return;
             }
 
@@ -295,7 +295,7 @@ namespace dci { namespace site { namespace impl
             {
                 LOGE("loading module \""<<_info._name<<"\": entry point is absent");
                 _state = ModuleState::loadError;
-                p.resolveError(make_error_code(error::module::unable_load_binary));
+                p.resolveError(err_module::unable_load_binary);
                 return;
             }
 
@@ -305,7 +305,7 @@ namespace dci { namespace site { namespace impl
             {
                 LOGE("loading module \""<<_info._name<<"\": entry point is damaged");
                 _state = ModuleState::loadError;
-                p.resolveError(make_error_code(error::module::unable_load_binary));
+                p.resolveError(err_module::unable_load_binary);
                 return;
             }
 
@@ -339,7 +339,7 @@ namespace dci { namespace site { namespace impl
             break;
 
         default:
-            return async::Future<std::error_code>(make_error_code(error::module::wrong_state));
+            return async::Future<std::error_code>(make_error_code(err_module::wrong_state));
         }
 
         _state = ModuleState::unloading;
@@ -380,7 +380,7 @@ namespace dci { namespace site { namespace impl
             break;
 
         default:
-            return async::Future<std::error_code>(make_error_code(error::module::wrong_state));
+            return async::Future<std::error_code>(make_error_code(err_module::wrong_state));
         }
 
         _state = ModuleState::starting;
@@ -414,7 +414,7 @@ namespace dci { namespace site { namespace impl
             break;
 
         default:
-            return async::Future<std::error_code>(make_error_code(error::module::wrong_state));
+            return async::Future<std::error_code>(make_error_code(err_module::wrong_state));
         }
 
         _state = ModuleState::stopping;
