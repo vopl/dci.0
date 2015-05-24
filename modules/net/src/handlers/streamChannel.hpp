@@ -12,12 +12,12 @@ namespace handlers
         : ScopeSelector<Address>::stream::template ChannelHandlerSkel<StreamChannel<Address>>
     {
 
-        Future< Address> ownAddress()
+        Future< Address> self()
         {
             assert(0);
         }
 
-        Future< Address> peerAddress()
+        Future< Address> peer()
         {
             assert(0);
         }

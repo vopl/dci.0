@@ -39,12 +39,17 @@ namespace dci { namespace async { namespace impl
 
     void Syncronizer::unlock()
     {
-        while(!_waiters.empty())
+        std::size_t idx(0);
+        while(idx < _waiters.size() && !locked())
         {
-            WaiterWithData &waiterWithData = _waiters.front();
+            WaiterWithData &waiterWithData = _waiters[idx];
             if(waiterWithData._waiter->released(waiterWithData._data))
             {
-                return;
+                //was removed
+            }
+            else
+            {
+                idx++;
             }
         }
     }

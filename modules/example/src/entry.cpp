@@ -81,7 +81,6 @@ struct Entry
             {
                 if(0 == dci::async::acquireAny(_stopEvent, t.pulser()))
                 {
-                    LOGD("timer break");
                     break;
                 }
 

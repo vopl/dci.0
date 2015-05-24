@@ -30,8 +30,8 @@ scope stream
     /////////////////////////////////////////////////////////
     iface Channel
     {
-        in ownAddress:  ()          -> Address;
-        in peerAddress: ()          -> Address;
+        in self:        ()          -> Address;
+        in peer:        ()          -> Address;
         
         in read:        ()          -> Data;
         out readed:     (Data v)    -> ();
