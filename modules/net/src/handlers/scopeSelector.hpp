@@ -21,9 +21,6 @@ namespace handlers
             using Channel = ip4::datagram::Channel;
 
             template <class H>
-            using HostHandlerSkel = hs::net::ip4::datagram::Host<H>;
-
-            template <class H>
             using ChannelHandlerSkel = hs::net::ip4::datagram::Channel<H>;
         };
 
@@ -32,9 +29,6 @@ namespace handlers
             using Server = ip4::stream::Server;
             using Client = ip4::stream::Client;
             using Channel = ip4::stream::Channel;
-
-            template <class H>
-            using HostHandlerSkel = hs::net::ip4::stream::Host<H>;
 
             template <class H>
             using ServerHandlerSkel = hs::net::ip4::stream::Server<H>;
@@ -57,9 +51,6 @@ namespace handlers
             using Channel = ip6::datagram::Channel;
 
             template <class H>
-            using HostHandlerSkel = hs::net::ip6::datagram::Host<H>;
-
-            template <class H>
             using ChannelHandlerSkel = hs::net::ip6::datagram::Channel<H>;
         };
 
@@ -68,9 +59,6 @@ namespace handlers
             using Server = ip6::stream::Server;
             using Client = ip6::stream::Client;
             using Channel = ip6::stream::Channel;
-
-            template <class H>
-            using HostHandlerSkel = hs::net::ip6::stream::Host<H>;
 
             template <class H>
             using ServerHandlerSkel = hs::net::ip6::stream::Server<H>;
@@ -93,9 +81,6 @@ namespace handlers
             using Server = local::stream::Server;
             using Client = local::stream::Client;
             using Channel = local::stream::Channel;
-
-            template <class H>
-            using HostHandlerSkel = hs::net::local::stream::Host<H>;
 
             template <class H>
             using ServerHandlerSkel = hs::net::local::stream::Server<H>;

@@ -1,8 +1,10 @@
 #include "host.hpp"
 #include "link.hpp"
 
-#include "datagramHost.hpp"
-#include "streamHost.hpp"
+#include "streamServer.hpp"
+#include "streamClient.hpp"
+
+#include "datagramChannel.hpp"
 
 #include "../impl/host.hpp"
 #include "../impl/link.hpp"
@@ -50,59 +52,92 @@ namespace handlers
         return std::move(res);
     }
 
-    Future< ip4::stream::Host> Host::ip4StreamHost()
+    Future< ip4::stream::Server> Host::ip4StreamServer()
     {
         if(!_impl)
         {
             return std::error_code(::net::error::general::implementation_down);
         }
 
-        auto *v = new StreamHost<ip4::Address>;
-        return ip4::stream::Host(*v);
+        auto *v = new StreamServer<ip4::Address>;
+        return ip4::stream::Server(*v);
     }
 
-    Future< ip4::datagram::Host> Host::ip4DatagramHost()
+    Future< ip4::stream::Client> Host::ip4StreamClient()
     {
         if(!_impl)
         {
             return std::error_code(::net::error::general::implementation_down);
         }
 
-        auto *v = new DatagramHost<ip4::Address>;
-        return ip4::datagram::Host(*v);
+        auto *v = new StreamClient<ip4::Address>;
+        return ip4::stream::Client(*v);
     }
 
-    Future< ip6::stream::Host> Host::ip6StreamHost()
+    Future< ip4::datagram::Channel> Host::ip4DatagramChannel()
     {
         if(!_impl)
         {
             return std::error_code(::net::error::general::implementation_down);
         }
 
-        auto *v = new StreamHost<ip6::Address>;
-        return ip6::stream::Host(*v);
+        auto *v = new DatagramChannel<ip4::Address>;
+        return ip4::datagram::Channel(*v);
     }
 
-    Future< ip6::datagram::Host> Host::ip6DatagramHost()
+    Future< ip6::stream::Server> Host::ip6StreamServer()
     {
         if(!_impl)
         {
             return std::error_code(::net::error::general::implementation_down);
         }
 
-        auto *v = new DatagramHost<ip6::Address>;
-        return ip6::datagram::Host(*v);
+        auto *v = new StreamServer<ip6::Address>;
+        return ip6::stream::Server(*v);
     }
 
-    Future< local::stream::Host> Host::localStreamHost()
+    Future< ip6::stream::Client> Host::ip6StreamClient()
     {
         if(!_impl)
         {
             return std::error_code(::net::error::general::implementation_down);
         }
 
-        auto *v = new StreamHost<local::Address>;
-        return local::stream::Host(*v);
+        auto *v = new StreamClient<ip6::Address>;
+        return ip6::stream::Client(*v);
+    }
+
+    Future< ip6::datagram::Channel> Host::ip6DatagramChannel()
+    {
+        if(!_impl)
+        {
+            return std::error_code(::net::error::general::implementation_down);
+        }
+
+        auto *v = new DatagramChannel<ip6::Address>;
+        return ip6::datagram::Channel(*v);
+    }
+
+    Future< local::stream::Server> Host::localStreamServer()
+    {
+        if(!_impl)
+        {
+            return std::error_code(::net::error::general::implementation_down);
+        }
+
+        auto *v = new StreamServer<local::Address>;
+        return local::stream::Server(*v);
+    }
+
+    Future< local::stream::Client> Host::localStreamClient()
+    {
+        if(!_impl)
+        {
+            return std::error_code(::net::error::general::implementation_down);
+        }
+
+        auto *v = new StreamClient<local::Address>;
+        return local::stream::Client(*v);
     }
 
     void HostHandlerFactory::createService(void *outFuture)

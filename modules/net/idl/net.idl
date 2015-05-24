@@ -20,17 +20,20 @@ scope net
     /////////////////////////////////////////////////////////
     iface Host
     {
-        in links:               ()              -> map<uint32, Link>;
+        in links:               ()                  -> map<uint32, Link>;
 
         out linkAdded:          (uint32 id, Link v);
 
-        in ip4StreamHost:       ()              -> ip4::stream::Host;
-        in ip4DatagramHost:     ()              -> ip4::datagram::Host;
+        in ip4StreamServer:     ()                  -> ip4::stream::Server;
+        in ip4StreamClient:     ()                  -> ip4::stream::Client;
+        in ip4DatagramChannel:  ()                  -> ip4::datagram::Channel;
 
-        in ip6StreamHost:       ()              -> ip6::stream::Host;
-        in ip6DatagramHost:     ()              -> ip6::datagram::Host;
+        in ip6StreamServer:     ()                  -> ip6::stream::Server;
+        in ip6StreamClient:     ()                  -> ip6::stream::Client;
+        in ip6DatagramChannel:  ()                  -> ip6::datagram::Channel;
 
-        in localStreamHost:     ()              -> local::stream::Host;
+        in localStreamServer:   ()                  -> local::stream::Server;
+        in localStreamClient:   ()                  -> local::stream::Client;
     }
 
     /////////////////////////////////////////////////////////

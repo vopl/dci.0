@@ -24,11 +24,17 @@ namespace handlers
         void dropImpl();
 
         Future<map<uint32, ::net::Link>> links();
-        Future< ip4::stream::Host> ip4StreamHost();
-        Future< ip4::datagram::Host> ip4DatagramHost();
-        Future< ip6::stream::Host> ip6StreamHost();
-        Future< ip6::datagram::Host> ip6DatagramHost();
-        Future< local::stream::Host> localStreamHost();
+
+        Future< ip4::stream::Server> ip4StreamServer();
+        Future< ip4::stream::Client> ip4StreamClient();
+        Future< ip4::datagram::Channel> ip4DatagramChannel();
+
+        Future< ip6::stream::Server> ip6StreamServer();
+        Future< ip6::stream::Client> ip6StreamClient();
+        Future< ip6::datagram::Channel> ip6DatagramChannel();
+
+        Future< local::stream::Server> localStreamServer();
+        Future< local::stream::Client> localStreamClient();
 
     private:
         ::impl::Host *_impl;

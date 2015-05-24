@@ -2,12 +2,6 @@
 scope datagram
 {
     /////////////////////////////////////////////////////////
-    iface Host
-    {
-        in mkChannel:   () -> Channel;
-    }
-
-    /////////////////////////////////////////////////////////
     iface Channel
     {
         in bind:            (Address v)         -> ();

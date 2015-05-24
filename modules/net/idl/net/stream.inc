@@ -2,13 +2,6 @@
 scope stream
 {
     /////////////////////////////////////////////////////////
-    iface Host
-    {
-        in mkServer:    () -> Server;
-        in mkClient:    () -> Client;
-    }
-
-    /////////////////////////////////////////////////////////
     iface Server
     {
         in bind:        (Address v) -> ();

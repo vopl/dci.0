@@ -21,11 +21,9 @@ set(SRC
     src/handlers/scopeSelector.hpp
 
     src/handlers/datagramChannel.hpp
-    src/handlers/datagramHost.hpp
 
     src/handlers/streamChannel.hpp
     src/handlers/streamClient.hpp
-    src/handlers/streamHost.hpp
     src/handlers/streamServer.hpp
 
     src/impl/host.hpp
