@@ -25,7 +25,7 @@ namespace dci { namespace poll { namespace impl
 
 
     private:
-        using LevelsUnit = std::chrono::duration<int64_t, std::ratio<1, 1000>>;
+        using LevelsUnit = std::chrono::duration<int64_t, std::ratio<1, 10000>>;
 
         std::chrono::steady_clock::time_point _now;
         timerEngine::Grid<4, 16> _grid;

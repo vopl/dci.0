@@ -35,22 +35,9 @@ namespace dci { namespace poll { namespace impl
 
     std::error_code Epoll::execute(std::chrono::milliseconds timeout)
     {
-        std::chrono::milliseconds timeoutms;
         if(timeout.count() < 0)
         {
-            timeoutms = std::chrono::milliseconds(-1);
-        }
-        else if(timeout.count() > 0)
-        {
-            timeoutms = std::chrono::duration_cast<std::chrono::milliseconds>(timeout);
-            if(!timeoutms.count())
-            {
-                timeoutms = std::chrono::milliseconds(1);
-            }
-        }
-        else
-        {
-            timeoutms = std::chrono::milliseconds(0);
+            timeout = std::chrono::milliseconds(-1);
         }
 
         epoll_event eventsBuffer[128];
@@ -58,7 +45,7 @@ namespace dci { namespace poll { namespace impl
             _fd,
             eventsBuffer,
             sizeof(eventsBuffer)/sizeof(eventsBuffer[0]),
-            timeoutms.count());
+            timeout.count());
 
         if(-1 == eventsAmount)
         {

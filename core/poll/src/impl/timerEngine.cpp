@@ -28,7 +28,7 @@ namespace dci { namespace poll { namespace impl
             return std::chrono::milliseconds::max();
         }
 
-        return LevelsUnit(next - now);
+        return std::chrono::duration_cast<std::chrono::milliseconds>(LevelsUnit(next - now));
     }
 
     void TimerEngine::update(Timer *t)
