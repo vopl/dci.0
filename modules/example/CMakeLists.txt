@@ -11,7 +11,7 @@ set(SRC
 
 
 ############################################################
-add_library(${PROJECT} MODULE
+add_library(${PROJECT} SHARED
     ${SRC}
     idl/talk.idl
 )
@@ -42,3 +42,11 @@ dciDefineModule(example
     IDL             ${IDL}
 )
 
+
+
+############################################################
+include(DciTest)
+dciTest(${PROJECT} mload
+    SRC test/probe.cpp
+    LINK ${PROJECT}
+)

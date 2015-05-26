@@ -11,6 +11,7 @@ set(INC
     include/dci/site/moduleInfo.hpp
     include/dci/site/serviceFactory.hpp
     include/dci/site/layoutProvider.hpp
+    include/dci/site/testHub.hpp
 )
 
 set(SRC
@@ -43,9 +44,11 @@ endif()
 include_directories(${Boost_INCLUDE_DIRS})
 
 
+############################################################
 add_library(${PROJECT} SHARED
     ${INC}  ${SRC}
     DciDefineModule.cmake
+    DciTest.cmake
 )
 set_property(TARGET ${PROJECT} PROPERTY CXX_STANDARD 14)
 set_property(TARGET ${PROJECT} PROPERTY CXX_STANDARD_REQUIRED ON)
@@ -58,17 +61,6 @@ target_link_libraries(${PROJECT}
     dl
 )
 target_link_libraries(${PROJECT} ${Boost_FILESYSTEM_LIBRARY})
-
-
-add_executable(${PROJECT}-executable
-    src/main.cpp
-)
-set_property(TARGET ${PROJECT}-executable PROPERTY OUTPUT_NAME ${PROJECT})
-set_property(TARGET ${PROJECT}-executable PROPERTY CXX_STANDARD 14)
-set_property(TARGET ${PROJECT}-executable PROPERTY CXX_STANDARD_REQUIRED ON)
-target_link_libraries(${PROJECT}-executable ${PROJECT})
-target_link_libraries(${PROJECT}-executable ${Boost_PROGRAM_OPTIONS_LIBRARY})
-
 
 include(DciHimpl)
 mkHimplLayouts(${PROJECT}
@@ -84,8 +76,42 @@ mkHimplLayouts(${PROJECT}
         ::dci::site::impl::Manager
 )
 
+############################################################
+add_executable(${PROJECT}-executable
+    src/main.cpp
+)
+set_property(TARGET ${PROJECT}-executable PROPERTY OUTPUT_NAME ${PROJECT})
+set_property(TARGET ${PROJECT}-executable PROPERTY CXX_STANDARD 14)
+set_property(TARGET ${PROJECT}-executable PROPERTY CXX_STANDARD_REQUIRED ON)
+target_link_libraries(${PROJECT}-executable ${PROJECT})
+target_link_libraries(${PROJECT}-executable ${Boost_PROGRAM_OPTIONS_LIBRARY})
 
+############################################################
+add_library(${PROJECT}-testHub-noenv    SHARED src/testHub.cpp)
+target_link_libraries(${PROJECT}-testHub-noenv dci-gtest)
+set_target_properties(${PROJECT}-testHub-noenv PROPERTIES CXX_STANDARD 14)
+set_target_properties(${PROJECT}-testHub-noenv PROPERTIES COMPILE_DEFINITIONS "DCI_SITE_TESTHUB_STAGE=noenv")
+
+add_library(${PROJECT}-testHub-min      MODULE src/testHub.cpp)
+target_link_libraries(${PROJECT}-testHub-min dci-gtest)
+set_target_properties(${PROJECT}-testHub-min PROPERTIES CXX_STANDARD 14)
+set_target_properties(${PROJECT}-testHub-min PROPERTIES COMPILE_DEFINITIONS "DCI_SITE_TESTHUB_STAGE=min")
+
+add_library(${PROJECT}-testHub-mload    MODULE src/testHub.cpp)
+target_link_libraries(${PROJECT}-testHub-mload dci-gtest)
+set_target_properties(${PROJECT}-testHub-mload PROPERTIES CXX_STANDARD 14)
+set_target_properties(${PROJECT}-testHub-mload PROPERTIES COMPILE_DEFINITIONS "DCI_SITE_TESTHUB_STAGE=mload")
+
+add_library(${PROJECT}-testHub-mstart   MODULE src/testHub.cpp)
+target_link_libraries(${PROJECT}-testHub-mstart dci-gtest)
+set_target_properties(${PROJECT}-testHub-mstart PROPERTIES CXX_STANDARD 14)
+set_target_properties(${PROJECT}-testHub-mstart PROPERTIES COMPILE_DEFINITIONS "DCI_SITE_TESTHUB_STAGE=mstart")
+
+
+
+############################################################
 if(COMMAND localinstall)
     localinstall(${PROJECT} include DROP_PREFIX include/ ${INC})
     localinstall(${PROJECT} share/cmake/Modules DciDefineModule.cmake)
+    localinstall(${PROJECT} share/cmake/Modules DciTest.cmake)
 endif()

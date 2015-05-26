@@ -7,6 +7,7 @@
 #include <dci/async/future.hpp>
 #include <dci/couple/runtime/iface.hpp>
 #include "error.hpp"
+#include <dci/site/testHub.hpp>
 
 namespace dci { namespace site
 {
@@ -23,11 +24,12 @@ namespace dci { namespace site
 
     public:
         static std::string generateManifest(const std::string &mainBinaryFullPath);
+        static int executeTest(int argc, char *argv[], testHub::Stage stage);
 
         Manager();
         ~Manager();
 
-        std::error_code run();
+        std::error_code run(int argc, char *argv[], testHub::Stage testStage);
         async::Future<std::error_code> stop();
 
         //outFuture is async::Future<std::error_code, ConcreteIface>

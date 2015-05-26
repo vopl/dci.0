@@ -3,6 +3,7 @@
 #include <dci/poll/functions.hpp>
 #include <dci/async.hpp>
 #include <dci/logger.hpp>
+#include <dci/gtest.hpp>
 
 #include <boost/filesystem/operations.hpp>
 #include <boost/filesystem/path.hpp>
@@ -10,6 +11,8 @@
 #include <cassert>
 #include <tuple>
 #include <iostream>
+
+#include <dlfcn.h>
 
 namespace fs = boost::filesystem;
 
@@ -27,7 +30,7 @@ namespace dci { namespace site { namespace impl
     {
     }
 
-    std::error_code Manager::run()
+    std::error_code Manager::run(int argc, char *argv[], testHub::Stage testStage)
     {
         switch(_workState)
         {
@@ -57,8 +60,21 @@ namespace dci { namespace site { namespace impl
 
         }
 
+        std::error_code testec{};
         _workState = WorkState::starting;
-        async::spawn([this](){
+        async::spawn([this, argc, argv, testStage, &testec](){
+
+            if(testHub::Stage::min == testStage)
+            {
+                if(Manager::executeTest(argc, argv, testStage, himpl::impl2Face<site::Manager>(this)))
+                {
+                    testec = make_error_code(err_general::test_failed);
+                }
+
+                _workState = WorkState::started;
+                stop();
+                return;
+            }
 
             std::error_code ec = initializeModules();
             if(ec)
@@ -72,6 +88,17 @@ namespace dci { namespace site { namespace impl
                 LOGE("load modules: "<<f.error());
             }
 
+            if(testHub::Stage::mload == testStage)
+            {
+                if(Manager::executeTest(argc, argv, testStage, himpl::impl2Face<site::Manager>(this)))
+                {
+                    testec = make_error_code(err_general::test_failed);
+                }
+                _workState = WorkState::started;
+                stop();
+                return;
+            }
+
             f = startModules();
             if(f.hasError())
             {
@@ -79,6 +106,16 @@ namespace dci { namespace site { namespace impl
             }
 
             _workState = WorkState::started;
+
+            if(testHub::Stage::mstart == testStage)
+            {
+                if(Manager::executeTest(argc, argv, testStage, himpl::impl2Face<site::Manager>(this)))
+                {
+                    testec = make_error_code(err_general::test_failed);
+                }
+                stop();
+                return;
+            }
         });
 
 
@@ -91,7 +128,19 @@ namespace dci { namespace site { namespace impl
             return ec;
         }
 
-        return poll::deinitialize();
+        ec = poll::deinitialize();
+        if(ec)
+        {
+            LOGE("poll deinitialize: "<<ec);
+            return ec;
+        }
+
+        if(testec)
+        {
+            return testec;
+        }
+
+        return std::error_code();
     }
 
     async::Future<std::error_code> Manager::stop()
@@ -165,6 +214,61 @@ namespace dci { namespace site { namespace impl
     std::string Manager::generateManifest(const std::string &mainBinaryFullPath)
     {
         return Module::generateManifest(mainBinaryFullPath);
+    }
+
+    int Manager::executeTest(int argc, char *argv[], testHub::Stage stage, site::Manager *manager)
+    {
+        const char *stageStr = nullptr;
+        switch(stage)
+        {
+        case testHub::Stage::noenv:
+            stageStr = "noenv";
+            break;
+        case testHub::Stage::min:
+            stageStr = "min";
+            break;
+        case testHub::Stage::mload:
+            stageStr = "mload";
+            break;
+        case testHub::Stage::mstart:
+            stageStr = "mstart";
+            break;
+        default:
+            assert(0);
+            abort();
+        }
+
+        std::string hubModuleName = "libdci-site-testHub-";
+        hubModuleName += stageStr;
+        hubModuleName += ".so";
+
+        void *hubModule = dlopen(hubModuleName.c_str(), RTLD_NOW | RTLD_LOCAL);
+        if(!hubModule)
+        {
+            LOGF("unable to load test hub module for stage "<<stageStr<<dlerror());
+            abort();
+            return -1;
+        }
+
+        int(*hubEntryPoint)(int, char *[], site::Manager *) = (int(*)(int, char *[], site::Manager*))dlsym(hubModule, "dciTestHubEntryPoint");
+        if(!hubEntryPoint)
+        {
+            dlclose(hubModule);
+            LOGF("missing entry point in test hub module for stage "<<stageStr);
+            abort();
+            return -1;
+        }
+
+        int res = hubEntryPoint(argc, argv, manager);
+
+        if(dlclose(hubModule))
+        {
+            LOGF("unable to unload test hub module for stage "<<stageStr<<dlerror());
+            abort();
+            return -1;
+        }
+
+        return res;
     }
 
     std::error_code Manager::createService(void *outFuture, const couple::runtime::Iid &iid)

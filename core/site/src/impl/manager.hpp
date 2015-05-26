@@ -5,6 +5,8 @@
 #include "module.hpp"
 #include <dci/site/serviceFactory.hpp>
 
+#include <dci/site/testHub.hpp>
+
 namespace dci { namespace site { namespace impl
 {
     enum class WorkState
@@ -21,11 +23,12 @@ namespace dci { namespace site { namespace impl
         Manager();
         ~Manager();
 
-        std::error_code run();
+        std::error_code run(int argc, char *argv[], testHub::Stage testStage);
         async::Future<std::error_code> stop();
 
     public:
         static std::string generateManifest(const std::string &mainBinaryFullPath);
+        static int executeTest(int argc, char *argv[], testHub::Stage stage, site::Manager *manager);
 
         //outFuture is async::Future<std::error_code, ConcreteIface>
         std::error_code createService(void *outFuture, const couple::runtime::Iid &iid);

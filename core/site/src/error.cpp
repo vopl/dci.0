@@ -40,6 +40,8 @@ namespace dci { namespace site
                     return "partial failed";
                 case err_general::not_found:
                     return "not found";
+                case err_general::test_failed:
+                    return "test failed";
                 }
 
                 return "dci.site.general error";

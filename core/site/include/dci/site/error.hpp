@@ -15,6 +15,7 @@ namespace dci { namespace site
         failed,
         partial_failed,
         not_found,
+        test_failed,
     };
 
     enum class err_module

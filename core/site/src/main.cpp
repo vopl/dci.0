@@ -1,6 +1,7 @@
 #include <cstdlib>
 
 #include <dci/site/manager.hpp>
+#include <dci/site/testHub.hpp>
 
 #include <dci/async.hpp>
 #include <dci/logger/logger.hpp>
@@ -84,13 +85,18 @@ int main(int argc, char *argv[])
                 po::value<std::string>(),
                 "output file name for genmanifest, rndsign"
             )
+            (
+                "test-stage",
+                po::value<std::string>(),
+                "stage for testing, one of noenv, min, mload, mstart"
+            )
             ;
 
     ////////////////////////////////////////////////////////////////////////////////
     po::variables_map vars;
     try
     {
-        po::store(po::command_line_parser(argc, argv).options(desc).run(), vars);
+        po::store(po::command_line_parser(argc, argv).options(desc).allow_unregistered().run(), vars);
     }
     catch(std::exception &e)
     {
@@ -105,9 +111,33 @@ int main(int argc, char *argv[])
     po::notify(vars);
 
     ////////////////////////////////////////////////////////////////////////////////
+    dci::site::testHub::Stage testStage = dci::site::testHub::Stage::null;
+    if(vars.count("test-stage"))
+    {
+        {
+            auto s  = vars["test-stage"].as<std::string>();
+
+                 if("noenv" == s)   testStage = dci::site::testHub::Stage::noenv;
+            else if("min" == s)     testStage = dci::site::testHub::Stage::min;
+            else if("mload" == s)   testStage = dci::site::testHub::Stage::mload;
+            else if("mstart" == s)  testStage = dci::site::testHub::Stage::mstart;
+            else
+            {
+                LOGF("unrecognized test stage: "<<s);
+                return EXIT_FAILURE;
+            }
+        }
+
+        if(dci::site::testHub::Stage::noenv == testStage)
+        {
+            return dci::site::Manager::executeTest(argc, argv, testStage);
+        }
+    }
+
     if(vars.count("version"))
     {
         std::cout << "this is a version info" << std::endl;
+        return EXIT_SUCCESS;
     }
 
     if(vars.count("help"))
@@ -142,8 +172,8 @@ int main(int argc, char *argv[])
         signal(SIGINT,  signalHandler);
         signal(SIGTERM, signalHandler);
 
-        std::error_code ec = manager->run();
-        if(ec)
+        std::error_code ec = manager->run(argc, argv, testStage);
+        if(ec && ec != dci::site::err_general::test_failed)
         {
             LOGE("run: "<<ec);
         }
@@ -156,7 +186,6 @@ int main(int argc, char *argv[])
 
         if(ec)
         {
-            LOGE(ec);
             return ec.value();
         }
     }

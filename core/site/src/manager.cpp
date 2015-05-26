@@ -10,6 +10,11 @@ namespace dci { namespace site
         return impl::Manager::generateManifest(mainBinaryFullPath);
     }
 
+    int Manager::executeTest(int argc, char *argv[], testHub::Stage stage)
+    {
+        return impl::Manager::executeTest(argc, argv, stage, nullptr);
+    }
+
     Manager::Manager()
         : himpl::FaceLayout<impl::Manager>()
     {
@@ -19,9 +24,9 @@ namespace dci { namespace site
     {
     }
 
-    std::error_code Manager::run()
+    std::error_code Manager::run(int argc, char *argv[], testHub::Stage testStage)
     {
-        return impl().run();
+        return impl().run(argc, argv, testStage);
     }
 
     async::Future<std::error_code> Manager::stop()

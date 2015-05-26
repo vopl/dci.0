@@ -41,7 +41,7 @@ set(SRC
 
 
 ############################################################
-add_library(${PROJECT} MODULE
+add_library(${PROJECT} SHARED
     ${IDL}
     ${SRC}
 )
@@ -67,4 +67,11 @@ dciDefineModule(net
     MAINTARGET      ${PROJECT}
     IMPLTARGETS
     IDL             ${IDL}
+)
+
+############################################################
+include(DciTest)
+dciTest(${PROJECT} mload
+    SRC test/probe.cpp
+    LINK ${PROJECT}
 )
