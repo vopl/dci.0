@@ -4,6 +4,7 @@
 #include LAYOUTPROVIDERFILE("layoutProvider.hpp")
 
 #include <dci/himpl/faceLayout.hpp>
+#include "api.hpp"
 
 namespace dci { namespace async
 {
@@ -12,7 +13,7 @@ namespace dci { namespace async
         class Pulser;
     }
 
-    class Pulser
+    class APIDCI_ASYNC Pulser
         : public himpl::FaceLayout<impl::Pulser>
     {
         Pulser(const Pulser &from) = delete;

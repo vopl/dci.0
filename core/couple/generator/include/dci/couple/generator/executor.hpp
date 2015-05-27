@@ -4,11 +4,12 @@
 #include <map>
 #include <system_error>
 #include <dci/couple/meta/library.hpp>
+#include "api.hpp"
 
 namespace dci { namespace couple { namespace generator
 {
 
-    struct Executor
+    struct APIDCI_COUPLE_GENERATOR Executor
     {
 
         virtual std::string name() = 0;

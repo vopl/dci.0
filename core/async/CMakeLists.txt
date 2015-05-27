@@ -133,6 +133,7 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR})
 ############################################################
 set(INC
     include/dci/async.hpp
+    include/dci/async/api.hpp
     include/dci/async/functions.hpp
     include/dci/async/mutex.hpp
     include/dci/async/event.hpp
@@ -256,14 +257,17 @@ target_link_libraries(${PROJECT}
 set_property(TARGET ${PROJECT} PROPERTY CXX_STANDARD 14)
 set_property(TARGET ${PROJECT} PROPERTY CXX_STANDARD_REQUIRED ON)
 
+include(dciApi)
+dciApiExport(${PROJECT})
+
 if(ASYNCSCHEDULER_CONTEXTENGINE_BOOSTCONTEXT)
     target_link_libraries(${PROJECT} ${Boost_CONTEXT_LIBRARY})
 endif()
 
 target_link_libraries(${PROJECT} ${Boost_SYSTEM_LIBRARY})
 
-include(DciHimpl)
-mkHimplLayouts(${PROJECT}
+include(dciHimpl)
+dciMakeHimplLayouts(${PROJECT}
     OUTPUT
         ${CMAKE_CURRENT_SOURCE_DIR}/include/dci/async/layoutProvider.hpp
 

@@ -1,5 +1,7 @@
 #include <dci/couple/meta/inheritable.hpp>
 #include "impl/inheritable.hpp"
+#include <dci/couple/meta/struct.hpp>
+#include <dci/couple/meta/iface.hpp>
 
 namespace dci { namespace couple { namespace meta
 {

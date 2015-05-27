@@ -1,10 +1,11 @@
 #pragma once
 
+#include "api.hpp"
 #include <cstdint>
 
 namespace dci { namespace couple { namespace runtime
 {
-    class IfaceWire
+    class APIDCI_COUPLE_RUNTIME IfaceWire
     {
         IfaceWire() = delete;
         void operator=(const IfaceWire&) = delete;

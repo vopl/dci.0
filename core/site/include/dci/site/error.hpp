@@ -1,5 +1,6 @@
 #pragma once
 
+#include "api.hpp"
 #include <system_error>
 
 namespace dci { namespace site
@@ -28,11 +29,11 @@ namespace dci { namespace site
         bad_info_file,
     };
 
-    const std::error_category& err_general_category();
-    const std::error_category& err_module_category();
+    APIDCI_SITE const std::error_category& err_general_category();
+    APIDCI_SITE const std::error_category& err_module_category();
 
-    std::error_code make_error_code(err_general e);
-    std::error_code make_error_code(err_module e);
+    APIDCI_SITE std::error_code make_error_code(err_general e);
+    APIDCI_SITE std::error_code make_error_code(err_module e);
 }}
 
 namespace std

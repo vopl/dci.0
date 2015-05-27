@@ -13,7 +13,7 @@ namespace dci { namespace couple { namespace runtime
         class SignBuilder;
     }
 
-    class SignBuilder
+    class APIDCI_COUPLE_RUNTIME SignBuilder
         : public himpl::FaceLayout<impl::SignBuilder>
     {
     public:

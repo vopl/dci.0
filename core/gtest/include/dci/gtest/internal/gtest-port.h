@@ -754,15 +754,17 @@ using ::std::tuple_size;
 
 #endif  // GTEST_HAS_SEH
 
-#ifdef _MSC_VER
+//#ifdef _MSC_VER
 
-# if GTEST_LINKED_AS_SHARED_LIBRARY
-#  define GTEST_API_ __declspec(dllimport)
-# elif GTEST_CREATE_SHARED_LIBRARY
-#  define GTEST_API_ __declspec(dllexport)
-# endif
+//# if GTEST_LINKED_AS_SHARED_LIBRARY
+//#  define GTEST_API_ __declspec(dllimport)
+//# elif GTEST_CREATE_SHARED_LIBRARY
+//#  define GTEST_API_ __declspec(dllexport)
+//# endif
 
-#endif  // _MSC_VER
+//#endif  // _MSC_VER
+#include "../api.hpp"
+#define GTEST_API_ APIDCI_GTEST
 
 #ifndef GTEST_API_
 # define GTEST_API_

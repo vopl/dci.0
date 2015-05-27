@@ -5,7 +5,7 @@
 
 namespace dci { namespace couple { namespace meta
 {
-    class ErrcValue
+    class APIDCI_COUPLE_META ErrcValue
         : public himpl::FaceLayout<impl::ErrcValue, Named, Signed>
     {
     public:

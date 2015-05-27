@@ -22,7 +22,7 @@ namespace dci { namespace site { namespace testHub
 
 extern "C"
 {
-    int dciTestHubEntryPoint(int argc, char *argv[], dci::site::Manager *manager)
+    DCI_API_EXPORT int dciTestHubEntryPoint(int argc, char *argv[], dci::site::Manager *manager)
     {
         dci::site::testHub::g_manager = manager;
         testing::InitGoogleTest(&argc, argv);

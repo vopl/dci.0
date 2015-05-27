@@ -18,9 +18,9 @@ namespace dci { namespace async { namespace details
 {
 
     ////////////////////////////////////////////////////////////////////////////////////
-    impl::SyncronizerPtr syncronizer(Mutex &v);
-    impl::SyncronizerPtr syncronizer(Event &v);
-    impl::SyncronizerPtr syncronizer(Pulser &v);
+    APIDCI_ASYNC impl::SyncronizerPtr syncronizer(Mutex &v);
+    APIDCI_ASYNC impl::SyncronizerPtr syncronizer(Event &v);
+    APIDCI_ASYNC impl::SyncronizerPtr syncronizer(Pulser &v);
 
     template <class... TT>
     impl::SyncronizerPtr syncronizer(Future<TT...> &v)
@@ -29,8 +29,8 @@ namespace dci { namespace async { namespace details
     }
 
     ////////////////////////////////////////////////////////////////////////////////////
-    std::size_t acquireAny(impl::SyncronizerPtr *syncronizers, std::size_t amount);
-    void acquireAll(impl::SyncronizerPtr *syncronizers, std::size_t amount);
+    APIDCI_ASYNC std::size_t acquireAny(impl::SyncronizerPtr *syncronizers, std::size_t amount);
+    APIDCI_ASYNC void acquireAll(impl::SyncronizerPtr *syncronizers, std::size_t amount);
 
     ////////////////////////////////////////////////////////////////////////////////////
     inline std::size_t acquerablesAmount()

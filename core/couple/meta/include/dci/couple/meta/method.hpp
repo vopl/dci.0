@@ -12,7 +12,7 @@ namespace dci { namespace couple { namespace meta
         out
     };
 
-    class Method
+    class APIDCI_COUPLE_META Method
         : public himpl::FaceLayout<impl::Method, Named, Signed, Compound<Attribute>, Compound<Type>>
     {
     public:

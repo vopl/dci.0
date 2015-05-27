@@ -7,6 +7,7 @@ project(${PROJECT})
 ############################################################
 set(INC
     include/dci/poll.hpp
+    include/dci/poll/api.hpp
     include/dci/poll/layoutProvider.hpp
     include/dci/poll/error.hpp
     include/dci/poll/descriptor.hpp
@@ -58,13 +59,16 @@ add_library(${PROJECT} SHARED
 set_property(TARGET ${PROJECT} PROPERTY CXX_STANDARD 14)
 set_property(TARGET ${PROJECT} PROPERTY CXX_STANDARD_REQUIRED ON)
 
+include(dciApi)
+dciApiExport(${PROJECT})
+
 target_link_libraries(${PROJECT}
     dci-logger
     dci-himpl
     dci-async)
 
-include(DciHimpl)
-mkHimplLayouts(${PROJECT}
+include(dciHimpl)
+dciMakeHimplLayouts(${PROJECT}
     OUTPUT
         ${CMAKE_CURRENT_SOURCE_DIR}/include/dci/poll/layoutProvider.hpp
 

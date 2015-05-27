@@ -287,5 +287,5 @@ private:
 
 extern "C"
 {
-    dci::site::ModuleEntry *dciModuleEntry = &entry;
+    DCI_API_EXPORT dci::site::ModuleEntry *dciModuleEntry = &entry;
 }

@@ -4,6 +4,7 @@
 #include LAYOUTPROVIDERFILE("layoutProvider.hpp")
 
 #include <dci/himpl/faceLayout.hpp>
+#include "api.hpp"
 
 namespace dci { namespace async
 {
@@ -12,7 +13,7 @@ namespace dci { namespace async
         class Event;
     }
 
-    class Event
+    class APIDCI_ASYNC Event
         : public himpl::FaceLayout<impl::Event>
     {
         Event(const Event &from) = delete;

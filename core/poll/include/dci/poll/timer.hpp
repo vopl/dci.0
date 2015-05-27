@@ -4,6 +4,7 @@
 #include <dci/himpl/layoutProvider.hpp>
 #include LAYOUTPROVIDERFILE("layoutProvider.hpp")
 
+#include "api.hpp"
 #include <dci/async.hpp>
 #include <chrono>
 
@@ -14,7 +15,7 @@ namespace dci { namespace poll
         class Timer;
     }
 
-    class Timer
+    class APIDCI_POLL Timer
         : public himpl::FaceLayout<impl::Timer>
     {
         Timer(const Timer &) = delete;

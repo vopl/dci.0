@@ -19,7 +19,7 @@
 
 namespace dci { namespace couple { namespace meta
 {
-    struct CommitError
+    struct APIDCI_COUPLE_META CommitError
     {
         std::error_code _ec;
         std::string     _comment;
@@ -28,7 +28,7 @@ namespace dci { namespace couple { namespace meta
     };
 
 
-    class LibraryBuilder
+    class APIDCI_COUPLE_META LibraryBuilder
         : public himpl::FaceLayout<impl::LibraryBuilder>
     {
     public:

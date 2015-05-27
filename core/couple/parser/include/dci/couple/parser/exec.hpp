@@ -9,5 +9,5 @@
 
 namespace dci { namespace couple { namespace parser
 {
-    bool exec(const std::vector<std::string> &fileNames, const Config &cfg, std::vector<ErrorInfo> &errs, meta::LibraryBuilder &lb);
+    APIDCI_COUPLE_PARSER bool exec(const std::vector<std::string> &fileNames, const Config &cfg, std::vector<ErrorInfo> &errs, meta::LibraryBuilder &lb);
 }}}

@@ -4,6 +4,7 @@
 #include LAYOUTPROVIDERFILE("layoutProvider.hpp")
 #include <dci/himpl/faceLayout.hpp>
 
+#include "api.hpp"
 #include <type_traits>
 #include <cstdlib>
 #include <cassert>
@@ -27,7 +28,7 @@ namespace dci { namespace couple { namespace meta
         variant
     };
 
-    class Type
+    class APIDCI_COUPLE_META Type
         : public himpl::FaceLayout<impl::Type>
     {
     public:

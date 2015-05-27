@@ -5,7 +5,7 @@
 
 namespace dci { namespace couple { namespace meta
 {
-    class Set
+    class APIDCI_COUPLE_META Set
         : public himpl::FaceLayout<impl::Set, Signed, Container1>
     {
     public:

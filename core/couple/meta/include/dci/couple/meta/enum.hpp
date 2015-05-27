@@ -8,7 +8,7 @@
 
 namespace dci { namespace couple { namespace meta
 {
-    class Enum
+    class APIDCI_COUPLE_META Enum
         : public himpl::FaceLayout<impl::Enum, Type, Named, Scoped, Compound<EnumValue>>
     {
     public:

@@ -8,7 +8,7 @@
 
 namespace dci { namespace couple { namespace meta
 {
-    class Iface
+    class APIDCI_COUPLE_META Iface
         : public himpl::FaceLayout<impl::Iface, Type, Scope, Compound<Method>, Inheritable<Iface>>
     {
     public:

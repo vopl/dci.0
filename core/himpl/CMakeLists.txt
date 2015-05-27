@@ -14,14 +14,14 @@ set(INC
 
 add_library(${PROJECT} STATIC
     ${INC}
-    DciHimpl.cmake
+    dciHimpl.cmake
 )
 set_target_properties(${PROJECT} PROPERTIES LINKER_LANGUAGE CXX)
 
 
 if(COMMAND localinstall)
     localinstall(${PROJECT} include DROP_PREFIX include/ ${INC})
-    localinstall(${PROJECT} share/cmake/Modules DciHimpl.cmake)
+    localinstall(${PROJECT} share/cmake/Modules dciHimpl.cmake)
 endif()
 
 

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "api.hpp"
 #include <system_error>
 
 namespace dci { namespace poll
@@ -15,8 +16,8 @@ namespace dci { namespace poll
         bad_descriptor,
     };
 
-    const std::error_category& err_general_category();
-    std::error_code make_error_code(err_general e);
+    APIDCI_POLL const std::error_category& err_general_category();
+    APIDCI_POLL std::error_code make_error_code(err_general e);
 }}
 
 namespace std

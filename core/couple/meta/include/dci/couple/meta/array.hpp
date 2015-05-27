@@ -7,7 +7,7 @@
 
 namespace dci { namespace couple { namespace meta
 {
-    class Array
+    class APIDCI_COUPLE_META Array
         : public himpl::FaceLayout<impl::Array, Signed, Container1>
     {
     public:

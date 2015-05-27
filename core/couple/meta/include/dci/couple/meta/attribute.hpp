@@ -5,7 +5,7 @@
 
 namespace dci { namespace couple { namespace meta
 {
-    class Attribute
+    class APIDCI_COUPLE_META Attribute
         : public himpl::FaceLayout<impl::Attribute, Named, Signed>
     {
     public:

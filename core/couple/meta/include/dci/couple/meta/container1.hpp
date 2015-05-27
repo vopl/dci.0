@@ -4,7 +4,7 @@
 
 namespace dci { namespace couple { namespace meta
 {
-    class Container1
+    class APIDCI_COUPLE_META Container1
         : public himpl::FaceLayout<impl::Container1, Type>
     {
     public:

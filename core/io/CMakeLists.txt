@@ -84,8 +84,8 @@ target_link_libraries(${PROJECT}
     dci-logger
     dci-himpl)
 
-include(DciHimpl)
-mkHimplLayouts(${PROJECT}
+include(dciHimpl)
+dciMakeHimplLayouts(${PROJECT}
     OUTPUT
         ${CMAKE_CURRENT_SOURCE_DIR}/include/dci/io/layoutProvider.hpp
 

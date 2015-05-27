@@ -3,6 +3,8 @@ set(PROJECT dci-site)
 project(${PROJECT})
 
 set(INC
+    include/dci/site.hpp
+    include/dci/site/api.hpp
     include/dci/site/error.hpp
     include/dci/site/manager.hpp
     include/dci/site/moduleId.hpp
@@ -47,11 +49,14 @@ include_directories(${Boost_INCLUDE_DIRS})
 ############################################################
 add_library(${PROJECT} SHARED
     ${INC}  ${SRC}
-    DciDefineModule.cmake
-    DciTest.cmake
+    dciDefineModule.cmake
+    dciTest.cmake
 )
 set_property(TARGET ${PROJECT} PROPERTY CXX_STANDARD 14)
 set_property(TARGET ${PROJECT} PROPERTY CXX_STANDARD_REQUIRED ON)
+
+include(dciApi)
+dciApiExport(${PROJECT})
 
 target_link_libraries(${PROJECT}
     dci-mm
@@ -62,8 +67,8 @@ target_link_libraries(${PROJECT}
 )
 target_link_libraries(${PROJECT} ${Boost_FILESYSTEM_LIBRARY})
 
-include(DciHimpl)
-mkHimplLayouts(${PROJECT}
+include(dciHimpl)
+dciMakeHimplLayouts(${PROJECT}
     OUTPUT
         ${CMAKE_CURRENT_SOURCE_DIR}/include/dci/site/layoutProvider.hpp
 
@@ -92,17 +97,17 @@ target_link_libraries(${PROJECT}-testHub-noenv dci-gtest)
 set_target_properties(${PROJECT}-testHub-noenv PROPERTIES CXX_STANDARD 14)
 set_target_properties(${PROJECT}-testHub-noenv PROPERTIES COMPILE_DEFINITIONS "DCI_SITE_TESTHUB_STAGE=noenv")
 
-add_library(${PROJECT}-testHub-min      MODULE src/testHub.cpp)
+add_library(${PROJECT}-testHub-min      SHARED src/testHub.cpp)
 target_link_libraries(${PROJECT}-testHub-min dci-gtest)
 set_target_properties(${PROJECT}-testHub-min PROPERTIES CXX_STANDARD 14)
 set_target_properties(${PROJECT}-testHub-min PROPERTIES COMPILE_DEFINITIONS "DCI_SITE_TESTHUB_STAGE=min")
 
-add_library(${PROJECT}-testHub-mload    MODULE src/testHub.cpp)
+add_library(${PROJECT}-testHub-mload    SHARED src/testHub.cpp)
 target_link_libraries(${PROJECT}-testHub-mload dci-gtest)
 set_target_properties(${PROJECT}-testHub-mload PROPERTIES CXX_STANDARD 14)
 set_target_properties(${PROJECT}-testHub-mload PROPERTIES COMPILE_DEFINITIONS "DCI_SITE_TESTHUB_STAGE=mload")
 
-add_library(${PROJECT}-testHub-mstart   MODULE src/testHub.cpp)
+add_library(${PROJECT}-testHub-mstart   SHARED src/testHub.cpp)
 target_link_libraries(${PROJECT}-testHub-mstart dci-gtest)
 set_target_properties(${PROJECT}-testHub-mstart PROPERTIES CXX_STANDARD 14)
 set_target_properties(${PROJECT}-testHub-mstart PROPERTIES COMPILE_DEFINITIONS "DCI_SITE_TESTHUB_STAGE=mstart")
@@ -112,6 +117,6 @@ set_target_properties(${PROJECT}-testHub-mstart PROPERTIES COMPILE_DEFINITIONS "
 ############################################################
 if(COMMAND localinstall)
     localinstall(${PROJECT} include DROP_PREFIX include/ ${INC})
-    localinstall(${PROJECT} share/cmake/Modules DciDefineModule.cmake)
-    localinstall(${PROJECT} share/cmake/Modules DciTest.cmake)
+    localinstall(${PROJECT} share/cmake/Modules dciDefineModule.cmake)
+    localinstall(${PROJECT} share/cmake/Modules dciTest.cmake)
 endif()

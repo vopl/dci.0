@@ -8,6 +8,7 @@ cmake_minimum_required(VERSION 3.1.0 FATAL_ERROR)
 ############################################################
 set(INC
     include/dci/mm.hpp
+    include/dci/mm/api.hpp
     include/dci/mm/functions.hpp
     include/dci/mm/config.hpp
     include/dci/mm/stack.hpp
@@ -74,6 +75,9 @@ add_library(${PROJECT} SHARED
 
 set_target_properties(${PROJECT} PROPERTIES CXX_STANDARD 14)
 set_target_properties(${PROJECT} PROPERTIES CXX_STANDARD_REQUIRED ON)
+
+include(dciApi)
+dciApiExport(${PROJECT})
 
 
 if(COMMAND localinstall)

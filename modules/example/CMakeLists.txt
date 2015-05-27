@@ -23,7 +23,7 @@ set_property(TARGET ${PROJECT} PROPERTY CXX_STANDARD_REQUIRED ON)
 
 
 
-include(DciUseIdl)
+include(dciUseIdl)
 dciUseIdl(${PROJECT}
     GEN cpp_basis
     INCLUDE ${CMAKE_CURRENT_SOURCE_DIR}/idl
@@ -35,7 +35,7 @@ dciUseIdl(${PROJECT}
 )
 
 
-include(DciDefineModule)
+include(dciDefineModule)
 dciDefineModule(example
     MAINTARGET      ${PROJECT}
     IMPLTARGETS
@@ -45,7 +45,7 @@ dciDefineModule(example
 
 
 ############################################################
-include(DciTest)
+include(dciTest)
 dciTest(${PROJECT} mload
     SRC test/probe.cpp
     LINK ${PROJECT}

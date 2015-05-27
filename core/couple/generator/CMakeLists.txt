@@ -6,6 +6,7 @@ project(${PROJECT})
 
 ############################################################
 set(INC
+    include/dci/couple/generator/api.hpp
     include/dci/couple/generator/executor.hpp
 )
 
@@ -57,6 +58,9 @@ add_library(${PROJECT} SHARED
 )
 set_property(TARGET ${PROJECT} PROPERTY CXX_STANDARD 14)
 set_property(TARGET ${PROJECT} PROPERTY CXX_STANDARD_REQUIRED ON)
+
+include(dciApi)
+dciApiExport(${PROJECT})
 
 target_link_libraries(${PROJECT}
     dci-himpl

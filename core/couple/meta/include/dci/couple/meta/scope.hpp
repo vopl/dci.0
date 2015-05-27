@@ -6,7 +6,7 @@
 
 namespace dci { namespace couple { namespace meta
 {
-    class Scope
+    class APIDCI_COUPLE_META Scope
         : public himpl::FaceLayout<impl::Scope, Named, Scoped, Compound<Struct>, Compound<Variant>, Compound<Enum>, Compound<Errc>, Compound<Alias>, Compound<Iface>, Compound<Scope>>
     {
     public:

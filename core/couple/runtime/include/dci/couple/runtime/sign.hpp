@@ -4,6 +4,7 @@
 #include LAYOUTPROVIDERFILE("layoutProvider.hpp")
 #include <dci/himpl/faceLayout.hpp>
 
+#include "api.hpp"
 #include <string>
 #include <cstdint>
 
@@ -14,7 +15,7 @@ namespace dci { namespace couple { namespace runtime
         class Sign;
     }
 
-    class Sign
+    class APIDCI_COUPLE_RUNTIME Sign
         : public himpl::FaceLayout<impl::Sign>
     {
     public:

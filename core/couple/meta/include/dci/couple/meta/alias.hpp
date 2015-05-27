@@ -6,7 +6,7 @@
 
 namespace dci { namespace couple { namespace meta
 {
-    class Alias
+    class APIDCI_COUPLE_META Alias
         : public himpl::FaceLayout<impl::Alias, Type, Named, Scoped>
     {
     public:

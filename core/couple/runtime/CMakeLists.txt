@@ -5,6 +5,7 @@ project(${PROJECT})
 ############################################################
 set(INC
     include/dci/couple/runtime.hpp
+    include/dci/couple/runtime/api.hpp
     include/dci/couple/runtime/error.hpp
 
     include/dci/couple/runtime/sign.hpp
@@ -62,6 +63,9 @@ add_library(${PROJECT} SHARED
 set_property(TARGET ${PROJECT} PROPERTY CXX_STANDARD 14)
 set_property(TARGET ${PROJECT} PROPERTY CXX_STANDARD_REQUIRED ON)
 
+include(dciApi)
+dciApiExport(${PROJECT})
+
 target_link_libraries(${PROJECT}
     dci-mm
     dci-async
@@ -69,8 +73,8 @@ target_link_libraries(${PROJECT}
     dci-himpl)
 
 ############################################################
-include(DciHimpl)
-mkHimplLayouts(${PROJECT}
+include(dciHimpl)
+dciMakeHimplLayouts(${PROJECT}
     OUTPUT
         ${CMAKE_CURRENT_SOURCE_DIR}/include/dci/couple/runtime/layoutProvider.hpp
 

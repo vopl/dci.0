@@ -7,7 +7,7 @@
 
 namespace dci { namespace couple { namespace meta
 {
-    class Variant
+    class APIDCI_COUPLE_META Variant
         : public himpl::FaceLayout<impl::Variant, Type, Scope, Compound<Attribute>>
     {
     public:

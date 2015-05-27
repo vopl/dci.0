@@ -7,7 +7,7 @@ project(${PROJECT})
 ############################################################
 set(SRC
     src/main.cpp
-    DciUseIdl.cmake
+    dciUseIdl.cmake
 )
 
 
@@ -37,5 +37,5 @@ target_link_libraries(${PROJECT}
 )
 
 if(COMMAND localinstall)
-    localinstall(${PROJECT} share/cmake/Modules DciUseIdl.cmake)
+    localinstall(${PROJECT} share/cmake/Modules dciUseIdl.cmake)
 endif()

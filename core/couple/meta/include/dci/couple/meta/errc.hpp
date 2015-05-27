@@ -8,7 +8,7 @@
 
 namespace dci { namespace couple { namespace meta
 {
-    class Errc
+    class APIDCI_COUPLE_META Errc
         : public himpl::FaceLayout<impl::Errc, Type, Named, Scoped, Compound<ErrcValue>>
     {
     public:

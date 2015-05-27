@@ -27,7 +27,7 @@ namespace dci { namespace couple { namespace meta
         real64,
     };
 
-    class Primitive
+    class APIDCI_COUPLE_META Primitive
         : public himpl::FaceLayout<impl::Primitive, Type, Signed>
     {
     public:

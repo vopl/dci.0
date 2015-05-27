@@ -1,5 +1,6 @@
 #pragma once
 
+#include "api.hpp"
 #include <system_error>
 
 namespace dci { namespace couple { namespace runtime
@@ -9,8 +10,8 @@ namespace dci { namespace couple { namespace runtime
         call_not_connected = 1,
     };
 
-    const std::error_category& err_general_category();
-    std::error_code make_error_code(err_general e);
+    APIDCI_COUPLE_RUNTIME const std::error_category& err_general_category();
+    APIDCI_COUPLE_RUNTIME std::error_code make_error_code(err_general e);
 
 }}}
 

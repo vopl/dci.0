@@ -5,7 +5,7 @@
 
 namespace dci { namespace couple { namespace meta
 {
-    class Map
+    class APIDCI_COUPLE_META Map
         : public himpl::FaceLayout<impl::Map, Signed, Container2>
     {
     public:

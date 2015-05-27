@@ -16,7 +16,7 @@ namespace dci { namespace site
         class Manager;
     }
 
-    class Manager
+    class APIDCI_SITE Manager
         : public himpl::FaceLayout<impl::Manager>
     {
         Manager(const Manager &) = delete;

@@ -28,7 +28,7 @@ namespace dci { namespace couple { namespace meta
         malformedFile,
     };
 
-    class Library
+    class APIDCI_COUPLE_META Library
         : public himpl::FaceLayout<impl::Library, Signed>
     {
     public:

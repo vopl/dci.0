@@ -6,6 +6,8 @@ project(${PROJECT})
 
 ############################################################
 set(INC
+    include/dci/couple/meta/api.hpp
+
     include/dci/couple/meta/alias.hpp
     include/dci/couple/meta/array.hpp
     include/dci/couple/meta/attribute.hpp
@@ -143,6 +145,11 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 add_library(${PROJECT} SHARED
     ${INC}                  ${SRC}
 )
+set_property(TARGET ${PROJECT} PROPERTY CXX_STANDARD 14)
+set_property(TARGET ${PROJECT} PROPERTY CXX_STANDARD_REQUIRED ON)
+
+include(dciApi)
+dciApiExport(${PROJECT})
 
 target_link_libraries(${PROJECT}
     dci-himpl
@@ -150,12 +157,9 @@ target_link_libraries(${PROJECT}
     dci-couple-runtime
     dci-logger)
 
-set_property(TARGET ${PROJECT} PROPERTY CXX_STANDARD 14)
-set_property(TARGET ${PROJECT} PROPERTY CXX_STANDARD_REQUIRED ON)
-
 ############################################################
-include(DciHimpl)
-mkHimplLayouts(${PROJECT}
+include(dciHimpl)
+dciMakeHimplLayouts(${PROJECT}
     OUTPUT
         ${CMAKE_CURRENT_SOURCE_DIR}/include/dci/couple/meta/layoutProvider.hpp
 

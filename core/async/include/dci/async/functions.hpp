@@ -1,12 +1,13 @@
 #pragma once
 
 #include "details/taskInstance.hpp"
+#include "api.hpp"
 
 namespace dci { namespace async
 {
-    void yield();
+    APIDCI_ASYNC void yield();
 
-    bool executeReadyCoros();
+    APIDCI_ASYNC bool executeReadyCoros();
 
     ////////////////////////////////////////////////////////////////////////////////
     template<class F, class... Args>

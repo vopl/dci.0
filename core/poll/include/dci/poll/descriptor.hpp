@@ -4,6 +4,7 @@
 #include <dci/himpl/layoutProvider.hpp>
 #include LAYOUTPROVIDERFILE("layoutProvider.hpp")
 
+#include "api.hpp"
 #include <dci/async.hpp>
 #include <dci/mm.hpp>
 #include <system_error>
@@ -15,7 +16,7 @@ namespace dci { namespace poll
         class Descriptor;
     }
 
-    class Descriptor final
+    class APIDCI_POLL Descriptor final
         : public himpl::FaceLayout<impl::Descriptor>
         , public mm::NewDelete<Descriptor>
     {

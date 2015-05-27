@@ -5,7 +5,7 @@
 
 namespace dci { namespace couple { namespace meta
 {
-    class EnumValue
+    class APIDCI_COUPLE_META EnumValue
         : public himpl::FaceLayout<impl::EnumValue, Named, Signed>
     {
     public:

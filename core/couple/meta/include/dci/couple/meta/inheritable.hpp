@@ -4,12 +4,13 @@
 #include LAYOUTPROVIDERFILE("layoutProvider.hpp")
 
 #include <dci/himpl/faceLayout.hpp>
+#include "api.hpp"
 #include <vector>
 
 namespace dci { namespace couple { namespace meta
 {
     template <class B>
-    class Inheritable
+    class APIDCI_COUPLE_META Inheritable
         : public himpl::FaceLayout<impl::Inheritable<B>>
     {
     public:

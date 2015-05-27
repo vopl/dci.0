@@ -100,5 +100,5 @@ struct Entry
 
 extern "C"
 {
-    ModuleEntry *dciModuleEntry = &entry;
+    DCI_API_EXPORT ModuleEntry *dciModuleEntry = &entry;
 }

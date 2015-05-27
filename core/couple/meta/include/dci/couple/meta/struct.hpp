@@ -8,7 +8,7 @@
 
 namespace dci { namespace couple { namespace meta
 {
-    class Struct
+    class APIDCI_COUPLE_META Struct
         : public himpl::FaceLayout<impl::Struct, Type, Scope, Compound<Attribute>, Inheritable<Struct>>
     {
     public:

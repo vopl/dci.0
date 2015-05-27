@@ -4,11 +4,12 @@
 #include LAYOUTPROVIDERFILE("layoutProvider.hpp")
 #include <dci/himpl/faceLayout.hpp>
 
+#include "api.hpp"
 #include <string>
 
 namespace dci { namespace couple { namespace meta
 {
-    class Named
+    class APIDCI_COUPLE_META Named
         : public himpl::FaceLayout<impl::Named>
     {
     public:

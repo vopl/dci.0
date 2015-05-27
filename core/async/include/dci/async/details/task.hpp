@@ -4,6 +4,7 @@
 #include LAYOUTPROVIDERFILE("../layoutProvider.hpp")
 #include <dci/himpl/faceLayout.hpp>
 
+#include "../api.hpp"
 
 namespace dci { namespace async { namespace impl
 {
@@ -14,7 +15,7 @@ namespace dci { namespace async { namespace details
 {
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
-    class Task
+    class APIDCI_ASYNC Task
         : public himpl::FaceLayout<impl::Task>
     {
         Task(const Task &) = delete;
@@ -33,5 +34,5 @@ namespace dci { namespace async { namespace details
         using himpl::FaceLayout<impl::Task>::impl;
     };
 
-    void spawnTask(details::Task *task);
+    APIDCI_ASYNC void spawnTask(details::Task *task);
 }}}

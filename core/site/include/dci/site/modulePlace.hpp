@@ -4,6 +4,7 @@
 #include <dci/himpl/layoutProvider.hpp>
 #include LAYOUTPROVIDERFILE("layoutProvider.hpp")
 
+#include "api.hpp"
 #include <string>
 
 namespace dci { namespace site
@@ -13,7 +14,7 @@ namespace dci { namespace site
         class ModulePlace;
     }
 
-    class ModulePlace
+    class APIDCI_SITE ModulePlace
         : public himpl::FaceLayout<impl::ModulePlace>
     {
 

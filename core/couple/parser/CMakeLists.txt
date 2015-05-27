@@ -16,6 +16,7 @@ include_directories(${Boost_INCLUDE_DIRS})
 
 ############################################################
 set(INC
+    include/dci/couple/parser/api.hpp
     include/dci/couple/parser/exec.hpp
     include/dci/couple/parser/config.hpp
     include/dci/couple/parser/errorInfo.hpp
@@ -101,6 +102,9 @@ add_library(${PROJECT} SHARED
 set_property(TARGET ${PROJECT} PROPERTY CXX_STANDARD 14)
 set_property(TARGET ${PROJECT} PROPERTY CXX_STANDARD_REQUIRED ON)
 
+include(dciApi)
+dciApiExport(${PROJECT})
+
 target_link_libraries(${PROJECT} ${Boost_FILESYSTEM_LIBRARY} ${Boost_SYSTEM_LIBRARY})
 
 target_link_libraries(${PROJECT}
@@ -110,7 +114,7 @@ target_link_libraries(${PROJECT}
     dci-couple-meta
     dci-logger)
 
-include(DciPch)
+include(dciPch)
 use_pch(${PROJECT} ${CMAKE_CURRENT_SOURCE_DIR}/src/pch.hpp ${SRC})
 
 if(COMMAND localinstall)

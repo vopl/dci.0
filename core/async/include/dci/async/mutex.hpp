@@ -4,6 +4,7 @@
 #include LAYOUTPROVIDERFILE("layoutProvider.hpp")
 
 #include <dci/himpl/faceLayout.hpp>
+#include "api.hpp"
 
 namespace dci { namespace async
 {
@@ -12,7 +13,7 @@ namespace dci { namespace async
         class Mutex;
     }
 
-    class Mutex
+    class APIDCI_ASYNC Mutex
         : public himpl::FaceLayout<impl::Mutex>
     {
         Mutex(const Mutex &from) = delete;

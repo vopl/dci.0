@@ -6,6 +6,8 @@ project(${PROJECT})
 set(INC
     include/dci/gtest.hpp
 
+    include/dci/gtest/api.hpp
+
     include/dci/gtest/gtest-death-test.h
     include/dci/gtest/gtest-message.h
     include/dci/gtest/gtest-param-test.h
@@ -54,6 +56,9 @@ add_library(${PROJECT} SHARED
 )
 set_property(TARGET ${PROJECT} PROPERTY CXX_STANDARD 14)
 set_property(TARGET ${PROJECT} PROPERTY CXX_STANDARD_REQUIRED ON)
+
+include(dciApi)
+dciApiExport(${PROJECT})
 
 target_link_libraries(${PROJECT} pthread)
 

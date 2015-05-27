@@ -1,11 +1,12 @@
 #pragma once
 
+#include "api.hpp"
 #include "ifaceId.hpp"
 #include "ifaceWire.hpp"
 
 namespace dci { namespace couple { namespace runtime
 {
-    class Iface
+    class APIDCI_COUPLE_RUNTIME Iface
     {
         Iface() = delete;
 

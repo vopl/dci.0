@@ -3,14 +3,14 @@ project(${PROJECT})
 
 
 ############################################################
-add_library(${PROJECT} STATIC EXCLUDE_FROM_ALL DciPch.cmake)
+add_library(${PROJECT} STATIC EXCLUDE_FROM_ALL dciPch.cmake)
 set_target_properties(${PROJECT} PROPERTIES LINKER_LANGUAGE CXX)
 
 
 
 
 if(COMMAND localinstall)
-    localinstall(${PROJECT} share/cmake/Modules DciPch.cmake)
+    localinstall(${PROJECT} share/cmake/Modules dciPch.cmake)
 endif()
 
 

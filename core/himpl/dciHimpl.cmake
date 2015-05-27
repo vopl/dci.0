@@ -1,5 +1,5 @@
 
-macro(mkHimplLayouts target)
+macro(dciMakeHimplLayouts target)
 
     ############################################################
     set(output)

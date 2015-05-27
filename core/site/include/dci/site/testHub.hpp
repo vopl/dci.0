@@ -1,5 +1,7 @@
 #pragma once
 
+#include "api.hpp"
+
 namespace dci { namespace site
 {
     class Manager;
@@ -17,7 +19,7 @@ namespace dci { namespace site { namespace testHub
         mstart  //после старта модулей
     };
 
-    Stage stage();
-    Manager *manager();
+    APIDCI_SITE Stage stage();
+    APIDCI_SITE Manager *manager();
 
 }}}
