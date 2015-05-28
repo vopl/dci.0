@@ -92,26 +92,19 @@ target_link_libraries(${PROJECT}-executable ${PROJECT})
 target_link_libraries(${PROJECT}-executable ${Boost_PROGRAM_OPTIONS_LIBRARY})
 
 ############################################################
-add_library(${PROJECT}-testHub-noenv    SHARED src/testHub.cpp)
-target_link_libraries(${PROJECT}-testHub-noenv dci-gtest)
-set_target_properties(${PROJECT}-testHub-noenv PROPERTIES CXX_STANDARD 14)
-set_target_properties(${PROJECT}-testHub-noenv PROPERTIES COMPILE_DEFINITIONS "DCI_SITE_TESTHUB_STAGE=noenv")
+function(dciSiteAddTestStage stage)
+    add_library(${PROJECT}-testHub-${stage}    SHARED src/testHub.cpp)
+    target_link_libraries(${PROJECT}-testHub-${stage} dci-gtest)
+    set_target_properties(${PROJECT}-testHub-${stage} PROPERTIES CXX_STANDARD 14)
+    set_target_properties(${PROJECT}-testHub-${stage} PROPERTIES COMPILE_DEFINITIONS "DCI_SITE_TESTHUB_STAGE=${stage}")
+    add_test(NAME ${stage} COMMAND ${PROJECT}-executable --test-stage ${stage})
+endfunction()
 
-add_library(${PROJECT}-testHub-min      SHARED src/testHub.cpp)
-target_link_libraries(${PROJECT}-testHub-min dci-gtest)
-set_target_properties(${PROJECT}-testHub-min PROPERTIES CXX_STANDARD 14)
-set_target_properties(${PROJECT}-testHub-min PROPERTIES COMPILE_DEFINITIONS "DCI_SITE_TESTHUB_STAGE=min")
 
-add_library(${PROJECT}-testHub-mload    SHARED src/testHub.cpp)
-target_link_libraries(${PROJECT}-testHub-mload dci-gtest)
-set_target_properties(${PROJECT}-testHub-mload PROPERTIES CXX_STANDARD 14)
-set_target_properties(${PROJECT}-testHub-mload PROPERTIES COMPILE_DEFINITIONS "DCI_SITE_TESTHUB_STAGE=mload")
-
-add_library(${PROJECT}-testHub-mstart   SHARED src/testHub.cpp)
-target_link_libraries(${PROJECT}-testHub-mstart dci-gtest)
-set_target_properties(${PROJECT}-testHub-mstart PROPERTIES CXX_STANDARD 14)
-set_target_properties(${PROJECT}-testHub-mstart PROPERTIES COMPILE_DEFINITIONS "DCI_SITE_TESTHUB_STAGE=mstart")
-
+dciSiteAddTestStage(noenv)
+dciSiteAddTestStage(min)
+dciSiteAddTestStage(mload)
+dciSiteAddTestStage(mstart)
 
 
 ############################################################

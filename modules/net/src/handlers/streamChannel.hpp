@@ -22,12 +22,12 @@ namespace handlers
             assert(0);
         }
 
-        Future< ::Data> read()
+        Future< Bytes> read()
         {
             assert(0);
         }
 
-        Future< > write(::Data &&v)
+        Future< > write(Bytes &&v)
         {
             (void)v;
             assert(0);

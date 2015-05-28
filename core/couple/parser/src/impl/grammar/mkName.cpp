@@ -18,6 +18,7 @@ namespace dci { namespace couple { namespace parser { namespace impl
                | toks.kwuint64
                | toks.kwreal32
                | toks.kwreal64
+               | toks.kwbytes
 
                | toks.kwlist
                | toks.kwset

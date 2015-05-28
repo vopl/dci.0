@@ -49,6 +49,7 @@ namespace dci { namespace couple { namespace parser { namespace impl
 
         TokenDef kwreal32;
         TokenDef kwreal64;
+        TokenDef kwbytes;
 
         TokenDef kwlist;
         TokenDef kwset;

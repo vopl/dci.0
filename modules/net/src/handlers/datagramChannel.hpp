@@ -17,17 +17,17 @@ namespace handlers
             assert(0);
         }
 
-        Future< ::Data> receiveData()
+        Future< Bytes> receiveData()
         {
             assert(0);
         }
 
-        Future< Data, Address> receive()
+        Future< Bytes, Address> receive()
         {
             assert(0);
         }
 
-        Future< > send(::Data &&d, Address &&a)
+        Future< > send(Bytes &&d, Address &&a)
         {
             (void)d;
             (void)a;

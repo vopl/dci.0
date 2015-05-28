@@ -11,6 +11,7 @@ set(INC
     include/dci/couple/runtime/sign.hpp
     include/dci/couple/runtime/signBuilder.hpp
     include/dci/couple/runtime/identifier.hpp
+    include/dci/couple/runtime/bytes.hpp
     include/dci/couple/runtime/iface.hpp
     include/dci/couple/runtime/ifaceId.hpp
     include/dci/couple/runtime/ifaceWire.hpp
@@ -31,6 +32,7 @@ set(SRC
 
     src/sign.cpp
     src/signBuilder.cpp
+    src/bytes.cpp
     src/iface.cpp
     src/ifaceWire.cpp
     src/errcCategoryProvider.cpp
@@ -40,6 +42,11 @@ set(SRC
 
     src/impl/signBuilder.hpp
     src/impl/signBuilder.cpp
+
+    src/impl/bytes.hpp
+    src/impl/bytes.cpp
+    src/impl/bytes/segment.hpp
+    src/impl/bytes/segment.cpp
 
     src/impl/errcCategory.hpp
     src/impl/errcCategory.cpp
@@ -81,10 +88,12 @@ dciMakeHimplLayouts(${PROJECT}
     HEADERS
         ${CMAKE_CURRENT_SOURCE_DIR}/src/impl/sign.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/impl/signBuilder.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/impl/bytes.hpp
 
     CLASSES
         ::dci::couple::runtime::impl::Sign
         ::dci::couple::runtime::impl::SignBuilder
+        ::dci::couple::runtime::impl::Bytes
 )
 
 

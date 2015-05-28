@@ -26,10 +26,10 @@ scope stream
         in self:        ()          -> Address;
         in peer:        ()          -> Address;
         
-        in read:        ()          -> Data;
-        out readed:     (Data v)    -> ();
+        in read:        ()          -> Bytes;
+        out readed:     (Bytes v)   -> ();
         
-        in write:       (Data v)    -> ();
+        in write:       (Bytes v)   -> ();
         
         in close:       ()          -> ();
         out closed:     ();

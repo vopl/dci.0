@@ -57,8 +57,14 @@ set(CMAKE_MODULE_LINKER_FLAGS "-Wl,--no-undefined")
 
 set(CMAKE_CXX_FLAGS "-Wall -Wextra -Wpedantic -ftemplate-depth-1000 -fvisibility=hidden")
 
+set(CMAKE_SHARED_LINKER_FLAGS_RELEASE "-O2")
+set(CMAKE_MODULE_LINKER_FLAGS_RELEASE "-O2")
+
+set(CMAKE_CXX_FLAGS_RELEASE "-O2")
+
+###########################################
+enable_testing()
 
 ###########################################
 add_subdirectory(core)
 add_subdirectory(modules)
-

@@ -100,6 +100,7 @@ struct Entry
     dci::async::Future<std::error_code> unload(const dci::site::ModulePlace &place) override
     {
         _stopEvent.set();
+        dci::async::yield();
 
         (void)place;
         return dci::async::Future<std::error_code>();

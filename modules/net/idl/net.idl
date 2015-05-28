@@ -1,9 +1,4 @@
 
-
-//temporary
-alias Data = list<uint8>;
-
-
 scope net
 {
     scope error

@@ -25,6 +25,8 @@ namespace dci { namespace couple { namespace meta
 
         real32,
         real64,
+
+        bytes,
     };
 
     class APIDCI_COUPLE_META Primitive

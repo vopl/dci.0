@@ -6,6 +6,7 @@
 #include "runtime/errcCategoryProvider.hpp"
 #include "runtime/errcInitializer.hpp"
 
+#include "runtime/bytes.hpp"
 #include <dci/async/future.hpp>
 
 #include <cstdint>
