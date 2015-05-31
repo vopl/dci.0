@@ -221,7 +221,8 @@ namespace impl
             return false;
         }
 
-        auto sflags = _sock->seizeReadyState();
+        auto sflags = _sock->readyState();
+        _sock->readyEvent().reset();
         if(dci::poll::Descriptor::rsf_error & sflags)
         {
             LOGE("rtnetlink poll: "<<_sock->error());

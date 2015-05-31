@@ -4,6 +4,7 @@
 
 namespace dci { namespace couple { namespace runtime { namespace impl
 {
+    /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
     Bytes::Bytes()
         : _size {0}
         , _first {nullptr}
@@ -11,6 +12,7 @@ namespace dci { namespace couple { namespace runtime { namespace impl
     {
     }
 
+    /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
     Bytes::Bytes(Bytes &&from)
         : _size {from._size}
         , _first {from._first}
@@ -21,6 +23,7 @@ namespace dci { namespace couple { namespace runtime { namespace impl
         from._last = nullptr;
     }
 
+    /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
     Bytes::Bytes(std::size_t size, bytes::Segment *first, bytes::Segment *last)
         : _size {size}
         , _first {first}
@@ -28,11 +31,13 @@ namespace dci { namespace couple { namespace runtime { namespace impl
     {
     }
 
+    /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
     Bytes::~Bytes()
     {
         clear();
     }
 
+    /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
     Bytes &Bytes::operator=(Bytes &&from)
     {
         _size = from._size;
@@ -46,6 +51,7 @@ namespace dci { namespace couple { namespace runtime { namespace impl
         return *this;
     }
 
+    /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
     void Bytes::append(Bytes &&data)
     {
         if(!_size)
@@ -85,6 +91,7 @@ namespace dci { namespace couple { namespace runtime { namespace impl
         }
     }
 
+    /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
     void Bytes::append(const char *str, std::size_t size)
     {
         if(!size)
@@ -92,13 +99,14 @@ namespace dci { namespace couple { namespace runtime { namespace impl
             return;
         }
 
-        _size += size;
-
         if(!_last)
         {
             assert(!_first);
+            assert(!_size);
             _first = _last = new bytes::Segment;
         }
+
+        _size += size;
 
         bytes::Segment *cur = _last;
         for(;;)
@@ -134,16 +142,48 @@ namespace dci { namespace couple { namespace runtime { namespace impl
         }
     }
 
+    /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
+    void Bytes::enlargeAtLeast(std::size_t size)
+    {
+        size += _size;
+
+        if(!_last)
+        {
+            assert(!_first);
+            assert(!_size);
+
+            _first = _last = new bytes::Segment(bytes::Segment::_granula);
+            _size = bytes::Segment::_granula;
+        }
+
+        bytes::Segment *cur = _last;
+        while(size > _size)
+        {
+            bytes::Segment *next = new bytes::Segment(bytes::Segment::_granula);
+            _size += bytes::Segment::_granula;
+            cur->_next = next;
+            cur = next;
+        }
+
+        if(_last != cur)
+        {
+            _last = cur;
+        }
+    }
+
+    /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
     bool Bytes::empty() const
     {
         return _size ? false : true;
     }
 
+    /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
     std::size_t Bytes::size() const
     {
         return _size;
     }
 
+    /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
     void Bytes::clear()
     {
         bytes::Segment *segment = _first;
@@ -159,6 +199,7 @@ namespace dci { namespace couple { namespace runtime { namespace impl
         _size = 0;
     }
 
+    /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
     std::size_t Bytes::segmentsAmount() const
     {
         std::size_t res {0};
@@ -170,6 +211,7 @@ namespace dci { namespace couple { namespace runtime { namespace impl
         return res;
     }
 
+    /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
     void Bytes::fillIovec(iovec *iov) const
     {
         for(bytes::Segment *iter = _first; iter; iter=iter->_next)
@@ -180,6 +222,7 @@ namespace dci { namespace couple { namespace runtime { namespace impl
         }
     }
 
+    /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
     void Bytes::dropFirst(std::size_t size)
     {
         if(size >= _size)
@@ -217,12 +260,14 @@ namespace dci { namespace couple { namespace runtime { namespace impl
         _first = iter;
     }
 
+    /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
     void Bytes::dropLast(std::size_t size)
     {
         (void)size;
         assert(0);
     }
 
+    /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
     Bytes Bytes::detachFirst(std::size_t size)
     {
         if(!size)
@@ -273,6 +318,7 @@ namespace dci { namespace couple { namespace runtime { namespace impl
         assert(!"never here");
     }
 
+    /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
     Bytes Bytes::detachLast(std::size_t size)
     {
         (void)size;
@@ -281,6 +327,7 @@ namespace dci { namespace couple { namespace runtime { namespace impl
         return Bytes();
     }
 
+    /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
     std::string Bytes::toString()
     {
         std::string res;

@@ -16,8 +16,15 @@
 
 namespace fs = boost::filesystem;
 
+namespace dci { namespace site
+{
+    extern TestStage g_testStage;
+    extern Manager *g_testManager;
+}}
+
 namespace dci { namespace site { namespace impl
 {
+
     Manager::Manager()
         : _modulesInitialized{false}
         , _modulesLoaded{false}
@@ -30,7 +37,7 @@ namespace dci { namespace site { namespace impl
     {
     }
 
-    std::error_code Manager::run(int argc, char *argv[], testHub::Stage testStage)
+    std::error_code Manager::run(int argc, char *argv[], TestStage testStage)
     {
         switch(_workState)
         {
@@ -64,7 +71,7 @@ namespace dci { namespace site { namespace impl
         _workState = WorkState::starting;
         async::spawn([this, argc, argv, testStage, &testec](){
 
-            if(testHub::Stage::min == testStage)
+            if(TestStage::min == testStage)
             {
                 if(Manager::executeTest(argc, argv, testStage, himpl::impl2Face<site::Manager>(this)))
                 {
@@ -88,7 +95,7 @@ namespace dci { namespace site { namespace impl
                 LOGE("load modules: "<<f.error());
             }
 
-            if(testHub::Stage::mload == testStage)
+            if(TestStage::mload == testStage)
             {
                 if(Manager::executeTest(argc, argv, testStage, himpl::impl2Face<site::Manager>(this)))
                 {
@@ -107,7 +114,7 @@ namespace dci { namespace site { namespace impl
 
             _workState = WorkState::started;
 
-            if(testHub::Stage::mstart == testStage)
+            if(TestStage::mstart == testStage)
             {
                 if(Manager::executeTest(argc, argv, testStage, himpl::impl2Face<site::Manager>(this)))
                 {
@@ -216,21 +223,21 @@ namespace dci { namespace site { namespace impl
         return Module::generateManifest(mainBinaryFullPath);
     }
 
-    int Manager::executeTest(int argc, char *argv[], testHub::Stage stage, site::Manager *manager)
+    int Manager::executeTest(int argc, char *argv[], TestStage stage, site::Manager *manager)
     {
         const char *stageStr = nullptr;
         switch(stage)
         {
-        case testHub::Stage::noenv:
+        case TestStage::noenv:
             stageStr = "noenv";
             break;
-        case testHub::Stage::min:
+        case TestStage::min:
             stageStr = "min";
             break;
-        case testHub::Stage::mload:
+        case TestStage::mload:
             stageStr = "mload";
             break;
-        case testHub::Stage::mstart:
+        case TestStage::mstart:
             stageStr = "mstart";
             break;
         default:
@@ -250,7 +257,7 @@ namespace dci { namespace site { namespace impl
             return -1;
         }
 
-        int(*hubEntryPoint)(int, char *[], site::Manager *) = (int(*)(int, char *[], site::Manager*))dlsym(hubModule, "dciTestHubEntryPoint");
+        int(*hubEntryPoint)(int, char *[]) = (int(*)(int, char *[]))dlsym(hubModule, "dciTestHubEntryPoint");
         if(!hubEntryPoint)
         {
             dlclose(hubModule);
@@ -259,7 +266,11 @@ namespace dci { namespace site { namespace impl
             return -1;
         }
 
-        int res = hubEntryPoint(argc, argv, manager);
+        g_testStage = stage;
+        g_testManager = manager;
+        int res = hubEntryPoint(argc, argv);
+        g_testStage = TestStage::null;
+        g_testManager = nullptr;
 
         if(dlclose(hubModule))
         {

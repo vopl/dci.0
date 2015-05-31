@@ -35,7 +35,9 @@ namespace dci { namespace couple { namespace runtime
         std::size_t size() const;
 
         void append(Bytes &&data);
-        void append(const char *str, std::size_t size = -1);
+        void append(const char *str);
+        void append(const char *str, std::size_t size);
+        void enlargeAtLeast(std::size_t size);
 
         void clear();
 

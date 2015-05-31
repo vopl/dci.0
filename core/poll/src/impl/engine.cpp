@@ -14,7 +14,7 @@ namespace dci { namespace poll { namespace impl
         while(_descriptors)
         {
             _descriptors->close(false);
-            _descriptors->addReadyState(poll::Descriptor::rsf_error);
+            _descriptors->setReadyState(poll::Descriptor::rsf_error);
             _descriptors = _descriptors->_nextInEngine;
         }
     }
@@ -98,9 +98,9 @@ namespace dci { namespace poll { namespace impl
         return std::error_code();
     }
 
-    void Engine::addReadyState(Descriptor *d, std::uint_fast32_t state)
+    void Engine::setReadyState(Descriptor *d, std::uint_fast32_t flags)
     {
-        d->addReadyState(state);
+        d->setReadyState(flags);
     }
 
     void Engine::registerDescriptor(Descriptor *d)

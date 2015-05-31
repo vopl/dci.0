@@ -169,12 +169,14 @@ namespace dci { namespace async { namespace details
     template <class E, class... T>
     typename FutureState<E, T...>::Value &FutureState<E, T...>::value()
     {
+        assert(DataState::value == _dataState);
         return _data._value;
     }
 
     template <class E, class... T>
     E &FutureState<E, T...>::error()
     {
+        assert(DataState::error == _dataState);
         return _data._error;
     }
 

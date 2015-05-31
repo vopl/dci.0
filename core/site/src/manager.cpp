@@ -10,7 +10,7 @@ namespace dci { namespace site
         return impl::Manager::generateManifest(mainBinaryFullPath);
     }
 
-    int Manager::executeTest(int argc, char *argv[], testHub::Stage stage)
+    int Manager::executeTest(int argc, char *argv[], TestStage stage)
     {
         return impl::Manager::executeTest(argc, argv, stage, nullptr);
     }
@@ -24,7 +24,7 @@ namespace dci { namespace site
     {
     }
 
-    std::error_code Manager::run(int argc, char *argv[], testHub::Stage testStage)
+    std::error_code Manager::run(int argc, char *argv[], TestStage testStage)
     {
         return impl().run(argc, argv, testStage);
     }

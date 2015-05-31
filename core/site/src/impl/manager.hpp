@@ -5,7 +5,7 @@
 #include "module.hpp"
 #include <dci/site/serviceFactory.hpp>
 
-#include <dci/site/testHub.hpp>
+#include <dci/site/test.hpp>
 
 namespace dci { namespace site { namespace impl
 {
@@ -23,12 +23,12 @@ namespace dci { namespace site { namespace impl
         Manager();
         ~Manager();
 
-        std::error_code run(int argc, char *argv[], testHub::Stage testStage);
+        std::error_code run(int argc, char *argv[], TestStage testStage);
         async::Future<std::error_code> stop();
 
     public:
         static std::string generateManifest(const std::string &mainBinaryFullPath);
-        static int executeTest(int argc, char *argv[], testHub::Stage stage, site::Manager *manager);
+        static int executeTest(int argc, char *argv[], TestStage stage, site::Manager *manager);
 
         //outFuture is async::Future<std::error_code, ConcreteIface>
         std::error_code createService(void *outFuture, const couple::runtime::Iid &iid);

@@ -1,4 +1,5 @@
 #include "descriptor.hpp"
+#include <dci/poll/descriptor.hpp>
 #include "engine.hpp"
 #include <dci/logger.hpp>
 #include <unistd.h>
@@ -58,6 +59,9 @@ namespace dci { namespace poll { namespace impl
             }
             ::close(_fd);
             _fd = -1;
+
+            setReadyState(poll::Descriptor::rsf_error);
+            _readyEvent.set();
         }
     }
 
@@ -80,18 +84,9 @@ namespace dci { namespace poll { namespace impl
         return _readyState;
     }
 
-    void Descriptor::resetReadyState()
+    void Descriptor::resetReadyState(std::uint_fast32_t flags)
     {
-        _readyState = 0;
-        _readyEvent.reset();
-    }
-
-    std::uint_fast32_t Descriptor::seizeReadyState()
-    {
-        std::uint32_t res = readyState();
-        resetReadyState();
-        return res;
-
+        _readyState &= ~flags;
     }
 
     std::error_code Descriptor::install()
@@ -118,9 +113,9 @@ namespace dci { namespace poll { namespace impl
         engine->uninstallDescriptor(this);
     }
 
-    void Descriptor::addReadyState(std::uint_fast32_t state)
+    void Descriptor::setReadyState(std::uint_fast32_t flags)
     {
-        _readyState |= state;
+        _readyState |= flags;
         _readyEvent.set();
     }
 

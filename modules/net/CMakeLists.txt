@@ -23,6 +23,10 @@ set(SRC
     src/handlers/datagramChannel.hpp
 
     src/handlers/streamChannel.hpp
+    src/handlers/streamChannel/reader.hpp
+    src/handlers/streamChannel/reader.cpp
+    src/handlers/streamChannel/writer.hpp
+    src/handlers/streamChannel/writer.cpp
     src/handlers/streamClient.hpp
     src/handlers/streamServer.hpp
 
@@ -37,6 +41,9 @@ set(SRC
 
     src/impl/engineRtnetlink.hpp
     src/impl/engineRtnetlink.cpp
+
+    src/utils/sockaddr.hpp
+    src/utils/sockaddr.cpp
 )
 
 

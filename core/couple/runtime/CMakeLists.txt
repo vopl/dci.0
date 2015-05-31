@@ -7,6 +7,7 @@ set(INC
     include/dci/couple/runtime.hpp
     include/dci/couple/runtime/api.hpp
     include/dci/couple/runtime/error.hpp
+    include/dci/couple/runtime/err_system.x
 
     include/dci/couple/runtime/sign.hpp
     include/dci/couple/runtime/signBuilder.hpp

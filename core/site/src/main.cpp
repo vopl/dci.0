@@ -1,7 +1,7 @@
 #include <cstdlib>
 
 #include <dci/site/manager.hpp>
-#include <dci/site/testHub.hpp>
+#include <dci/site/test.hpp>
 
 #include <dci/async.hpp>
 #include <dci/logger/logger.hpp>
@@ -86,7 +86,7 @@ int main(int argc, char *argv[])
                 "output file name for genmanifest, rndsign"
             )
             (
-                "test-stage",
+                "test",
                 po::value<std::string>(),
                 "stage for testing, one of noenv, min, mload, mstart"
             )
@@ -111,16 +111,16 @@ int main(int argc, char *argv[])
     po::notify(vars);
 
     ////////////////////////////////////////////////////////////////////////////////
-    dci::site::testHub::Stage testStage = dci::site::testHub::Stage::null;
-    if(vars.count("test-stage"))
+    dci::site::TestStage testStage = dci::site::TestStage::null;
+    if(vars.count("test"))
     {
         {
-            auto s  = vars["test-stage"].as<std::string>();
+            auto s  = vars["test"].as<std::string>();
 
-                 if("noenv" == s)   testStage = dci::site::testHub::Stage::noenv;
-            else if("min" == s)     testStage = dci::site::testHub::Stage::min;
-            else if("mload" == s)   testStage = dci::site::testHub::Stage::mload;
-            else if("mstart" == s)  testStage = dci::site::testHub::Stage::mstart;
+                 if("noenv" == s)   testStage = dci::site::TestStage::noenv;
+            else if("min" == s)     testStage = dci::site::TestStage::min;
+            else if("mload" == s)   testStage = dci::site::TestStage::mload;
+            else if("mstart" == s)  testStage = dci::site::TestStage::mstart;
             else
             {
                 LOGF("unrecognized test stage: "<<s);
@@ -128,7 +128,7 @@ int main(int argc, char *argv[])
             }
         }
 
-        if(dci::site::testHub::Stage::noenv == testStage)
+        if(dci::site::TestStage::noenv == testStage)
         {
             return dci::site::Manager::executeTest(argc, argv, testStage);
         }

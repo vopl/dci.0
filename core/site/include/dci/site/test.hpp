@@ -5,12 +5,8 @@
 namespace dci { namespace site
 {
     class Manager;
-}}
 
-
-namespace dci { namespace site { namespace testHub
-{
-    enum class Stage
+    enum class TestStage
     {
         null,
         noenv,  //ничего нет
@@ -19,7 +15,7 @@ namespace dci { namespace site { namespace testHub
         mstart  //после старта модулей
     };
 
-    APIDCI_SITE Stage stage();
-    APIDCI_SITE Manager *manager();
+    APIDCI_SITE TestStage testStage();
+    APIDCI_SITE Manager *testManager();
 
-}}}
+}}

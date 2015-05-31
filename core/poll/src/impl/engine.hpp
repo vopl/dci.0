@@ -31,7 +31,7 @@ namespace dci { namespace poll { namespace impl
         virtual std::error_code uninstallDescriptor(Descriptor *d) = 0;
 
     protected:
-        static void addReadyState(Descriptor *d, std::uint_fast32_t state);
+        static void setReadyState(Descriptor *d, std::uint_fast32_t flags);
 
         void registerDescriptor(Descriptor *d);
         bool deregisterDescriptor(Descriptor *d);

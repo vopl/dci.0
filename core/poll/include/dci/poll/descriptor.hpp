@@ -46,8 +46,6 @@ namespace dci { namespace poll
 
         dci::async::Event &readyEvent();
         std::uint_fast32_t readyState() const;
-        void resetReadyState();
-
-        std::uint_fast32_t seizeReadyState();
+        void resetReadyState(std::uint_fast32_t flags);
     };
 }}

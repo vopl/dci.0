@@ -53,13 +53,8 @@ namespace dci { namespace poll
         return impl().readyState();
     }
 
-    void Descriptor::resetReadyState()
+    void Descriptor::resetReadyState(std::uint_fast32_t flags)
     {
-        return impl().resetReadyState();
-    }
-
-    std::uint_fast32_t Descriptor::seizeReadyState()
-    {
-        return impl().seizeReadyState();
+        return impl().resetReadyState(flags);
     }
 }}

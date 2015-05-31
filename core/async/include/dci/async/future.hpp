@@ -8,11 +8,61 @@ namespace dci { namespace async
 
     struct FutureNullInitializer{};
 
+    /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
+    namespace details
+    {
+        template <class F, class... ET>
+        struct FutureOperators;
+
+        template <class F, class E, class... T>
+        struct FutureOperators<F, E, T...>
+        {
+            operator E &&()
+            {
+                return static_cast<F*>(this)->detachError();
+            }
+        };
+
+        template <class F, class E, class T0>
+        struct FutureOperators<F, E, T0>
+        {
+            operator E &&()
+            {
+                return static_cast<F*>(this)->detachError();
+            }
+
+            operator T0 &&()
+            {
+                return static_cast<F*>(this)->template detachValue<0>();
+            }
+
+        };
+
+        template <class F, class E, class T0, class T1>
+        struct FutureOperators<F, E, T0, T1>
+        {
+            operator E &&()
+            {
+                return static_cast<F*>(this)->detachError();
+            }
+
+            operator T0 &&()
+            {
+                return static_cast<F*>(this)->template detachValue<0>();
+            }
+
+            operator T1 &&()
+            {
+                return static_cast<F*>(this)->template detachValue<1>();
+            }
+        };
+    }
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
     template <class E, class... T>
     class Future
         : private dci::mm::SharedInstance<details::FutureState<E, T...>>
+        , public details::FutureOperators<Future<E, T...>, E, T...>
     {
         friend class Promise<E, T...>;
         friend struct details::FutureStateAccessor;

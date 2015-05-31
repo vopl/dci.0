@@ -23,9 +23,7 @@ namespace dci { namespace poll { namespace impl
 
         dci::async::Event &readyEvent();
         std::uint_fast32_t readyState() const;
-        void resetReadyState();
-
-        std::uint_fast32_t seizeReadyState();
+        void resetReadyState(std::uint_fast32_t flags);
 
     private:
         std::error_code install();
@@ -35,7 +33,7 @@ namespace dci { namespace poll { namespace impl
         friend class Engine;
         Descriptor *_nextInEngine{nullptr};
         Descriptor *_prevInEngine{nullptr};
-        void addReadyState(std::uint_fast32_t state);
+        void setReadyState(std::uint_fast32_t flags);
 
     private:
         int                 _fd;

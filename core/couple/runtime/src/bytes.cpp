@@ -44,9 +44,19 @@ namespace dci { namespace couple { namespace runtime
         return impl().append(std::move(data.impl()));
     }
 
+    void Bytes::append(const char *str)
+    {
+        return impl().append(str, strlen(str));
+    }
+
     void Bytes::append(const char *str, std::size_t size)
     {
         return impl().append(str, size);
+    }
+
+    void Bytes::enlargeAtLeast(std::size_t size)
+    {
+        return impl().enlargeAtLeast(size);
     }
 
     void Bytes::clear()

@@ -13,13 +13,14 @@ set(INC
     include/dci/site/moduleInfo.hpp
     include/dci/site/serviceFactory.hpp
     include/dci/site/layoutProvider.hpp
-    include/dci/site/testHub.hpp
+    include/dci/site/test.hpp
 )
 
 set(SRC
     src/error.cpp
     src/manager.cpp
     src/modulePlace.cpp
+    src/test.cpp
 
     src/impl/manager.hpp
     src/impl/module.hpp
@@ -96,8 +97,7 @@ function(dciSiteAddTestStage stage)
     add_library(${PROJECT}-testHub-${stage}    SHARED src/testHub.cpp)
     target_link_libraries(${PROJECT}-testHub-${stage} dci-gtest)
     set_target_properties(${PROJECT}-testHub-${stage} PROPERTIES CXX_STANDARD 14)
-    set_target_properties(${PROJECT}-testHub-${stage} PROPERTIES COMPILE_DEFINITIONS "DCI_SITE_TESTHUB_STAGE=${stage}")
-    add_test(NAME ${stage} COMMAND ${PROJECT}-executable --test-stage ${stage})
+    add_test(NAME ${stage} COMMAND ${PROJECT}-executable --test ${stage})
 endfunction()
 
 

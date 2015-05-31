@@ -70,13 +70,13 @@ namespace dci { namespace poll { namespace impl
 
             Descriptor *d = static_cast<Descriptor *>(evt.data.ptr);
 
-            std::uint_fast32_t state =
+            std::uint_fast32_t flags =
                     ((evt.events & (EPOLLIN|EPOLLPRI)) ? (std::uint_fast32_t)poll::Descriptor::rsf_read : 0) |
                     ((evt.events & (EPOLLOUT)) ? (std::uint_fast32_t)poll::Descriptor::rsf_write : 0) |
                     ((evt.events & (EPOLLERR|EPOLLHUP)) ? (std::uint_fast32_t)poll::Descriptor::rsf_error : 0) |
                     0;
 
-            addReadyState(d, state);
+            setReadyState(d, flags);
         }
 
         return std::error_code();
