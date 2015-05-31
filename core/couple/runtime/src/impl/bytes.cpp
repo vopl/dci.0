@@ -161,14 +161,12 @@ namespace dci { namespace couple { namespace runtime { namespace impl
         {
             bytes::Segment *next = new bytes::Segment(bytes::Segment::_granula);
             _size += bytes::Segment::_granula;
+            assert(!cur->_next);
             cur->_next = next;
             cur = next;
         }
 
-        if(_last != cur)
-        {
-            _last = cur;
-        }
+        _last = cur;
     }
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7

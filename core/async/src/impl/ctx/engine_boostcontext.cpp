@@ -1,8 +1,8 @@
-#include "dci/stable.hpp"
-#include "dci/async/impl/ctx/engine_boostcontext.hpp"
+#include "engine_boostcontext.hpp"
 #include "dci/mm/config.hpp"
 
 #include <cstddef>
+#include <cassert>
 
 namespace dci { namespace async { namespace impl { namespace ctx
 {

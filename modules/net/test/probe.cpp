@@ -4,6 +4,8 @@
 #include <dci/site/manager.hpp>
 #include <dci/couple/runtime.hpp>
 
+#include <chrono>
+
 #include <net.hpp>
 
 using namespace dci;
@@ -38,12 +40,12 @@ TEST_F(Net, Host)
 {
     async::Future<std::error_code, Host> netHost = _manager->createService<Host>();
 
-    EXPECT_FALSE(netHost.hasError());
+    ASSERT_FALSE(netHost.hasError());
 
     Host nh = netHost.detachValue<0>();
 
     map<uint32, Link> links = nh.links().detachValue<0>();
-    EXPECT_FALSE(links.empty());
+    ASSERT_FALSE(links.empty());
 
     //links
     for(auto & linkp : links)
@@ -52,79 +54,79 @@ TEST_F(Net, Host)
 
         {
             auto v = link.id();
-            EXPECT_FALSE(v.hasError());
+            ASSERT_FALSE(v.hasError());
             EXPECT_EQ(v.value<0>(), linkp.first);
         }
 
         {
             auto v = link.name();
-            EXPECT_FALSE(v.hasError());
+            ASSERT_FALSE(v.hasError());
         }
 
         {
             auto v = link.flags();
-            EXPECT_FALSE(v.hasError());
+            ASSERT_FALSE(v.hasError());
         }
 
         {
             auto v = link.mtu();
-            EXPECT_FALSE(v.hasError());
+            ASSERT_FALSE(v.hasError());
         }
 
         {
             auto v = link.ip4();
-            EXPECT_FALSE(v.hasError());
+            ASSERT_FALSE(v.hasError());
         }
 
         {
             auto v = link.ip6();
-            EXPECT_FALSE(v.hasError());
+            ASSERT_FALSE(v.hasError());
         }
     }
 
     //ip4
     {
         auto v = nh.ip4StreamServer();
-        EXPECT_FALSE(v.hasError());
+        ASSERT_FALSE(v.hasError());
     }
     {
         auto v = nh.ip4StreamClient();
-        EXPECT_FALSE(v.hasError());
+        ASSERT_FALSE(v.hasError());
     }
     {
         auto v = nh.ip4DatagramChannel();
-        EXPECT_FALSE(v.hasError());
+        ASSERT_FALSE(v.hasError());
     }
 
     //ip6
     {
         auto v = nh.ip6StreamServer();
-        EXPECT_FALSE(v.hasError());
+        ASSERT_FALSE(v.hasError());
     }
     {
         auto v = nh.ip6StreamClient();
-        EXPECT_FALSE(v.hasError());
+        ASSERT_FALSE(v.hasError());
     }
     {
         auto v = nh.ip6DatagramChannel();
-        EXPECT_FALSE(v.hasError());
+        ASSERT_FALSE(v.hasError());
     }
 
     //local
     {
         auto v = nh.localStreamServer();
-        EXPECT_FALSE(v.hasError());
+        ASSERT_FALSE(v.hasError());
     }
     {
         auto v = nh.localStreamClient();
-        EXPECT_FALSE(v.hasError());
+        ASSERT_FALSE(v.hasError());
     }
 }
 
 TEST_F(Net, StreamIp4)
 {
     async::Future<std::error_code, Host> netHost = _manager->createService<Host>();
-    EXPECT_FALSE(netHost.hasError());
+    ASSERT_FALSE(netHost.hasError());
     Host nh = netHost.detachValue<0>();
 
     ip4::Address addr;
@@ -138,14 +140,14 @@ TEST_F(Net, StreamIp4)
     //server
     spawn([&](){
         auto fs = nh.ip4StreamServer();
-        EXPECT_FALSE(fs.hasError());
+        ASSERT_FALSE(fs.hasError());
         ip4::stream::Server s = fs;
 
-        EXPECT_FALSE(s.bind(ip4::Address(addr)).hasError());
-        EXPECT_FALSE(s.listen().hasError());
+        ASSERT_FALSE(s.bind(ip4::Address(addr)).hasError());
+        ASSERT_FALSE(s.listen().hasError());
 
         auto fch = s.accept();
-        EXPECT_FALSE(fch.hasError());
+        ASSERT_FALSE(fch.hasError());
 
         ip4::stream::Channel ch = fch;
         ch.write(ch.read().detachValue<0>());
@@ -156,11 +158,11 @@ TEST_F(Net, StreamIp4)
     //client
     spawn([&](){
         auto fc = nh.ip4StreamClient();
-        EXPECT_FALSE(fc.hasError());
+        ASSERT_FALSE(fc.hasError());
         ip4::stream::Client c = fc;
 
         auto fch = c.connect(ip4::Address(addr));
-        EXPECT_FALSE(fch.hasError());
+        ASSERT_FALSE(fch.hasError());
 
         ip4::stream::Channel ch = fch;
 
@@ -173,4 +175,64 @@ TEST_F(Net, StreamIp4)
     });
 
     async::acquireAll(sdone, cdone);
+}
+
+TEST_F(Net, SpamerBench)
+{
+    async::Future<std::error_code, Host> netHost = _manager->createService<Host>();
+    ASSERT_FALSE(netHost.hasError());
+    Host nh = netHost.detachValue<0>();
+
+    ip4::Address addr;
+    addr.octets[0] = 127;
+    addr.octets[1] = 0;
+    addr.octets[2] = 0;
+    addr.octets[3] = 1;
+
+    addr.port = 1234;
+
+    Event cdone;
+
+    //client
+    spawn([&](){
+        auto fc = nh.ip4StreamClient();
+        ASSERT_FALSE(fc.hasError());
+        ip4::stream::Client c = fc;
+
+        auto fch = c.connect(ip4::Address(addr));
+        ASSERT_FALSE(fch.hasError());
+
+        ip4::stream::Channel ch = fch;
+
+
+
+        std::chrono::high_resolution_clock::time_point start = std::chrono::high_resolution_clock::now();
+
+        for(std::size_t i(1); i<=1000000; i++)
+        {
+
+            Bytes bs;
+            bs.append("tratata data");
+            ch.write(std::move(bs));
+
+            bs = ch.read();
+
+            if(!(i%100000))
+            {
+                std::chrono::high_resolution_clock::time_point stop = std::chrono::high_resolution_clock::now();
+
+                std::cout << "Reply is: ";
+                std::cout<<bs.toString()<<std::endl;
+                std::cout << ", "<<std::chrono::duration_cast<std::chrono::duration<double>>((stop - start)).count();
+                std::cout << "\n";
+
+                start = std::chrono::high_resolution_clock::now();
+
+            }
+        }
+
+        cdone.set();
+    });
+
+    async::acquireAll(cdone);
 }
