@@ -1,7 +1,7 @@
 #pragma once
 
 #include <sys/uio.h>
-#include "bytes/segment.hpp"
+#include <dci/couple/runtime/bytes/segment.hpp>
 
 #include <string>
 

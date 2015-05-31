@@ -19,6 +19,12 @@ namespace dci { namespace couple { namespace runtime
     {
     }
 
+    Bytes::Bytes(std::size_t size, bytes::Segment *first, bytes::Segment *last)
+        : himpl::FaceLayout<impl::Bytes>(size, first, last)
+    {
+
+    }
+
     Bytes::~Bytes()
     {
     }

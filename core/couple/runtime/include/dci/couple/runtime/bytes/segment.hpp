@@ -2,8 +2,9 @@
 
 #include <dci/mm/newDelete.hpp>
 #include <cstdint>
+#include <cassert>
 
-namespace dci { namespace couple { namespace runtime { namespace impl { namespace bytes
+namespace dci { namespace couple { namespace runtime { namespace bytes
 {
     struct Segment
         : public mm::NewDelete<Segment>
@@ -19,4 +20,15 @@ namespace dci { namespace couple { namespace runtime { namespace impl { namespac
         Segment *_next;
     };
 
-}}}}}
+
+
+    inline Segment::Segment(std::uint32_t size, std::uint32_t offset, Segment *next)
+        : _size {size}
+        , _offset {offset}
+        , _next {next}
+    {
+        assert(_offset+_size <= _granula);
+    }
+
+
+}}}}

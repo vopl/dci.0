@@ -13,6 +13,7 @@ set(INC
     include/dci/couple/runtime/signBuilder.hpp
     include/dci/couple/runtime/identifier.hpp
     include/dci/couple/runtime/bytes.hpp
+    include/dci/couple/runtime/bytes/segment.hpp
     include/dci/couple/runtime/iface.hpp
     include/dci/couple/runtime/ifaceId.hpp
     include/dci/couple/runtime/ifaceWire.hpp
@@ -46,8 +47,6 @@ set(SRC
 
     src/impl/bytes.hpp
     src/impl/bytes.cpp
-    src/impl/bytes/segment.hpp
-    src/impl/bytes/segment.cpp
 
     src/impl/errcCategory.hpp
     src/impl/errcCategory.cpp

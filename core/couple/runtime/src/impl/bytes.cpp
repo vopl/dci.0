@@ -29,6 +29,7 @@ namespace dci { namespace couple { namespace runtime { namespace impl
         , _first {first}
         , _last {last}
     {
+        assert(!_last->_next);
     }
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
@@ -160,6 +161,7 @@ namespace dci { namespace couple { namespace runtime { namespace impl
         while(size > _size)
         {
             bytes::Segment *next = new bytes::Segment(bytes::Segment::_granula);
+            assert(!next->_next);
             _size += bytes::Segment::_granula;
             assert(!cur->_next);
             cur->_next = next;
@@ -309,6 +311,7 @@ namespace dci { namespace couple { namespace runtime { namespace impl
                 bytes::Segment *detachFirst = _first;
                 _size -= size;
                 _first = detachBound->_next;
+                detachBound->_next = nullptr;
                 return impl::Bytes {size, detachFirst, detachBound};
             }
         }

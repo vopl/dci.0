@@ -4,6 +4,7 @@
 #include <dci/himpl/layoutProvider.hpp>
 #include LAYOUTPROVIDERFILE(<dci/couple/runtime/layoutProvider.hpp>)
 
+#include "bytes/segment.hpp"
 #include "api.hpp"
 #include <string>
 
@@ -20,13 +21,14 @@ namespace dci { namespace couple { namespace runtime
         : public himpl::FaceLayout<impl::Bytes>
     {
     private:
+        Bytes(impl::Bytes &&);
         Bytes(const Bytes &) = delete;
         void operator=(const Bytes &) = delete;
 
     public:
         Bytes();
         Bytes(Bytes &&);
-        Bytes(impl::Bytes &&);
+        Bytes(std::size_t size, bytes::Segment *first, bytes::Segment *last);
         ~Bytes();
 
         Bytes &operator=(Bytes &&);

@@ -135,6 +135,8 @@ TEST_F(Net, StreamIp4)
     addr.octets[2] = 0;
     addr.octets[3] = 1;
 
+    addr.port = 12345;
+
     Event sdone, cdone;
 
     //server

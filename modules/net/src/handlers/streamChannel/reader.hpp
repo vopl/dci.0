@@ -31,6 +31,20 @@ namespace handlers { namespace streamChannel
         Request *_requestsLast;
 
     private:
-        static Bytes _buffer;
+        class PreparedBuffer
+        {
+        public:
+            PreparedBuffer();
+            ~PreparedBuffer();
+            std::pair<iovec *, std::size_t> prepare(std::size_t size);
+            Bytes flush(std::size_t size);
+
+        private:
+            bytes::Segment *    _segmentFirst;
+            bytes::Segment *    _segmentLast;
+            std::vector<iovec>  _iovecs;
+        };
+
+        static PreparedBuffer _preparedBuffer;
     };
 }}
