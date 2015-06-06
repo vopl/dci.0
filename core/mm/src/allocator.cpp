@@ -4,7 +4,6 @@
 #include "allocator/stack.hpp"
 
 #include "allocator.ipp"
-#include "utils/intrusiveDeque.ipp"
 #include "utils/sized_cast.ipp"
 #include "allocator/bitIndex.ipp"
 #include "allocator/bitIndex/level.ipp"
@@ -127,9 +126,5 @@ namespace dci { namespace mm
         return false;
     }
 
-    namespace
-    {
-        std::aligned_storage<sizeof(Allocator), alignof(Allocator)>::type g_allocator_area;
-    }
-    Allocator &g_allocator(*(Allocator *)(&g_allocator_area));
+    Allocator g_allocator;
 }}

@@ -1,20 +1,20 @@
 #pragma once
 
-#include "syncronizer.hpp"
+#include "waitable.hpp"
 
 namespace dci { namespace async { namespace impl
 {
 
     class Pulser
-        : public Syncronizer
+        : public Waitable
     {
     public:
         Pulser();
         virtual ~Pulser();
 
     public:
-        virtual bool locked() const override;
-        virtual void lock() override;
+//        virtual bool locked() const override;
+//        virtual void lock() override;
 
         void pulse();
 

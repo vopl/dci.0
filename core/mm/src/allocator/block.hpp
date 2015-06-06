@@ -2,9 +2,10 @@
 
 #include <dci/mm/config.hpp>
 
-#include "../utils/intrusiveDeque.hpp"
+#include <dci/mm/intrusiveDlist.hpp>
 
 #include <cstdint>
+#include <type_traits>
 
 namespace dci { namespace mm { namespace allocator
 {
@@ -46,13 +47,10 @@ namespace dci { namespace mm { namespace allocator
          };
 
     private:
+        mm::IntrusiveDlistElement<Block> _intrusiveDequeElement;
+
+    private:
         ElementHeader *_nextFreeElement;
-
-        //for intrusiveDeque
-        template <class T> friend class utils::IntrusiveDeque;
-
-        Block *_next;
-        Block *_prev;
 
     private:
         BlocksHolder *_thisBlockHolder;
@@ -63,8 +61,21 @@ namespace dci { namespace mm { namespace allocator
         alignas(ConfigMemory::_cacheLineSize) char _elementsArea[ConfigHeap::_blockSize - ConfigMemory::_cacheLineSize];
     };
 
+    ////////////////////////////////////////////////////////////////////////////////
+    inline IntrusiveDlistElement<Block> *intrusiveDlistElementCast(Block *e)
+    {
+        //static_assert(0 == offsetof(Block, _intrusiveDequeElement), "");
+        return (IntrusiveDlistElement<Block> *)(void *)e;
+    }
 
     ////////////////////////////////////////////////////////////////////////////////
-    static_assert(ConfigHeap::_blockSize == sizeof(Block), "Block must be ConfigHeap::_blockSize bytes");
+    inline Block *intrusiveDlistElementCast(IntrusiveDlistElement<Block> *e, Block *)
+    {
+        return (Block *)(void *)e;
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////
+    static_assert(ConfigHeap::_blockSize == sizeof(Block), "Block must be ConfigHeap::_blockSize bytes long");
+    static_assert(std::is_standard_layout<Block>::value, "Block must satisfy StandardLayoutType");
 
 }}}

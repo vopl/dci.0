@@ -4,6 +4,8 @@
 #include LAYOUTPROVIDERFILE("layoutProvider.hpp")
 
 #include <dci/himpl/faceLayout.hpp>
+#include "waitable.hpp"
+#include "lockable.hpp"
 #include "api.hpp"
 
 namespace dci { namespace async
@@ -14,7 +16,7 @@ namespace dci { namespace async
     }
 
     class APIDCI_ASYNC Mutex
-        : public himpl::FaceLayout<impl::Mutex>
+        : public himpl::FaceLayout<impl::Mutex, Waitable, Lockable>
     {
         Mutex(const Mutex &from) = delete;
         Mutex &operator=(const Mutex &from) = delete;
@@ -26,16 +28,8 @@ namespace dci { namespace async
     public:
         void lock();
         bool tryLock();
-
-    public:
+        bool canLock() const;
         void unlock();
-
-    public:
-        bool locked() const;
-
-    public:
-        using himpl::FaceLayout<impl::Mutex>::pimpl;
-        using himpl::FaceLayout<impl::Mutex>::impl;
     };
 
 }}

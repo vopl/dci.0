@@ -1,22 +1,23 @@
 #pragma once
 
-#include "syncronizer.hpp"
-#include <cstdint>
+#include "waitable.hpp"
+#include "lockable.hpp"
 
 namespace dci { namespace async { namespace impl
 {
 
     class Mutex
-        : public Syncronizer
+        : public Waitable
+        , public Lockable
     {
     public:
         Mutex();
-        virtual ~Mutex();
+        ~Mutex();
 
     public:
-        virtual bool locked() const override;
-        virtual void lock() override;
+        void lock();
         bool tryLock();
+        bool canLock() const;
         void unlock();
 
     private:

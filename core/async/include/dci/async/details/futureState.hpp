@@ -97,7 +97,7 @@ namespace dci { namespace async { namespace details
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
     template <class E, class... T>
     FutureState<E, T...>::FutureState()
-        : _readyEvent(false)
+        : _readyEvent()
         , _then(nullptr)
         , _dataState(DataState::null)
         , _data()
@@ -124,7 +124,7 @@ namespace dci { namespace async { namespace details
     template <class E, class... T>
     bool FutureState<E, T...>::resolved() const
     {
-        assert(_readyEvent.isSignalled() == (DataState::null != _dataState));
+        assert(_readyEvent.canAcquire() == (DataState::null != _dataState));
         return DataState::null != _dataState;
     }
 

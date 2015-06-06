@@ -2,9 +2,11 @@
 
 namespace dci { namespace async { namespace impl
 {
-    Event::Event(bool autoReset)
-        : _autoReset(autoReset)
-        , _signalled()
+    Event::Event()
+        : Waitable(
+            [](Waitable *w){ return static_cast<Event*>(w)->canAcquire();},
+            [](Waitable *w){ return static_cast<Event*>(w)->tryAcquire();})
+        , _ready(false)
     {
     }
 
@@ -12,55 +14,49 @@ namespace dci { namespace async { namespace impl
     {
     }
 
-    bool Event::locked() const
+    void Event::acquire()
     {
-        return !_signalled;
-    }
-
-    void Event::lock()
-    {
-        if(tryLock())
+        if(tryAcquire())
         {
             return;
         }
 
-        SyncronizerPtr syncronizers[1] = {this};
-        SyncronizerWaiter syncronizerWaiter(syncronizers, 1);
+        assert(!_ready);
 
-        syncronizerWaiter.all();
+        WWLink l;
+        l._waitable = this;
+        Waiter(&l, 1).any();
     }
 
-    bool Event::tryLock()
+    bool Event::tryAcquire()
     {
-        if(_signalled)
-        {
-            if(_autoReset)
-            {
-                _signalled = false;
-            }
-            return true;
-        }
+        return _ready;
+    }
 
-        return false;
+    bool Event::canAcquire() const
+    {
+        return _ready;
     }
 
     void Event::set()
     {
-        if(!_signalled)
+        if(!_ready)
         {
-            _signalled = true;
-            Syncronizer::unlock();
+            _ready = true;
+
+            std::pair<WWLink *, WWLink *> range = _links.range();
+            for(WWLink *link = range.first; link!=range.second;)
+            {
+                WWLink *next = link->_next;
+                link->_waiter->readyOffer(link);
+                link = next;
+            }
         }
     }
 
     void Event::reset()
     {
-        _signalled = false;
-    }
-
-    bool Event::signalled() const
-    {
-        return _signalled;
+        _ready = false;
     }
 
 }}}

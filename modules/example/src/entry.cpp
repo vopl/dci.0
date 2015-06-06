@@ -79,7 +79,7 @@ struct Entry
 
             for(;;)
             {
-                if(0 == dci::async::acquireAny(_stopEvent, t.pulser()))
+                if(0 == dci::async::waitAny(_stopEvent, t.pulser()))
                 {
                     break;
                 }
@@ -283,7 +283,7 @@ struct Entry
     }
 
 private:
-    dci::async::Event _stopEvent{false};
+    dci::async::Event _stopEvent{};
 } entry;
 
 extern "C"

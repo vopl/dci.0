@@ -39,7 +39,7 @@ namespace dci { namespace poll { namespace impl
         bool started() const;
         void stop();
 
-        async::Pulser &pulser();
+        async::PulserAll &pulser();
 
     public:
         std::chrono::steady_clock::time_point bound() const;
@@ -48,9 +48,9 @@ namespace dci { namespace poll { namespace impl
     private:
         bool                        _started;
         bool                        _repeatable;
-        std::chrono::nanoseconds   _interval;
+        std::chrono::nanoseconds    _interval;
 
-        async::Pulser               _pulser;
+        async::PulserAll            _pulser;
 
         std::chrono::steady_clock::time_point   _bound;
     };

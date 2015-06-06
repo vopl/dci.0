@@ -60,6 +60,12 @@ namespace handlers
         typename utils::AddressSpares<Address>::SockAddr sa;
         utils::fillSockaddr(sa, v);
 
+        int yes = 1;
+        if(setsockopt(_d, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(yes)))
+        {
+            return systemError();
+        }
+
         if(::bind(_d, (sockaddr *)&sa, sizeof(sa)))
         {
             return systemError();
@@ -110,7 +116,7 @@ namespace handlers
             p.resolveError(err_system::unknown);
         };
 
-        if(_d.readyEvent().isSignalled())
+        if(_d.readyEvent().canAcquire())
         {
             typename Future<Channel>::Promise p;
             acceptor(_d, p);

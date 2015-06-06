@@ -13,8 +13,8 @@ namespace dci { namespace mm
     class Allocator
     {
     public:
-        Allocator() = delete;
-        ~Allocator() = delete;
+        Allocator() = default;
+        ~Allocator() = default;
 
         void init();
         void deinit();
@@ -56,17 +56,17 @@ namespace dci { namespace mm
                 _stacksBitIndexAlignedSize + _stacksPad + _stacksAlignedSize;
 
 
-        void *_vm;
+        void *_vm {nullptr};
 
-        BlocksBitIndex *_blocksBitIndex;
-        void *_blocks;
+        BlocksBitIndex *_blocksBitIndex {nullptr};
+        void *_blocks {nullptr};
 
-        StacksBitIndex *_stacksBitIndex;
-        void *_stacks;
+        StacksBitIndex *_stacksBitIndex {nullptr};
+        void *_stacks {nullptr};
 
     private:
         allocator::BlocksHolder _blocksHolders[ConfigHeap::_maxSizeClassIndex+1];
     };
 
-    extern Allocator &g_allocator;
+    extern Allocator g_allocator;
 }}

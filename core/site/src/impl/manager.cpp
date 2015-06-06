@@ -245,14 +245,14 @@ namespace dci { namespace site { namespace impl
             abort();
         }
 
-        std::string hubModuleName = "libdci-site-testHub-";
+        std::string hubModuleName = "libdci-gtest-hub-";
         hubModuleName += stageStr;
         hubModuleName += ".so";
 
         void *hubModule = dlopen(hubModuleName.c_str(), RTLD_NOW | RTLD_LOCAL);
         if(!hubModule)
         {
-            LOGF("unable to load test hub module for stage "<<stageStr<<dlerror());
+            LOGF("unable to load test hub module for stage "<<stageStr<<", "<<dlerror());
             abort();
             return -1;
         }
@@ -274,7 +274,7 @@ namespace dci { namespace site { namespace impl
 
         if(dlclose(hubModule))
         {
-            LOGF("unable to unload test hub module for stage "<<stageStr<<dlerror());
+            LOGF("unable to unload test hub module for stage "<<stageStr<<", "<<dlerror());
             abort();
             return -1;
         }

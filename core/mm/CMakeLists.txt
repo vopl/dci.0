@@ -14,6 +14,8 @@ set(INC
     include/dci/mm/stack.hpp
     include/dci/mm/sharedInstance.hpp
     include/dci/mm/newDelete.hpp
+    include/dci/mm/intrusiveDlist.hpp
+    include/dci/mm/intrusiveDlist.ipp
 )
 
 ############################################################
@@ -24,8 +26,6 @@ set(SRC
     src/system.hpp
     src/system.cpp
     src/utils/sized_cast.hpp
-    src/utils/intrusiveDeque.hpp
-    src/utils/intrusiveDeque.ipp
     src/utils/sized_cast.ipp
     src/allocator/block.ipp
     src/allocator/blocksHolder.hpp
