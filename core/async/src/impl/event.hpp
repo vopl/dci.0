@@ -1,30 +1,25 @@
 #pragma once
 
-#include "syncronizer.hpp"
+#include "waitable.hpp"
 
 namespace dci { namespace async { namespace impl
 {
-
     class Event
-        : public Syncronizer
+        : public Waitable
     {
     public:
-        Event(bool autoReset);
-        virtual ~Event();
+        Event();
+        ~Event();
 
-    public:
-        virtual bool locked() const override;
-        virtual void lock() override;
-        bool tryLock();
-        bool signalled() const;
+        void acquire();
+        bool tryAcquire();
+        bool canAcquire() const;
 
         void set();
         void reset();
 
     private:
-        bool _autoReset;
-        bool _signalled;
-
+        bool _ready;
     };
 
 }}}

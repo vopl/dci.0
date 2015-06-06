@@ -51,7 +51,6 @@ include_directories(${Boost_INCLUDE_DIRS})
 add_library(${PROJECT} SHARED
     ${INC}  ${SRC}
     dciDefineModule.cmake
-    dciTest.cmake
 )
 set_property(TARGET ${PROJECT} PROPERTY CXX_STANDARD 14)
 set_property(TARGET ${PROJECT} PROPERTY CXX_STANDARD_REQUIRED ON)
@@ -93,23 +92,14 @@ target_link_libraries(${PROJECT}-executable ${PROJECT})
 target_link_libraries(${PROJECT}-executable ${Boost_PROGRAM_OPTIONS_LIBRARY})
 
 ############################################################
-function(dciSiteAddTestStage stage)
-    add_library(${PROJECT}-testHub-${stage}    SHARED src/testHub.cpp)
-    target_link_libraries(${PROJECT}-testHub-${stage} dci-gtest)
-    set_target_properties(${PROJECT}-testHub-${stage} PROPERTIES CXX_STANDARD 14)
-    add_test(NAME ${stage} COMMAND ${PROJECT}-executable --test ${stage})
-endfunction()
-
-
-dciSiteAddTestStage(noenv)
-dciSiteAddTestStage(min)
-dciSiteAddTestStage(mload)
-dciSiteAddTestStage(mstart)
+add_test(NAME noenv COMMAND ${PROJECT}-executable --test noenv)
+add_test(NAME min COMMAND ${PROJECT}-executable --test min)
+add_test(NAME mload COMMAND ${PROJECT}-executable --test mload)
+add_test(NAME mstart COMMAND ${PROJECT}-executable --test mstart)
 
 
 ############################################################
 if(COMMAND localinstall)
     localinstall(${PROJECT} include DROP_PREFIX include/ ${INC})
     localinstall(${PROJECT} share/cmake/Modules dciDefineModule.cmake)
-    localinstall(${PROJECT} share/cmake/Modules dciTest.cmake)
 endif()

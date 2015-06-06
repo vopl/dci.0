@@ -45,8 +45,6 @@ namespace dci { namespace mm { namespace allocator
     ////////////////////////////////////////////////////////////////////////////////
     inline Block::Block(BlocksHolder *thisBlockHolder, std::size_t sizeClass)
         : _nextFreeElement{utils::sized_cast<ElementHeader *>(_elementsArea)}
-        , _next{}
-        , _prev{}
         , _thisBlockHolder{thisBlockHolder}
         , _allocated{0}
         , _sizeClass{sizeClass}

@@ -53,6 +53,7 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
 add_library(${PROJECT} SHARED
     ${INC} ${SRC}
+    dciTest.cmake
 )
 set_property(TARGET ${PROJECT} PROPERTY CXX_STANDARD 14)
 set_property(TARGET ${PROJECT} PROPERTY CXX_STANDARD_REQUIRED ON)
@@ -64,6 +65,22 @@ target_link_libraries(${PROJECT} pthread)
 
 if(COMMAND localinstall)
     localinstall(${PROJECT} include DROP_PREFIX include/ ${INC})
+    localinstall(${PROJECT} share/cmake/Modules dciTest.cmake)
 endif()
 
+############################################################
+add_library(${PROJECT}-hub-noenv    SHARED src/testHub.cpp)
+target_link_libraries(${PROJECT}-hub-noenv ${PROJECT})
+set_target_properties(${PROJECT}-hub-noenv PROPERTIES CXX_STANDARD 14)
 
+add_library(${PROJECT}-hub-min    SHARED src/testHub.cpp)
+target_link_libraries(${PROJECT}-hub-min ${PROJECT})
+set_target_properties(${PROJECT}-hub-min PROPERTIES CXX_STANDARD 14)
+
+add_library(${PROJECT}-hub-mload    SHARED src/testHub.cpp)
+target_link_libraries(${PROJECT}-hub-mload ${PROJECT})
+set_target_properties(${PROJECT}-hub-mload PROPERTIES CXX_STANDARD 14)
+
+add_library(${PROJECT}-hub-mstart    SHARED src/testHub.cpp)
+target_link_libraries(${PROJECT}-hub-mstart ${PROJECT})
+set_target_properties(${PROJECT}-hub-mstart PROPERTIES CXX_STANDARD 14)

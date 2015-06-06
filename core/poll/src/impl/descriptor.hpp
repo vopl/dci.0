@@ -37,7 +37,7 @@ namespace dci { namespace poll { namespace impl
 
     private:
         int                 _fd;
-        dci::async::Event   _readyEvent{false};
+        dci::async::Event   _readyEvent;
         std::uint_fast32_t  _readyState{0};
     };
 }}}

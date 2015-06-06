@@ -135,28 +135,51 @@ set(INC
     include/dci/async.hpp
     include/dci/async/api.hpp
     include/dci/async/functions.hpp
+
+    include/dci/async/waitable.hpp
+    include/dci/async/lockable.hpp
     include/dci/async/mutex.hpp
+    include/dci/async/mutexRecursive.hpp
+    include/dci/async/semaphore.hpp
+    include/dci/async/condVar.hpp
     include/dci/async/event.hpp
-    include/dci/async/pulser.hpp
-    include/dci/async/acquire.hpp
+    include/dci/async/notifierOne.hpp
+    include/dci/async/notifierAll.hpp
+    include/dci/async/pulserOne.hpp
+    include/dci/async/pulserAll.hpp
+    include/dci/async/barrier.hpp
+
+    include/dci/async/waiter.hpp
+    include/dci/async/wait.hpp
     include/dci/async/future.hpp
     include/dci/async/promise.hpp
     include/dci/async/details/futureState.hpp
     include/dci/async/details/task.hpp
     include/dci/async/details/taskInstance.hpp
     include/dci/async/details/taskPromiseProcessor.hpp
-    include/dci/async/details/acquire.hpp
+    include/dci/async/details/wait.hpp
     include/dci/async/layoutProvider.hpp
 )
 
 ############################################################
 set(SRC
     src/functions.cpp
+
+    src/waiter.cpp
+    src/waitable.cpp
+    src/lockable.cpp
     src/mutex.cpp
+    src/mutexRecursive.cpp
+    src/semaphore.cpp
+    src/condVar.cpp
     src/event.cpp
-    src/pulser.cpp
+    src/notifierOne.cpp
+    src/notifierAll.cpp
+    src/pulserOne.cpp
+    src/pulserAll.cpp
+    src/barrier.cpp
+
     src/details/task.cpp
-    src/details/acquire.cpp
     
     src/impl/scheduler.hpp
     src/impl/scheduler.cpp
@@ -164,17 +187,35 @@ set(SRC
     src/impl/task.cpp
     src/impl/effortContainer.hpp
 
-    src/impl/syncronizerWaiter.hpp
-    src/impl/syncronizer.hpp
-    src/impl/mutex.hpp
-    src/impl/event.hpp
-    src/impl/pulser.hpp
+    src/impl/waiter.hpp
+    src/impl/waitable.hpp
+    src/impl/lockable.hpp
 
-    src/impl/syncronizerWaiter.cpp
-    src/impl/syncronizer.cpp
+    src/impl/mutex.hpp
+    src/impl/mutexRecursive.hpp
+    src/impl/semaphore.hpp
+    src/impl/condVar.hpp
+    src/impl/event.hpp
+    src/impl/notifierOne.hpp
+    src/impl/notifierAll.hpp
+    src/impl/pulserOne.hpp
+    src/impl/pulserAll.hpp
+    src/impl/barrier.hpp
+
+    src/impl/waiter.cpp
+    src/impl/waitable.cpp
+    src/impl/lockable.cpp
+
     src/impl/mutex.cpp
+    src/impl/mutexRecursive.cpp
+    src/impl/semaphore.cpp
+    src/impl/condVar.cpp
     src/impl/event.cpp
-    src/impl/pulser.cpp
+    src/impl/notifierOne.cpp
+    src/impl/notifierAll.cpp
+    src/impl/pulserOne.cpp
+    src/impl/pulserAll.cpp
+    src/impl/barrier.cpp
 )
 
 
@@ -274,19 +315,46 @@ dciMakeHimplLayouts(${PROJECT}
     HEADERS
         ${CMAKE_CURRENT_SOURCE_DIR}/src/impl/scheduler.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/impl/task.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/impl/waitable.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/impl/lockable.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/impl/waiter.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/impl/mutex.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/impl/mutexRecursive.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/impl/semaphore.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/impl/condVar.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/impl/event.hpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/impl/pulser.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/impl/notifierOne.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/impl/notifierAll.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/impl/pulserOne.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/impl/pulserAll.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/impl/barrier.hpp
 
     CLASSES
         ::dci::async::impl::Scheduler
         ::dci::async::impl::Task
+        ::dci::async::impl::Waitable
+        ::dci::async::impl::Lockable
+        ::dci::async::impl::Waiter
+
         ::dci::async::impl::Mutex
+        ::dci::async::impl::MutexRecursive
+        ::dci::async::impl::Semaphore
+        ::dci::async::impl::CondVar
         ::dci::async::impl::Event
-        ::dci::async::impl::Pulser
+        ::dci::async::impl::NotifierOne
+        ::dci::async::impl::NotifierAll
+        ::dci::async::impl::PulserOne
+        ::dci::async::impl::PulserAll
+        ::dci::async::impl::Barrier
 )
 
 
+############################################################
+include(dciTest)
+dciTest(${PROJECT} noenv
+    SRC test/syncronizers.cpp
+    LINK ${PROJECT}
+)
 
 
 

@@ -1,12 +1,15 @@
 #include "mutex.hpp"
-#include "syncronizerWaiter.hpp"
+#include "waiter.hpp"
 
 #include <cassert>
 
 namespace dci { namespace async { namespace impl
 {
     Mutex::Mutex()
-        : _locked()
+        : Waitable(
+              [](Waitable *w){ return static_cast<Mutex*>(w)->canLock();},
+              [](Waitable *w){ return static_cast<Mutex*>(w)->tryLock();})
+        , _locked(false)
     {
     }
 
@@ -21,15 +24,16 @@ namespace dci { namespace async { namespace impl
             return;
         }
 
-        SyncronizerPtr syncronizers[1] = {this};
-        SyncronizerWaiter syncronizerWaiter(syncronizers, 1);
+        assert(_locked);
 
-        syncronizerWaiter.all();
+        WWLink l;
+        l._waitable = this;
+        Waiter(&l, 1).any();
     }
 
     bool Mutex::tryLock()
     {
-        if(!locked())
+        if(!_locked)
         {
             _locked = true;
             return true;
@@ -38,16 +42,33 @@ namespace dci { namespace async { namespace impl
         return false;
     }
 
-    void Mutex::unlock()
+    bool Mutex::canLock() const
     {
-        assert(locked());
-        _locked = false;
-        Syncronizer::unlock();
+        return !_locked;
     }
 
-    bool Mutex::locked() const
+    void Mutex::unlock()
     {
-        return _locked;
+        assert(_locked);
+
+        if(!_locked)
+        {
+            abort();
+        }
+
+        _locked = false;
+
+        std::pair<WWLink *, WWLink *> range = _links.range();
+        for(WWLink *link = range.first; link!=range.second;)
+        {
+            WWLink *next = link->_next;
+            if(link->_waiter->readyOffer(link))
+            {
+                assert(_locked);
+                return;
+            }
+            link = next;
+        }
     }
 
 }}}

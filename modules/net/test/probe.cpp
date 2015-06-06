@@ -176,7 +176,7 @@ TEST_F(Net, StreamIp4)
         cdone.set();
     });
 
-    async::acquireAll(sdone, cdone);
+    async::waitAll(sdone, cdone);
 }
 
 TEST_F(Net, SpamerBench)
@@ -197,44 +197,46 @@ TEST_F(Net, SpamerBench)
 
     //client
     spawn([&](){
-        auto fc = nh.ip4StreamClient();
-        ASSERT_FALSE(fc.hasError());
-        ip4::stream::Client c = fc;
-
-        auto fch = c.connect(ip4::Address(addr));
-        ASSERT_FALSE(fch.hasError());
-
-        ip4::stream::Channel ch = fch;
-
-
-
-        std::chrono::high_resolution_clock::time_point start = std::chrono::high_resolution_clock::now();
-
-        for(std::size_t i(1); i<=1000000; i++)
         {
+            auto fc = nh.ip4StreamClient();
+            ASSERT_FALSE(fc.hasError());
+            ip4::stream::Client c = fc;
 
-            Bytes bs;
-            bs.append("tratata data");
-            ch.write(std::move(bs));
+            auto fch = c.connect(ip4::Address(addr));
+            ASSERT_FALSE(fch.hasError());
 
-            bs = ch.read();
+            ip4::stream::Channel ch = fch;
 
-            if(!(i%100000))
+
+
+            std::chrono::high_resolution_clock::time_point start = std::chrono::high_resolution_clock::now();
+
+            for(std::size_t i(1); i<=1000000; i++)
             {
-                std::chrono::high_resolution_clock::time_point stop = std::chrono::high_resolution_clock::now();
 
-                std::cout << "Reply is: ";
-                std::cout<<bs.toString()<<std::endl;
-                std::cout << ", "<<std::chrono::duration_cast<std::chrono::duration<double>>((stop - start)).count();
-                std::cout << "\n";
+                Bytes bs;
+                bs.append("tratata data");
+                ch.write(std::move(bs));
 
-                start = std::chrono::high_resolution_clock::now();
+                bs = ch.read();
 
+                if(!(i%100000))
+                {
+                    std::chrono::high_resolution_clock::time_point stop = std::chrono::high_resolution_clock::now();
+
+                    std::cout << "Reply is: ";
+                    std::cout<<bs.toString()<<std::endl;
+                    std::cout << ", "<<std::chrono::duration_cast<std::chrono::duration<double>>((stop - start)).count();
+                    std::cout << "\n";
+
+                    start = std::chrono::high_resolution_clock::now();
+
+                }
             }
-        }
 
+        }
         cdone.set();
     });
 
-    async::acquireAll(cdone);
+    async::waitAll(cdone);
 }

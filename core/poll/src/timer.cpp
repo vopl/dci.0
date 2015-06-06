@@ -49,7 +49,7 @@ namespace dci { namespace poll
         return impl().stop();
     }
 
-    async::Pulser &Timer::pulser()
+    async::PulserAll &Timer::pulser()
     {
         return impl().pulser();
     }

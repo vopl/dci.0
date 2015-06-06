@@ -1,7 +1,7 @@
 #pragma once
 
 #include "block.hpp"
-#include "../utils/intrusiveDeque.hpp"
+#include <dci/mm/intrusiveDlist.hpp>
 
 namespace dci { namespace mm { namespace allocator
 {
@@ -9,7 +9,7 @@ namespace dci { namespace mm { namespace allocator
     class BlocksHolder
     {
     public:
-        BlocksHolder() = delete;
+        BlocksHolder() = default;
         ~BlocksHolder();
 
     public:
@@ -25,8 +25,8 @@ namespace dci { namespace mm { namespace allocator
         void blockFullToMiddle(Block *block);
 
     private:
-        utils::IntrusiveDeque<Block> _empty;
-        utils::IntrusiveDeque<Block> _middle;
-        utils::IntrusiveDeque<Block> _full;
+        IntrusiveDlist<Block> _empty;
+        IntrusiveDlist<Block> _middle;
+        IntrusiveDlist<Block> _full;
     };
 }}}

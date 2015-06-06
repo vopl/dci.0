@@ -30,7 +30,7 @@ namespace handlers
         bool _bounded{false};
         Address _boundAddress;
         std::size_t _spawnedTasks{0};
-        dci::async::Event _abortEvent{false};
+        dci::async::Event _abortEvent{};
     };
 
 
@@ -99,7 +99,7 @@ namespace handlers
                 }
                 else
                 {
-                    if(0 == dci::async::acquireAny(_abortEvent, channel->_d.readyEvent()))
+                    if(0 == dci::async::waitAny(_abortEvent, channel->_d.readyEvent()))
                     {
                         channel->_d.close();
                         ec = err_system::connection_aborted;

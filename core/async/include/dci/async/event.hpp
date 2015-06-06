@@ -4,6 +4,7 @@
 #include LAYOUTPROVIDERFILE("layoutProvider.hpp")
 
 #include <dci/himpl/faceLayout.hpp>
+#include "waitable.hpp"
 #include "api.hpp"
 
 namespace dci { namespace async
@@ -14,29 +15,22 @@ namespace dci { namespace async
     }
 
     class APIDCI_ASYNC Event
-        : public himpl::FaceLayout<impl::Event>
+        : public himpl::FaceLayout<impl::Event, Waitable>
     {
         Event(const Event &from) = delete;
         Event &operator=(const Event &from) = delete;
 
     public:
-        Event(bool autoReset = true);
+        Event();
         ~Event();
 
     public:
         void acquire();
         bool tryAcquire();
+        bool canAcquire() const;
 
-    public:
         void set();
         void reset();
-
-    public:
-        bool isSignalled() const;
-
-    public:
-        using himpl::FaceLayout<impl::Event>::pimpl;
-        using himpl::FaceLayout<impl::Event>::impl;
     };
 
 }}

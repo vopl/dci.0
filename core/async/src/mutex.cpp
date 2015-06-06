@@ -4,14 +4,12 @@
 namespace dci { namespace async
 {
     Mutex::Mutex()
-        : himpl::FaceLayout<impl::Mutex>()
+        : himpl::FaceLayout<impl::Mutex, Waitable, Lockable>()
     {
-
     }
 
     Mutex::~Mutex()
     {
-
     }
 
     void Mutex::lock()
@@ -24,14 +22,13 @@ namespace dci { namespace async
         return impl().tryLock();
     }
 
+    bool Mutex::canLock() const
+    {
+        return impl().canLock();
+    }
+
     void Mutex::unlock()
     {
         return impl().unlock();
     }
-
-    bool Mutex::locked() const
-    {
-        return impl().locked();
-    }
-
 }}

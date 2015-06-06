@@ -38,7 +38,7 @@ namespace dci { namespace poll
         bool started() const;
         void stop();
 
-        async::Pulser &pulser();
+        async::PulserAll &pulser();
     };
 
 }}

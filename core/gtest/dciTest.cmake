@@ -17,8 +17,8 @@ function(dciTest target stage)
     target_link_libraries(${testTarget} dci-gtest ${OPTS_LINK})
 
 
-    get_property(libsInHub TARGET dci-site-testHub-${stage} PROPERTY LINK_LIBRARIES)
+    get_property(libsInHub TARGET dci-gtest-hub-${stage} PROPERTY LINK_LIBRARIES)
     set(libsInHub ${libsInHub} ${testTarget})
-    set_property(TARGET dci-site-testHub-${stage} PROPERTY LINK_LIBRARIES ${libsInHub})
+    set_property(TARGET dci-gtest-hub-${stage} PROPERTY LINK_LIBRARIES ${libsInHub})
 
 endfunction()

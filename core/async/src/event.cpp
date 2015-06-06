@@ -1,27 +1,30 @@
 #include <dci/async/event.hpp>
 #include "impl/event.hpp"
+#include "impl/waitable.hpp"
 
 namespace dci { namespace async
 {
-    Event::Event(bool autoReset)
-        : himpl::FaceLayout<impl::Event>(autoReset)
+    Event::Event()
+        : himpl::FaceLayout<impl::Event, Waitable>()
     {
-
     }
 
     Event::~Event()
     {
-
     }
 
     void Event::acquire()
     {
-        return impl().lock();
+        return impl().acquire();
     }
 
     bool Event::tryAcquire()
     {
-        return impl().tryLock();
+        return impl().tryAcquire();
+    }
+    bool Event::canAcquire() const
+    {
+        return impl().canAcquire();
     }
 
     void Event::set()
@@ -32,11 +35,6 @@ namespace dci { namespace async
     void Event::reset()
     {
         return impl().reset();
-    }
-
-    bool Event::isSignalled() const
-    {
-        return !impl().locked();
     }
 
 }}

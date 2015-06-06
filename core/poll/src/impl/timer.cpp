@@ -108,7 +108,7 @@ namespace dci { namespace poll { namespace impl
         }
     }
 
-    async::Pulser &Timer::pulser()
+    async::PulserAll &Timer::pulser()
     {
         return _pulser;
     }

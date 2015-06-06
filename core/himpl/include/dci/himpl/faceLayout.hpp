@@ -7,6 +7,7 @@
 #include <utility>
 #include <cstdint>
 #include <cassert>
+#include <new>
 
 namespace dci { namespace himpl
 {

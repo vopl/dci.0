@@ -216,7 +216,7 @@ namespace impl
     bool Rtnetlink::read()
     {
         assert(_sock);
-        if(0 == dci::async::acquireAny(_stop, _sock->readyEvent()))
+        if(0 == dci::async::waitAny(_stop, _sock->readyEvent()))
         {
             return false;
         }
