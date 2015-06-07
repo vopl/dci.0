@@ -10,7 +10,6 @@ namespace dci {namespace async {namespace impl {class Waiter;}}}
 namespace dci {namespace async {namespace impl {class Mutex;}}}
 namespace dci {namespace async {namespace impl {class MutexRecursive;}}}
 namespace dci {namespace async {namespace impl {class Semaphore;}}}
-namespace dci {namespace async {namespace impl {class CondVar;}}}
 namespace dci {namespace async {namespace impl {class Event;}}}
 namespace dci {namespace async {namespace impl {class NotifierOne;}}}
 namespace dci {namespace async {namespace impl {class NotifierAll;}}}
@@ -27,7 +26,6 @@ namespace dci { namespace himpl {
     template <> struct LayoutProvider< ::dci::async::impl::Mutex > { static const std::size_t _size=56; static const std::size_t _align=8; static const bool _polymorphic=false; };
     template <> struct LayoutProvider< ::dci::async::impl::MutexRecursive > { static const std::size_t _size=64; static const std::size_t _align=8; static const bool _polymorphic=false; };
     template <> struct LayoutProvider< ::dci::async::impl::Semaphore > { static const std::size_t _size=56; static const std::size_t _align=8; static const bool _polymorphic=false; };
-    template <> struct LayoutProvider< ::dci::async::impl::CondVar > { static const std::size_t _size=48; static const std::size_t _align=8; static const bool _polymorphic=false; };
     template <> struct LayoutProvider< ::dci::async::impl::Event > { static const std::size_t _size=56; static const std::size_t _align=8; static const bool _polymorphic=false; };
     template <> struct LayoutProvider< ::dci::async::impl::NotifierOne > { static const std::size_t _size=56; static const std::size_t _align=8; static const bool _polymorphic=false; };
     template <> struct LayoutProvider< ::dci::async::impl::NotifierAll > { static const std::size_t _size=56; static const std::size_t _align=8; static const bool _polymorphic=false; };

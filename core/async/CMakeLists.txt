@@ -141,7 +141,6 @@ set(INC
     include/dci/async/mutex.hpp
     include/dci/async/mutexRecursive.hpp
     include/dci/async/semaphore.hpp
-    include/dci/async/condVar.hpp
     include/dci/async/event.hpp
     include/dci/async/notifierOne.hpp
     include/dci/async/notifierAll.hpp
@@ -171,7 +170,6 @@ set(SRC
     src/mutex.cpp
     src/mutexRecursive.cpp
     src/semaphore.cpp
-    src/condVar.cpp
     src/event.cpp
     src/notifierOne.cpp
     src/notifierAll.cpp
@@ -194,7 +192,6 @@ set(SRC
     src/impl/mutex.hpp
     src/impl/mutexRecursive.hpp
     src/impl/semaphore.hpp
-    src/impl/condVar.hpp
     src/impl/event.hpp
     src/impl/notifierOne.hpp
     src/impl/notifierAll.hpp
@@ -209,7 +206,6 @@ set(SRC
     src/impl/mutex.cpp
     src/impl/mutexRecursive.cpp
     src/impl/semaphore.cpp
-    src/impl/condVar.cpp
     src/impl/event.cpp
     src/impl/notifierOne.cpp
     src/impl/notifierAll.cpp
@@ -321,7 +317,6 @@ dciMakeHimplLayouts(${PROJECT}
         ${CMAKE_CURRENT_SOURCE_DIR}/src/impl/mutex.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/impl/mutexRecursive.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/impl/semaphore.hpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/impl/condVar.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/impl/event.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/impl/notifierOne.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/impl/notifierAll.hpp
@@ -339,7 +334,6 @@ dciMakeHimplLayouts(${PROJECT}
         ::dci::async::impl::Mutex
         ::dci::async::impl::MutexRecursive
         ::dci::async::impl::Semaphore
-        ::dci::async::impl::CondVar
         ::dci::async::impl::Event
         ::dci::async::impl::NotifierOne
         ::dci::async::impl::NotifierAll
