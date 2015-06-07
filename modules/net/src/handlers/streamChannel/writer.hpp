@@ -13,6 +13,7 @@ namespace handlers { namespace streamChannel
         Writer();
         ~Writer();
 
+        bool hasRequests() const;
         Future< > pushRequest(Bytes &&b);
         void pump(Descriptor &d);
         void close(const std::error_code &ec);

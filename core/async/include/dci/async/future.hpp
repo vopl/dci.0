@@ -214,7 +214,7 @@ namespace dci { namespace async
     std::tuple<T...> &&Future<E, T...>::detachValue()
     {
         wait();
-        return this->instance().value();
+        return std::move(this->instance().value());
     }
 
     template <class E, class... T>

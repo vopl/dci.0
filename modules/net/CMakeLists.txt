@@ -21,6 +21,8 @@ set(SRC
     src/handlers/scopeSelector.hpp
 
     src/handlers/datagramChannel.hpp
+    src/handlers/datagramChannel/reader.hpp
+    src/handlers/datagramChannel/writer.hpp
 
     src/handlers/streamChannel.hpp
     src/handlers/streamChannel/reader.hpp

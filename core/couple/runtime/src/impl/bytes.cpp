@@ -263,8 +263,39 @@ namespace dci { namespace couple { namespace runtime { namespace impl
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
     void Bytes::dropLast(std::size_t size)
     {
-        (void)size;
-        assert(0);
+        if(size >= _size)
+        {
+            clear();
+            return;
+        }
+
+        bytes::Segment *iter = _first;
+
+        std::size_t keepSize = _size - size;
+        while(iter->_size <= keepSize)
+        {
+            _last = iter;
+            keepSize -= iter->_size;
+            iter = iter->_next;
+        }
+
+        if(keepSize)
+        {
+            _last = iter;
+            iter->_size = keepSize;
+            iter = iter->_next;
+        }
+
+        _last->_next = nullptr;
+
+        while(iter)
+        {
+            bytes::Segment *cur = iter;
+            iter = iter->_next;
+            delete cur;
+        }
+
+        _size -= size;
     }
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7

@@ -33,8 +33,12 @@ namespace utils
         using SockAddr = sockaddr_un;
     };
 
-    void fillSockaddr(sockaddr_in &inetAddress, const net::ip4::Address &address);
-    void fillSockaddr(sockaddr_in6 &inetAddress, const net::ip6::Address &address);
-    void fillSockaddr(sockaddr_un &inetAddress, const net::local::Address &address);
+    void fillSockaddr(const net::ip4::Address &address, sockaddr_in &inetAddress);
+    void fillSockaddr(const net::ip6::Address &address, sockaddr_in6 &inetAddress);
+    void fillSockaddr(const net::local::Address &address, sockaddr_un &inetAddress);
+
+    void fillSockaddr(const sockaddr_in &inetAddress, net::ip4::Address &address);
+    void fillSockaddr(const sockaddr_in6 &inetAddress, net::ip6::Address &address);
+    void fillSockaddr(const sockaddr_un &inetAddress, net::local::Address &address);
 
 }

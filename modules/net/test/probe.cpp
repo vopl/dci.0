@@ -5,6 +5,7 @@
 #include <dci/couple/runtime.hpp>
 
 #include <chrono>
+#include <tuple>
 
 #include <net.hpp>
 
@@ -179,6 +180,67 @@ TEST_F(Net, StreamIp4)
     async::waitAll(sdone, cdone);
 }
 
+TEST_F(Net, DatagramIp4)
+{
+    async::Future<std::error_code, Host> netHost = _manager->createService<Host>();
+    ASSERT_FALSE(netHost.hasError());
+    Host nh = netHost.detachValue<0>();
+
+    ip4::Address addr;
+    addr.octets[0] = 127;
+    addr.octets[1] = 0;
+    addr.octets[2] = 0;
+    addr.octets[3] = 1;
+
+    addr.port = 12345;
+
+    Event sdone, cdone;
+
+    //server
+    spawn([&](){
+        auto fch = nh.ip4DatagramChannel();
+        ASSERT_FALSE(fch.hasError());
+        ip4::datagram::Channel ch = fch;
+
+        ASSERT_FALSE(ch.bind(ip4::Address(addr)).hasError());
+
+        auto rcv = ch.receive();
+        ASSERT_FALSE(rcv.hasError());
+
+        Bytes b;
+        ip4::Address a;
+        std::tie(b, a) = rcv.detachValue();
+
+        ch.send(std::move(b), ip4::Address(a));
+
+        sdone.set();
+    });
+
+    //client
+    spawn([&](){
+        auto fch = nh.ip4DatagramChannel();
+        ASSERT_FALSE(fch.hasError());
+        ip4::datagram::Channel ch = fch;
+
+        Bytes b;
+        b.append("tratata");
+        ASSERT_FALSE(ch.send(std::move(b), ip4::Address(addr)).hasError());
+
+        auto rcv = ch.receive();
+        ASSERT_FALSE(rcv.hasError());
+
+        ip4::Address a;
+        std::tie(b, a) = rcv.detachValue();
+
+        EXPECT_TRUE(b.toString() == "tratata");
+
+        cdone.set();
+    });
+
+    async::waitAll(sdone, cdone);
+}
+
+#if 0
 TEST_F(Net, SpamerBench)
 {
     async::Future<std::error_code, Host> netHost = _manager->createService<Host>();
@@ -240,3 +302,4 @@ TEST_F(Net, SpamerBench)
 
     async::waitAll(cdone);
 }
+#endif

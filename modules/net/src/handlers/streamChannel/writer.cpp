@@ -26,6 +26,12 @@ namespace handlers { namespace streamChannel
     }
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
+    bool Writer::hasRequests() const
+    {
+        return !!_requestsFirst;
+    }
+
+    /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
     Future< > Writer::pushRequest(Bytes &&b)
     {
         if(!_requestsFirst)

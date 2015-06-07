@@ -14,6 +14,7 @@ namespace handlers { namespace streamChannel
         Reader();
         ~Reader();
 
+        bool hasRequests() const;
         Future< Bytes> pushRequest();
         void pump(Descriptor &d);
         void close(const std::error_code &ec);

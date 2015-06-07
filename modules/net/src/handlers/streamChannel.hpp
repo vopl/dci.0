@@ -46,6 +46,7 @@ namespace handlers
     StreamChannel<Address>::StreamChannel(int sock)
         : _d(sock)
     {
+        launchPumper();
     }
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
@@ -88,11 +89,12 @@ namespace handlers
             return systemError(_d.error());
         }
 
+        bool wasEmpty = !_reader.hasRequests();
         Future< Bytes> res = _reader.pushRequest();
 
-        if(!_pumperLaunched)
+        if(wasEmpty && dci::poll::Descriptor::rsf_read & _d.readyState())
         {
-            launchPumper();
+            _reader.pump(_d);
         }
 
         return res;
@@ -112,15 +114,12 @@ namespace handlers
             return systemError(_d.error());
         }
 
+        bool wasEmpty = !_writer.hasRequests();
         Future< > res = _writer.pushRequest(std::move(v));
 
-        if(dci::poll::Descriptor::rsf_write & _d.readyState())
+        if(wasEmpty && dci::poll::Descriptor::rsf_write & _d.readyState())
         {
             _writer.pump(_d);
-        }
-        else if(!_pumperLaunched)
-        {
-            launchPumper();
         }
 
         return res;
@@ -131,8 +130,8 @@ namespace handlers
     Future< > StreamChannel<Address>::close()
     {
         _d.close();
-        _reader.close(err_system::bad_file_descriptor);
-        _writer.close(err_system::bad_file_descriptor);
+        _reader.close(err_system::connection_reset);
+        _writer.close(err_system::connection_reset);
         return Future< >();
     }
 

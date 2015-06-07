@@ -68,7 +68,7 @@ namespace handlers
         if(_bounded)
         {
             typename utils::AddressSpares<Address>::SockAddr sa;
-            utils::fillSockaddr(sa, _boundAddress);
+            utils::fillSockaddr(_boundAddress, sa);
 
             if(::bind(sock, (sockaddr *)&sa, sizeof(sa)))
             {
@@ -86,7 +86,7 @@ namespace handlers
 
             {
                 typename utils::AddressSpares<Address>::SockAddr sa;
-                utils::fillSockaddr(sa, address);
+                utils::fillSockaddr(address, sa);
 
                 int res = ::connect(channel->_d, (sockaddr *)&sa, sizeof(sa));
                 if(!res)

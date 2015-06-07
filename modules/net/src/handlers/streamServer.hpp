@@ -58,7 +58,7 @@ namespace handlers
     Future< > StreamServer<Address>::bind(Address &&v)
     {
         typename utils::AddressSpares<Address>::SockAddr sa;
-        utils::fillSockaddr(sa, v);
+        utils::fillSockaddr(v, sa);
 
         int yes = 1;
         if(setsockopt(_d, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(yes)))
@@ -135,11 +135,7 @@ namespace handlers
     template <class Address>
     Future< > StreamServer<Address>::close()
     {
-        if(::close(_d))
-        {
-            return systemError();
-        }
-
+        _d.close();
         return Future<>();
     }
 
