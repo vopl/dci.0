@@ -144,16 +144,85 @@ namespace handlers { namespace datagramChannel
         static const std::size_t messagesPrepared = 256;
 
         static std::vector<mmsghdr> mmsgs(messagesPrepared);
-        static std::vector<Bytes> buffers(messagesPrepared);
+
+        using BufferSegment = std::unique_ptr<bytes::Segment>;
+        class Buffer
+        {
+            BufferSegment _segments[segmentsPerMessage];
+
+        public:
+            void ensureFull(iovec *iov)
+            {
+                for(std::size_t sindex(0); sindex<segmentsPerMessage; ++sindex)
+                {
+                    BufferSegment &bs = _segments[sindex];
+
+                    assert(!bs);
+                    bs.reset(new bytes::Segment(bytes::Segment::_granula));
+
+                    iov->iov_base = bs->_buffer;
+                    iov->iov_len = bs->_size;
+                    iov++;
+                }
+            }
+
+            Bytes emitBytes(std::size_t size, iovec *iov)
+            {
+                assert(size <= segmentsPerMessage * bytes::Segment::_granula);
+
+                if(!size)
+                {
+                    return Bytes();
+                }
+
+                BufferSegment *bs = _segments;
+
+                bytes::Segment *first = bs->release();
+
+                BufferSegment(new bytes::Segment(bytes::Segment::_granula)).swap(*bs);
+                iov->iov_base = bs->get()->_buffer;
+                //iov->iov_len = bs->get()->_size;
+                assert(bytes::Segment::_granula == iov->iov_len);
+
+                iov++;
+                bs++;
+
+                bytes::Segment *last = first;
+                std::size_t emittedSize(first->_granula);
+
+                while(emittedSize < size)
+                {
+                    last->_next = bs->release();
+                    BufferSegment(new bytes::Segment(bytes::Segment::_granula)).swap(*bs);
+                    iov->iov_base = bs->get()->_buffer;
+                    //iov->iov_len = bs->get()->_size;
+                    assert(bytes::Segment::_granula == iov->iov_len);
+
+                    iov++;
+                    bs++;
+
+                    last = last->_next;
+                    emittedSize += last->_granula;
+                }
+
+                if(emittedSize > size)
+                {
+                    last->_size -= emittedSize - size;
+                }
+
+                return Bytes(size, first, last);
+            }
+        };
+        static std::vector<Buffer> buffers(messagesPrepared);
+
         static std::vector<iovec[segmentsPerMessage]> iovs(messagesPrepared);
         static std::vector<sockaddr_in6> addresses(messagesPrepared);
 
-        bool regenerateBuffers(std::size_t amount)
-        {
-            for(std::size_t index(0); index<amount; ++index)
-            {
-                assert(buffers[index].empty());
 
+        static volatile bool stub = ([]()->bool
+        {
+            for(std::size_t index(0); index<messagesPrepared; ++index)
+            {
                 mmsghdr &h = mmsgs[index];
 
                 h.msg_hdr.msg_name = &addresses[index];
@@ -165,31 +234,12 @@ namespace handlers { namespace datagramChannel
                 h.msg_hdr.msg_control = nullptr;
                 h.msg_hdr.msg_controllen = 0;
 
-                iovec *iov = (iovec *)h.msg_hdr.msg_iov + segmentsPerMessage;
-                iov--;
-
-                bytes::Segment *slast = new bytes::Segment(bytes::Segment::_granula);
-                bytes::Segment *sfirst = slast;
-                iov->iov_base = sfirst->_buffer;
-                iov->iov_len = sfirst->_size;
-                iov--;
-
-
-                for(std::size_t sindex(1); sindex<segmentsPerMessage; ++sindex)
-                {
-                    sfirst = new bytes::Segment(bytes::Segment::_granula, 0, sfirst);
-                    iov->iov_base = sfirst->_buffer;
-                    iov->iov_len = sfirst->_size;
-                    iov--;
-                }
-
-                buffers[index] = Bytes(segmentsPerMessage * bytes::Segment::_granula, sfirst, slast);
+                buffers[index].ensureFull(h.msg_hdr.msg_iov);
             }
-
             return true;
-        }
+        })();
 
-        static bool stub = regenerateBuffers(messagesPrepared);
+
     }
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
@@ -214,25 +264,23 @@ namespace handlers { namespace datagramChannel
 
                     mmsghdr &h = mmsgs[index];
 
-                    Bytes b = std::move(buffers[index]);
-                    b.dropLast(b.size() - h.msg_len);
-
                     if(Request::PromiseKind::data == request->_promiseKind)
                     {
-                        request->_promiseHolder._d.resolveValue(std::move(b));
+                        request->_promiseHolder._d.resolveValue(buffers[index].emitBytes(h.msg_len, h.msg_hdr.msg_iov));
                     }
                     else
                     {
                         Address a;
                         utils::fillSockaddr(*(typename utils::AddressSpares<Address>::SockAddr *)&addresses[index], a);
-                        request->_promiseHolder._da.resolveValue(std::move(b), std::move(a));
+                        request->_promiseHolder._da.resolveValue(
+                                    buffers[index].emitBytes(h.msg_len, h.msg_hdr.msg_iov),
+                                    std::move(a));
                     }
 
                     delete request;
                 }
 
                 _requestsAmount -= res;
-                regenerateBuffers(res);
 
                 if(!_requestsFirst)
                 {
