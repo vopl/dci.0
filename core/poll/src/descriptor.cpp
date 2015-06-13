@@ -57,4 +57,11 @@ namespace dci { namespace poll
     {
         return impl().resetReadyState(flags);
     }
+
+    void Descriptor::setReadyCallback(void *userData, void (*f)(void *userData, std::uint_fast32_t flags))
+    {
+        return impl().setReadyCallback(userData, f);
+    }
+
+
 }}

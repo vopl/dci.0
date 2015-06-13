@@ -61,7 +61,6 @@ namespace dci { namespace poll { namespace impl
             _fd = -1;
 
             setReadyState(poll::Descriptor::rsf_error);
-            _readyEvent.set();
         }
     }
 
@@ -87,6 +86,16 @@ namespace dci { namespace poll { namespace impl
     void Descriptor::resetReadyState(std::uint_fast32_t flags)
     {
         _readyState &= ~flags;
+    }
+
+    void Descriptor::setReadyCallback(void *userData, void (*f)(void *userData, std::uint_fast32_t flags))
+    {
+        assert(!_readyCallback);
+        _readyCallbackData = userData;
+        _readyCallback = f;
+
+        _readyEvent.reset();
+        _readyState = 0;
     }
 
     std::error_code Descriptor::install()
@@ -115,8 +124,15 @@ namespace dci { namespace poll { namespace impl
 
     void Descriptor::setReadyState(std::uint_fast32_t flags)
     {
-        _readyState |= flags;
-        _readyEvent.set();
+        if(_readyCallback)
+        {
+            _readyCallback(_readyCallbackData, flags);
+        }
+        else
+        {
+            _readyState |= flags;
+            _readyEvent.set();
+        }
     }
 
 }}}

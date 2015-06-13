@@ -240,7 +240,7 @@ TEST_F(Net, DatagramIp4)
     async::waitAll(sdone, cdone);
 }
 
-#if 0
+#if 1
 TEST_F(Net, SpamerBench)
 {
     async::Future<std::error_code, Host> netHost = _manager->createService<Host>();

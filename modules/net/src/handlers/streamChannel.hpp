@@ -25,19 +25,17 @@ namespace handlers
 
         Future< > close();
 
-    private:
-        void launchPumper();
+    public:
+        void start();
 
     private:
         template <class T> friend struct StreamClient;
         dci::poll::Descriptor _d;
 
     private:
+        std::uint_fast32_t _readyFlags {0};
         streamChannel::Reader _reader;
         streamChannel::Writer _writer;
-
-    private:
-        bool _pumperLaunched{false};
     };
 
 
@@ -46,7 +44,6 @@ namespace handlers
     StreamChannel<Address>::StreamChannel(int sock)
         : _d(sock)
     {
-        launchPumper();
     }
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
@@ -54,11 +51,6 @@ namespace handlers
     StreamChannel<Address>::~StreamChannel()
     {
         close();
-
-        while(_pumperLaunched)
-        {
-            dci::async::yield();
-        }
     }
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
@@ -84,7 +76,7 @@ namespace handlers
             return make_error_code(err_system::bad_file_descriptor);
         }
 
-        if(dci::poll::Descriptor::rsf_error & _d.readyState())
+        if(dci::poll::Descriptor::rsf_error & _readyFlags)
         {
             return systemError(_d.error());
         }
@@ -92,9 +84,9 @@ namespace handlers
         bool wasEmpty = !_reader.hasRequests();
         Future< Bytes> res = _reader.pushRequest();
 
-        if(wasEmpty && dci::poll::Descriptor::rsf_read & _d.readyState())
+        if(wasEmpty && dci::poll::Descriptor::rsf_read & _readyFlags)
         {
-            _reader.pump(_d);
+            _reader.pump(_d, _readyFlags);
         }
 
         return res;
@@ -109,7 +101,7 @@ namespace handlers
             return make_error_code(err_system::bad_file_descriptor);
         }
 
-        if(dci::poll::Descriptor::rsf_error & _d.readyState())
+        if(dci::poll::Descriptor::rsf_error & _readyFlags)
         {
             return systemError(_d.error());
         }
@@ -117,9 +109,9 @@ namespace handlers
         bool wasEmpty = !_writer.hasRequests();
         Future< > res = _writer.pushRequest(std::move(v));
 
-        if(wasEmpty && dci::poll::Descriptor::rsf_write & _d.readyState())
+        if(wasEmpty && dci::poll::Descriptor::rsf_write & _readyFlags)
         {
-            _writer.pump(_d);
+            _writer.pump(_d, _readyFlags);
         }
 
         return res;
@@ -137,43 +129,32 @@ namespace handlers
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
     template <class Address>
-    void StreamChannel<Address>::launchPumper()
+    void StreamChannel<Address>::start()
     {
-        assert(!_pumperLaunched);
-
-        _pumperLaunched = true;
-        dci::async::spawn([&]()
+        _readyFlags = _d.readyState();
+        _d.setReadyCallback(this, [](void *userData, std::uint_fast32_t flags)
         {
-            while(_d.valid() && !(dci::poll::Descriptor::rsf_error & _d.readyState()))
+            StreamChannel *self = static_cast<StreamChannel *>(userData);
+            self->_readyFlags |= flags;
+
+            if(dci::poll::Descriptor::rsf_error & self->_readyFlags)
             {
-                _d.readyEvent().acquire();
-                if(!_d.valid())
-                {
-                    break;
-                }
-
-                if(dci::poll::Descriptor::rsf_error & _d.readyState())
-                {
-                    std::error_code ec = systemError(_d.error());
-                    _reader.close(ec);
-                    _writer.close(ec);
-                    break;
-                }
-
-                if(dci::poll::Descriptor::rsf_write & _d.readyState())
-                {
-                    _writer.pump(_d);
-                }
-
-                if(dci::poll::Descriptor::rsf_read & _d.readyState())
-                {
-                    _reader.pump(_d);
-                }
-
-                _d.readyEvent().reset();
+                std::error_code ec = systemError(self->_d.error());
+                self->_d.close();
+                self->_reader.close(ec);
+                self->_writer.close(ec);
+                return;
             }
 
-            _pumperLaunched = false;
+            if(dci::poll::Descriptor::rsf_write & self->_readyFlags)
+            {
+                self->_writer.pump(self->_d, self->_readyFlags);
+            }
+
+            if(dci::poll::Descriptor::rsf_read & self->_readyFlags)
+            {
+                self->_reader.pump(self->_d, self->_readyFlags);
+            }
         });
     }
 

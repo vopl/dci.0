@@ -31,17 +31,12 @@ namespace handlers
         Future< > close();
 
     private:
-        void launchPumper();
-
-    private:
         dci::poll::Descriptor _d;
 
     private:
+        std::uint_fast32_t _readyFlags {0};
         datagramChannel::Reader<Address> _reader;
         datagramChannel::Writer<Address> _writer;
-
-    private:
-        bool _pumperLaunched{false};
     };
 
 
@@ -50,18 +45,37 @@ namespace handlers
     DatagramChannel<Address>::DatagramChannel()
         : _d(::socket(utils::AddressSpares<Address>::af, SOCK_DGRAM|SOCK_NONBLOCK, 0))
     {
-        launchPumper();
+        _readyFlags = _d.readyState();
+        _d.setReadyCallback(this, [](void *userData, std::uint_fast32_t flags)
+        {
+            DatagramChannel *self = static_cast<DatagramChannel *>(userData);
+            self->_readyFlags |= flags;
+
+            if(dci::poll::Descriptor::rsf_error & self->_readyFlags)
+            {
+                std::error_code ec = systemError(self->_d.error());
+                self->_d.close();
+                self->_reader.close(ec);
+                self->_writer.close(ec);
+                return;
+            }
+
+            if(dci::poll::Descriptor::rsf_write & self->_readyFlags)
+            {
+                self->_writer.pump(self->_d, self->_readyFlags);
+            }
+
+            if(dci::poll::Descriptor::rsf_read & self->_readyFlags)
+            {
+                self->_reader.pump(self->_d, self->_readyFlags);
+            }
+        });
     }
 
     template <class Address>
     DatagramChannel<Address>::~DatagramChannel()
     {
         close();
-
-        while(_pumperLaunched)
-        {
-            dci::async::yield();
-        }
     }
 
     template <class Address>
@@ -86,7 +100,7 @@ namespace handlers
             return make_error_code(err_system::bad_file_descriptor);
         }
 
-        if(dci::poll::Descriptor::rsf_error & _d.readyState())
+        if(dci::poll::Descriptor::rsf_error & _readyFlags)
         {
             return systemError(_d.error());
         }
@@ -94,9 +108,9 @@ namespace handlers
         bool wasEmpty = !_reader.hasRequests();
         Future< Bytes> res = _reader.pushRequest();
 
-        if(wasEmpty && dci::poll::Descriptor::rsf_read & _d.readyState())
+        if(wasEmpty && dci::poll::Descriptor::rsf_read & _readyFlags)
         {
-            _reader.pump(_d);
+            _reader.pump(_d, _readyFlags);
         }
 
         return res;
@@ -110,7 +124,7 @@ namespace handlers
             return make_error_code(err_system::bad_file_descriptor);
         }
 
-        if(dci::poll::Descriptor::rsf_error & _d.readyState())
+        if(dci::poll::Descriptor::rsf_error & _readyFlags)
         {
             return systemError(_d.error());
         }
@@ -118,9 +132,9 @@ namespace handlers
         bool wasEmpty = !_reader.hasRequests();
         Future< Bytes, Address> res = _reader.pushRequest2();
 
-        if(wasEmpty && dci::poll::Descriptor::rsf_read & _d.readyState())
+        if(wasEmpty && dci::poll::Descriptor::rsf_read & _readyFlags)
         {
-            _reader.pump(_d);
+            _reader.pump(_d, _readyFlags);
         }
 
         return res;
@@ -134,7 +148,7 @@ namespace handlers
             return make_error_code(err_system::bad_file_descriptor);
         }
 
-        if(dci::poll::Descriptor::rsf_error & _d.readyState())
+        if(dci::poll::Descriptor::rsf_error & _readyFlags)
         {
             return systemError(_d.error());
         }
@@ -142,9 +156,9 @@ namespace handlers
         bool wasEmpty = !_writer.hasRequests();
         Future< > res = _writer.pushRequest2(std::move(d), std::move(a));
 
-        if(wasEmpty && dci::poll::Descriptor::rsf_write & _d.readyState())
+        if(wasEmpty && dci::poll::Descriptor::rsf_write & _readyFlags)
         {
-            _writer.pump(_d);
+            _writer.pump(_d, _readyFlags);
         }
 
         return res;
@@ -157,48 +171,6 @@ namespace handlers
         _reader.close(err_system::connection_reset);
         _writer.close(err_system::connection_reset);
         return Future<>();
-    }
-
-    /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
-    template <class Address>
-    void DatagramChannel<Address>::launchPumper()
-    {
-        assert(!_pumperLaunched);
-
-        _pumperLaunched = true;
-        dci::async::spawn([&]()
-        {
-            while(_d.valid() && !(dci::poll::Descriptor::rsf_error & _d.readyState()))
-            {
-                _d.readyEvent().acquire();
-                if(!_d.valid())
-                {
-                    break;
-                }
-
-                if(dci::poll::Descriptor::rsf_error & _d.readyState())
-                {
-                    std::error_code ec = systemError(_d.error());
-                    _reader.close(ec);
-                    _writer.close(ec);
-                    break;
-                }
-
-                if(dci::poll::Descriptor::rsf_write & _d.readyState())
-                {
-                    _writer.pump(_d);
-                }
-
-                if(dci::poll::Descriptor::rsf_read & _d.readyState())
-                {
-                    _reader.pump(_d);
-                }
-
-                _d.readyEvent().reset();
-            }
-
-            _pumperLaunched = false;
-        });
     }
 
 }

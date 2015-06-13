@@ -128,6 +128,7 @@ namespace handlers
             }
             else
             {
+                channel->start();
                 p.resolveValue(Channel(*channel));
             }
 

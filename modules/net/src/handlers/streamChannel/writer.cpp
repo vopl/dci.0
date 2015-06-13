@@ -61,13 +61,14 @@ namespace handlers { namespace streamChannel
     }
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
-    void Writer::pump(Descriptor &d)
+    void Writer::pump(int d, std::uint_fast32_t &readyState)
     {
-        assert(dci::poll::Descriptor::rsf_write & d.readyState());
+        assert(dci::poll::Descriptor::rsf_write & readyState);
 
         int iovAmount = _buffer.segmentsAmount();
-        if(iovAmount)
+        if(!_buffer.empty())
         {
+
             iovec *iov = (iovec *)alloca(iovAmount * sizeof(iovec));
             _buffer.fillIovec(iov);
 
@@ -105,7 +106,7 @@ namespace handlers { namespace streamChannel
 
                 if(!writedSize)
                 {
-                    d.resetReadyState(Descriptor::rsf_write);
+                    readyState &= ~Descriptor::rsf_write;
                     break;
                 }
 

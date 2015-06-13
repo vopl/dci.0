@@ -15,7 +15,7 @@ namespace handlers { namespace streamChannel
 
         bool hasRequests() const;
         Future< > pushRequest(Bytes &&b);
-        void pump(Descriptor &d);
+        void pump(int d, std::uint_fast32_t &readyState);
         void close(const std::error_code &ec);
 
     private:

@@ -22,7 +22,7 @@ namespace handlers { namespace datagramChannel
 
         bool hasRequests() const;
         Future< > pushRequest2(Bytes &&b, Address &&a);
-        void pump(Descriptor &d);
+        void pump(int d, std::uint_fast32_t &readyState);
         void close(const std::error_code &ec);
 
     private:
@@ -108,9 +108,9 @@ namespace handlers { namespace datagramChannel
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
     template <class Address>
-    void Writer<Address>::pump(Descriptor &d)
+    void Writer<Address>::pump(int d, std::uint_fast32_t &readyState)
     {
-        assert(dci::poll::Descriptor::rsf_write & d.readyState());
+        assert(dci::poll::Descriptor::rsf_write & readyState);
 
         while(_requestsFirst)
         {
@@ -140,7 +140,7 @@ namespace handlers { namespace datagramChannel
                 }
                 else
                 {
-                    d.resetReadyState(Descriptor::rsf_write);
+                    readyState &= ~Descriptor::rsf_write;
                 }
 
                 break;
