@@ -8,20 +8,20 @@
 
 namespace dci { namespace couple { namespace meta
 {
-    class APIDCI_COUPLE_META Iface
-        : public himpl::FaceLayout<impl::Iface, Type, Scope, Compound<Method>, Inheritable<Iface>>
+    class APIDCI_COUPLE_META Interface
+        : public himpl::FaceLayout<impl::Interface, Type, Scope, Compound<Method>, Inheritable<Interface>>
     {
     public:
         using ThisFaceLayout::ThisFaceLayout;
-        Iface() = delete;
-        ~Iface() = delete;
+        Interface() = delete;
+        ~Interface() = delete;
 
-        static const TypeConcrete _concrete = TypeConcrete::iface;
+        static const TypeConcrete _concrete = TypeConcrete::interface;
 
         const std::vector<const Method *> &methods() const;
 
         bool primary() const;
-        const Iface *opposite() const;
+        const Interface *opposite() const;
     };
 
 }}}

@@ -18,7 +18,7 @@ namespace dci { namespace couple { namespace meta
         array,
         enum_,
         errc,
-        iface,
+        interface,
         list,
         map,
         primitive,

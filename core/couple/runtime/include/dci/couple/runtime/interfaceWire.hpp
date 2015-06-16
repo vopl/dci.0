@@ -5,18 +5,18 @@
 
 namespace dci { namespace couple { namespace runtime
 {
-    class APIDCI_COUPLE_RUNTIME IfaceWire
+    class APIDCI_COUPLE_RUNTIME InterfaceWire
     {
-        IfaceWire() = delete;
-        void operator=(const IfaceWire&) = delete;
+        InterfaceWire() = delete;
+        void operator=(const InterfaceWire&) = delete;
 
     public:
-        using Deleter = void (*)(IfaceWire*wire);
+        using Deleter = void (*)(InterfaceWire*wire);
         using UninvolveListener = void (*)(void *userData);
 
     public:
-        IfaceWire(Deleter deleter);
-        ~IfaceWire();
+        InterfaceWire(Deleter deleter);
+        ~InterfaceWire();
 
         void involve(bool fwd, bool use);
         void listenUninvolve(bool fwd, UninvolveListener listener, void *userData=0);

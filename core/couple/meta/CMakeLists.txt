@@ -18,7 +18,7 @@ set(INC
     include/dci/couple/meta/enumValue.hpp
     include/dci/couple/meta/errc.hpp
     include/dci/couple/meta/errcValue.hpp
-    include/dci/couple/meta/iface.hpp
+    include/dci/couple/meta/interface.hpp
     include/dci/couple/meta/inheritable.hpp
     include/dci/couple/meta/list.hpp
     include/dci/couple/meta/map.hpp
@@ -53,7 +53,7 @@ set(SRC
     src/enumValue.cpp
     src/errc.cpp
     src/errcValue.cpp
-    src/iface.cpp
+    src/interface.cpp
     src/inheritable.cpp
     src/list.cpp
     src/map.cpp
@@ -82,7 +82,7 @@ set(SRC
     src/impl/enumValue.hpp
     src/impl/errc.hpp
     src/impl/errcValue.hpp
-    src/impl/iface.hpp
+    src/impl/interface.hpp
     src/impl/inheritable.hpp
     src/impl/list.hpp
     src/impl/map.hpp
@@ -111,7 +111,7 @@ set(SRC
     src/impl/enumValue.cpp
     src/impl/errc.cpp
     src/impl/errcValue.cpp
-    src/impl/iface.cpp
+    src/impl/interface.cpp
     src/impl/inheritable.cpp
     src/impl/list.cpp
     src/impl/map.cpp
@@ -174,7 +174,7 @@ dciMakeHimplLayouts(${PROJECT}
         ${CMAKE_CURRENT_SOURCE_DIR}/src/impl/enumValue.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/impl/errc.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/impl/errcValue.hpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/impl/iface.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/impl/interface.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/impl/inheritable.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/impl/list.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/impl/map.hpp
@@ -209,7 +209,7 @@ dciMakeHimplLayouts(${PROJECT}
         "::dci::couple::meta::impl::Compound< ::dci::couple::meta::Enum>"
         "::dci::couple::meta::impl::Compound< ::dci::couple::meta::Errc>"
         "::dci::couple::meta::impl::Compound< ::dci::couple::meta::Alias>"
-        "::dci::couple::meta::impl::Compound< ::dci::couple::meta::Iface>"
+        "::dci::couple::meta::impl::Compound< ::dci::couple::meta::Interface>"
         "::dci::couple::meta::impl::Compound< ::dci::couple::meta::Scope>"
         ::dci::couple::meta::impl::Container1
         ::dci::couple::meta::impl::Container2
@@ -217,8 +217,8 @@ dciMakeHimplLayouts(${PROJECT}
         ::dci::couple::meta::impl::EnumValue
         ::dci::couple::meta::impl::Errc
         ::dci::couple::meta::impl::ErrcValue
-        ::dci::couple::meta::impl::Iface
-        "::dci::couple::meta::impl::Inheritable< ::dci::couple::meta::Iface>"
+        ::dci::couple::meta::impl::Interface
+        "::dci::couple::meta::impl::Inheritable< ::dci::couple::meta::Interface>"
         "::dci::couple::meta::impl::Inheritable< ::dci::couple::meta::Struct>"
         ::dci::couple::meta::impl::List
         ::dci::couple::meta::impl::Map

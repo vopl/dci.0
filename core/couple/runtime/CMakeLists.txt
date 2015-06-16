@@ -14,9 +14,9 @@ set(INC
     include/dci/couple/runtime/identifier.hpp
     include/dci/couple/runtime/bytes.hpp
     include/dci/couple/runtime/bytes/segment.hpp
-    include/dci/couple/runtime/iface.hpp
-    include/dci/couple/runtime/ifaceId.hpp
-    include/dci/couple/runtime/ifaceWire.hpp
+    include/dci/couple/runtime/interface.hpp
+    include/dci/couple/runtime/interfaceId.hpp
+    include/dci/couple/runtime/interfaceWire.hpp
 
     include/dci/couple/runtime/signal.hpp
     include/dci/couple/runtime/wire.hpp
@@ -35,8 +35,8 @@ set(SRC
     src/sign.cpp
     src/signBuilder.cpp
     src/bytes.cpp
-    src/iface.cpp
-    src/ifaceWire.cpp
+    src/interface.cpp
+    src/interfaceWire.cpp
     src/errcCategoryProvider.cpp
 
     src/impl/sign.hpp

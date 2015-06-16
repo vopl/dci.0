@@ -5,7 +5,7 @@
 #include "manager.hpp"
 #include "serviceFactory.hpp"
 #include <dci/async/future.hpp>
-#include <dci/couple/runtime/iface.hpp>
+#include <dci/couple/runtime/interface.hpp>
 
 #include <system_error>
 

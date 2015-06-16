@@ -3,7 +3,7 @@ scope streamer
 {
     alias Traffic = Bytes;
 
-    iface Channel
+    interface Channel
     {
         in flow:    (Traffic);
         in reset:   ();
@@ -13,19 +13,19 @@ scope streamer
     }
 
 
-    iface Hub
+    interface Hub
     {
         in channel: () -> (Channel);
         in reset:   ();
 
-alias iface = int8;
+alias interface = int8;
 alias iid = int8;
 
-        in put:     (iface);
-        out put:    (iface);
+        in put:     (interface);
+        out put:    (interface);
 
-        in get:     (iid) -> (iface);
-        out get:    (iid) -> (iface);
+        in get:     (iid) -> (interface);
+        out get:    (iid) -> (interface);
 
         in join:    (Channel);
     }

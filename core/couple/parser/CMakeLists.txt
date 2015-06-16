@@ -72,7 +72,7 @@ set(SRC
     src/impl/grammar/mkErrc.cpp
     src/impl/grammar/mkMethodParam.cpp
     src/impl/grammar/mkMethod.cpp
-    src/impl/grammar/mkIface.cpp
+    src/impl/grammar/mkInterface.cpp
     src/impl/grammar/mkScope.cpp
     src/impl/grammar/mkInclude.cpp
     src/impl/grammar/mkDecl.cpp

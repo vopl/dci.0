@@ -4,6 +4,6 @@
 
 namespace dci { namespace couple { namespace runtime
 {
-    class IfaceIdentifierTag;
-    using Iid = Identifier<IfaceIdentifierTag>;
+    class InterfaceIdentifierTag;
+    using Iid = Identifier<InterfaceIdentifierTag>;
 }}}

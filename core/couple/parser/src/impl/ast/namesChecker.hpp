@@ -196,7 +196,7 @@ namespace  dci { namespace couple { namespace parser { namespace impl { namespac
             return NamesChecker(_errs).exec(v->decls);
         }
 
-        bool checkChildren(const SIface *v)
+        bool checkChildren(const SInterface *v)
         {
             NamesChecker checker(_errs);
 
@@ -215,7 +215,7 @@ namespace  dci { namespace couple { namespace parser { namespace impl { namespac
             return true;
         }
 
-        bool checkOpposite(const SIface *v)
+        bool checkOpposite(const SInterface *v)
         {
             const Name &name = v->name;
             if(name->value.size()>=8 && name->value.size()-8 == name->value.find("Opposite"))
@@ -224,7 +224,7 @@ namespace  dci { namespace couple { namespace parser { namespace impl { namespac
                                       name->pos.begin().file(),
                                       static_cast<int>(name->pos.begin().line()),
                                       static_cast<int>(name->pos.begin().column()),
-                                      "'Opposite' suffix is not allowed for ifaces"});
+                                      "'Opposite' suffix is not allowed for interfaces"});
                 return false;
             }
 

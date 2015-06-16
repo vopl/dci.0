@@ -12,7 +12,7 @@ namespace  dci { namespace couple { namespace parser { namespace impl { namespac
         SScope      *_scope     {nullptr};
         SStruct     *_struct    {nullptr};
         SVariant    *_variant   {nullptr};
-        SIface      *_iface     {nullptr};
+        SInterface      *_interface     {nullptr};
         SMethod     *_method    {nullptr};
         SEnum       *_enum      {nullptr};
         SErrc       *_errc      {nullptr};
@@ -111,7 +111,7 @@ namespace  dci { namespace couple { namespace parser { namespace impl { namespac
                 vs.begin(),
                 vs.end(),
                 [&](const Method &v)->void {
-                    v->owner = _iface;
+                    v->owner = _interface;
 
                     CurrentSetter<SMethod> csm(_method, v.get());
                     exec(v->query);
@@ -197,9 +197,9 @@ namespace  dci { namespace couple { namespace parser { namespace impl { namespac
                                           "declaration of non pure scope "+place->name->value});
                 };
 
-                if(_iface)
+                if(_interface)
                 {
-                    errPusher(_iface);
+                    errPusher(_interface);
                 }
                 if(_struct)
                 {
@@ -215,13 +215,13 @@ namespace  dci { namespace couple { namespace parser { namespace impl { namespac
             exec(v->fields);
         }
 
-        void operator()(SIface *v)
+        void operator()(SInterface *v)
         {
             v->owner = _scope;
-            _scope->ifaces.insert(std::make_pair(v->name->value, v));
+            _scope->interfaces.insert(std::make_pair(v->name->value, v));
             _scope->scopes.insert(std::make_pair(v->name->value, v));
 
-            CurrentSetter<SIface> csi(_iface, v);
+            CurrentSetter<SInterface> csi(_interface, v);
             CurrentSetter<SScope> css(_scope, v);
             exec(v->decls);
             exec(v->methods);

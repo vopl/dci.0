@@ -62,7 +62,7 @@ namespace dci { namespace couple { namespace parser { namespace impl
         TokenDef kwalias;
         TokenDef kwstruct;
         TokenDef kwvariant;
-        TokenDef kwiface;
+        TokenDef kwinterface;
         TokenDef kwenum;
         TokenDef kwerrc;
         TokenDef kwin;

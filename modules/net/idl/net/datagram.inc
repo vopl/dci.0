@@ -2,7 +2,7 @@
 scope datagram
 {
     /////////////////////////////////////////////////////////
-    iface Channel
+    interface Channel
     {
         in bind:            (Address v)         -> ();
         

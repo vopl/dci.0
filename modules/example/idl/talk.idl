@@ -5,7 +5,7 @@ scope talk
 {
     
     //клиентское подключение
-    iface Peer
+    interface Peer
     {
         alias Id = array<int8, 32>;
 
@@ -23,7 +23,7 @@ scope talk
     
     
     
-    iface Chat
+    interface Chat
     {
         out setMembers: (list<Peer::Id> ids);
 
@@ -61,7 +61,7 @@ scope talk
         uint64 directoriesAmount;
         uint64 totalFilesVolume;
 
-        iface StubInFilesInfo {}
+        interface StubInFilesInfo {}
     }
 
     struct MediaInfo
@@ -88,7 +88,7 @@ scope talk
     
     
     
-    iface FilesReceiver
+    interface FilesReceiver
     {
         in abort: ();
         out abort: ();//тут одинаковое имя
@@ -111,11 +111,11 @@ scope talk
         in finish: ();
     }
     
-    iface VoiceTrain
+    interface VoiceTrain
     {
     }
 
-    iface VideoTrain
+    interface VideoTrain
     {
     }
 }

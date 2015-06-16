@@ -29,9 +29,9 @@ namespace dci { namespace couple { namespace meta
         return Compound<Alias>::elements();
     }
 
-    const std::vector<const Iface *> &Scope::ifaces() const
+    const std::vector<const Interface *> &Scope::interfaces() const
     {
-        return Compound<Iface>::elements();
+        return Compound<Interface>::elements();
     }
 
     const std::vector<const Scope *> &Scope::scopes() const

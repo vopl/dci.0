@@ -46,7 +46,7 @@ namespace dci { namespace couple { namespace parser { namespace impl
         , kwalias   {"\"alias\""}
         , kwstruct  {"\"struct\""}
         , kwvariant {"\"variant\""}
-        , kwiface   {"\"iface\""}
+        , kwinterface   {"\"interface\""}
         , kwenum    {"\"enum\""}
         , kwerrc    {"\"errc\""}
         , kwin      {"\"in\""}
@@ -112,7 +112,7 @@ namespace dci { namespace couple { namespace parser { namespace impl
             | kwalias
             | kwstruct
             | kwvariant
-            | kwiface
+            | kwinterface
             | kwenum
             | kwerrc
             | kwin

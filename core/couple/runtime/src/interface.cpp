@@ -1,16 +1,16 @@
-#include <dci/couple/runtime/iface.hpp>
+#include <dci/couple/runtime/interface.hpp>
 #include <cassert>
 
 namespace dci { namespace couple { namespace runtime
 {
-    Iface::Iface(IfaceWire *state, bool fwd)
+    Interface::Interface(InterfaceWire *state, bool fwd)
         : _wire(state)
         , _fwd(fwd)
     {
         _wire->involve(_fwd, true);
     }
 
-    Iface::Iface(Iface &&from)
+    Interface::Interface(Interface &&from)
         : _wire(from._wire)
         , _fwd(from._fwd)
     {
@@ -18,7 +18,7 @@ namespace dci { namespace couple { namespace runtime
         //from._fwd = false;
     }
 
-    Iface::~Iface()
+    Interface::~Interface()
     {
         if(_wire)
         {
@@ -26,7 +26,7 @@ namespace dci { namespace couple { namespace runtime
         }
     }
 
-    Iface &Iface::operator=(Iface &&from)
+    Interface &Interface::operator=(Interface &&from)
     {
         assert(this != &from);
 
@@ -45,7 +45,7 @@ namespace dci { namespace couple { namespace runtime
         return *this;
     }
 
-    void Iface::assign(IfaceWire *wire, bool fwd)
+    void Interface::assign(InterfaceWire *wire, bool fwd)
     {
         if(_wire == wire)
         {
@@ -59,7 +59,7 @@ namespace dci { namespace couple { namespace runtime
         _wire->involve(_fwd, true);
     }
 
-    IfaceWire *Iface::wire()
+    InterfaceWire *Interface::wire()
     {
         assert(_wire);
         return _wire;

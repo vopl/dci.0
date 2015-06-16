@@ -1,6 +1,6 @@
 #pragma once
 
-#include <dci/couple/runtime/iface.hpp>
+#include <dci/couple/runtime/interface.hpp>
 #include "moduleState.hpp"
 #include <dci/site/modulePlace.hpp>
 #include "modulePlace.hpp"

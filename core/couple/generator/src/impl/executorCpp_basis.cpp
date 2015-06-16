@@ -124,7 +124,7 @@ namespace dci { namespace couple { namespace generator { namespace impl
         }
 
         bool res = false;
-        for(auto child : v->ifaces())   res |= writeWire(child);
+        for(auto child : v->interfaces())   res |= writeWire(child);
         for(auto child : v->structs())  res |= writeWire(child);
         for(auto child : v->variants()) res |= writeWire(child);
         for(auto child : v->scopes())   res |= writeWire(child);
@@ -150,7 +150,7 @@ namespace dci { namespace couple { namespace generator { namespace impl
         _hpp<<indent;
 
         bool res = false;
-        for(auto child : v->ifaces())   res |= writeWire(child);
+        for(auto child : v->interfaces())   res |= writeWire(child);
         for(auto child : v->structs())  res |= writeWire(child);
         for(auto child : v->variants()) res |= writeWire(child);
         for(auto child : v->scopes())   res |= writeWire(child);
@@ -173,7 +173,7 @@ namespace dci { namespace couple { namespace generator { namespace impl
         _hpp<<indent;
 
         bool res = false;
-        for(auto child : v->ifaces())   res |= writeWire(child);
+        for(auto child : v->interfaces())   res |= writeWire(child);
         for(auto child : v->structs())  res |= writeWire(child);
         for(auto child : v->variants()) res |= writeWire(child);
         for(auto child : v->scopes())   res |= writeWire(child);
@@ -186,18 +186,18 @@ namespace dci { namespace couple { namespace generator { namespace impl
         return res;
     }
 
-    bool ExecutorCpp_basis::writeWire(const Iface *v)
+    bool ExecutorCpp_basis::writeWire(const Interface *v)
     {
         if(!v->primary())
         {
-            //opposite ifaces use primary wires
+            //opposite interfaces use primary wires
             return true;
         }
 
-        _hpp<< "// iface "<<v->name()<<el;
+        _hpp<< "// interface "<<v->name()<<el;
         _hpp<< "struct "<<v->name()<<el;
         _hpp<< indent;
-        _hpp<< ": public IfaceWire"<<el;
+        _hpp<< ": public InterfaceWire"<<el;
         _hpp<< undent;
         _hpp<< "{"<<el;
         _hpp<< indent;
@@ -209,7 +209,7 @@ namespace dci { namespace couple { namespace generator { namespace impl
             _hpp<< v->name()<<"()"<<el;
 
             _hpp<< indent;
-            _hpp<< ": IfaceWire([](IfaceWire *p){delete static_cast<"<<v->name()<<"*>(p);})"<<el;
+            _hpp<< ": InterfaceWire([](InterfaceWire *p){delete static_cast<"<<v->name()<<"*>(p);})"<<el;
             _hpp<< undent;
             _hpp<< "{"<<el;
             _hpp<< indent;
@@ -278,7 +278,7 @@ namespace dci { namespace couple { namespace generator { namespace impl
         for(auto child : scope->enums())    writeBody(child);
         for(auto child : scope->errcs())    writeBody(child);
         for(auto child : scope->aliases())  writeBody(child);
-        for(auto child : scope->ifaces())   writeBody(child);
+        for(auto child : scope->interfaces())   writeBody(child);
         for(auto child : scope->scopes())   writeBody(child, true);
 
         if(withSelf)
@@ -400,15 +400,15 @@ namespace dci { namespace couple { namespace generator { namespace impl
         _hpp<< "using "<<v->name()<<" = "<<typeName(v->type(), inBody)<<";"<<el;
     }
 
-    void ExecutorCpp_basis::writeBody(const Iface *v)
+    void ExecutorCpp_basis::writeBody(const Interface *v)
     {
-        _hpp<< "// "<<"iface "<<v->name()<<el;
+        _hpp<< "// "<<"interface "<<v->name()<<el;
         _hpp<< "struct "<<v->name()<<el;
 
         _hpp<< indent;
         if(v->bases().empty())
         {
-            _hpp<< ": public Iface"<<el;
+            _hpp<< ": public Interface"<<el;
         }
         else
         {
@@ -443,7 +443,7 @@ namespace dci { namespace couple { namespace generator { namespace impl
         {
             _hpp<< v->name()<<"()"<<el;
             _hpp<< indent;
-            _hpp<< ": Iface(new "<<typeName(v->primary() ? v : v->opposite(), inWire)<<", "<<(v->primary()?"true":"false")<<")"<<el;
+            _hpp<< ": Interface(new "<<typeName(v->primary() ? v : v->opposite(), inWire)<<", "<<(v->primary()?"true":"false")<<")"<<el;
             _hpp<< undent;
             _hpp<< "{"<<el;
             _hpp<< "}"<<el;
@@ -453,7 +453,7 @@ namespace dci { namespace couple { namespace generator { namespace impl
         {
             _hpp<< v->name()<<"("<<v->name()<<" &&from)"<<el;
             _hpp<< indent;
-            _hpp<< ": Iface(std::forward< Iface>(from))"<<el;
+            _hpp<< ": Interface(std::forward< Interface>(from))"<<el;
             _hpp<< undent;
             _hpp<< "{"<<el;
             _hpp<< "}"<<el;
@@ -463,7 +463,7 @@ namespace dci { namespace couple { namespace generator { namespace impl
         {
             _hpp<< v->name()<<"("<<typeName(v->opposite(), inBody)<<" &from)"<<el;
             _hpp<< indent;
-            _hpp<< ": Iface(from.wire(), "<<(v->primary()?"true":"false")<<")"<<el;
+            _hpp<< ": Interface(from.wire(), "<<(v->primary()?"true":"false")<<")"<<el;
             _hpp<< undent;
             _hpp<< "{"<<el;
             _hpp<< "}"<<el;
@@ -482,7 +482,7 @@ namespace dci { namespace couple { namespace generator { namespace impl
             _hpp<< v->name()<<" &operator=("<<v->name()<<" &&from)"<<el;
             _hpp<< "{"<<el;
             _hpp<< indent;
-            _hpp<< "Iface::operator=(std::forward< Iface>(from));"<<el;
+            _hpp<< "Interface::operator=(std::forward< Interface>(from));"<<el;
             _hpp<< "return *this;"<<el;
             _hpp<< undent;
             _hpp<< "}"<<el;
@@ -493,7 +493,7 @@ namespace dci { namespace couple { namespace generator { namespace impl
             _hpp<< v->name()<<" &operator=("<<typeName(v->opposite(), inBody)<<" &from)"<<el;
             _hpp<< "{"<<el;
             _hpp<< indent;
-            _hpp<< "Iface::assign(from.wire(), "<<(v->primary()?"true":"false")<<");"<<el;
+            _hpp<< "Interface::assign(from.wire(), "<<(v->primary()?"true":"false")<<");"<<el;
             _hpp<< "return *this;"<<el;
             _hpp<< undent;
             _hpp<< "}"<<el;
@@ -507,7 +507,7 @@ namespace dci { namespace couple { namespace generator { namespace impl
             _hpp<< indent;
             _hpp<< "return static_cast< ";
             _hpp<< typeName(v->primary() ? v : v->opposite(), inWire);
-            _hpp<< " *>(Iface::wire());"<<el;
+            _hpp<< " *>(Interface::wire());"<<el;
             _hpp<< undent;
             _hpp<< "}"<<el;
         }
@@ -567,13 +567,13 @@ namespace dci { namespace couple { namespace generator { namespace impl
 
     void ExecutorCpp_basis::writeIid(const dci::couple::meta::Scope *v)
     {
-        for(auto child : v->ifaces())   writeIid(child);
+        for(auto child : v->interfaces())   writeIid(child);
         for(auto child : v->structs())  writeIid(child);
         for(auto child : v->variants()) writeIid(child);
         for(auto child : v->scopes())   writeIid(child);
     }
 
-    void ExecutorCpp_basis::writeIid(const Iface *v)
+    void ExecutorCpp_basis::writeIid(const Interface *v)
     {
         writeIid(static_cast<const Scope *>(v));
 
@@ -590,7 +590,7 @@ namespace dci { namespace couple { namespace generator { namespace impl
     }
 
     template <>
-    void ExecutorCpp_basis::writeTarget<Iface>(const Iface *v)
+    void ExecutorCpp_basis::writeTarget<Interface>(const Interface *v)
     {
         _hpp<< "using "<<v->name()<<" = "<<typeName(v, inBody|forGlobalScope|instantiated)<<";"<<el;
     }
@@ -667,7 +667,7 @@ namespace dci { namespace couple { namespace generator { namespace impl
         for(auto child : scope->enums())    writeTarget(child);
         for(auto child : scope->errcs())    writeTarget(child);
         for(auto child : scope->aliases())  writeTarget(child);
-        for(auto child : scope->ifaces())   writeTarget(child);
+        for(auto child : scope->interfaces())   writeTarget(child);
         for(auto child : scope->scopes())   writeTarget(child);
 
         if(!scope->name().empty())
@@ -681,7 +681,7 @@ namespace dci { namespace couple { namespace generator { namespace impl
     {
         for(auto child : scope->structs())  writeErrcSpares(child);
         for(auto child : scope->errcs())    writeErrcSpares(child);
-        for(auto child : scope->ifaces())   writeErrcSpares(child);
+        for(auto child : scope->interfaces())   writeErrcSpares(child);
         for(auto child : scope->scopes())   writeErrcSpares(child);
     }
 

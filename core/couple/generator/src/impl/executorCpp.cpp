@@ -76,9 +76,9 @@ namespace dci { namespace couple { namespace generator { namespace impl
                 auto vv = static_cast<const Errc *>(v);
                 return typeName(vv->scope(), vv->name(), flags);
             }
-        case TypeConcrete::iface:
+        case TypeConcrete::interface:
             {
-                auto vv = static_cast<const Iface *>(v);
+                auto vv = static_cast<const Interface *>(v);
                 return typeName(vv->scope(), vv->name(), flags);
             }
 
@@ -202,7 +202,7 @@ namespace dci { namespace couple { namespace generator { namespace impl
     }
 
 
-    std::string ExecutorCpp::methodSignature(const Method *m, int typesFlags, const Iface *i)
+    std::string ExecutorCpp::methodSignature(const Method *m, int typesFlags, const Interface *i)
     {
         std::string res;
 

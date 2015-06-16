@@ -5,7 +5,7 @@
 #include LAYOUTPROVIDERFILE("layoutProvider.hpp")
 
 #include <dci/async/future.hpp>
-#include <dci/couple/runtime/iface.hpp>
+#include <dci/couple/runtime/interface.hpp>
 #include "error.hpp"
 #include <dci/site/test.hpp>
 
@@ -32,33 +32,33 @@ namespace dci { namespace site
         std::error_code run(int argc, char *argv[], TestStage testStage);
         async::Future<std::error_code> stop();
 
-        //outFuture is async::Future<std::error_code, ConcreteIface>
+        //outFuture is async::Future<std::error_code, ConcreteInterface>
         std::error_code createService(void *outFuture, const couple::runtime::Iid &iid);
 
-        template <class TIface>
-        async::Future<std::error_code, TIface> createService();
+        template <class TInterface>
+        async::Future<std::error_code, TInterface> createService();
     };
 
 
-    template <class TIface>
-    async::Future<std::error_code, TIface> Manager::createService()
+    template <class TInterface>
+    async::Future<std::error_code, TInterface> Manager::createService()
     {
-//        return createService(TIface::_iid).template thenTransform<std::error_code, TIface>([](auto *srcErr, auto *srcValue, auto &dst){
+//        return createService(TInterface::_iid).template thenTransform<std::error_code, TInterface>([](auto *srcErr, auto *srcValue, auto &dst){
 //            if(srcErr) dst.resolveError(std::move(*srcErr));
 //            else
 //            {
 //                assert(0);
-//                //dst.resolveValue(TIface(srcValue));
-//                dst.resolveValue(TIface());
+//                //dst.resolveValue(TInterface(srcValue));
+//                dst.resolveValue(TInterface());
 //            }
 //        });
 
-        async::Future<std::error_code, TIface> res{async::FutureNullInitializer()};
+        async::Future<std::error_code, TInterface> res{async::FutureNullInitializer()};
 
-        std::error_code ec = createService(&res, TIface::_iid);
+        std::error_code ec = createService(&res, TInterface::_iid);
         if(ec)
         {
-            return async::Future<std::error_code, TIface>(std::move(ec));
+            return async::Future<std::error_code, TInterface>(std::move(ec));
         }
 
         return res;

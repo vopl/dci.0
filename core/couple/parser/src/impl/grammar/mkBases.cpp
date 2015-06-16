@@ -15,12 +15,12 @@ namespace dci { namespace couple { namespace parser { namespace impl
             );
 
         ////////////////////////////////////////////////////////////////////////////////
-        baseIfaces =
-            toks.colon[qi::_val = phx::construct<BaseIfaces>(phx::new_<SBaseIfaces>())] >
+        baseInterfaces =
+            toks.colon[qi::_val = phx::construct<BaseInterfaces>(phx::new_<SBaseInterfaces>())] >
             (
                 (
-                    scopedName[phx::push_back(phx::bind(&SBaseIfaces::scopedNames, deref(qi::_val)), qi::_1)] |
-                    error(+"base iface type expected")
+                    scopedName[phx::push_back(phx::bind(&SBaseInterfaces::scopedNames, deref(qi::_val)), qi::_1)] |
+                    error(+"base interface type expected")
                 ) % toks.comma
             );
     }

@@ -24,7 +24,7 @@ namespace dci { namespace couple { namespace generator { namespace impl
         bool writeWire(const dci::couple::meta::Scope *v);
         bool writeWire(const dci::couple::meta::Struct *v);
         bool writeWire(const dci::couple::meta::Variant *v);
-        bool writeWire(const dci::couple::meta::Iface *v);
+        bool writeWire(const dci::couple::meta::Interface *v);
 
     private:
         void writeBody(const dci::couple::meta::Scope *scope, bool withSelf);
@@ -33,11 +33,11 @@ namespace dci { namespace couple { namespace generator { namespace impl
         void writeBody(const dci::couple::meta::Enum *v);
         void writeBody(const dci::couple::meta::Errc *v);
         void writeBody(const dci::couple::meta::Alias *v);
-        void writeBody(const dci::couple::meta::Iface *v);
+        void writeBody(const dci::couple::meta::Interface *v);
 
     private:
         void writeIid(const dci::couple::meta::Scope *v);
-        void writeIid(const dci::couple::meta::Iface *v);
+        void writeIid(const dci::couple::meta::Interface *v);
 
     private:
         template <class T>

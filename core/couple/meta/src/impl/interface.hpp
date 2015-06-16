@@ -8,15 +8,15 @@
 
 namespace dci { namespace couple { namespace meta { namespace impl
 {
-    class Iface
+    class Interface
         : public Type
         , public Scope
         , public Compound<Method>
-        , public Inheritable<Iface>
+        , public Inheritable<Interface>
     {
     public:
-        Iface();
-        ~Iface();
+        Interface();
+        ~Interface();
 
         using Compound<Method>::add;
         using Scope::add;
@@ -26,12 +26,12 @@ namespace dci { namespace couple { namespace meta { namespace impl
         void setPrimary(bool v);
         bool primary() const;
 
-        void setOpposite(Iface *v);
-        const Iface *opposite() const;
+        void setOpposite(Interface *v);
+        const Interface *opposite() const;
 
     private:
         bool    _primary{true};
-        Iface * _opposite{nullptr};
+        Interface * _opposite{nullptr};
     };
 
 }}}}

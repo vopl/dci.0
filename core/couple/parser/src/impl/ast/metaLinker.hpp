@@ -161,14 +161,14 @@ namespace  dci { namespace couple { namespace parser { namespace impl { namespac
             exec(v->fields);
         }
 
-        void operator()(SIface *v)
+        void operator()(SInterface *v)
         {
             if(v->bases)
             {
                 std::for_each(
                     v->bases->instances.begin(),
                     v->bases->instances.end(),
-                    [&](SIface *b) {
+                    [&](SInterface *b) {
                         _lb.addBase(v->meta, b->meta);
                     }
                 );

@@ -1,27 +1,27 @@
-#include "iface.hpp"
+#include "interface.hpp"
 #include <dci/couple/runtime/signBuilder.hpp>
 
 #include <iostream>
 
 namespace dci { namespace couple { namespace meta { namespace impl
 {
-    Iface::Iface()
-        : Type(TypeConcrete::iface)
+    Interface::Interface()
+        : Type(TypeConcrete::interface)
     {
     }
 
-    Iface::~Iface()
+    Interface::~Interface()
     {
 
     }
 
-    void Iface::makeSign()
+    void Interface::makeSign()
     {
         Scope::makeSign();
 
         runtime::SignBuilder s;
 
-        s.add("iface");
+        s.add("interface");
         s.add(sign());
 
         s.add(Compound<Method>::elements().size());
@@ -30,8 +30,8 @@ namespace dci { namespace couple { namespace meta { namespace impl
             s.add(v->sign());
         }
 
-        s.add(Inheritable<Iface>::bases().size());
-        for(auto v : Inheritable<Iface>::bases())
+        s.add(Inheritable<Interface>::bases().size());
+        for(auto v : Inheritable<Interface>::bases())
         {
             s.add(v->sign());
         }
@@ -39,22 +39,22 @@ namespace dci { namespace couple { namespace meta { namespace impl
         setSign(s.finish());
     }
 
-    void Iface::setPrimary(bool v)
+    void Interface::setPrimary(bool v)
     {
         _primary = v;
     }
 
-    bool Iface::primary() const
+    bool Interface::primary() const
     {
         return _primary;
     }
 
-    void Iface::setOpposite(Iface *v)
+    void Interface::setOpposite(Interface *v)
     {
         _opposite = v;
     }
 
-    const Iface *Iface::opposite() const
+    const Interface *Interface::opposite() const
     {
         return _opposite;
     }

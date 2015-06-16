@@ -96,12 +96,12 @@ namespace dci { namespace couple { namespace meta
         return impl2Face<Errc>(impl().addErrc(face2Impl(parent), name));
     }
 
-    Iface *LibraryBuilder::addIface(Scope *parent, const std::string &name)
+    Interface *LibraryBuilder::addInterface(Scope *parent, const std::string &name)
     {
-        return impl2Face<Iface>(impl().addIface(face2Impl(parent), name));
+        return impl2Face<Interface>(impl().addInterface(face2Impl(parent), name));
     }
 
-    Method *LibraryBuilder::addMethod(Iface *parent, const std::string &name)
+    Method *LibraryBuilder::addMethod(Interface *parent, const std::string &name)
     {
         return impl2Face<Method>(impl().addMethod(face2Impl(parent), name));
     }
@@ -136,7 +136,7 @@ namespace dci { namespace couple { namespace meta
         return impl().addBase(face2Impl(target), face2Impl(base));
     }
 
-    void LibraryBuilder::addBase(Iface *target, Iface *base)
+    void LibraryBuilder::addBase(Interface *target, Interface *base)
     {
         return impl().addBase(face2Impl(target), face2Impl(base));
     }

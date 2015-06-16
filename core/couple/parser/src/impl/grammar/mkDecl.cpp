@@ -6,7 +6,7 @@ namespace dci { namespace couple { namespace parser { namespace impl
     {
         ////////////////////////////////////////////////////////////////////////////////
         decl =
-            (alias | variant | struct_ | enum_ | errc | iface | scope)
+            (alias | variant | struct_ | enum_ | errc | interface | scope)
                 [qi::_val = qi::_1];
     }
 

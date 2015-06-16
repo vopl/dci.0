@@ -30,7 +30,7 @@ namespace dci { namespace couple { namespace parser { namespace impl
         mkErrc();
         mkMethodParam();
         mkMethod();
-        mkIface();
+        mkInterface();
         mkScope();
         mkInclude();
         mkDecl();

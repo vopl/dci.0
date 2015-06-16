@@ -1,6 +1,6 @@
 #pragma once
 
-#include "runtime/iface.hpp"
+#include "runtime/interface.hpp"
 #include "runtime/signal.hpp"
 #include "runtime/wire.hpp"
 #include "runtime/errcCategoryProvider.hpp"

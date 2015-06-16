@@ -170,7 +170,7 @@ namespace  dci { namespace couple { namespace parser { namespace impl { namespac
                 return true;
             }
 
-            if(resolveOne(scope->ifaces, nameValue, scopedName))
+            if(resolveOne(scope->interfaces, nameValue, scopedName))
             {
                 return true;
             }

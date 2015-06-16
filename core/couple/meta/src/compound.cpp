@@ -19,7 +19,7 @@ namespace dci { namespace couple { namespace meta
     template class Compound<Errc>;
     template class Compound<ErrcValue>;
     template class Compound<Alias>;
-    template class Compound<Iface>;
+    template class Compound<Interface>;
     template class Compound<Method>;
     template class Compound<Attribute>;
     template class Compound<Scope>;

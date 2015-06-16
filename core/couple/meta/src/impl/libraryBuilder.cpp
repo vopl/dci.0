@@ -125,9 +125,9 @@ namespace dci { namespace couple { namespace meta { namespace impl
         return res;
     }
 
-    Iface *LibraryBuilder::addIface(Scope *parent, const std::string &name)
+    Interface *LibraryBuilder::addInterface(Scope *parent, const std::string &name)
     {
-        auto res = _lc.create<Iface>();
+        auto res = _lc.create<Interface>();
         res->setName(name);
 
         _lc.checkPresense(parent);
@@ -137,7 +137,7 @@ namespace dci { namespace couple { namespace meta { namespace impl
         return res;
     }
 
-    Method *LibraryBuilder::addMethod(Iface *parent, const std::string &name)
+    Method *LibraryBuilder::addMethod(Interface *parent, const std::string &name)
     {
         auto res = _lc.create<Method>();
         res->setName(name);
@@ -210,7 +210,7 @@ namespace dci { namespace couple { namespace meta { namespace impl
         target->addBase(base);
     }
 
-    void LibraryBuilder::addBase(Iface *target, Iface *base)
+    void LibraryBuilder::addBase(Interface *target, Interface *base)
     {
         _lc.checkPresense(target);
         _lc.checkPresense(base);
@@ -318,7 +318,7 @@ namespace dci { namespace couple { namespace meta { namespace impl
 
         //give a names to unnamed method arguments
         {
-            for(Iface *i : _lc.items<Iface>())
+            for(Interface *i : _lc.items<Interface>())
             {
                 for(const Method *cm : i->Compound<Method>::elements())
                 {
@@ -339,12 +339,12 @@ namespace dci { namespace couple { namespace meta { namespace impl
             }
         }
 
-        //create opposite ifaces
+        //create opposite interfaces
         {
-            auto ifaces = _lc.items<Iface>();
-            for(Iface *v : ifaces)
+            auto interfaces = _lc.items<Interface>();
+            for(Interface *v : interfaces)
             {
-                Iface *o = addIface(const_cast<Scope *>(v->scope()), v->name()+"Opposite");
+                Interface *o = addInterface(const_cast<Scope *>(v->scope()), v->name()+"Opposite");
 
                 v->setPrimary(true);
                 v->setOpposite(o);
@@ -352,7 +352,7 @@ namespace dci { namespace couple { namespace meta { namespace impl
                 o->setPrimary(false);
                 o->setOpposite(v);
 
-                fillOppositeIfaceScope(o, v);
+                fillOppositeInterfaceScope(o, v);
 
                 for(const Method *m : v->Compound<Method>::elements())
                 {
@@ -375,12 +375,12 @@ namespace dci { namespace couple { namespace meta { namespace impl
             }
 
 
-            for(Iface *v : ifaces)
+            for(Interface *v : interfaces)
             {
-                Iface *o = const_cast<Iface *>(v->opposite());
-                for(const Iface *b : v->bases())
+                Interface *o = const_cast<Interface *>(v->opposite());
+                for(const Interface *b : v->bases())
                 {
-                    addBase(o, const_cast<Iface *>(b->opposite()));
+                    addBase(o, const_cast<Interface *>(b->opposite()));
                 }
             }
         }
@@ -395,18 +395,18 @@ namespace dci { namespace couple { namespace meta { namespace impl
         _lc.clear();
     }
 
-    void LibraryBuilder::fillOppositeIfaceScope(Scope *o, Scope *v)
+    void LibraryBuilder::fillOppositeInterfaceScope(Scope *o, Scope *v)
     {
         for(auto *c : v->Compound<Struct>::elements())  setType(addAlias(o, c->name()), const_cast<Struct *>(c));
         for(auto *c : v->Compound<Variant>::elements()) setType(addAlias(o, c->name()), const_cast<Variant *>(c));
         for(auto *c : v->Compound<Enum>::elements())    setType(addAlias(o, c->name()), const_cast<Enum *>(c));
         for(auto *c : v->Compound<Alias>::elements())   setType(addAlias(o, c->name()), const_cast<Alias *>(c));
-        for(auto *c : v->Compound<Iface>::elements())   setType(addAlias(o, c->name()), const_cast<Iface *>(c));
+        for(auto *c : v->Compound<Interface>::elements())   setType(addAlias(o, c->name()), const_cast<Interface *>(c));
 
         for(auto *c : v->Compound<Scope>::elements())
         {
             Scope *s = addScope(o, c->name());
-            fillOppositeIfaceScope(s, const_cast<Scope *>(c));
+            fillOppositeInterfaceScope(s, const_cast<Scope *>(c));
         }
     }
 

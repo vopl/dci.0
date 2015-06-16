@@ -41,7 +41,7 @@ namespace dci { namespace couple { namespace parser { namespace impl
         void mkErrc();
         void mkMethodParam();
         void mkMethod();
-        void mkIface();
+        void mkInterface();
         void mkScope();
         void mkInclude();
         void mkDecl();
@@ -63,7 +63,7 @@ namespace dci { namespace couple { namespace parser { namespace impl
         qi::rule<TokIterator, TypeUse()>                                    typeUse;
         qi::rule<TokIterator, Alias()>                                      alias;
         qi::rule<TokIterator, BaseStructs()>                                baseStructs;
-        qi::rule<TokIterator, BaseIfaces()>                                 baseIfaces;
+        qi::rule<TokIterator, BaseInterfaces()>                                 baseInterfaces;
         qi::rule<TokIterator, VariantField()>                               variantField;
         qi::rule<TokIterator, Variant()>                                    variant;
         qi::rule<TokIterator, StructField()>                                structField;
@@ -74,7 +74,7 @@ namespace dci { namespace couple { namespace parser { namespace impl
         qi::rule<TokIterator, Errc()>                                       errc;
         qi::rule<TokIterator, MethodParam()>                                methodParam;
         qi::rule<TokIterator, Method(), qi::locals<MethodDirection>>        method;
-        qi::rule<TokIterator, Iface()>                                      iface;
+        qi::rule<TokIterator, Interface()>                                      interface;
         qi::rule<TokIterator, Scope()>                                      scope;
         qi::rule<TokIterator, std::vector<Decl>()>                          include;
         qi::rule<TokIterator, Decl()>                                       decl;

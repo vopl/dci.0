@@ -3,7 +3,7 @@
 #include "variant.hpp"
 #include "enum.hpp"
 #include "alias.hpp"
-#include "iface.hpp"
+#include "interface.hpp"
 #include <dci/couple/runtime/signBuilder.hpp>
 
 #include <cassert>

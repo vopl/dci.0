@@ -1,6 +1,6 @@
 #pragma once
 
-#include <dci/couple/runtime/ifaceId.hpp>
+#include <dci/couple/runtime/interfaceId.hpp>
 #include "moduleId.hpp"
 #include <string>
 #include <vector>

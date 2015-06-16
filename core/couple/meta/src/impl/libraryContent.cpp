@@ -24,7 +24,7 @@ namespace dci { namespace couple { namespace meta { namespace impl
         , _variants(std::move(from._variants))
         , _enums(std::move(from._enums))
         , _errcs(std::move(from._errcs))
-        , _ifaces(std::move(from._ifaces))
+        , _interfaces(std::move(from._interfaces))
         , _methods(std::move(from._methods))
         , _attributes(std::move(from._attributes))
         , _enumValues(std::move(from._enumValues))
@@ -52,7 +52,7 @@ namespace dci { namespace couple { namespace meta { namespace impl
         _variants = (std::move(from._variants));
         _enums = (std::move(from._enums));
         _errcs = (std::move(from._errcs));
-        _ifaces = (std::move(from._ifaces));
+        _interfaces = (std::move(from._interfaces));
         _methods = (std::move(from._methods));
         _attributes = (std::move(from._attributes));
         _enumValues = (std::move(from._enumValues));
@@ -140,9 +140,9 @@ namespace dci { namespace couple { namespace meta { namespace impl
     }
 
     template <>
-    LibraryContent::Items<Iface> &LibraryContent::items<Iface>()
+    LibraryContent::Items<Interface> &LibraryContent::items<Interface>()
     {
-        return _ifaces;
+        return _interfaces;
     }
 
     template <>
@@ -183,7 +183,7 @@ namespace dci { namespace couple { namespace meta { namespace impl
         _variants.clear();
         _enums.clear();
         _errcs.clear();
-        _ifaces.clear();
+        _interfaces.clear();
         _methods.clear();
         _attributes.clear();
         _enums.clear();

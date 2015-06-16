@@ -12,7 +12,7 @@ namespace dci { namespace couple { namespace meta { namespace impl
     class Enum;
     class Errc;
     class Alias;
-    class Iface;
+    class Interface;
 
     class Scope
         : public Named
@@ -22,7 +22,7 @@ namespace dci { namespace couple { namespace meta { namespace impl
         , public Compound<Enum>
         , public Compound<Errc>
         , public Compound<Alias>
-        , public Compound<Iface>
+        , public Compound<Interface>
         , public Compound<Scope>
     {
     public:
@@ -34,7 +34,7 @@ namespace dci { namespace couple { namespace meta { namespace impl
         using Compound<Enum>::add;
         using Compound<Errc>::add;
         using Compound<Alias>::add;
-        using Compound<Iface>::add;
+        using Compound<Interface>::add;
         using Compound<Scope>::add;
 
         void makeSign();

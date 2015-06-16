@@ -4,7 +4,7 @@
 #include "array.hpp"
 #include "enum.hpp"
 #include "errc.hpp"
-#include "iface.hpp"
+#include "interface.hpp"
 #include "list.hpp"
 #include "map.hpp"
 #include "ptr.hpp"
@@ -54,9 +54,9 @@ namespace dci { namespace couple { namespace meta
         Variant     *addVariant(Scope *parent, const std::string &name);
         Enum        *addEnum(Scope *parent, const std::string &name);
         Errc        *addErrc(Scope *parent, const std::string &name);
-        Iface       *addIface(Scope *parent, const std::string &name);
+        Interface       *addInterface(Scope *parent, const std::string &name);
 
-        Method      *addMethod(Iface *parent, const std::string &name);
+        Method      *addMethod(Interface *parent, const std::string &name);
 
         Attribute   *addAttribute(Struct *parent, const std::string &name);
         Attribute   *addAttribute(Variant *parent, const std::string &name);
@@ -65,7 +65,7 @@ namespace dci { namespace couple { namespace meta
         ErrcValue   *addErrcValue(Errc *parent, const std::string &name);
 
         void addBase(Struct *target, Struct *base);
-        void addBase(Iface *target, Iface *base);
+        void addBase(Interface *target, Interface *base);
 
         void setType(Attribute *target, Type *type);
         void setType(Alias *target, Type *type);

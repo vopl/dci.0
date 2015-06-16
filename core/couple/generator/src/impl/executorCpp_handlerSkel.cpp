@@ -80,7 +80,7 @@ namespace dci { namespace couple { namespace generator { namespace impl
         bool res = false;
         for(auto child : scope->structs())  res |= writeBody(child, true);
         for(auto child : scope->variants()) res |= writeBody(child, true);
-        for(auto child : scope->ifaces())   res |= writeBody(child);
+        for(auto child : scope->interfaces())   res |= writeBody(child);
         for(auto child : scope->scopes())   res |= writeBody(child, true);
 
         if(withSelf)
@@ -94,7 +94,7 @@ namespace dci { namespace couple { namespace generator { namespace impl
         return res;
     }
 
-    bool ExecutorCpp_handlerSkel::writeBody(const dci::couple::meta::Iface *v)
+    bool ExecutorCpp_handlerSkel::writeBody(const dci::couple::meta::Interface *v)
     {
         _hpp<< "// "<<"handler skeleton for "<<v->name()<<el;
 

@@ -1,10 +1,10 @@
-#include <dci/couple/runtime/ifaceWire.hpp>
+#include <dci/couple/runtime/interfaceWire.hpp>
 #include <cassert>
 #include <cstdlib>
 
 namespace dci { namespace couple { namespace runtime
 {
-    IfaceWire::IfaceWire(Deleter deleter)
+    InterfaceWire::InterfaceWire(Deleter deleter)
         : _involvedFwd{}
         , _involvedBwd{}
         , _uninvolvFwdListener{}
@@ -15,13 +15,13 @@ namespace dci { namespace couple { namespace runtime
     {
     }
 
-    IfaceWire::~IfaceWire()
+    InterfaceWire::~InterfaceWire()
     {
         assert(!_involvedFwd && !_involvedBwd);
     }
 
 
-    void IfaceWire::involve(bool fwd, bool use)
+    void InterfaceWire::involve(bool fwd, bool use)
     {
         if(fwd)
         {
@@ -52,7 +52,7 @@ namespace dci { namespace couple { namespace runtime
         }
     }
 
-    void IfaceWire::listenUninvolve(bool fwd, UninvolveListener listener, void *userData)
+    void InterfaceWire::listenUninvolve(bool fwd, UninvolveListener listener, void *userData)
     {
         if(fwd)
         {

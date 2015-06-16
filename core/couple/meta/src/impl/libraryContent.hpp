@@ -4,7 +4,7 @@
 #include "array.hpp"
 #include "enum.hpp"
 #include "errc.hpp"
-#include "iface.hpp"
+#include "interface.hpp"
 #include "list.hpp"
 #include "map.hpp"
 #include "ptr.hpp"
@@ -71,7 +71,7 @@ namespace dci { namespace couple { namespace meta { namespace impl
         Items<Variant>      _variants;
         Items<Enum>         _enums;
         Items<Errc>         _errcs;
-        Items<Iface>        _ifaces;
+        Items<Interface>        _interfaces;
         Items<Method>       _methods;
         Items<Attribute>    _attributes;
         Items<EnumValue>    _enumValues;
@@ -125,7 +125,7 @@ namespace dci { namespace couple { namespace meta { namespace impl
         locateConvertible(p, items<Variant>());
         locateConvertible(p, items<Enum>());
         locateConvertible(p, items<Errc>());
-        locateConvertible(p, items<Iface>());
+        locateConvertible(p, items<Interface>());
         locateConvertible(p, items<Method>());
         locateConvertible(p, items<Attribute>());
         locateConvertible(p, items<EnumValue>());

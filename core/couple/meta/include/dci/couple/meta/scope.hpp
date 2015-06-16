@@ -7,7 +7,7 @@
 namespace dci { namespace couple { namespace meta
 {
     class APIDCI_COUPLE_META Scope
-        : public himpl::FaceLayout<impl::Scope, Named, Scoped, Compound<Struct>, Compound<Variant>, Compound<Enum>, Compound<Errc>, Compound<Alias>, Compound<Iface>, Compound<Scope>>
+        : public himpl::FaceLayout<impl::Scope, Named, Scoped, Compound<Struct>, Compound<Variant>, Compound<Enum>, Compound<Errc>, Compound<Alias>, Compound<Interface>, Compound<Scope>>
     {
     public:
         using ThisFaceLayout::ThisFaceLayout;
@@ -22,7 +22,7 @@ namespace dci { namespace couple { namespace meta
         const std::vector<const Errc *>       &errcs() const;
         const std::vector<const Alias *>      &aliases() const;
 
-        const std::vector<const Iface *>      &ifaces() const;
+        const std::vector<const Interface *>      &interfaces() const;
 
         const std::vector<const Scope *>      &scopes() const;
 

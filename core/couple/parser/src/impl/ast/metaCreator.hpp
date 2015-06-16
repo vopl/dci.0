@@ -165,9 +165,9 @@ namespace  dci { namespace couple { namespace parser { namespace impl { namespac
             exec(v->fields);
         }
 
-        void operator()(SIface *v)
+        void operator()(SInterface *v)
         {
-            v->meta = _lb.addIface(v->owner->meta, v->name->value);
+            v->meta = _lb.addInterface(v->owner->meta, v->name->value);
             v->SScope::meta = v->meta;
 
             exec(v->decls);

@@ -4,7 +4,7 @@
 #include "array.hpp"
 #include "enum.hpp"
 #include "errc.hpp"
-#include "iface.hpp"
+#include "interface.hpp"
 #include "list.hpp"
 #include "map.hpp"
 #include "primitive.hpp"
@@ -44,8 +44,8 @@ namespace dci { namespace couple { namespace meta { namespace impl
             return static_cast<const Enum *>(this)->sign();
         case TypeConcrete::errc:
             return static_cast<const Errc *>(this)->sign();
-        case TypeConcrete::iface:
-            return static_cast<const Iface *>(this)->sign();
+        case TypeConcrete::interface:
+            return static_cast<const Interface *>(this)->sign();
         case TypeConcrete::list:
             return static_cast<const List *>(this)->sign();
         case TypeConcrete::map:

@@ -30,7 +30,7 @@ namespace dci { namespace site { namespace impl
         static std::string generateManifest(const std::string &mainBinaryFullPath);
         static int executeTest(int argc, char *argv[], TestStage stage, site::Manager *manager);
 
-        //outFuture is async::Future<std::error_code, ConcreteIface>
+        //outFuture is async::Future<std::error_code, ConcreteInterface>
         std::error_code createService(void *outFuture, const couple::runtime::Iid &iid);
 
     private:

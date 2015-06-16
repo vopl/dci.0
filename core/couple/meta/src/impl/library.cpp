@@ -63,7 +63,7 @@ namespace dci { namespace couple { namespace meta { namespace impl
     {
         makeSign4Items(_lc.items<Primitive>());
 
-        makeSign4Items(_lc.items<Scope>());//structs, variants, ifaces,
+        makeSign4Items(_lc.items<Scope>());//structs, variants, interfaces,
 
         makeSign4Items(_lc.items<List>());
         makeSign4Items(_lc.items<Set>());

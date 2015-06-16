@@ -22,7 +22,7 @@ namespace dci { namespace couple { namespace generator { namespace impl
 
     private:
         bool writeBody(const dci::couple::meta::Scope *scope, bool withSelf);
-        bool writeBody(const dci::couple::meta::Iface *v);
+        bool writeBody(const dci::couple::meta::Interface *v);
 
     private:
         Out _hpp;

@@ -2,7 +2,7 @@
 scope stream
 {
     /////////////////////////////////////////////////////////
-    iface Server
+    interface Server
     {
         in bind:        (Address v) -> ();
         in listen:      ()          -> ();
@@ -13,7 +13,7 @@ scope stream
     }
 
     /////////////////////////////////////////////////////////
-    iface Client
+    interface Client
     {
         in bind:        (Address v) -> ();
         in connect:     (Address v) -> Channel;
@@ -21,7 +21,7 @@ scope stream
     }
 
     /////////////////////////////////////////////////////////
-    iface Channel
+    interface Channel
     {
         in self:        ()          -> Address;
         in peer:        ()          -> Address;

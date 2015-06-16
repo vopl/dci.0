@@ -43,13 +43,13 @@ namespace dci { namespace couple { namespace parser { namespace impl
 
         methodParam
         method
-        iface
+        interface
 
         scope
 
         include
 
-        decl = alias | variant | struct | enum | errc | iface | scope
+        decl = alias | variant | struct | enum | errc | interface | scope
 
         decls = *decl | include
 
@@ -113,8 +113,8 @@ namespace dci { namespace couple { namespace parser { namespace impl
     struct SBaseStructs;
     using BaseStructs = std::shared_ptr<SBaseStructs>;
 
-    struct SBaseIfaces;
-    using BaseIfaces = std::shared_ptr<SBaseIfaces>;
+    struct SBaseInterfaces;
+    using BaseInterfaces = std::shared_ptr<SBaseInterfaces>;
 
     //    structField
     struct SStructField;
@@ -156,9 +156,9 @@ namespace dci { namespace couple { namespace parser { namespace impl
     struct SMethod;
     using Method = std::shared_ptr<SMethod>;
 
-    //    iface
-    struct SIface;
-    using Iface = std::shared_ptr<SIface>;
+    //    interface
+    struct SInterface;
+    using Interface = std::shared_ptr<SInterface>;
 
     struct SScopeEntry;
 
@@ -168,14 +168,14 @@ namespace dci { namespace couple { namespace parser { namespace impl
 
     //    include
 
-    //    decl = alias | variant | struct | enum | errc | iface | scope
+    //    decl = alias | variant | struct | enum | errc | interface | scope
     using Decl = boost::variant<
           Alias
         , Variant
         , Struct
         , Enum
         , Errc
-        , Iface
+        , Interface
         , Scope
     >;
 
@@ -255,7 +255,7 @@ namespace dci { namespace couple { namespace parser { namespace impl
             , SStruct *
             , SEnum *
             , SErrc *
-            , SIface *
+            , SInterface *
         > asDecl;
 
         SScopeEntry *asScopedEntry;
@@ -291,7 +291,7 @@ namespace dci { namespace couple { namespace parser { namespace impl
         std::map<std::string, SVariant *>   variants;
         std::map<std::string, SEnum *>      enums;
         std::map<std::string, SErrc *>      errcs;
-        std::map<std::string, SIface *>     ifaces;
+        std::map<std::string, SInterface *>     interfaces;
         std::map<std::string, SScope *>     scopes;
 
         meta::Scope                         *meta{nullptr};
@@ -313,10 +313,10 @@ namespace dci { namespace couple { namespace parser { namespace impl
         std::vector<SStruct*>   instances;
     };
 
-    struct SBaseIfaces
+    struct SBaseInterfaces
     {
         std::vector<ScopedName> scopedNames;
-        std::vector<SIface*>    instances;
+        std::vector<SInterface*>    instances;
     };
 
     //    variantField
@@ -416,7 +416,7 @@ namespace dci { namespace couple { namespace parser { namespace impl
 
     struct SMethod
     {
-        SIface                      *owner{nullptr};
+        SInterface                      *owner{nullptr};
 
         MethodDirection             direction{MethodDirection::out};
         Name                        name;
@@ -427,19 +427,19 @@ namespace dci { namespace couple { namespace parser { namespace impl
         meta::Method                *meta{nullptr};
     };
 
-    //    iface
-    struct SIface
+    //    interface
+    struct SInterface
         : SScope
     {
-        BaseIfaces              bases;
+        BaseInterfaces              bases;
         std::vector<Method>     methods;
 
-        meta::Iface             *meta{nullptr};
+        meta::Interface             *meta{nullptr};
     };
 
     //    include
 
-    //    decl = alias | variant | struct | enum | errc | iface
+    //    decl = alias | variant | struct | enum | errc | interface
 
     //    decls = *(decl | include)
 
