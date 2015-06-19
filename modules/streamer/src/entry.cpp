@@ -4,6 +4,7 @@
 
 
 #include "streamer.hpp"
+#include "streamerHandlerSkel.hpp"
 
 
 

@@ -27,6 +27,9 @@ namespace dci { namespace couple { namespace meta
         real64,
 
         bytes,
+
+        service,
+        iid,
     };
 
     class APIDCI_COUPLE_META Primitive

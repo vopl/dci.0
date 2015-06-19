@@ -1,7 +1,7 @@
 
 scope streamer
 {
-    alias Traffic = Bytes;
+    alias Traffic = bytes;
 
     interface Channel
     {
@@ -18,14 +18,11 @@ scope streamer
         in channel: () -> (Channel);
         in reset:   ();
 
-alias interface = int8;
-alias iid = int8;
+        in put:     (service);
+        out put:    (service);
 
-        in put:     (interface);
-        out put:    (interface);
-
-        in get:     (iid) -> (interface);
-        out get:    (iid) -> (interface);
+        in get:     (iid) -> (service);
+        out get:    (iid) -> (service);
 
         in join:    (Channel);
     }

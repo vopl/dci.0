@@ -6,11 +6,11 @@ scope datagram
     {
         in bind:            (Address v)         -> ();
         
-        in receiveData:     ()                  -> Bytes;
-        in receive:         ()                  -> (Bytes, Address);
-        out received:       (Bytes, Address)    -> ();
+        in receiveData:     ()                  -> (bytes);
+        in receive:         ()                  -> (bytes, Address);
+        out received:       (bytes, Address)    -> ();
         
-        in send:            (Bytes, Address)    -> ();
+        in send:            (bytes, Address)    -> ();
         
         in close:           ()                  -> ();
         out closed:         ();
