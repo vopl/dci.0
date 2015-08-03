@@ -35,6 +35,11 @@ namespace dci { namespace couple { namespace runtime
         return *this;
     }
 
+    Bytes Bytes::clone() const
+    {
+        return impl().clone();
+    }
+
     bool Bytes::empty() const
     {
         return impl().empty();

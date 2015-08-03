@@ -29,7 +29,7 @@ namespace dci { namespace couple { namespace runtime { namespace impl
         , _first {first}
         , _last {last}
     {
-        assert(!_last->_next);
+        assert(!_size || !_last->_next);
     }
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
@@ -50,6 +50,42 @@ namespace dci { namespace couple { namespace runtime { namespace impl
         from._last = nullptr;
 
         return *this;
+    }
+
+    /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
+    Bytes Bytes::clone() const
+    {
+        bytes::Segment *first, *last;
+        if(_size)
+        {
+            bytes::Segment *src = _first;
+            bytes::Segment *iter = new bytes::Segment(src->_size, src->_offset);
+
+            first = iter;
+
+            for(;;)
+            {
+                memcpy(iter->_buffer+iter->_offset, src->_buffer+src->_offset, src->_size);
+                src = src->_next;
+                if(src)
+                {
+                    iter->_next = new bytes::Segment(src->_size, src->_offset);
+                    iter = iter->_next;
+                }
+                else
+                {
+                    break;
+                }
+            }
+
+            last = iter;
+        }
+        else
+        {
+            first = last = nullptr;
+        }
+
+        return Bytes(_size, first, last);
     }
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7

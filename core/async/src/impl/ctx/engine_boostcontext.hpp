@@ -20,8 +20,7 @@ namespace dci { namespace async { namespace impl { namespace ctx
         void switchTo(Engine *to);
 
     private:
-        boost::context::fcontext_t *_ctxPtr;
-        static boost::context::fcontext_t _rootCtx;
+        boost::context::fcontext_t _ctx;
         std::uintptr_t _coroArg;
     };
 }}}}

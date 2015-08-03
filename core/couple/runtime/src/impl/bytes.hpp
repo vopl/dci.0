@@ -21,6 +21,8 @@ namespace dci { namespace couple { namespace runtime { namespace impl
 
         Bytes &operator=(Bytes &&);
 
+        Bytes clone() const;
+
         void append(Bytes &&bytes);
         void append(const char *str, std::size_t size);
         void enlargeAtLeast(std::size_t size);

@@ -9,7 +9,6 @@
 
 using namespace streamer;
 using namespace dci::couple;
-using namespace dci::couple::runtime;
 
 
 
@@ -22,31 +21,51 @@ using namespace dci::couple::runtime;
 #include <dci/couple/serialize.hpp>
 namespace xyz
 {
+    using namespace dci::couple::runtime;
+
     struct SinkSource
     {
         //sink
         template <class T>
-        std::size_t writePod(const T &) throw (std::system_error)
+        void writePod(const T &) throw (std::system_error)
         {
             //assert(0);
-            return sizeof(T);
         }
 
-        std::size_t writeBinary(const char *data, std::size_t size) throw (std::system_error)
+        void writeBinary(const char *data, std::size_t size) throw (std::system_error)
         {
             //assert(0);
             (void)data;
-            return size;
+            (void)size;
+        }
+
+        void writeBytes(Bytes &&data) throw (std::system_error)
+        {
+            //assert(0);
+            (void)data;
         }
 
         //source
         template <class T>
-        std::size_t readPod(T &)  throw (std::system_error)
+        void readPod(T &)  throw (std::system_error)
         {
             //assert(0);
-            return sizeof(T);
         }
 
+        void readBinary(char *data, std::size_t size) throw (std::system_error)
+        {
+            //assert(0);
+            (void)data;
+            (void)size;
+        }
+
+        Bytes readBytes(std::size_t size) throw (std::system_error)
+        {
+            //assert(0);
+            (void)size;
+
+            return Bytes();
+        }
     };
 
     struct Settings
@@ -59,17 +78,17 @@ namespace xyz
     {
 
         {
-            int kin;
+            std::array<Bytes, 0> kin;
 
             SinkSource sink;
             struct {} context;
 
-            std::error_code ec = serialize::save<Settings>(context, kin, sink);//ok, writerError, badInput
+            std::error_code ec = serialize::save<Settings>(context, std::move(kin), sink);//ok, writerError, badInput
             (void)ec;
         }
 
         {
-            bool kout;
+            Bytes kout;
             SinkSource source;
             struct {} context;
 
@@ -94,6 +113,8 @@ TEST(Streamer, Probe)
 {
     xyz::f();
     return;
+
+    using namespace dci::couple::runtime;
 
     {
         Future<Hub> hf = dci::site::testManager()->createService<Hub>();

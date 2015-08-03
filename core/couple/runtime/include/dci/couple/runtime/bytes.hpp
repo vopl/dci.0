@@ -33,6 +33,8 @@ namespace dci { namespace couple { namespace runtime
 
         Bytes &operator=(Bytes &&);
 
+        Bytes clone() const;
+
         bool empty() const;
         std::size_t size() const;
 

@@ -14,7 +14,7 @@ namespace dci { namespace couple { namespace serialize
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
     template <class Settings, class Context, class Value, class Sink>
-    std::error_code save(Context &context, const Value &value, Sink &sink);
+    std::error_code save(Context &context, Value &&value, Sink &sink);
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
     template <class Settings, class Context, class Source, class Value>
@@ -39,11 +39,11 @@ namespace dci { namespace couple { namespace serialize
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
     template <class Settings, class Context, class Value, class Sink>
-    std::error_code save(Context &context, const Value &value, Sink &sink)
+    std::error_code save(Context &context, Value &&value, Sink &sink)
     {
         try
         {
-            details::Processor<Settings, Context, Sink>::save(context, sink, value, 0);
+            details::Processor<Settings, Context, Sink>::save(context, sink, std::forward<Value>(value), 0);
         }
         catch(const std::system_error &e)
         {
