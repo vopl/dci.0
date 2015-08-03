@@ -291,7 +291,7 @@ namespace dci { namespace couple { namespace parser { namespace impl
         std::map<std::string, SVariant *>   variants;
         std::map<std::string, SEnum *>      enums;
         std::map<std::string, SErrc *>      errcs;
-        std::map<std::string, SInterface *>     interfaces;
+        std::map<std::string, SInterface *> interfaces;
         std::map<std::string, SScope *>     scopes;
 
         meta::Scope                         *meta{nullptr};
@@ -315,7 +315,7 @@ namespace dci { namespace couple { namespace parser { namespace impl
 
     struct SBaseInterfaces
     {
-        std::vector<ScopedName> scopedNames;
+        std::vector<ScopedName>     scopedNames;
         std::vector<SInterface*>    instances;
     };
 
@@ -416,7 +416,7 @@ namespace dci { namespace couple { namespace parser { namespace impl
 
     struct SMethod
     {
-        SInterface                      *owner{nullptr};
+        SInterface                  *owner{nullptr};
 
         MethodDirection             direction{MethodDirection::out};
         Name                        name;
@@ -432,7 +432,7 @@ namespace dci { namespace couple { namespace parser { namespace impl
         : SScope
     {
         BaseInterfaces              bases;
-        std::vector<Method>     methods;
+        std::vector<Method>         methods;
 
         meta::Interface             *meta{nullptr};
     };

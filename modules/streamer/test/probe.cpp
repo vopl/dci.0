@@ -27,8 +27,9 @@ namespace xyz
     {
         //sink
         template <class T>
-        void writePod(const T &) throw (std::system_error)
+        void writePod(const T &v) throw (std::system_error)
         {
+            std::cout<<v<<std::endl;
             //assert(0);
         }
 
@@ -47,8 +48,9 @@ namespace xyz
 
         //source
         template <class T>
-        void readPod(T &)  throw (std::system_error)
+        void readPod(T &v)  throw (std::system_error)
         {
+            v = 220;
             //assert(0);
         }
 
@@ -72,13 +74,16 @@ namespace xyz
     {
         static const std::size_t _maxSize = 1024*1024*1;
 
+        static const serialize::Endianness _endianness = serialize::Endianness::big;
+
     };
 
     int f()
     {
 
         {
-            std::array<Bytes, 0> kin;
+            std::set<int> kin;
+            kin.insert(0);
 
             SinkSource sink;
             struct {} context;
@@ -88,7 +93,7 @@ namespace xyz
         }
 
         {
-            Bytes kout;
+            std::set<int> kout;
             SinkSource source;
             struct {} context;
 

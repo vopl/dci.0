@@ -5,11 +5,20 @@
 namespace dci { namespace couple { namespace serialize
 {
 
+    enum class ValueKind
+    {
+        undefined,
+        variant,
+        struct_,
+        enum_,
+        service,
+    };
+
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
     template <class Value>
     class ValueTraits
     {
-        static const bool _defined = false;
+        static const ValueKind _kind = ValueKind::undefined;
     };
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
@@ -22,9 +31,28 @@ namespace dci { namespace couple { namespace serialize
 
 
 
+    enum class Endianness
+    {
+        unknown,
+        little,
+        big,
+        pdp
+    };
 
+#if not defined __BYTE_ORDER or not defined __BYTE_ORDER
+#   error __BYTE_ORDER must be defined
+#endif
 
-
+    static const Endianness _currentEndianness =
+        __LITTLE_ENDIAN == __BYTE_ORDER ?
+            Endianness::little :
+            __BIG_ENDIAN == __BYTE_ORDER ?
+                Endianness::big :
+                __PDP_ENDIAN == __BYTE_ORDER ?
+                    Endianness::pdp :
+                    Endianness::unknown;
+    static_assert(Endianness::unknown != _currentEndianness, "");
+    static_assert(Endianness::pdp != _currentEndianness, "");
 
 
 
@@ -43,7 +71,8 @@ namespace dci { namespace couple { namespace serialize
     {
         try
         {
-            details::Processor<Settings, Context, Sink>::save(context, sink, std::forward<Value>(value), 0);
+            details::Processor<Settings, Context, Sink> processor(context, sink);
+            processor.save(std::forward<Value>(value));
         }
         catch(const std::system_error &e)
         {
@@ -59,7 +88,8 @@ namespace dci { namespace couple { namespace serialize
     {
         try
         {
-            details::Processor<Settings, Context, Source>::load(context, source, value, 0);
+            details::Processor<Settings, Context, Source> processor(context, source);
+            processor.load(value);
         }
         catch(const std::system_error &e)
         {
