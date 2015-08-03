@@ -6,6 +6,9 @@ cmake_minimum_required(VERSION 3.1.0 FATAL_ERROR)
 
 set(SRC
     src/entry.cpp
+
+    src/handlers/hub.hpp
+    src/handlers/hub.cpp
 )
 
 
@@ -15,7 +18,7 @@ add_library(${PROJECT} SHARED
     ${SRC}
     idl/streamer.idl
 )
-target_link_libraries(${PROJECT} dci-site)
+target_link_libraries(${PROJECT} dci-site dci-couple-runtime)
 
 set_property(TARGET ${PROJECT} PROPERTY CXX_STANDARD 14)
 set_property(TARGET ${PROJECT} PROPERTY CXX_STANDARD_REQUIRED ON)

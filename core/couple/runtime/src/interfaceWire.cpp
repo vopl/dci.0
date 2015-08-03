@@ -52,6 +52,11 @@ namespace dci { namespace couple { namespace runtime
         }
     }
 
+    bool InterfaceWire::involved(bool fwd)
+    {
+        return fwd ? _involvedFwd : _involvedBwd;
+    }
+
     void InterfaceWire::listenUninvolve(bool fwd, UninvolveListener listener, void *userData)
     {
         if(fwd)

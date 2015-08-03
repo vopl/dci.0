@@ -65,4 +65,10 @@ namespace dci { namespace couple { namespace runtime
         return _wire;
     }
 
+    bool Interface::oppositeInvolved() const
+    {
+        assert(_wire);
+        return _wire->involved(!_fwd);
+    }
+
 }}}

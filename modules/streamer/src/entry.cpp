@@ -3,12 +3,11 @@
 #include <dci/logger.hpp>
 
 
-#include "streamer.hpp"
-#include "streamerHandlerSkel.hpp"
+#include "handlers/hub.hpp"
 
-
-
-
+using namespace dci::couple::runtime;
+using namespace dci::site;
+using namespace streamer;
 
 
 
@@ -19,7 +18,7 @@ struct Info
     {
         _provider = "dci";
         _id.fromHex("23bd7add4fc9c603b42bb20a41fe80a0");
-        //_serviceIds;
+        _serviceIds.push_back(Hub::_iid);
 
         _revision = 1;
         _name = "streamer";
@@ -89,15 +88,14 @@ struct Entry
 
     dci::site::ServiceFactory *allocServiceFactory(const dci::couple::runtime::Iid &iid) override
     {
-        (void)iid;
-        assert(0);
+        assert(iid == info._serviceIds[0]);
+        return new handlers::HubHandlerFactory;
     }
 
     void freeServiceFactory(const dci::couple::runtime::Iid &iid, dci::site::ServiceFactory *factory) override
     {
-        (void)iid;
-        (void)factory;
-        assert(0);
+        assert(iid == info._serviceIds[0]);
+        delete factory;
     }
 
 } entry;

@@ -8,6 +8,8 @@ namespace dci { namespace couple { namespace runtime
     enum class err_general
     {
         call_not_connected = 1,
+        bad_input = 2,
+        quote_exhausted = 3,
     };
 
     enum class err_system

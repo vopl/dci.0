@@ -20,6 +20,7 @@ namespace dci { namespace couple { namespace runtime
         void assign(InterfaceWire *wire, bool fwd);
 
         InterfaceWire *wire();
+        bool oppositeInvolved() const;
 
     private:
         InterfaceWire*_wire;

@@ -68,6 +68,7 @@ else()
 
         add_custom_command(OUTPUT ${outFile}
             COMMAND dci-couple-translator ${gens} ${include} ${sources} --outdir ${outDir} --outname ${NAME} --print-source-files > ${translatorStdoutFile}
+            COMMAND echo dci-couple-translator ${gens} ${include} ${sources} --outdir ${outDir} --outname ${NAME} --print-source-files > ${translatorStdoutFile}
             COMMAND ${CMAKE_COMMAND} -DdciUseIdlParseIncludes=${translatorStdoutFile} -DdciUseIdlWriteIncludes=${fakeDepsCxx} -P ${dciUseIdlScript}
             VERBATIM
             DEPENDS dci-couple-translator

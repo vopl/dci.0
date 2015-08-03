@@ -53,4 +53,7 @@ namespace dci { namespace couple { namespace runtime
     template <class... T>
     using Future = ::dci::async::Future< std::error_code, T...>;
 
+    template <class... T>
+    using Promise = typename Future<T...>::Promise;
+
 }}}

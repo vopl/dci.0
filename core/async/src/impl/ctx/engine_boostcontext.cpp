@@ -7,9 +7,11 @@
 namespace dci { namespace async { namespace impl { namespace ctx
 {
     ////////////////////////////////////////////////////////////////////////////////
+    boost::context::fcontext_t Engine::_rootCtx;
+
+    ////////////////////////////////////////////////////////////////////////////////
     Engine::Engine()
-        : _ctx()
-        , _ctxIsRoot()
+        : _ctxPtr()
         , _coroArg()
     {
     }
@@ -17,45 +19,42 @@ namespace dci { namespace async { namespace impl { namespace ctx
     ////////////////////////////////////////////////////////////////////////////////
     void Engine::constructRoot()
     {
-        assert(!_ctx);
-        assert(!_ctxIsRoot);
+        assert(!_ctxPtr);
+        assert(&_rootCtx != _ctxPtr);
         assert(!_coroArg);
 
-        _ctx = new boost::context::fcontext_t;
-        _ctxIsRoot = true;
+        _ctxPtr = &_rootCtx;
     }
 
     ////////////////////////////////////////////////////////////////////////////////
     void Engine::destructRoot()
     {
-        assert(_ctx);
-        assert(_ctxIsRoot);
+        //assert(_ctxPtr);
+        assert(&_rootCtx == _ctxPtr);
         assert(!_coroArg);
 
-        delete _ctx;
-        _ctx = nullptr;
-        _ctxIsRoot = false;
+        _ctxPtr = nullptr;
     }
 
     ////////////////////////////////////////////////////////////////////////////////
     void Engine::constructCoro(char *stackPtr, std::size_t stackSize, void(*f)(std::intptr_t), std::uintptr_t arg)
     {
-        assert(!_ctx);
-        assert(!_ctxIsRoot);
+        assert(!_ctxPtr);
+        assert(&_rootCtx != _ctxPtr);
         assert(!_coroArg);
 
         _coroArg = arg;
 
         if(mm::Config::_stackGrowsDown)
         {
-            _ctx = boost::context::make_fcontext(
+            _ctxPtr = boost::context::make_fcontext(
                       stackPtr + stackSize,
                       stackSize,
                       f);
         }
         else
         {
-            _ctx = boost::context::make_fcontext(
+            _ctxPtr = boost::context::make_fcontext(
                       stackPtr,
                       stackSize,
                       f);
@@ -65,16 +64,16 @@ namespace dci { namespace async { namespace impl { namespace ctx
     ////////////////////////////////////////////////////////////////////////////////
     void Engine::destructCoro()
     {
-        assert(_ctx);
-        assert(!_ctxIsRoot);
+        assert(_ctxPtr);
+        assert(&_rootCtx != _ctxPtr);
 
-        _ctx = nullptr;
+        _ctxPtr = nullptr;
         _coroArg = 0;
     }
 
     ////////////////////////////////////////////////////////////////////////////////
     void Engine::switchTo(Engine *to)
     {
-        boost::context::jump_fcontext(_ctx, to->_ctx, to->_coroArg, false);
+        boost::context::jump_fcontext(_ctxPtr, to->_ctxPtr, to->_coroArg, false);
     }
 }}}}

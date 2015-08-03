@@ -208,8 +208,8 @@ int main(int argc, const char **argv)
             }
             catch(const std::out_of_range &e)
             {
-                std::cout << "generator " << gen << " is not found" << std::endl;
-                continue;
+                std::cerr << "generator " << gen << " is not found" << std::endl;
+                return EXIT_FAILURE;
             }
 
             std::string outname;
@@ -229,7 +229,7 @@ int main(int argc, const char **argv)
             else
             {
                 std::cout << gen << " generation failed" << std::endl;
-                break;
+                return EXIT_FAILURE;
             }
         }
     }

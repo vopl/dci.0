@@ -18,7 +18,7 @@ namespace dci {namespace async {namespace impl {class PulserAll;}}}
 namespace dci {namespace async {namespace impl {class Barrier;}}}
 
 namespace dci { namespace himpl {
-    template <> struct LayoutProvider< ::dci::async::impl::Scheduler > { static const std::size_t _size=80; static const std::size_t _align=8; static const bool _polymorphic=false; };
+    template <> struct LayoutProvider< ::dci::async::impl::Scheduler > { static const std::size_t _size=72; static const std::size_t _align=8; static const bool _polymorphic=false; };
     template <> struct LayoutProvider< ::dci::async::impl::Task > { static const std::size_t _size=32; static const std::size_t _align=8; static const bool _polymorphic=false; };
     template <> struct LayoutProvider< ::dci::async::impl::Waitable > { static const std::size_t _size=48; static const std::size_t _align=8; static const bool _polymorphic=false; };
     template <> struct LayoutProvider< ::dci::async::impl::Lockable > { static const std::size_t _size=0; static const std::size_t _align=1; static const bool _polymorphic=false; };

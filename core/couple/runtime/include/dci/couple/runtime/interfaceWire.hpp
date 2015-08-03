@@ -19,6 +19,7 @@ namespace dci { namespace couple { namespace runtime
         ~InterfaceWire();
 
         void involve(bool fwd, bool use);
+        bool involved(bool fwd);
         void listenUninvolve(bool fwd, UninvolveListener listener, void *userData=0);
 
     private:
