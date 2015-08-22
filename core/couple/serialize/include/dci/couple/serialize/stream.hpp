@@ -13,20 +13,18 @@ namespace dci { namespace couple { namespace serialize
         using Processor = details::Processor<Settings, Context, SinkSource>;
 
     private:
-        template< class... >
-        using void_t = void;
 
-        template< class, class = void_t<> >
+        template< class, class = void >
         struct hasLoader : std::false_type { };
 
         template< class Value >
-        struct hasLoader<Value, void_t<decltype(std::declval<Processor>().load(std::declval<Value>()))>> : std::true_type { };
+        struct hasLoader<Value, decltype(std::declval<Processor>().load(std::declval<Value&>()))> : std::true_type { };
 
-        template< class, class = void_t<> >
+        template< class, class = void >
         struct hasSaver : std::false_type { };
 
         template< class Value >
-        struct hasSaver<Value, void_t<decltype(std::declval<Processor>().save(std::declval<Value>()))>> : std::true_type { };
+        struct hasSaver<Value, decltype(std::declval<Processor>().save(std::declval<Value>()))> : std::true_type { };
 
     public:
         Stream(Context &ctx, SinkSource &sinkSource);

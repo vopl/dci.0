@@ -45,9 +45,8 @@ namespace dci { namespace couple { namespace serialize
     template <class OStream, class IStream>
     void RequestWriterResponseReader<OStream, IStream>::write(OStream &ostream)
     {
-        ContentType contentType = ContentType::request;
-//        ostream.save(std::move(contentType));
-//        ostream.save(_callId);
+        ostream << ContentType::request;
+        ostream << _callId;
     }
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7

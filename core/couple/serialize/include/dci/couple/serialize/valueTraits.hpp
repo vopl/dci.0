@@ -14,7 +14,7 @@ namespace dci { namespace couple { namespace serialize
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
     template <class Value>
-    class ValueTraits
+    struct ValueTraits
     {
         static const ValueKind _kind = ValueKind::undefined;
     };

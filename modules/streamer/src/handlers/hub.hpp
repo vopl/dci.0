@@ -18,41 +18,8 @@ namespace handlers
         Hub();
         ~Hub();
 
-        Future< >           start   (Channel &&ch);
-        Future< >           stop    ();
-        void_               put     (Interface &&ch);
-        Future< Interface>  get     (Iid &&iid);
-        void_               join    (Channel &&ch);
-
-    private:
-        void reset();
-
-//    private:
-//        enum class ByteOrder
-//        {
-//            unknown,
-//            be,
-//            le,
-//        };
-
-//        enum class State
-//        {
-//            stop,
-//            negotiation,
-//            work,
-//            error,
-//        };
-
-        using ChannelEndpoint = std::experimental::optional<ChannelOpposite>;
-//        using Protocol = std::experimental::optional<BinaryProtocol>;
-
-    private:
-//        State               _state;
-
-        ChannelEndpoint     _channelEndpoint;
-
-//        ByteOrder           _bo;
-//        std::uint_fast32_t  _version;
+        Future< Hub::SubchannelId> attach(Channel &&unnamed_0);
+        Future< > detach(Hub::SubchannelId &&unnamed_0);
     };
 
     struct HubHandlerFactory

@@ -1,51 +1,102 @@
 
 scope streamer
 {
-    struct Traffic
+//    struct Traffic
+//    {
+//        enum Kind
+//        {
+//            start       =0x01;
+//            stop        =0x02;
+//            restart     =0x03;
+//            error       =0x04;
+
+////            negotiate       =0x11; //bytes order, protocol version, кто главный из двух участников
+
+////            create          =0x21;
+////            request         =0x22;
+////            response        =0x23;
+////            destroy         =0x24;
+
+////            indexIdentifier =0x31;
+////            indexError      =0x32;
+//        }
+
+//        Kind    kind;
+//        bytes   payload;
+//    }
+
+//    interface Channel
+//    {
+//        in flow:    (Traffic);
+//        out flow:   (Traffic);
+//    }
+
+
+//    interface Hub
+//    {
+//        in start:           (Channel)   -> ();
+//        in stop:            ()          -> ();
+
+//        out channelError:   ();
+
+//        in put:             (service);
+//        out put:            (service);
+
+//        in get:             (iid)       -> (service);
+//        out get:            (iid)       -> (service);
+
+//        //in join:            (Channel);
+//    }
+
+
+    errc error
     {
-        enum Kind
-        {
-            start       =0x01;
-            stop        =0x02;
-            restart     =0x03;
-            error       =0x04;
+        incompatibleProtocol:   "запрошенный удаленной стороной протокол не совместим с уже установленным";
+        unsupportedProtocol:    "запрошенный удаленной стороной протокол не поддерживается";
+        malformedData:          "бинарный поток испорчен";
+        channelClosed:          "канал закрыт";
 
-//            negotiate       =0x11; //bytes order, protocol version, кто главный из двух участников
+        unknownIid:             "запрошенный идентификатор интерфейса не опознан";
 
-//            create          =0x21;
-//            request         =0x22;
-//            response        =0x23;
-//            destroy         =0x24;
-
-//            indexIdentifier =0x31;
-//            indexError      =0x32;
-        }
-
-        Kind    kind;
-        bytes   payload;
+        tooManyChannels:        "слишком много каналов";
+        unknownChannelId:       "запрошенный идентификатор канала не опознан";
     }
 
     interface Channel
     {
+        alias Traffic = bytes;
+
         in flow:    (Traffic);
         out flow:   (Traffic);
     }
 
-
-    interface Hub
+    interface Endpoint
     {
         in start:           (Channel)   -> ();
         in stop:            ()          -> ();
 
-        out channelError:   ();
+        out channelError:   (error);
+    }
 
-        in put:             (service);
-        out put:            (service);
+    interface Hub
+        //: Endpoint
+    {
+        alias SubchannelId = uint32;
 
-        in get:             (iid)       -> (service);
-        out get:            (iid)       -> (service);
+        in attach:              (Channel)               -> (SubchannelId);
+        in detach:              (SubchannelId)          -> ();
 
-        in join:            (Channel);
+        out subchannelError:    (SubchannelId, error);
+    }
+
+    interface Serializer
+        //: Endpoint
+    {
+        in put:     (service);
+        out put:    (service);
+
+        in get:     (iid)       -> (service);
+        out get:    (iid)       -> (service);
     }
 
 }

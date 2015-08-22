@@ -43,7 +43,13 @@ namespace dci { namespace couple { namespace generator { namespace impl
         template <class T>
         void writeTarget(const T *v);
 
-        void writeTarget(const dci::couple::meta::Scope *v);
+        enum class Stage
+        {
+            pre,
+            post
+        };
+
+        void writeTarget(const dci::couple::meta::Scope *v, Stage stage);
 
     private:
         void writeErrcSpares(const dci::couple::meta::Scope *scope);

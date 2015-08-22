@@ -74,7 +74,7 @@ namespace dci { namespace couple { namespace generator { namespace impl
         case TypeConcrete::errc:
             {
                 auto vv = static_cast<const Errc *>(v);
-                return typeName(vv->scope(), vv->name(), flags);
+                return typeName(vv->scope(), vv->name(), (flags & ~inBody) | inTarget);
             }
         case TypeConcrete::interface:
             {

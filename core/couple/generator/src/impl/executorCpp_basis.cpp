@@ -45,6 +45,14 @@ namespace dci { namespace couple { namespace generator { namespace impl
                 _hpp<< "#pragma once"<<el;
                 _hpp<< "#include <dci/couple/runtime.hpp>"<<el;
                 _hpp<< el;
+
+                if(lib.rootScope())
+                {
+                    writeTarget(lib.rootScope(), Stage::pre);
+                    _hpp<< el;
+                }
+
+
                 _hpp<< "namespace dci { namespace couple { namespace runtime { namespace generated"<<el;
                 _hpp<< "{"<<el;
                 _hpp<< indent;
@@ -98,7 +106,7 @@ namespace dci { namespace couple { namespace generator { namespace impl
 
             if(lib.rootScope())
             {
-                writeTarget(lib.rootScope());
+                writeTarget(lib.rootScope(), Stage::post);
                 writeErrcSpares(lib.rootScope());
             }
         }
@@ -425,7 +433,7 @@ namespace dci { namespace couple { namespace generator { namespace impl
                     _hpp<< ", ";
                 }
 
-                _hpp<< typeName(b, inBody|ignoreTemplateTypename)<<el;
+                _hpp<< "public " << typeName(b, inBody|ignoreTemplateTypename)<<el;
             }
         }
         _hpp<< undent;
@@ -653,7 +661,7 @@ namespace dci { namespace couple { namespace generator { namespace impl
         _hpp<< "using "<<v->name()<<" = "<<typeName(v, inBody|forGlobalScope|instantiated)<<";"<<el;
     }
 
-    void ExecutorCpp_basis::writeTarget(const Scope *scope)
+    void ExecutorCpp_basis::writeTarget(const Scope *scope, Stage stage)
     {
         if(!scope->name().empty())
         {
@@ -662,13 +670,19 @@ namespace dci { namespace couple { namespace generator { namespace impl
             _hpp<<indent;
         }
 
-        for(auto child : scope->structs())  writeTarget(child);
-        for(auto child : scope->variants()) writeTarget(child);
-        for(auto child : scope->enums())    writeTarget(child);
-        for(auto child : scope->errcs())    writeTarget(child);
-        for(auto child : scope->aliases())  writeTarget(child);
-        for(auto child : scope->interfaces())   writeTarget(child);
-        for(auto child : scope->scopes())   writeTarget(child);
+        if(Stage::pre == stage)
+        {
+            for(auto child : scope->errcs())    writeTarget(child);
+        }
+        else
+        {
+            for(auto child : scope->structs())  writeTarget(child);
+            for(auto child : scope->variants()) writeTarget(child);
+            for(auto child : scope->enums())    writeTarget(child);
+            for(auto child : scope->aliases())  writeTarget(child);
+            for(auto child : scope->interfaces())   writeTarget(child);
+        }
+        for(auto child : scope->scopes())   writeTarget(child, stage);
 
         if(!scope->name().empty())
         {

@@ -8,6 +8,7 @@
 
 #include <system_error>
 #include <type_traits>
+#include <tuple>
 
 namespace dci { namespace couple { namespace serialize { namespace details
 {
@@ -48,13 +49,13 @@ namespace dci { namespace couple { namespace serialize { namespace details
 
         /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
         //integral
-        template <class Value> std::enable_if_t<std::is_integral<Value>::value || std::is_floating_point<Value>::value, void> save(const Value &value)
+        template <class Value> std::enable_if_t<std::is_integral<Value>::value || std::is_enum<Value>::value || std::is_floating_point<Value>::value, void> save(const Value &value)
         {
             meterProcessedSize(sizeof(Value));
             _ss.writePod(fixEndianness(value));
         }
 
-        template <class Value> std::enable_if_t<std::is_integral<Value>::value || std::is_floating_point<Value>::value, void> load(Value &value)
+        template <class Value> std::enable_if_t<std::is_integral<Value>::value || std::is_enum<Value>::value || std::is_floating_point<Value>::value, void> load(Value &value)
         {
             Value tmp;
             meterProcessedSize(sizeof(Value));
@@ -121,6 +122,41 @@ namespace dci { namespace couple { namespace serialize { namespace details
             load(value.first);
             load(value.second);
         }
+
+        /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
+        //tuple
+        template <int I=0, class... T> auto save(std::tuple<T...> &&) -> std::enable_if_t<(I>=sizeof...(T))>
+        {
+        }
+
+        template <int I=0, class... T> auto save(std::tuple<T...> &&value) -> std::enable_if_t<(I<sizeof...(T))>
+        {
+            save(std::get<I>(std::move(value)));
+            save<I+1>(std::move(value));
+        }
+
+
+        template <int I=0, class... T> auto save(const std::tuple<T...> &) -> std::enable_if_t<(I>=sizeof...(T))>
+        {
+        }
+
+        template <int I=0, class... T> auto save(const std::tuple<T...> &value) -> std::enable_if_t<(I<sizeof...(T))>
+        {
+            save(std::get<I>(value));
+            save<I+1>(value);
+        }
+
+
+        template <int I=0, class... T> auto load(std::tuple<T...> &) -> std::enable_if_t<(I>=sizeof...(T))>
+        {
+        }
+
+        template <int I=0, class... T> auto load(std::tuple<T...> &value) -> std::enable_if_t<(I<sizeof...(T))>
+        {
+            load(std::get<I>(value));
+            load<I+1>(value);
+        }
+
 
         /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
         //vector
@@ -261,25 +297,25 @@ namespace dci { namespace couple { namespace serialize { namespace details
             });
         }
 
-        /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
-        //enum
-        template <class Value> std::enable_if_t<ValueKind::enum_ == ValueTraits<Value>::_kind> save(const Value &value)
-        {
-            save(static_cast<std::underlying_type_t<Value>>(value));
-        }
+//        /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
+//        //enum
+//        template <class Value> std::enable_if_t<ValueKind::enum_ == ValueTraits<Value>::_kind> save(const Value &value)
+//        {
+//            save(static_cast<std::underlying_type_t<Value>>(value));
+//        }
 
-        template <class Value> std::enable_if_t<ValueKind::enum_ == ValueTraits<Value>::_kind> load(Value &value)
-        {
-            std::underlying_type_t<Value> tmp;
-            load(tmp);
-            value = static_cast<Value>(tmp);
-        }
+//        template <class Value> std::enable_if_t<ValueKind::enum_ == ValueTraits<Value>::_kind> load(Value &value)
+//        {
+//            std::underlying_type_t<Value> tmp;
+//            load(tmp);
+//            value = static_cast<Value>(tmp);
+//        }
 
         /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
         //service
         template <class Value> std::enable_if_t<ValueKind::service == ValueTraits<Value>::_kind> save(Value &&value)
         {
-            std::uint32_t serviceId = _ctx.setService(value);
+            std::uint32_t serviceId = _ctx.setService(std::forward<Value>(value));
             save(serviceId);
         }
 
@@ -381,8 +417,40 @@ namespace dci { namespace couple { namespace serialize { namespace details
             throw std::system_error(err_general::quote_exhausted);
         }
 
+
         template <class Value>
-        static Value fixEndianness(const Value &src)
+        static std::enable_if_t<std::is_enum<Value>::value, Value> fixEndianness(const Value &src)
+        {
+            using Integral = std::underlying_type_t<Value>;
+            return static_cast<Value>(fixEndianness(static_cast<const Integral>(src)));
+        }
+
+        template <class Value>
+        static std::enable_if_t<std::is_floating_point<Value>::value, Value> fixEndianness(const Value &src)
+        {
+            using Integral = std::conditional_t<
+                4==sizeof(Value),
+                std::uint32_t,
+                std::conditional_t<
+                    8==sizeof(Value),
+                    std::uint64_t,
+                    void
+                >
+            >;
+
+            union
+            {
+                Value _value;
+                Integral _integral;
+            } d;
+            d._value = src;
+            d._integral = fixEndianness(d._integral);
+
+            return d._value;
+        }
+
+        template <class Value>
+        static std::enable_if_t<!std::is_enum<Value>::value && !std::is_floating_point<Value>::value, Value> fixEndianness(const Value &src)
         {
             if(Settings::_endianness == Endianness::unknown || _currentEndianness == Endianness::unknown)
             {

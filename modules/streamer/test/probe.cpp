@@ -11,6 +11,16 @@
 using namespace streamer;
 using namespace dci::couple;
 
+namespace  dci { namespace  couple { namespace  serialize
+{
+            template <>
+            struct ValueTraits< ::streamer::Channel>
+            {
+                static const ValueKind _kind = ValueKind::service;
+            };
+
+}}}
+
 
 namespace tryIfaceSerialization
 {
@@ -133,8 +143,8 @@ namespace tryIfaceSerialization
                     RequestWriterResponseReader<OStream, IStream>::write(w);
 
                     assert(0);
-                    //w.save(MethodId::start);
-                    //w.save(_args);
+                    w << MethodId::start;
+                    w << std::move(_args);
                 }
 
                 virtual void read(IStream &r) override
@@ -186,20 +196,20 @@ namespace xyz
         template <class T>
         void writePod(const T &v) throw (std::system_error)
         {
+            assert(0);
             std::cout<<(int)v<<std::endl;
-            //assert(0);
         }
 
         void writeBinary(const char *data, std::size_t size) throw (std::system_error)
         {
-            //assert(0);
+            assert(0);
             (void)data;
             (void)size;
         }
 
         void writeBytes(Bytes &&data) throw (std::system_error)
         {
-            //assert(0);
+            assert(0);
             (void)data;
         }
 
@@ -207,20 +217,20 @@ namespace xyz
         template <class T>
         void readPod(T &v)  throw (std::system_error)
         {
+            assert(0);
             v = 220;
-            //assert(0);
         }
 
         void readBinary(char *data, std::size_t size) throw (std::system_error)
         {
-            //assert(0);
+            assert(0);
             (void)data;
             (void)size;
         }
 
         Bytes readBytes(std::size_t size) throw (std::system_error)
         {
-            //assert(0);
+            assert(0);
             (void)size;
 
             return Bytes();
@@ -231,7 +241,7 @@ namespace xyz
     {
         static const std::size_t _maxSize = 1024*1024*1;
 
-        static const serialize::Endianness _endianness = serialize::Endianness::big;
+        static const serialize::Endianness _endianness = serialize::Endianness::little;
 
     };
 
@@ -240,14 +250,25 @@ namespace xyz
         using OStream = serialize::Stream<Settings, Engine, SinkSource>;
         using IStream  = serialize::Stream<Settings, Engine, SinkSource>;
 
+        template <class Service>
+        std::uint32_t setService(Service &&);
+
         void pushWriter(
                 dci::couple::serialize::Interface<Engine> *interface,
                 dci::couple::serialize::WriterPtr<OStream> &&writerPtr,
                 int cookie)
         {
-
+            assert(0);
+            (void)interface;
+            (void)writerPtr;
+            (void)cookie;
         }
     };
+
+    struct Context
+    {
+      std::uint32_t setService(...);
+    } context;
 
     int f()
     {
@@ -257,17 +278,16 @@ namespace xyz
             kin.insert(0);
 
             SinkSource sink;
-            struct Context {} context;
 
             serialize::Stream<Settings, Context, SinkSource> ostream(context, sink);
 
+            ostream << 10.2;
             ostream << std::move(kin);
         }
 
         {
             std::set<int> kout;
             SinkSource source;
-            struct Context {} context;
 
             serialize::Stream<Settings, Context, SinkSource> istream(context, source);
 
