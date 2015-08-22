@@ -26,10 +26,6 @@ namespace dci { namespace couple { namespace runtime
                 {
                 case err_general::call_not_connected:
                     return "call is not connected";
-                case err_general::bad_input:
-                    return "bad input";
-                case err_general::quote_exhausted:
-                    return "quote exhausted";
                 }
 
                 return "dci.couple.runtime.general error";

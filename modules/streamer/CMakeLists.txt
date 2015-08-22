@@ -18,7 +18,7 @@ add_library(${PROJECT} SHARED
     ${SRC}
     idl/streamer.idl
 )
-target_link_libraries(${PROJECT} dci-site dci-couple-runtime)
+target_link_libraries(${PROJECT} dci-site dci-couple-runtime dci-couple-serialize)
 
 set_property(TARGET ${PROJECT} PROPERTY CXX_STANDARD 14)
 set_property(TARGET ${PROJECT} PROPERTY CXX_STANDARD_REQUIRED ON)

@@ -2,11 +2,12 @@
 
 #include <dci/couple/runtime/error.hpp>
 #include <dci/couple/runtime/bytes.hpp>
+#include "../error.hpp"
+#include "../endianness.hpp"
+#include "../valueTraits.hpp"
 
 #include <system_error>
 #include <type_traits>
-
-//TODO: контекст, синк и тоталСайз оформить членами, вырезать из методов
 
 namespace dci { namespace couple { namespace serialize { namespace details
 {
@@ -223,13 +224,13 @@ namespace dci { namespace couple { namespace serialize { namespace details
             });
         }
 
-        template <class Value> std::enable_if_t<ValueKind::variant == ValueTraits<Value>::_kind> load(Value &value)
+        template <class Value> std::enable_if_t<ValueKind::variant == ValueTraits<Value>::_kind> load(Value &value) throw (std::system_error)
         {
             std::uint32_t typeId;
             load(typeId);
             if(!ValueTraits<Value>::isTypeIdValid(typeId))
             {
-                throw std::system_error(runtime::err_general::bad_input);
+                throw std::system_error(err_general::bad_input);
             }
             value.ensureType(typeId);
             value.visit([](auto &subval){
@@ -359,17 +360,17 @@ namespace dci { namespace couple { namespace serialize { namespace details
         }
 
     private:
-        void checkProcessedSize(std::size_t size) const
+        void checkProcessedSize(std::size_t size) const throw (std::system_error)
         {
             if(Settings::_maxSize > _processedSize + size)
             {
                 return;
             }
 
-            throw std::system_error(runtime::err_general::quote_exhausted);
+            throw std::system_error(err_general::quote_exhausted);
         }
 
-        void meterProcessedSize(std::size_t size)
+        void meterProcessedSize(std::size_t size) throw (std::system_error)
         {
             _processedSize += size;
             if(Settings::_maxSize > _processedSize)
@@ -377,7 +378,7 @@ namespace dci { namespace couple { namespace serialize { namespace details
                 return;
             }
 
-            throw std::system_error(runtime::err_general::quote_exhausted);
+            throw std::system_error(err_general::quote_exhausted);
         }
 
         template <class Value>
