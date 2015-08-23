@@ -17,6 +17,7 @@ set(INC
     include/dci/couple/runtime/interface.hpp
     include/dci/couple/runtime/interfaceId.hpp
     include/dci/couple/runtime/interfaceWire.hpp
+    include/dci/couple/runtime/interfaceWires.hpp
 
     include/dci/couple/runtime/signal.hpp
     include/dci/couple/runtime/wire.hpp
@@ -36,7 +37,7 @@ set(SRC
     src/signBuilder.cpp
     src/bytes.cpp
     src/interface.cpp
-    src/interfaceWire.cpp
+    src/interfaceWires.cpp
     src/errcCategoryProvider.cpp
 
     src/impl/sign.hpp

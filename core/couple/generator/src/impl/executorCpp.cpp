@@ -259,4 +259,25 @@ namespace dci { namespace couple { namespace generator { namespace impl
         return res;
     }
 
+    std::vector<const Interface *> ExecutorCpp::interfaceWithAllBases(const dci::couple::meta::Interface *v)
+    {
+        std::vector<const Interface *> res;
+        interfaceWithAllBases(res, v);
+        return res;
+    }
+
+    void ExecutorCpp::interfaceWithAllBases(std::vector<const Interface *> &res, const dci::couple::meta::Interface *v)
+    {
+        if(res.end() == std::find(res.begin(), res.end(), v))
+        {
+            res.push_back(v);
+        }
+
+        for(const dci::couple::meta::Interface *b : v->bases())
+        {
+            interfaceWithAllBases(res, b);
+        }
+    }
+
+
 }}}}

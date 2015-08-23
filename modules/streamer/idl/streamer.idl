@@ -72,14 +72,14 @@ scope streamer
 
     interface Endpoint
     {
-        in start:           (Channel)   -> ();
-        in stop:            ()          -> ();
+        in start:           (Channel)  -> ();
+        in stop:            ()  -> ();
 
         out channelError:   (error);
     }
 
     interface Hub
-        //: Endpoint
+        : Endpoint
     {
         alias SubchannelId = uint32;
 
@@ -90,7 +90,7 @@ scope streamer
     }
 
     interface Serializer
-        //: Endpoint
+        : Endpoint
     {
         in put:     (service);
         out put:    (service);

@@ -120,18 +120,23 @@ namespace dci { namespace couple { namespace generator { namespace impl
             _hpp<< v->name()<<"(bool deleteSelfWhenUninvolved=true)"<<el;
             _hpp<< "{"<<el;
             _hpp<< indent;
-            _hpp<< "if(deleteSelfWhenUninvolved) wire()->listenUninvolve(true, [](void *userData){delete static_cast<Handler*>(userData);}, static_cast<Handler*>(this));"<<el;
+            _hpp<< "if(deleteSelfWhenUninvolved) wires()->listenUninvolve(true, [](void *userData){delete static_cast<Handler*>(userData);}, static_cast<Handler*>(this));"<<el;
             _hpp<< el;
 
-            _hpp<< "//connect 'in' methods"<<el;
             _hpp<< "bool b; (void)b;"<<el;
-            for(const Method *m : v->methods())
+            for(const Interface *b : interfaceWithAllBases(v))
             {
-                if(CallDirection::in == m->direction())
+                _hpp<< "//connect 'in' methods for interface "<<b->name()<<el;
+                _hpp<< "{"<<el<<indent;
+                for(const Method *m : b->methods())
                 {
-                    _hpp<< "b = "<<typeName(v->opposite(), inTarget)<<"::signal_"<<m->name()<<"().connect(&Handler::"<<m->name()<<", static_cast<Handler *>(this));"<<el;
-                    _hpp<< "assert(b);"<<el;
+                    if(CallDirection::in == m->direction())
+                    {
+                        _hpp<< "b = "<<typeName(v->opposite(), inTarget)<<"::signal_"<<m->name()<<"().connect(&Handler::"<<m->name()<<", static_cast<Handler *>(this));"<<el;
+                        _hpp<< "assert(b);"<<el;
+                    }
                 }
+                _hpp<< undent<<"}"<<el;
             }
             _hpp<< undent;
             _hpp<< "}"<<el;
@@ -145,14 +150,20 @@ namespace dci { namespace couple { namespace generator { namespace impl
             _hpp<< "{"<<el;
             _hpp<< indent;
 
-            _hpp<< "//disconnect 'in' methods"<<el;
-            for(const Method *m : v->methods())
+            for(const Interface *b : interfaceWithAllBases(v))
             {
-                if(CallDirection::in == m->direction())
+                _hpp<< "//disconnect 'in' methods for interface "<<b->name()<<el;
+                _hpp<< "{"<<el<<indent;
+                for(const Method *m : b->methods())
                 {
-                    _hpp<< typeName(v->opposite(), inTarget)<<"::signal_"<<m->name()<<"().disconnect();"<<el;
+                    if(CallDirection::in == m->direction())
+                    {
+                        _hpp<< typeName(v->opposite(), inTarget)<<"::signal_"<<m->name()<<"().disconnect();"<<el;
+                    }
                 }
+                _hpp<< undent<<"}"<<el;
             }
+
             _hpp<< undent;
             _hpp<< "}"<<el;
         }
@@ -160,16 +171,21 @@ namespace dci { namespace couple { namespace generator { namespace impl
 
         {
             _hpp<< "//methods, deleted 'in' for implementation and commented 'out' for use"<<el;
-            for(const Method *m : v->methods())
+            for(const Interface *b : interfaceWithAllBases(v))
             {
-                if(CallDirection::in == m->direction())
+                _hpp<< "//interface "<<b->name()<<el;
+                for(const Method *m : b->methods())
                 {
-                    _hpp<< methodSignature(m, inTarget)<<" = delete;"<<el;
+                    if(CallDirection::in == m->direction())
+                    {
+                        _hpp<< methodSignature(m, inTarget)<<" = delete;"<<el;
+                    }
+                    else
+                    {
+                        _hpp<< "//"<<methodSignature(m, inTarget)<<";"<<el;
+                    }
                 }
-                else
-                {
-                    _hpp<< "//"<<methodSignature(m, inTarget)<<";"<<el;
-                }
+                _hpp<< el;
             }
         }
 

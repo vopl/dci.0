@@ -43,6 +43,9 @@ namespace dci { namespace couple { namespace generator { namespace impl
 
         static std::string signInitializer(const runtime::Sign &sign);
 
+        static std::vector<const dci::couple::meta::Interface *> interfaceWithAllBases(const dci::couple::meta::Interface *v);
+        static void interfaceWithAllBases(std::vector<const dci::couple::meta::Interface *> &res, const dci::couple::meta::Interface *v);
+
     private:
         std::string _wireName;
         std::string _bodyName;

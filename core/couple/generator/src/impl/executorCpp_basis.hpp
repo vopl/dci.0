@@ -1,6 +1,7 @@
 #pragma once
 
 #include "executorCpp.hpp"
+#include <set>
 
 namespace dci { namespace couple { namespace generator { namespace impl
 {
@@ -25,6 +26,9 @@ namespace dci { namespace couple { namespace generator { namespace impl
         bool writeWire(const dci::couple::meta::Struct *v);
         bool writeWire(const dci::couple::meta::Variant *v);
         bool writeWire(const dci::couple::meta::Interface *v);
+
+        std::string interfaceWireTypeName(const dci::couple::meta::Interface *v);
+        std::string interfaceWireMemberName(const dci::couple::meta::Interface *v);
 
     private:
         void writeBody(const dci::couple::meta::Scope *scope, bool withSelf);

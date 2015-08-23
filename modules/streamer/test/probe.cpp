@@ -63,12 +63,12 @@ namespace tryIfaceSerialization
         //destructor
         ~Hub()
         {
-            //disconnect 'in' methods
-            ::streamer::HubOpposite::signal_start().disconnect();
-            ::streamer::HubOpposite::signal_stop().disconnect();
-            ::streamer::HubOpposite::signal_put().disconnect();
-            ::streamer::HubOpposite::signal_get().disconnect();
-            ::streamer::HubOpposite::signal_join().disconnect();
+//            //disconnect 'in' methods
+//            ::streamer::HubOpposite::signal_start().disconnect();
+//            ::streamer::HubOpposite::signal_stop().disconnect();
+//            ::streamer::HubOpposite::signal_put().disconnect();
+//            ::streamer::HubOpposite::signal_get().disconnect();
+//            ::streamer::HubOpposite::signal_join().disconnect();
 
         }
 
@@ -318,8 +318,8 @@ namespace xyz
 
 TEST(Streamer, Probe)
 {
-    xyz::f();
-    return;
+    //xyz::f();
+    //return;
 
     using namespace dci::couple::runtime;
 
@@ -333,40 +333,11 @@ TEST(Streamer, Probe)
     Hub h1 = dci::site::testManager()->createService<Hub>().detachValue<0>();
     Hub h2 = dci::site::testManager()->createService<Hub>().detachValue<0>();
 
-    Channel c1;
-    Channel c2;
-
-    c1.signal_flow().connect(&Channel::flow, &c2);
-    c2.signal_flow().connect(&Channel::flow, &c1);
-
-    h1.start(std::move(c1));
-    h2.start(std::move(c2));
-
-
-    dci::async::Event e1, e2;
-
-    dci::async::spawn([&]()
     {
-        Interface i = h1.get(Iid(Channel::_iid));
-
-        e1.set();
-    });
-
-    dci::async::spawn([&]()
-    {
-        h2.signal_get().connect([](const Iid &iid) -> runtime::Future< Interface>
+        Hub h3(std::forward<runtime::Interface>(h1));
+        if(h3)
         {
-            (void)iid;
-
-            runtime::Promise< Interface> p;
-            p.resolveError(std::make_error_code(std::errc::address_family_not_supported));
-
-            return p.future();
-        });
-
-        e2.set();
-    });
-
-
-    dci::async::waitAll(e1, e2);
+            std::cout << h3.stop().error().message() << std::endl;
+        }
+    }
 }

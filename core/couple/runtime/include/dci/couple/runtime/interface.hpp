@@ -3,6 +3,7 @@
 #include "api.hpp"
 #include "interfaceId.hpp"
 #include "interfaceWire.hpp"
+#include "interfaceWires.hpp"
 
 namespace dci { namespace couple { namespace runtime
 {
@@ -11,19 +12,27 @@ namespace dci { namespace couple { namespace runtime
         Interface() = delete;
 
     public:
-        Interface(InterfaceWire *wire, bool fwd);
+        Interface(InterfaceWires *wire, bool fwd);
         Interface(Interface &&from);
 
         ~Interface();
 
         Interface &operator=(Interface &&from);
-        void assign(InterfaceWire *wire, bool fwd);
+        void assign(InterfaceWires *wire, bool fwd);
 
-        InterfaceWire *wire();
+        InterfaceWires *wires();
+        bool fwd() const;
         bool oppositeInvolved() const;
 
+        operator bool() const;
+        bool operator !() const;
+
+    protected:
+        struct NullInterfaceInitializer {};
+        Interface(NullInterfaceInitializer);
+
     private:
-        InterfaceWire*_wire;
+        InterfaceWires*_wires;
         bool _fwd;
     };
 

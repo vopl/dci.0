@@ -3,26 +3,32 @@
 
 namespace dci { namespace couple { namespace runtime
 {
-    Interface::Interface(InterfaceWire *state, bool fwd)
-        : _wire(state)
+    Interface::Interface(InterfaceWires *state, bool fwd)
+        : _wires(state)
         , _fwd(fwd)
     {
-        _wire->involve(_fwd, true);
+        if(_wires)
+        {
+            _wires->involve(_fwd, true);
+        }
     }
 
     Interface::Interface(Interface &&from)
-        : _wire(from._wire)
+        : _wires(from._wires)
         , _fwd(from._fwd)
     {
-        from._wire = nullptr;
-        //from._fwd = false;
+        if(_wires)
+        {
+            from._wires = nullptr;
+            //from._fwd = false;
+        }
     }
 
     Interface::~Interface()
     {
-        if(_wire)
+        if(_wires)
         {
-            _wire->involve(_fwd, false);
+            _wires->involve(_fwd, false);
         }
     }
 
@@ -30,45 +36,81 @@ namespace dci { namespace couple { namespace runtime
     {
         assert(this != &from);
 
-        if(_wire == from.wire())
+        if(_wires == from.wires())
         {
             return *this;
         }
 
-        _wire->involve(_fwd, false);
-        _wire = from._wire;
+        if(_wires)
+        {
+            _wires->involve(_fwd, false);
+        }
+        _wires = from._wires;
         _fwd = from._fwd;
 
-        from._wire = nullptr;
+        from._wires = nullptr;
         //from._fwd = false;
+
+        if(_wires)
+        {
+            assert(_wires->involved(_fwd));
+        }
 
         return *this;
     }
 
-    void Interface::assign(InterfaceWire *wire, bool fwd)
+    void Interface::assign(InterfaceWires *wire, bool fwd)
     {
-        if(_wire == wire)
+        if(_wires == wire)
         {
             assert(_fwd == fwd);
             return;
         }
 
-        _wire->involve(_fwd, false);
-        _wire = wire;
+        if(_wires)
+        {
+            _wires->involve(_fwd, false);
+        }
+        _wires = wire;
         _fwd = fwd;
-        _wire->involve(_fwd, true);
+        if(_wires)
+        {
+            _wires->involve(_fwd, true);
+        }
     }
 
-    InterfaceWire *Interface::wire()
+    InterfaceWires *Interface::wires()
     {
-        assert(_wire);
-        return _wire;
+        //assert(_wires);
+        return _wires;
+    }
+
+    bool Interface::fwd() const
+    {
+        return _fwd;
     }
 
     bool Interface::oppositeInvolved() const
     {
-        assert(_wire);
-        return _wire->involved(!_fwd);
+        assert(_wires);
+        return _wires->involved(!_fwd);
     }
+
+    Interface::operator bool() const
+    {
+        return !!_wires;
+    }
+
+    bool Interface::operator !() const
+    {
+        return !_wires;
+    }
+
+    Interface::Interface(NullInterfaceInitializer)
+        : _wires(nullptr)
+        , _fwd(true)
+    {
+    }
+
 
 }}}
