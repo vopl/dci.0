@@ -50,6 +50,20 @@ namespace  dci { namespace couple { namespace parser { namespace impl { namespac
             return res;
         }
 
+        bool operator()(const Interface &v)
+        {
+            bool res = true;
+            if(v->primary)
+            {
+                res &= checkName(v.get());
+                res &= checkFields(v.get());
+                res &= checkQuery(v.get());
+                res &= checkChildren(v.get());
+                res &= checkOpposite(v.get());
+            }
+            return res;
+        }
+
     private:
         bool checkName(...)
         {

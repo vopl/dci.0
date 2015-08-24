@@ -211,6 +211,16 @@ namespace dci { namespace couple { namespace meta
         return impl().setValue(face2Impl(target), value);
     }
 
+    void LibraryBuilder::setInterfacePrimary(Interface *target, bool primary)
+    {
+        return impl().setInterfacePrimary(face2Impl(target), primary);
+    }
+
+    void LibraryBuilder::setInterfaceOpposite(Interface *target, Interface *opposite)
+    {
+        return impl().setInterfaceOpposite(face2Impl(target), face2Impl(opposite));
+    }
+
     bool LibraryBuilder::commitChanges(Library &lib, std::vector<CommitError> &errors)
     {
         return impl().commitChanges(*face2Impl(&lib), errors);

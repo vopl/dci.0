@@ -39,9 +39,10 @@ set(SRC
     src/impl/currentPosRaii.hpp
 
     src/impl/ast.hpp
+    src/impl/ast/oppositeInterfacesMaker.hpp
+    src/impl/ast/scopeMerger.hpp
     src/impl/ast/namesChecker.hpp
     src/impl/ast/ownerIndexer.hpp
-    src/impl/ast/scopeMerger.hpp
     src/impl/ast/scopedNamesResolver.hpp
     src/impl/ast/basesChecker.hpp
     src/impl/ast/metaCreator.hpp

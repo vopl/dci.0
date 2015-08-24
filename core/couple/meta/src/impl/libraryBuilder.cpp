@@ -311,6 +311,19 @@ namespace dci { namespace couple { namespace meta { namespace impl
         target->setValue(value);
     }
 
+    void LibraryBuilder::setInterfacePrimary(Interface *target, bool primary)
+    {
+        _lc.checkPresense(target);
+        target->setPrimary(primary);
+    }
+
+    void LibraryBuilder::setInterfaceOpposite(Interface *target, Interface *opposite)
+    {
+        _lc.checkPresense(target);
+        _lc.checkPresense(opposite);
+        target->setOpposite(opposite);
+    }
+
     bool LibraryBuilder::commitChanges(Library &lib, std::vector<CommitError> &errors)
     {
         (void)errors;
@@ -339,52 +352,6 @@ namespace dci { namespace couple { namespace meta { namespace impl
             }
         }
 
-        //create opposite interfaces
-        {
-            auto interfaces = _lc.items<Interface>();
-            for(Interface *v : interfaces)
-            {
-                Interface *o = addInterface(const_cast<Scope *>(v->scope()), v->name()+"Opposite");
-
-                v->setPrimary(true);
-                v->setOpposite(o);
-
-                o->setPrimary(false);
-                o->setOpposite(v);
-
-                fillOppositeInterfaceScope(o, v);
-
-                for(const Method *m : v->Compound<Method>::elements())
-                {
-                    Method *om = addMethod(o, m->name());
-
-                    setMethodDirection(om, CallDirection::in == m->direction() ? CallDirection::out : CallDirection::in);
-                    setMethodNoreply(om, m->noreply());
-
-                    for(const Attribute *a : m->Compound<Attribute>::elements())
-                    {
-                        Attribute *oa = addAttribute(om, a->name());
-                        setType(oa, const_cast<Type *>(a->type()));
-                    }
-
-                    for(const Type *t : m->Compound<Type>::elements())
-                    {
-                        addReplyArg(om, const_cast<Type *>(t));
-                    }
-                }
-            }
-
-
-            for(Interface *v : interfaces)
-            {
-                Interface *o = const_cast<Interface *>(v->opposite());
-                for(const Interface *b : v->bases())
-                {
-                    addBase(o, const_cast<Interface *>(b->opposite()));
-                }
-            }
-        }
-
         lib = std::move(_lc);
         _lc.clear();
         return true;
@@ -393,21 +360,6 @@ namespace dci { namespace couple { namespace meta { namespace impl
     void LibraryBuilder::rollbackChanges()
     {
         _lc.clear();
-    }
-
-    void LibraryBuilder::fillOppositeInterfaceScope(Scope *o, Scope *v)
-    {
-        for(auto *c : v->Compound<Struct>::elements())  setType(addAlias(o, c->name()), const_cast<Struct *>(c));
-        for(auto *c : v->Compound<Variant>::elements()) setType(addAlias(o, c->name()), const_cast<Variant *>(c));
-        for(auto *c : v->Compound<Enum>::elements())    setType(addAlias(o, c->name()), const_cast<Enum *>(c));
-        for(auto *c : v->Compound<Alias>::elements())   setType(addAlias(o, c->name()), const_cast<Alias *>(c));
-        for(auto *c : v->Compound<Interface>::elements())   setType(addAlias(o, c->name()), const_cast<Interface *>(c));
-
-        for(auto *c : v->Compound<Scope>::elements())
-        {
-            Scope *s = addScope(o, c->name());
-            fillOppositeInterfaceScope(s, const_cast<Scope *>(c));
-        }
     }
 
 }}}}

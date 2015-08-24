@@ -17,7 +17,6 @@ namespace dci { namespace couple { namespace meta { namespace impl
 
     private:
         runtime::Sign _sign;
-        int k;
     };
 
 }}}}

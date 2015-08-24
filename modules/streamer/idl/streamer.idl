@@ -83,7 +83,7 @@ scope streamer
     {
         alias SubchannelId = uint32;
 
-        in attach:              (Channel)               -> (SubchannelId);
+        in attach:              (ChannelOpposite)       -> (SubchannelId);
         in detach:              (SubchannelId)          -> ();
 
         out subchannelError:    (SubchannelId, error);

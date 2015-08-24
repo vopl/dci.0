@@ -11,6 +11,7 @@ namespace  dci { namespace couple { namespace parser { namespace impl { namespac
         std::vector<ErrorInfo> &_errs;
         SScope *_rootScope{nullptr};
         SScope *_currentScope{nullptr};
+        int _oppositeInterfaceLevel{0};
 
     public:
         ScopedNamesResolver(std::vector<ErrorInfo> &errs)
@@ -24,6 +25,7 @@ namespace  dci { namespace couple { namespace parser { namespace impl { namespac
             assert(!_rootScope);
             _rootScope = s.get();
             _currentScope = _rootScope;
+            _oppositeInterfaceLevel = 0;
             bool res = exec(s->decls);
             _currentScope = nullptr;
             _rootScope = nullptr;
@@ -180,6 +182,10 @@ namespace  dci { namespace couple { namespace parser { namespace impl { namespac
 
         bool resolve(const SScope *scope, SScopedName &scopedName)
         {
+            if(scopedName.values.empty() && scopedName.asScopedEntry)
+            {
+                return true;
+            }
             assert(!scopedName.values.empty());
 
             if(scopedName.root)
@@ -189,11 +195,14 @@ namespace  dci { namespace couple { namespace parser { namespace impl { namespac
                     return true;
                 }
 
-                _errs.emplace_back(ErrorInfo {
-                                      scopedName.pos.begin().file(),
-                                      static_cast<int>(scopedName.pos.begin().line()),
-                                      static_cast<int>(scopedName.pos.begin().column()),
-                                      "unable to resolve type name: " + scopedName.toString()});
+                if(!_oppositeInterfaceLevel)
+                {
+                    _errs.emplace_back(ErrorInfo {
+                                          scopedName.pos.begin().file(),
+                                          static_cast<int>(scopedName.pos.begin().line()),
+                                          static_cast<int>(scopedName.pos.begin().column()),
+                                          "unable to resolve type name: " + scopedName.toString()});
+                }
 
                 return false;
             }
@@ -206,11 +215,14 @@ namespace  dci { namespace couple { namespace parser { namespace impl { namespac
                 }
             }
 
-            _errs.emplace_back(ErrorInfo {
-                                  scopedName.pos.begin().file(),
-                                  static_cast<int>(scopedName.pos.begin().line()),
-                                  static_cast<int>(scopedName.pos.begin().column()),
-                                  "unable to resolve type name: " + scopedName.toString()});
+            if(!_oppositeInterfaceLevel)
+            {
+                _errs.emplace_back(ErrorInfo {
+                                      scopedName.pos.begin().file(),
+                                      static_cast<int>(scopedName.pos.begin().line()),
+                                      static_cast<int>(scopedName.pos.begin().column()),
+                                      "unable to resolve type name: " + scopedName.toString()});
+            }
 
             return false;
         }
@@ -229,7 +241,7 @@ namespace  dci { namespace couple { namespace parser { namespace impl { namespac
 
     public:
         template <class T>
-        bool operator()(T &v)
+        bool operator()(const T &v)
         {
             bool res = true;
 
@@ -246,6 +258,37 @@ namespace  dci { namespace couple { namespace parser { namespace impl { namespac
             res &= resolveKeyType(v.get());
 
             endResolveScope(outerScope);
+
+            return res;
+        }
+
+        bool operator()(const Interface &v)
+        {
+            if(!v->primary)
+            {
+                _oppositeInterfaceLevel++;
+            }
+
+            bool res = true;
+
+            SScope *outerScope = nullptr;
+
+            res &= beginResolveScope(v.get(), outerScope);
+            res &= resolveBases(v.get());
+            res &= resolveFields(v.get());
+            res &= resolveMethods(v.get());
+            res &= resolveAlias(v.get());
+
+            res &= resolveElementType(v.get());
+            res &= resolveValueType(v.get());
+            res &= resolveKeyType(v.get());
+
+            endResolveScope(outerScope);
+
+            if(!v->primary)
+            {
+                _oppositeInterfaceLevel--;
+            }
 
             return res;
         }
@@ -300,11 +343,14 @@ namespace  dci { namespace couple { namespace parser { namespace impl { namespac
                         }
                         else if((typeid(v) != a->asDecl.type()))
                         {
-                            _errs.emplace_back(ErrorInfo {
-                                                  a->pos.begin().file(),
-                                                  static_cast<int>(a->pos.begin().line()),
-                                                  static_cast<int>(a->pos.begin().column()),
-                                                  "resolved type name is incompatible: " + a->toString()});
+                            if(!_oppositeInterfaceLevel)
+                            {
+                                _errs.emplace_back(ErrorInfo {
+                                                      a->pos.begin().file(),
+                                                      static_cast<int>(a->pos.begin().line()),
+                                                      static_cast<int>(a->pos.begin().column()),
+                                                      "resolved type name is incompatible: " + a->toString()});
+                            }
                             v->bases->instances.push_back(nullptr);
                             res = false;
                         }

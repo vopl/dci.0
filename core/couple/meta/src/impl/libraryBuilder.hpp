@@ -62,12 +62,12 @@ namespace dci { namespace couple { namespace meta { namespace impl
         void setDescription(ErrcValue *target, const std::string &description);
         void setValue(EnumValue *target, const std::string &description);
 
+        void setInterfacePrimary(Interface *target, bool primary);
+        void setInterfaceOpposite(Interface *target, Interface *opposite);
+
     public:// commit
         bool commitChanges(Library &lib, std::vector<meta::CommitError> &errors);
         void rollbackChanges();
-
-    private:
-        void fillOppositeInterfaceScope(Scope *o, Scope *v);
 
     private:
         LibraryContent _lc;

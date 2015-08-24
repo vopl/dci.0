@@ -1,7 +1,8 @@
+#include "ast/oppositeInterfacesMaker.hpp"
+#include "ast/scopeMerger.hpp"
 #include "ast/namesChecker.hpp"
 #include "ast/ownerIndexer.hpp"
 #include "ast/scopedNamesResolver.hpp"
-#include "ast/scopeMerger.hpp"
 #include "ast/basesChecker.hpp"
 
 #include "parse.hpp"
@@ -232,6 +233,9 @@ namespace  dci { namespace couple { namespace parser { namespace impl
                 }
             }
         }
+
+        //make opposite interfaces
+        ast::OppositeInterfacesMaker().exec(res);
 
         //merge scopes
         ast::ScopeMerger().exec(res);

@@ -173,6 +173,8 @@ namespace  dci { namespace couple { namespace parser { namespace impl { namespac
                     }
                 );
             }
+            _lb.setInterfacePrimary(v->meta, v->primary);
+            _lb.setInterfaceOpposite(v->meta, v->opposite.lock()->meta);
 
             exec(v->decls);
             exec(v->methods);

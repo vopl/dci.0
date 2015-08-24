@@ -88,6 +88,9 @@ namespace dci { namespace couple { namespace meta
         void setDescription(ErrcValue *target, const std::string &description);
         void setValue(EnumValue *target, const std::string &value);
 
+        void setInterfacePrimary(Interface *target, bool primary);
+        void setInterfaceOpposite(Interface *target, Interface *opposite);
+
     public:// commit
         bool commitChanges(Library &lib, std::vector<CommitError> &errors);
         void rollbackChanges();

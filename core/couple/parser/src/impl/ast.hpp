@@ -431,6 +431,8 @@ namespace dci { namespace couple { namespace parser { namespace impl
     struct SInterface
         : SScope
     {
+        bool                        primary{true};
+        std::weak_ptr<SInterface>   opposite;
         BaseInterfaces              bases;
         std::vector<Method>         methods;
 
