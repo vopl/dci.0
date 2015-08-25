@@ -51,12 +51,13 @@ namespace  dci { namespace couple { namespace parser { namespace impl { namespac
         Interface operator()(const Interface &v)
         {
             exec(v->decls);
+            static const std::string oppositeSuffix = "Opposite";
 
             Interface ov(new SInterface);
 
             ov->name.reset(new SName);
             ov->name->pos = v->name->pos;
-            ov->name->value = v->name->value+"Opposite";
+            ov->name->value = v->name->value+oppositeSuffix;
 
             ov->primary = false;
             ov->opposite = v;
@@ -76,7 +77,16 @@ namespace  dci { namespace couple { namespace parser { namespace impl { namespac
                     {
                         osn->values.back().reset(new SName);
                         osn->values.back()->pos = sn->values.back()->pos;
-                        osn->values.back()->value = sn->values.back()->value+"Opposite";
+
+                        std::string bname = sn->values.back()->value;
+                        if(bname.size() - oppositeSuffix.size() == bname.rfind(oppositeSuffix))
+                        {
+                            osn->values.back()->value = bname.substr(0, bname.size() - oppositeSuffix.size());
+                        }
+                        else
+                        {
+                            osn->values.back()->value = bname+oppositeSuffix;
+                        }
                     }
 
                     ov->bases->scopedNames.push_back(osn);

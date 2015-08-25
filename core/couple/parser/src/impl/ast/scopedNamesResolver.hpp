@@ -11,7 +11,10 @@ namespace  dci { namespace couple { namespace parser { namespace impl { namespac
         std::vector<ErrorInfo> &_errs;
         SScope *_rootScope{nullptr};
         SScope *_currentScope{nullptr};
+        SInterface *_currentInterface{nullptr};
         int _oppositeInterfaceLevel{0};
+        int _resolvedCount{0};
+        bool _reportErrors{false};
 
     public:
         ScopedNamesResolver(std::vector<ErrorInfo> &errs)
@@ -22,13 +25,42 @@ namespace  dci { namespace couple { namespace parser { namespace impl { namespac
     public:
         bool exec(const Scope &s)
         {
-            assert(!_rootScope);
-            _rootScope = s.get();
-            _currentScope = _rootScope;
-            _oppositeInterfaceLevel = 0;
-            bool res = exec(s->decls);
-            _currentScope = nullptr;
-            _rootScope = nullptr;
+            bool res = false;
+            do
+            {
+                assert(!_rootScope);
+                _rootScope = s.get();
+                _currentScope = _rootScope;
+                _oppositeInterfaceLevel = 0;
+                _resolvedCount = 0;
+                _reportErrors = false;
+
+
+                res = exec(s->decls);
+
+                _currentScope = nullptr;
+                _rootScope = nullptr;
+            }
+            while(!res && _resolvedCount);
+
+            if(!res)
+            {
+                assert(!_rootScope);
+                _rootScope = s.get();
+                _currentScope = _rootScope;
+                _oppositeInterfaceLevel = 0;
+                _resolvedCount = 0;
+                _reportErrors = true;
+
+
+                res = exec(s->decls);
+
+                _currentScope = nullptr;
+                _rootScope = nullptr;
+
+                assert(!res);
+            }
+
             return res;
         }
 
@@ -122,6 +154,7 @@ namespace  dci { namespace couple { namespace parser { namespace impl { namespac
                 return false;
             }
 
+            _resolvedCount++;
             scopedName.asDecl = target->second;
             scopedName.asScopedEntry = target->second;
             return true;
@@ -132,6 +165,7 @@ namespace  dci { namespace couple { namespace parser { namespace impl { namespac
             auto iter = scopedName.values.begin();
             auto last = --scopedName.values.end();
 
+            bool failed = false;
             for(; iter!=last; ++iter)
             {
                 const Name &name = *iter;
@@ -139,42 +173,75 @@ namespace  dci { namespace couple { namespace parser { namespace impl { namespac
 
                 if(scope->scopes.end() == scopeIter)
                 {
-                    return false;
+                    failed = true;
+                    break;
                 }
                 scope = scopeIter->second;
             }
 
-            const Name &name = *last;
-            const std::string &nameValue = name->value;
+            if(!failed)
+            {
+                const Name &name = *last;
+                const std::string &nameValue = name->value;
 
-            if(resolveOne(scope->aliases, nameValue, scopedName))
+                if(resolveOne(scope->aliases, nameValue, scopedName))
+                {
+                    return true;
+                }
+
+                if(resolveOne(scope->structs, nameValue, scopedName))
+                {
+                    return true;
+                }
+
+                if(resolveOne(scope->variants, nameValue, scopedName))
+                {
+                    return true;
+                }
+
+                if(resolveOne(scope->enums, nameValue, scopedName))
+                {
+                    return true;
+                }
+
+                if(resolveOne(scope->errcs, nameValue, scopedName))
+                {
+                    return true;
+                }
+
+                if(resolveOne(scope->interfaces, nameValue, scopedName))
+                {
+                    return true;
+                }
+            }
+
+            if(scope->owner)
+            {
+                return resolveOne(scope->owner, scopedName);
+            }
+
+            return false;
+        }
+
+        template <class T>
+        typename std::enable_if<sizeof(T::bases)!=0, bool>::type resolveOne(const T *scope, SScopedName &scopedName)
+        {
+            if(resolveOne(static_cast<const SScope*>(scope), scopedName))
             {
                 return true;
             }
 
-            if(resolveOne(scope->structs, nameValue, scopedName))
+            if(scope->bases)
             {
-                return true;
-            }
+                assert(!scope->bases->instances.size() || scope->bases->instances.size() == scope->bases->scopedNames.size());
 
-            if(resolveOne(scope->variants, nameValue, scopedName))
-            {
-                return true;
-            }
-
-            if(resolveOne(scope->enums, nameValue, scopedName))
-            {
-                return true;
-            }
-
-            if(resolveOne(scope->errcs, nameValue, scopedName))
-            {
-                return true;
-            }
-
-            if(resolveOne(scope->interfaces, nameValue, scopedName))
-            {
-                return true;
+                for(const T *b : scope->bases->instances)
+                {
+                    if(b && resolveOne(b, scopedName))
+                    {
+                        return true;
+                    }
+                }
             }
 
             return false;
@@ -184,6 +251,7 @@ namespace  dci { namespace couple { namespace parser { namespace impl { namespac
         {
             if(scopedName.values.empty() && scopedName.asScopedEntry)
             {
+                //already resolved
                 return true;
             }
             assert(!scopedName.values.empty());
@@ -195,7 +263,7 @@ namespace  dci { namespace couple { namespace parser { namespace impl { namespac
                     return true;
                 }
 
-                if(!_oppositeInterfaceLevel)
+                if(_reportErrors && !_oppositeInterfaceLevel)
                 {
                     _errs.emplace_back(ErrorInfo {
                                           scopedName.pos.begin().file(),
@@ -207,15 +275,20 @@ namespace  dci { namespace couple { namespace parser { namespace impl { namespac
                 return false;
             }
 
-            for(; scope; scope=scope->owner)
+            if(_currentInterface)
             {
-                if(resolveOne(scope, scopedName))
+                if(resolveOne(_currentInterface, scopedName))
                 {
                     return true;
                 }
             }
 
-            if(!_oppositeInterfaceLevel)
+            if(resolveOne(scope, scopedName))
+            {
+                return true;
+            }
+
+            if(_reportErrors && !_oppositeInterfaceLevel)
             {
                 _errs.emplace_back(ErrorInfo {
                                       scopedName.pos.begin().file(),
@@ -250,7 +323,7 @@ namespace  dci { namespace couple { namespace parser { namespace impl { namespac
             res &= beginResolveScope(v.get(), outerScope);
             res &= resolveBases(v.get());
             res &= resolveFields(v.get());
-            res &= resolveMethods(v.get());
+
             res &= resolveAlias(v.get());
 
             res &= resolveElementType(v.get());
@@ -277,11 +350,6 @@ namespace  dci { namespace couple { namespace parser { namespace impl { namespac
             res &= resolveBases(v.get());
             res &= resolveFields(v.get());
             res &= resolveMethods(v.get());
-            res &= resolveAlias(v.get());
-
-            res &= resolveElementType(v.get());
-            res &= resolveValueType(v.get());
-            res &= resolveKeyType(v.get());
 
             endResolveScope(outerScope);
 
@@ -308,15 +376,31 @@ namespace  dci { namespace couple { namespace parser { namespace impl { namespac
             return res;
         }
 
+        bool beginResolveScope(SInterface *v, SScope *&outerScope)
+        {
+            outerScope = _currentScope;
+            _currentScope = v;
+            _currentInterface = v;
+            bool res = exec(v->decls);
+
+            return res;
+        }
+
         /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
         void endResolveScope(...)
         {
         }
 
-        void endResolveScope(SScope *v, SScope *&outerScope)
+        void endResolveScope(SScope *v, SScope *outerScope)
         {
             (void)v;
             _currentScope = outerScope;
+        }
+        void endResolveScope(SInterface *v, SScope *outerScope)
+        {
+            (void)v;
+            _currentScope = outerScope;
+            _currentInterface = static_cast<SInterface*>(outerScope);
         }
 
         /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
@@ -331,35 +415,44 @@ namespace  dci { namespace couple { namespace parser { namespace impl { namespac
             bool res = true;
             if(v->bases)
             {
-                std::for_each(
-                    v->bases->scopedNames.begin(),
-                    v->bases->scopedNames.end(),
-                    [&](const ScopedName &a) {
-                        bool localRes = resolve(v->owner, *a);
-                        if(!localRes)
-                        {
-                            v->bases->instances.push_back(nullptr);
-                            res = false;
-                        }
-                        else if((typeid(v) != a->asDecl.type()))
-                        {
-                            if(!_oppositeInterfaceLevel)
-                            {
-                                _errs.emplace_back(ErrorInfo {
-                                                      a->pos.begin().file(),
-                                                      static_cast<int>(a->pos.begin().line()),
-                                                      static_cast<int>(a->pos.begin().column()),
-                                                      "resolved type name is incompatible: " + a->toString()});
-                            }
-                            v->bases->instances.push_back(nullptr);
-                            res = false;
-                        }
-                        else
-                        {
-                            v->bases->instances.push_back(boost::get<decltype(v->bases->instances[0])>(a->asDecl));
-                        }
+                const auto &scopedNames = v->bases->scopedNames;
+                auto &instances = v->bases->instances;
+
+                instances.resize(scopedNames.size());
+
+                for(std::size_t i(0); i<scopedNames.size(); ++i)
+                {
+                    if(instances[i])
+                    {
+                        continue;
                     }
-                );
+
+                    const ScopedName &sn = scopedNames[i];
+
+                    bool localRes = resolve(v->owner, *sn);
+                    if(!localRes)
+                    {
+                        res = false;
+                    }
+                    else if((typeid(v) != sn->asDecl.type()))
+                    {
+                        if(_reportErrors && !_oppositeInterfaceLevel)
+                        {
+                            _errs.emplace_back(ErrorInfo {
+                                                  sn->pos.begin().file(),
+                                                  static_cast<int>(sn->pos.begin().line()),
+                                                  static_cast<int>(sn->pos.begin().column()),
+                                                  "resolved type name is incompatible: " + sn->toString()});
+                        }
+                        res = false;
+                    }
+                    else
+                    {
+                        _resolvedCount++;
+                        instances[i] = boost::get<decltype(v->bases->instances[0])>(sn->asDecl);
+                    }
+
+                }
             }
 
             return res;
