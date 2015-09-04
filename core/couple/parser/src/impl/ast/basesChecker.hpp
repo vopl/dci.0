@@ -60,20 +60,31 @@ namespace  dci { namespace couple { namespace parser { namespace impl { namespac
             bool res = true;
 
             //duplicate direct bases
-            auto direct = v->bases->instances;
-            std::sort(direct.begin(), direct.end());
+            const auto &instances = v->bases->instances;
+            const auto &scopedNames = v->bases->scopedNames;
 
-            auto dupIter = std::adjacent_find(direct.begin(), direct.end());
-            if(direct.end() != dupIter)
+            for(size_t idx1(1); idx1<instances.size(); ++idx1)
             {
-                std::size_t idx = std::find(v->bases->instances.begin(), v->bases->instances.end(), *dupIter) - v->bases->instances.begin();
-                const ScopedName &scopedName = v->bases->scopedNames[idx];
-                _errs.emplace_back(ErrorInfo {
-                                      scopedName->pos.begin().file(),
-                                      static_cast<int>(scopedName->pos.begin().line()),
-                                      static_cast<int>(scopedName->pos.begin().column()),
-                                      "duplicate base type: "+scopedName->toString()});
-                res = false;
+                for(size_t idx2(0); idx2<idx1; ++idx2)
+                {
+                    if(instances[idx1] == instances[idx2])
+                    {
+                        const ScopedName &scopedName1 = scopedNames[idx1];
+                        _errs.emplace_back(ErrorInfo {
+                                              scopedName1->pos.begin().file(),
+                                              static_cast<int>(scopedName1->pos.begin().line()),
+                                              static_cast<int>(scopedName1->pos.begin().column()),
+                                              "duplicate base type: "+scopedName1->toString()});
+
+                        const ScopedName &scopedName2 = scopedNames[idx2];
+                        _errs.emplace_back(ErrorInfo {
+                                              scopedName2->pos.begin().file(),
+                                              static_cast<int>(scopedName2->pos.begin().line()),
+                                              static_cast<int>(scopedName2->pos.begin().column()),
+                                              "previous base type: "+scopedName2->toString()});
+                        res = false;
+                    }
+                }
             }
 
             //cycles in all bases

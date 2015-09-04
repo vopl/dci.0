@@ -7,8 +7,10 @@ cmake_minimum_required(VERSION 3.1.0 FATAL_ERROR)
 set(SRC
     src/entry.cpp
 
-    src/handlers/hub.hpp
-    src/handlers/hub.cpp
+    src/handlers/channelHub.hpp
+    src/handlers/channelHub.cpp
+    src/handlers/serviceHub.hpp
+    src/handlers/serviceHub.cpp
 )
 
 

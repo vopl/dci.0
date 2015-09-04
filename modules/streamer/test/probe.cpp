@@ -16,7 +16,7 @@ namespace  dci { namespace  couple { namespace  serialize
             template <>
             struct ValueTraits< ::streamer::Channel>
             {
-                static const ValueKind _kind = ValueKind::service;
+                static const ValueKind _kind = ValueKind::interface;
             };
 
 }}}
@@ -27,19 +27,19 @@ namespace tryIfaceSerialization
     using namespace dci::couple::serialize;
 
     //////////////////////////////////////////////////////////////////////
-    // serializer for Hub
+    // serializer for ChannelHub
     template <class Engine>
-    struct Hub
-        : public ::streamer::HubOpposite
-        , public ::dci::couple::serialize::InterfaceImplHelper<Hub<Engine>, Engine>
+    struct ChannelHub
+        : public ::streamer::ChannelHubOpposite
+        , public ::dci::couple::serialize::InterfaceImplHelper<ChannelHub<Engine>, Engine>
     {
-        using ImplHelper = ::dci::couple::serialize::InterfaceImplHelper<Hub<Engine>, Engine>;
+        using ImplHelper = ::dci::couple::serialize::InterfaceImplHelper<ChannelHub<Engine>, Engine>;
         using OStream = typename Engine::OStream;
         using IStream = typename Engine::IStream;
 
     public:
         //constructor
-        Hub(Engine &engine, bool deleteSelfWhenUninvolved=true)
+        ChannelHub(Engine &engine, bool deleteSelfWhenUninvolved=true)
             : ImplHelper(engine)
         {
             (void)deleteSelfWhenUninvolved;
@@ -48,27 +48,27 @@ namespace tryIfaceSerialization
 
 //            //connect 'in' methods
 //            bool b; (void)b;
-//            b = ::streamer::HubOpposite::signal_start().connect(&Handler::start, static_cast<Handler *>(this));
+//            b = ::streamer::ChannelHubOpposite::signal_start().connect(&Handler::start, static_cast<Handler *>(this));
 //            assert(b);
-//            b = ::streamer::HubOpposite::signal_stop().connect(&Handler::stop, static_cast<Handler *>(this));
+//            b = ::streamer::ChannelHubOpposite::signal_stop().connect(&Handler::stop, static_cast<Handler *>(this));
 //            assert(b);
-//            b = ::streamer::HubOpposite::signal_put().connect(&Handler::put, static_cast<Handler *>(this));
+//            b = ::streamer::ChannelHubOpposite::signal_put().connect(&Handler::put, static_cast<Handler *>(this));
 //            assert(b);
-//            b = ::streamer::HubOpposite::signal_get().connect(&Handler::get, static_cast<Handler *>(this));
+//            b = ::streamer::ChannelHubOpposite::signal_get().connect(&Handler::get, static_cast<Handler *>(this));
 //            assert(b);
-//            b = ::streamer::HubOpposite::signal_join().connect(&Handler::join, static_cast<Handler *>(this));
+//            b = ::streamer::ChannelHubOpposite::signal_join().connect(&Handler::join, static_cast<Handler *>(this));
 //            assert(b);
         }
 
         //destructor
-        ~Hub()
+        ~ChannelHub()
         {
 //            //disconnect 'in' methods
-//            ::streamer::HubOpposite::signal_start().disconnect();
-//            ::streamer::HubOpposite::signal_stop().disconnect();
-//            ::streamer::HubOpposite::signal_put().disconnect();
-//            ::streamer::HubOpposite::signal_get().disconnect();
-//            ::streamer::HubOpposite::signal_join().disconnect();
+//            ::streamer::ChannelHubOpposite::signal_start().disconnect();
+//            ::streamer::ChannelHubOpposite::signal_stop().disconnect();
+//            ::streamer::ChannelHubOpposite::signal_put().disconnect();
+//            ::streamer::ChannelHubOpposite::signal_get().disconnect();
+//            ::streamer::ChannelHubOpposite::signal_join().disconnect();
 
         }
 
@@ -83,7 +83,7 @@ namespace tryIfaceSerialization
 //                //read args
 
 //                //fire signal
-                  //res = ::streamer::HubOpposite::get(arg1)
+                  //res = ::streamer::ChannelHubOpposite::get(arg1)
 
 //                //struct ConcreteResponseWriter ...
 //                //return new ConcreteResponseWriter;
@@ -106,7 +106,7 @@ namespace tryIfaceSerialization
         }
 
         //concrete
-        ::dci::couple::runtime::Future< > start(::streamer::Channel &&unnamed_0)
+        ::dci::couple::runtime::Future< > start(::streamer::Channel &&arg_0)
         {
             /*
              *
@@ -127,8 +127,8 @@ namespace tryIfaceSerialization
                 std::tuple< ::streamer::Channel> _args;
                 ::dci::couple::runtime::Promise< > _promise;
 
-                ConcreteRequestWriterResponseReader(::streamer::Channel &&unnamed_0)
-                    : _args(std::move(unnamed_0))
+                ConcreteRequestWriterResponseReader(::streamer::Channel &&arg_0)
+                    : _args(std::move(arg_0))
                 {
 
                 }
@@ -159,16 +159,16 @@ namespace tryIfaceSerialization
                 }
             };
 
-            return this->pushRequestWriter(std::unique_ptr<ConcreteRequestWriterResponseReader>(new ConcreteRequestWriterResponseReader(std::move(unnamed_0))));
+            return this->pushRequestWriter(std::unique_ptr<ConcreteRequestWriterResponseReader>(new ConcreteRequestWriterResponseReader(std::move(arg_0))));
         }
 
         ::dci::couple::runtime::Future< > stop() = delete;
         //::dci::couple::runtime::void_ channelError();
-        ::dci::couple::runtime::void_ put(::dci::couple::runtime::Interface &&unnamed_0) = delete;
-        //::dci::couple::runtime::void_ put(::dci::couple::runtime::Interface &&unnamed_0);
-        ::dci::couple::runtime::Future< ::dci::couple::runtime::Interface> get(::dci::couple::runtime::Iid &&unnamed_0) = delete;
-        //::dci::couple::runtime::Future< ::dci::couple::runtime::Interface> get(::dci::couple::runtime::Iid &&unnamed_0);
-        ::dci::couple::runtime::void_ join(::streamer::Channel &&unnamed_0) = delete;
+        ::dci::couple::runtime::void_ put(::dci::couple::runtime::Interface &&arg_0) = delete;
+        //::dci::couple::runtime::void_ put(::dci::couple::runtime::Interface &&arg_0);
+        ::dci::couple::runtime::Future< ::dci::couple::runtime::Interface> get(::dci::couple::runtime::Iid &&arg_0) = delete;
+        //::dci::couple::runtime::Future< ::dci::couple::runtime::Interface> get(::dci::couple::runtime::Iid &&arg_0);
+        ::dci::couple::runtime::void_ join(::streamer::Channel &&arg_0) = delete;
 
     private:
         enum class MethodId
@@ -298,7 +298,7 @@ namespace xyz
         {
             Engine e;
 
-            tryIfaceSerialization::Hub<Engine> h(e);
+            tryIfaceSerialization::ChannelHub<Engine> h(e);
 
             ::streamer::Channel ch;
             h.start(std::move(ch));
@@ -324,17 +324,17 @@ TEST(Streamer, Probe)
     using namespace dci::couple::runtime;
 
     {
-        Future<Hub> hf = dci::site::testManager()->createService<Hub>();
+        Future<ChannelHub> hf = dci::site::testManager()->createService<ChannelHub>();
 
         GTEST_ASSERT_EQ(hf.hasValue(), true);
     }
 
 
-    Hub h1 = dci::site::testManager()->createService<Hub>().detachValue<0>();
-    Hub h2 = dci::site::testManager()->createService<Hub>().detachValue<0>();
+    ChannelHub h1 = dci::site::testManager()->createService<ChannelHub>().detachValue<0>();
+    ChannelHub h2 = dci::site::testManager()->createService<ChannelHub>().detachValue<0>();
 
     {
-        Hub h3(std::forward<runtime::Interface>(h1));
+        ChannelHub h3(std::forward<runtime::Interface>(h1));
         if(h3)
         {
             std::cout << h3.stop().error().message() << std::endl;

@@ -3,7 +3,8 @@
 #include <dci/logger.hpp>
 
 
-#include "handlers/hub.hpp"
+#include "handlers/channelHub.hpp"
+#include "handlers/serviceHub.hpp"
 
 using namespace dci::couple::runtime;
 using namespace dci::site;
@@ -18,7 +19,8 @@ struct Info
     {
         _provider = "dci";
         _id.fromHex("23bd7add4fc9c603b42bb20a41fe80a0");
-        _serviceIds.push_back(Hub::_iid);
+        _serviceIds.push_back(ChannelHub::_iid);
+        _serviceIds.push_back(ServiceHub::_iid);
 
         _revision = 1;
         _name = "streamer";
@@ -88,14 +90,30 @@ struct Entry
 
     dci::site::ServiceFactory *allocServiceFactory(const dci::couple::runtime::Iid &iid) override
     {
-        assert(iid == info._serviceIds[0]);
-        return new handlers::HubHandlerFactory;
+        if(ChannelHub::_iid == iid)
+        {
+            return new handlers::ChannelHubHandlerFactory;
+        }
+        if(ServiceHub::_iid == iid)
+        {
+            return new handlers::ServiceHubHandlerFactory;
+        }
+
+        return nullptr;
     }
 
     void freeServiceFactory(const dci::couple::runtime::Iid &iid, dci::site::ServiceFactory *factory) override
     {
-        assert(iid == info._serviceIds[0]);
-        delete factory;
+        if(ChannelHub::_iid == iid)
+        {
+            delete factory;
+            return;
+        }
+        if(ServiceHub::_iid == iid)
+        {
+            delete factory;
+            return;
+        }
     }
 
 } entry;

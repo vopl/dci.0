@@ -34,7 +34,6 @@ namespace dci { namespace couple { namespace parser { namespace impl
         , kwreal32  {"\"real32\""}
         , kwreal64  {"\"real64\""}
         , kwbytes   {"\"bytes\""}
-        , kwservice {"\"service\""}
         , kwiid     {"\"iid\""}
 
         , kwlist    {"\"list\""}
@@ -102,7 +101,6 @@ namespace dci { namespace couple { namespace parser { namespace impl
             | kwreal32
             | kwreal64
             | kwbytes
-            | kwservice
             | kwiid
 
             | kwlist

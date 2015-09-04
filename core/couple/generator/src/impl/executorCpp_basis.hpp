@@ -28,7 +28,7 @@ namespace dci { namespace couple { namespace generator { namespace impl
         bool writeWire(const dci::couple::meta::Interface *v);
 
         std::string interfaceWireTypeName(const dci::couple::meta::Interface *v);
-        std::string interfaceWireMemberName(const dci::couple::meta::Interface *v);
+        std::string interfaceWireMemberName(const dci::couple::meta::Interface *v, bool invertPrimary);
 
     private:
         void writeBody(const dci::couple::meta::Scope *scope, bool withSelf);

@@ -79,7 +79,8 @@ namespace  dci { namespace couple { namespace parser { namespace impl { namespac
                         osn->values.back()->pos = sn->values.back()->pos;
 
                         std::string bname = sn->values.back()->value;
-                        if(bname.size() - oppositeSuffix.size() == bname.rfind(oppositeSuffix))
+                        std::string::size_type pos = bname.rfind(oppositeSuffix);
+                        if(std::string::npos != pos && bname.size() - oppositeSuffix.size() == pos)
                         {
                             osn->values.back()->value = bname.substr(0, bname.size() - oppositeSuffix.size());
                         }

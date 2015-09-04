@@ -9,7 +9,7 @@ namespace dci { namespace couple { namespace serialize
         variant,
         struct_,
         enum_,
-        service,
+        interface,
     };
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7

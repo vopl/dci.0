@@ -20,7 +20,7 @@ namespace dci { namespace couple { namespace parser { namespace impl
                 toks.kwreal32   [qi::_a = meta::PrimitiveKind::real32   ] |
                 toks.kwreal64   [qi::_a = meta::PrimitiveKind::real64   ] |
                 toks.kwbytes    [qi::_a = meta::PrimitiveKind::bytes    ] |
-                toks.kwservice  [qi::_a = meta::PrimitiveKind::service  ] |
+                toks.kwinterface[qi::_a = meta::PrimitiveKind::interface] |
                 toks.kwiid      [qi::_a = meta::PrimitiveKind::iid      ]
             ) >
             qi::eps

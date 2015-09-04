@@ -133,7 +133,7 @@ namespace dci { namespace couple { namespace generator { namespace impl
 
                 case PrimitiveKind::bytes:  return _runtimeNamespace+"::Bytes";
 
-                case PrimitiveKind::service:return _runtimeNamespace+"::Interface";
+                case PrimitiveKind::interface:return _runtimeNamespace+"::Interface";
                 case PrimitiveKind::iid:    return _runtimeNamespace+"::Iid";
                 }
 

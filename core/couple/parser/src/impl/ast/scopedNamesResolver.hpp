@@ -154,9 +154,14 @@ namespace  dci { namespace couple { namespace parser { namespace impl { namespac
                 return false;
             }
 
-            _resolvedCount++;
-            scopedName.asDecl = target->second;
-            scopedName.asScopedEntry = target->second;
+            if(!scopedName.asScopedEntry)
+            {
+                _resolvedCount++;
+                scopedName.asDecl = target->second;
+                scopedName.asScopedEntry = target->second;
+            }
+
+            assert(scopedName.asScopedEntry == target->second);
             return true;
         }
 

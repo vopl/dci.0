@@ -1,54 +1,6 @@
 
 scope streamer
 {
-//    struct Traffic
-//    {
-//        enum Kind
-//        {
-//            start       =0x01;
-//            stop        =0x02;
-//            restart     =0x03;
-//            error       =0x04;
-
-////            negotiate       =0x11; //bytes order, protocol version, кто главный из двух участников
-
-////            create          =0x21;
-////            request         =0x22;
-////            response        =0x23;
-////            destroy         =0x24;
-
-////            indexIdentifier =0x31;
-////            indexError      =0x32;
-//        }
-
-//        Kind    kind;
-//        bytes   payload;
-//    }
-
-//    interface Channel
-//    {
-//        in flow:    (Traffic);
-//        out flow:   (Traffic);
-//    }
-
-
-//    interface Hub
-//    {
-//        in start:           (Channel)   -> ();
-//        in stop:            ()          -> ();
-
-//        out channelError:   ();
-
-//        in put:             (service);
-//        out put:            (service);
-
-//        in get:             (iid)       -> (service);
-//        out get:            (iid)       -> (service);
-
-//        //in join:            (Channel);
-//    }
-
-
     errc error
     {
         incompatibleProtocol:   "запрошенный удаленной стороной протокол не совместим с уже установленным";
@@ -62,41 +14,47 @@ scope streamer
         unknownChannelId:       "запрошенный идентификатор канала не опознан";
     }
 
-    interface Channel
+
+    interface Stream
     {
         alias Traffic = bytes;
-
         in flow:    (Traffic);
-        out flow:   (Traffic);
     }
 
-    interface Endpoint
+    interface Channel: Stream, StreamOpposite
     {
-        in start:           (Channel)  -> ();
-        in stop:            ()  -> ();
-
-        out channelError:   (error);
     }
 
-    interface Hub
-        : Endpoint
+    interface ChannelEndpoint
     {
-        alias SubchannelId = uint32;
+        in start:           (Channel)       -> ();
+        in stop:            ()              -> (Channel);
 
-        in attach:              (ChannelOpposite)       -> (SubchannelId);
-        in detach:              (SubchannelId)          -> ();
-
-        out subchannelError:    (SubchannelId, error);
+        out channelFail:    (error);
     }
 
-    interface Serializer
-        : Endpoint
+    interface ChannelHub: ChannelEndpoint
     {
-        in put:     (service);
-        out put:    (service);
+        alias ChannelId = uint32;
 
-        in get:     (iid)       -> (service);
-        out get:    (iid)       -> (service);
+        in inject:          (ChannelOpposite)   -> (ChannelId);
+        in eject:           (ChannelId)         -> (ChannelOpposite);
+
+        out subchannelFail: (ChannelId, error);
     }
 
+    interface ServiceHub: ChannelEndpoint
+    {
+        alias ServiceId = uint32;
+
+        in inject:      (interface)             -> (ServiceId);
+        in invite:      (iid)                   -> (interface, ServiceId);
+        in eject:       (ServiceId)             -> (interface);
+
+        out injected:   (interface, ServiceId);
+        out invited:    (iid, ServiceId)        -> (interface);
+        out ejected:    (ServiceId);
+
+        out serviceFail:(ServiceId, error);
+    }
 }

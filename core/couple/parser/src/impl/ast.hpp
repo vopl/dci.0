@@ -258,7 +258,7 @@ namespace dci { namespace couple { namespace parser { namespace impl
             , SInterface *
         > asDecl;
 
-        SScopeEntry *asScopedEntry;
+        SScopeEntry *asScopedEntry {nullptr};
 
         std::string toString()
         {

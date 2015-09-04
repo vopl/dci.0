@@ -11,24 +11,21 @@ namespace handlers
     using namespace dci::couple::runtime;
     using namespace streamer;
 
-    class Hub
-        : public hs::streamer::Hub<Hub>
+    class ChannelHub
+        : public hs::streamer::ChannelHub<ChannelHub>
     {
     public:
-        Hub();
-        ~Hub();
+        ChannelHub();
+        ~ChannelHub();
 
-        Future< Hub::SubchannelId> attach(Channel &&unnamed_0);
-        Future< > detach(Hub::SubchannelId &&unnamed_0);
+        Future< > start(Channel &&arg_0);
+        Future< Channel> stop();
 
-        Future< > start(Channel &&unnamed_0);
-        Future< > stop();
-
-        void_ flow(Channel::Traffic &&unnamed_0);
-
+        Future< ChannelHub::ChannelId> inject(ChannelOpposite &&arg_0);
+        Future< ChannelOpposite> eject(ChannelHub::ChannelId &&arg_0);
     };
 
-    struct HubHandlerFactory
+    struct ChannelHubHandlerFactory
         : ::dci::site::ServiceFactory
     {
         void createService(void *outFuture) override;

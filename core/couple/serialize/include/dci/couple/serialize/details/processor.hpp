@@ -312,14 +312,14 @@ namespace dci { namespace couple { namespace serialize { namespace details
 //        }
 
         /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
-        //service
-        template <class Value> std::enable_if_t<ValueKind::service == ValueTraits<Value>::_kind> save(Value &&value)
+        //interface
+        template <class Value> std::enable_if_t<ValueKind::interface == ValueTraits<Value>::_kind> save(Value &&value)
         {
             std::uint32_t serviceId = _ctx.setService(std::forward<Value>(value));
             save(serviceId);
         }
 
-        template <class Value> std::enable_if_t<ValueKind::service == ValueTraits<Value>::_kind> load(Value &value)
+        template <class Value> std::enable_if_t<ValueKind::interface == ValueTraits<Value>::_kind> load(Value &value)
         {
             std::uint32_t serviceId;
             load(serviceId);

@@ -344,7 +344,7 @@ namespace dci { namespace couple { namespace meta { namespace impl
                         Attribute *a = const_cast<Attribute *>(ca);
                         while(usedNames.end() != usedNames.find(a->name()))
                         {
-                            a->setName("unnamed_"+std::to_string(indexGen++));
+                            a->setName("arg_"+std::to_string(indexGen++));
                         }
                         usedNames.insert(a->name());
                     }

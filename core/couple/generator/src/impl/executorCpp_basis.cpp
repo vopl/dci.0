@@ -263,17 +263,15 @@ namespace dci { namespace couple { namespace generator { namespace impl
         _hpp<< "{"<<el;
         _hpp<< indent;
 
-        _hpp<< "static const Iid _iid;"<<el;
-
         _hpp<< "virtual InterfaceWire* concrete(const Iid &iid) override"<<el;
         _hpp<< "{"<<el;
         _hpp<< indent;
         for(const Interface *b : interfaceWithAllBases(v))
         {
-            _hpp<< "if(iid == "<<typeName(b, inWire|ignoreTemplateTypename)<<"::_iid)"<<el;
+            _hpp<< "if(iid == "<<typeName(b, inBody|ignoreTemplateTypename)<<"::_iid)"<<el;
             _hpp<< "{"<<el;
             _hpp<< indent;
-            _hpp<< "return &"<<interfaceWireMemberName(b)<<";"<<el;
+            _hpp<< "return &"<<interfaceWireMemberName(b, false)<<";"<<el;
             _hpp<< undent;
             _hpp<< "}"<<el;
         }
@@ -284,7 +282,7 @@ namespace dci { namespace couple { namespace generator { namespace impl
         for(const Interface *b : interfaceWithAllBases(v))
         {
             _hpp<< "//wire ref for "<<b->name()<<el;
-            _hpp<< interfaceWireTypeName(b)<<" "<<interfaceWireMemberName(b)<<";"<<el;
+            _hpp<< interfaceWireTypeName(b)<<" "<<interfaceWireMemberName(b, false)<<";"<<el;
         }
 
         _hpp<< undent;
@@ -302,9 +300,9 @@ namespace dci { namespace couple { namespace generator { namespace impl
         return typeName(v, inWire) + "_concrete";
     }
 
-    std::string ExecutorCpp_basis::interfaceWireMemberName(const dci::couple::meta::Interface *v)
+    std::string ExecutorCpp_basis::interfaceWireMemberName(const dci::couple::meta::Interface *v, bool invertPrimary)
     {
-        if(!v->primary())
+        if(invertPrimary)
         {
             v = v->opposite();
         }
@@ -466,7 +464,7 @@ namespace dci { namespace couple { namespace generator { namespace impl
 
         for(const Interface *b : interfaceWithAllBases(v))
         {
-            _hpp<< interfaceWireTypeName(b)<<" *"<<interfaceWireMemberName(b)<<"_ptr;"<<el;
+            _hpp<< interfaceWireTypeName(b)<<" *"<<interfaceWireMemberName(b, !v->primary())<<"_ptr;"<<el;
         }
         _hpp<< el;
 
@@ -483,7 +481,7 @@ namespace dci { namespace couple { namespace generator { namespace impl
             _hpp<< ": Interface(new "<<wiresType<<", "<<(v->primary()?"true":"false")<<")"<<el;
             for(const Interface *b : interfaceWithAllBases(v))
             {
-                _hpp<< ", "<<interfaceWireMemberName(b)<<"_ptr(&static_cast<"<<wiresType<<"*>(wires())->"<<interfaceWireMemberName(b)<<")"<<el;
+                _hpp<< ", "<<interfaceWireMemberName(b, !v->primary())<<"_ptr(&static_cast<"<<wiresType<<"*>(wires())->"<<interfaceWireMemberName(b, !v->primary())<<")"<<el;
             }
 
             _hpp<< undent;
@@ -498,14 +496,14 @@ namespace dci { namespace couple { namespace generator { namespace impl
             _hpp<< ": Interface(std::forward< Interface>(from))"<<el;
             for(const Interface *b : interfaceWithAllBases(v))
             {
-                _hpp<< ", "<<interfaceWireMemberName(b)<<"_ptr(from."<<interfaceWireMemberName(b)<<"_ptr)"<<el;
+                _hpp<< ", "<<interfaceWireMemberName(b, !v->primary())<<"_ptr(from."<<interfaceWireMemberName(b, !v->primary())<<"_ptr)"<<el;
             }
             _hpp<< undent;
             _hpp<< "{"<<el;
             _hpp<< indent;
             for(const Interface *b : interfaceWithAllBases(v))
             {
-                _hpp<< "//from."<<interfaceWireMemberName(b)<<"_ptr = nullptr;"<<el;
+                _hpp<< "//from."<<interfaceWireMemberName(b, !v->primary())<<"_ptr = nullptr;"<<el;
             }
             _hpp<< undent;
             _hpp<< "}"<<el;
@@ -518,7 +516,7 @@ namespace dci { namespace couple { namespace generator { namespace impl
             _hpp<< ": Interface(from.wires(), "<<(v->primary()?"true":"false")<<")"<<el;
             for(const Interface *b : interfaceWithAllBases(v))
             {
-                _hpp<< ", "<<interfaceWireMemberName(b)<<"_ptr(from."<<interfaceWireMemberName(b)<<"_ptr)"<<el;
+                _hpp<< ", "<<interfaceWireMemberName(b, !v->primary())<<"_ptr(from."<<interfaceWireMemberName(b, !v->primary())<<"_ptr)"<<el;
             }
             _hpp<< undent;
             _hpp<< "{"<<el;
@@ -563,8 +561,8 @@ namespace dci { namespace couple { namespace generator { namespace impl
             _hpp<< "Interface::operator=(std::forward< Interface>(from));"<<el;
             for(const Interface *b : interfaceWithAllBases(v))
             {
-                _hpp<< interfaceWireMemberName(b)<<"_ptr = from."<<interfaceWireMemberName(b)<<"_ptr;"<<el;
-                _hpp<< "//from."<<interfaceWireMemberName(b)<<"_ptr = nullptr;"<<el;
+                _hpp<< interfaceWireMemberName(b, !v->primary())<<"_ptr = from."<<interfaceWireMemberName(b, !v->primary())<<"_ptr;"<<el;
+                _hpp<< "//from."<<interfaceWireMemberName(b, !v->primary())<<"_ptr = nullptr;"<<el;
             }
             _hpp<< "return *this;"<<el;
             _hpp<< undent;
@@ -579,7 +577,7 @@ namespace dci { namespace couple { namespace generator { namespace impl
             _hpp<< "Interface::assign(from.wires(), "<<(v->primary()?"true":"false")<<");"<<el;
             for(const Interface *b : interfaceWithAllBases(v))
             {
-                _hpp<< interfaceWireMemberName(b)<<"_ptr = from."<<interfaceWireMemberName(b)<<"_ptr;"<<el;
+                _hpp<< interfaceWireMemberName(b, !v->primary())<<"_ptr = from."<<interfaceWireMemberName(b, !v->primary())<<"_ptr;"<<el;
             }
             _hpp<< "return *this;"<<el;
             _hpp<< undent;
@@ -603,8 +601,8 @@ namespace dci { namespace couple { namespace generator { namespace impl
 
             for(const Interface *b : interfaceWithAllBases(v))
             {
-                _hpp<< interfaceWireMemberName(b)<<"_ptr = static_cast<"<<interfaceWireTypeName(b)<<"*>(from.wires()->concrete("<<typeName(b, inWire|ignoreTemplateTypename)<<"::_iid));"<<el;
-                _hpp<< "if(!"<<interfaceWireMemberName(b)<<"_ptr)"<<el;
+                _hpp<< interfaceWireMemberName(b, !v->primary())<<"_ptr = static_cast<"<<interfaceWireTypeName(b)<<"*>(from.wires()->concrete("<<typeName(b, inBody|ignoreTemplateTypename)<<"::_iid));"<<el;
+                _hpp<< "if(!"<<interfaceWireMemberName(b, !v->primary())<<"_ptr)"<<el;
                 _hpp<< "{"<<el;
                 _hpp<< indent;
                 _hpp<< "return *this;"<<el;
@@ -654,7 +652,7 @@ namespace dci { namespace couple { namespace generator { namespace impl
 
                     _hpp<< "{"<<el;
                     _hpp<< indent;
-                    _hpp<< "return "<<interfaceWireMemberName(b)<<"_ptr->"<<(b->primary() ? "out" : "in")<<"_"<<m->name()<<";"<<el;
+                    _hpp<< "return "<<interfaceWireMemberName(b, !v->primary())<<"_ptr->"<<(b->primary() ? "out" : "in")<<"_"<<m->name()<<";"<<el;
                     _hpp<< undent;
                     _hpp<< "}"<<el;
                 }
@@ -665,7 +663,7 @@ namespace dci { namespace couple { namespace generator { namespace impl
                     _hpp<< "{"<<el;
                     _hpp<< indent;
 
-                    _hpp<< "return "<<interfaceWireMemberName(b)<<"_ptr->"<<(b->primary() ? "in" : "out")<<"_"<<m->name()<<"(";
+                    _hpp<< "return "<<interfaceWireMemberName(b, !v->primary())<<"_ptr->"<<(b->primary() ? "in" : "out")<<"_"<<m->name()<<"(";
 
                     bool first = true;
                     for(const Attribute *a : m->query())
@@ -704,11 +702,6 @@ namespace dci { namespace couple { namespace generator { namespace impl
         auto writer = [&](const std::string &target){
             _hpp<< "template <int i> const Iid "<<target<<"::_iid"<<signInitializer(v->sign())<<";"<<el;
         };
-
-        if(v->primary())
-        {
-            writer(typeName(v, inWire|ignoreTemplateTypename));
-        }
 
         writer(typeName(v, ignoreTemplateTypename));
     }

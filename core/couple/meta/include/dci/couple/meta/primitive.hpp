@@ -28,7 +28,7 @@ namespace dci { namespace couple { namespace meta
 
         bytes,
 
-        service,
+        interface,
         iid,
     };
 

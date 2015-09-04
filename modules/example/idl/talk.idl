@@ -3,7 +3,7 @@
 
 scope talk
 {
-    
+
     //клиентское подключение
     interface Peer
     {
