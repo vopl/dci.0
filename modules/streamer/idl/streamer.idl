@@ -46,14 +46,16 @@ scope streamer
     interface ServiceHub: ChannelEndpoint
     {
         alias ServiceId = uint32;
+        alias Local = interface;
+        alias Remote = interface;
 
-        in inject:      (interface)             -> (ServiceId);
-        in invite:      (iid)                   -> (interface, ServiceId);
-        in eject:       (ServiceId)             -> (interface);
+        in inject:      (Remote)                -> (ServiceId);
+        in invite:      (iid)                   -> (Local, ServiceId);
+        in eject:       (ServiceId)             -> (Remote);
 
-        out injected:   (interface, ServiceId);
-        out invited:    (iid, ServiceId)        -> (interface);
-        out ejected:    (ServiceId);
+        out injected:   (Local, ServiceId);
+        out invited:    (iid, ServiceId)        -> (Remote);
+        out ejected:    (Remote, ServiceId);
 
         out serviceFail:(ServiceId, error);
     }
