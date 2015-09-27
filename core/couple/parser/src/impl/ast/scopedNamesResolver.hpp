@@ -454,7 +454,7 @@ namespace  dci { namespace couple { namespace parser { namespace impl { namespac
                     else
                     {
                         _resolvedCount++;
-                        instances[i] = boost::get<decltype(v->bases->instances[0])>(sn->asDecl);
+                        instances[i] = boost::get<std::remove_reference_t<decltype(v->bases->instances[0])>>(sn->asDecl);
                     }
 
                 }
