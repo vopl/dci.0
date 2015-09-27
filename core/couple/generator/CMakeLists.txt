@@ -28,6 +28,9 @@ set(SRC
 
     src/impl/executorCpp_handlerSkel.hpp
     src/impl/executorCpp_handlerSkel.cpp
+
+    src/impl/executorCpp_serializer.hpp
+    src/impl/executorCpp_serializer.cpp
 )
 
 

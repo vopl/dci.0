@@ -30,7 +30,7 @@ set_property(TARGET ${PROJECT} PROPERTY CXX_STANDARD_REQUIRED ON)
 
 include(dciUseIdl)
 dciUseIdl(${PROJECT}
-    GEN cpp_basis cpp_handler_skel
+    GEN cpp_basis cpp_handler_skel cpp_serializer
     INCLUDE ${CMAKE_CURRENT_SOURCE_DIR}/idl
     SOURCES streamer.idl
 )

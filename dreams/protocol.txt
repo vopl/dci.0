@@ -1,0 +1,74 @@
+
+
+
+Packet
+{
+    enum Type
+    {
+        //корневой сервис
+        inject
+        invite
+        eject
+
+        //самого этого канала
+        drop    //штатное разрушение инициированное одной из сторон
+
+        //самого этого канала
+        fail    //нештатное разрушение инициированное одной из сторон или кем то из посредников
+
+        //взаимодействие объектов компонент по спецификации их внутренних интерфейсов
+        request
+        response
+        message
+
+    }
+    
+    Type type;
+
+
+            //это уже в зависимости от типа
+            
+            int serviceId;
+            Bytes serializedPayload;
+            vector<int> createChannels;
+    
+}
+
+
+struct Inject
+{
+    int serviceId;
+    iid iid;
+}
+
+struct Invite
+{
+    int serviceId;
+    iid iid;
+}
+
+struct Eject
+{
+    int serviceId;
+}
+
+
+struct Drop
+{
+    int serviceId;
+}
+
+struct Fail
+{
+    int serviceId;
+    Bytes reason;
+}
+
+struct Request //Response, Message
+{
+    int serviceId;
+    Bytes data;
+    vector<int> injectedServiceIds;
+}
+
+

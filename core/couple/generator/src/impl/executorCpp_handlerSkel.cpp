@@ -23,7 +23,7 @@ namespace dci { namespace couple { namespace generator { namespace impl
 
     std::string ExecutorCpp_handlerSkel::description()
     {
-        return "handler ckeletons for cpp";
+        return "handler skeletons for cpp";
     }
 
     bool ExecutorCpp_handlerSkel::exec(

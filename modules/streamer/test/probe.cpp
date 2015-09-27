@@ -4,6 +4,7 @@
 #include <dci/couple/runtime.hpp>
 #include <dci/couple/serialize.hpp>
 #include "streamer.hpp"
+#include "streamerHandlerSkel.hpp"
 
 
 /////////////////////////////////////////////////////////////////////
@@ -30,9 +31,10 @@ namespace tryIfaceSerialization
     // serializer for ChannelHub
     template <class Engine>
     struct ChannelHub
-        : public ::streamer::ChannelHubOpposite
+        : public ::dci::couple::runtime::hs::streamer::ChannelHub<ChannelHub<Engine>>
         , public ::dci::couple::serialize::InterfaceImplHelper<ChannelHub<Engine>, Engine>
     {
+        using Handler = ::dci::couple::runtime::hs::streamer::ChannelHub<ChannelHub<Engine>>;
         using ImplHelper = ::dci::couple::serialize::InterfaceImplHelper<ChannelHub<Engine>, Engine>;
         using OStream = typename Engine::OStream;
         using IStream = typename Engine::IStream;
@@ -40,38 +42,17 @@ namespace tryIfaceSerialization
     public:
         //constructor
         ChannelHub(Engine &engine, bool deleteSelfWhenUninvolved=true)
-            : ImplHelper(engine)
+            : Handler(deleteSelfWhenUninvolved)
+            , ImplHelper(engine)
         {
-            (void)deleteSelfWhenUninvolved;
-
-//            if(deleteSelfWhenUninvolved) wire()->listenUninvolve(true, [](void *userData){delete static_cast<Handler*>(userData);}, static_cast<Handler*>(this));
-
-//            //connect 'in' methods
-//            bool b; (void)b;
-//            b = ::streamer::ChannelHubOpposite::signal_start().connect(&Handler::start, static_cast<Handler *>(this));
-//            assert(b);
-//            b = ::streamer::ChannelHubOpposite::signal_stop().connect(&Handler::stop, static_cast<Handler *>(this));
-//            assert(b);
-//            b = ::streamer::ChannelHubOpposite::signal_put().connect(&Handler::put, static_cast<Handler *>(this));
-//            assert(b);
-//            b = ::streamer::ChannelHubOpposite::signal_get().connect(&Handler::get, static_cast<Handler *>(this));
-//            assert(b);
-//            b = ::streamer::ChannelHubOpposite::signal_join().connect(&Handler::join, static_cast<Handler *>(this));
-//            assert(b);
         }
 
         //destructor
         ~ChannelHub()
         {
-//            //disconnect 'in' methods
-//            ::streamer::ChannelHubOpposite::signal_start().disconnect();
-//            ::streamer::ChannelHubOpposite::signal_stop().disconnect();
-//            ::streamer::ChannelHubOpposite::signal_put().disconnect();
-//            ::streamer::ChannelHubOpposite::signal_get().disconnect();
-//            ::streamer::ChannelHubOpposite::signal_join().disconnect();
-
         }
 
+    private:
         //concrete
         void readRequest(IStream &)
         {
@@ -105,6 +86,7 @@ namespace tryIfaceSerialization
 //            }
         }
 
+    public:
         //concrete
         ::dci::couple::runtime::Future< > start(::streamer::Channel &&arg_0)
         {
@@ -162,17 +144,27 @@ namespace tryIfaceSerialization
             return this->pushRequestWriter(std::unique_ptr<ConcreteRequestWriterResponseReader>(new ConcreteRequestWriterResponseReader(std::move(arg_0))));
         }
 
-        ::dci::couple::runtime::Future< > stop() = delete;
-        //::dci::couple::runtime::void_ channelError();
-        ::dci::couple::runtime::void_ put(::dci::couple::runtime::Interface &&arg_0) = delete;
-        //::dci::couple::runtime::void_ put(::dci::couple::runtime::Interface &&arg_0);
-        ::dci::couple::runtime::Future< ::dci::couple::runtime::Interface> get(::dci::couple::runtime::Iid &&arg_0) = delete;
-        //::dci::couple::runtime::Future< ::dci::couple::runtime::Interface> get(::dci::couple::runtime::Iid &&arg_0);
-        ::dci::couple::runtime::void_ join(::streamer::Channel &&arg_0) = delete;
+        ::dci::couple::runtime::Future< ::streamer::ChannelHub::ChannelId> inject(::streamer::ChannelOpposite &&arg_0)
+        {
+            assert(0);
+        }
+
+        ::dci::couple::runtime::Future< ::streamer::ChannelOpposite> eject(::streamer::ChannelHub::ChannelId &&arg_0)
+        {
+            assert(0);
+        }
+
+        ::dci::couple::runtime::Future< ::streamer::Channel> stop()
+        {
+            assert(0);
+        }
+
 
     private:
         enum class MethodId
         {
+            inject,
+            eject,
             start,
             stop,
             //...
