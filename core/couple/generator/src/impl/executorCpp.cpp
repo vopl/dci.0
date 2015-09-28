@@ -162,12 +162,12 @@ namespace dci { namespace couple { namespace generator { namespace impl
 
         return
                 std::string(flags&ignoreTemplateTypename ? "" : "typename ")+
-                (flags&forGlobalScope ? "::dci::couple::runtime::generated::" : "")+
+                (flags&forGlobalScope ? _runtimeNamespace+"::generated::" : "")+
                 (flags&inWire ? _wireName : _bodyName)+
                 "<"+(flags&instantiated ? "0" : "i")+">"+scopedName;
     }
 
-    std::string ExecutorCpp::methodArgiments(const Method *m, bool forRealMethod, int typesFlags)
+    std::string ExecutorCpp::methodArguments(const Method *m, bool forRealMethod, int typesFlags)
     {
         std::string res;
 
@@ -183,6 +183,24 @@ namespace dci { namespace couple { namespace generator { namespace impl
                 res+= " &&";
                 res+= a->name();
             }
+        }
+
+        return res;
+    }
+
+    std::string ExecutorCpp::methodArgumentsMove(const dci::couple::meta::Method *m)
+    {
+        std::string res;
+
+        bool first = true;
+        for(const Attribute *a : m->query())
+        {
+            if(first) first = false;
+            else res+= ", ";
+
+            res+= "::std::move(";
+            res+= a->name();
+            res+= ")";
         }
 
         return res;
@@ -204,6 +222,13 @@ namespace dci { namespace couple { namespace generator { namespace impl
         return res;
     }
 
+    std::string ExecutorCpp::methodName(const dci::couple::meta::Method *m, int typesFlags, const dci::couple::meta::Interface *i)
+    {
+        std::string res;
+        if(i) res += typeName(i, typesFlags) + "::";
+        res+= m->name();
+        return res;
+    }
 
     std::string ExecutorCpp::methodSignature(const Method *m, int typesFlags, const Interface *i)
     {
@@ -218,9 +243,9 @@ namespace dci { namespace couple { namespace generator { namespace impl
             res+= _runtimeNamespace+"::Future< " + methodReplyTypes(m, typesFlags) + "> ";
         }
 
-        if(i) res += typeName(i, typesFlags);
+        if(i) res += typeName(i, typesFlags) + "::";
 
-        res+= m->name()+"("+methodArgiments(m, true, typesFlags)+")";
+        res+= m->name()+"("+methodArguments(m, true, typesFlags)+")";
 
         return res;
     }
@@ -238,6 +263,11 @@ namespace dci { namespace couple { namespace generator { namespace impl
     const std::string &ExecutorCpp::runtimeNamespace() const
     {
         return _runtimeNamespace;
+    }
+
+    const std::string &ExecutorCpp::serializeNamespace() const
+    {
+        return _serializeNamespace;
     }
 
     std::string ExecutorCpp::signInitializer(const runtime::Sign &sign)

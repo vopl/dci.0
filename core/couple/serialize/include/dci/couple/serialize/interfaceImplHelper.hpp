@@ -1,7 +1,9 @@
 #pragma once
 
 #include "interface.hpp"
+#include "messageWriter.hpp"
 #include "requestWriterResponseReader.hpp"
+#include "responseWriter.hpp"
 #include <map>
 
 namespace dci { namespace couple { namespace serialize
@@ -97,7 +99,6 @@ namespace dci { namespace couple { namespace serialize
     void InterfaceImplHelper<Concrete, Engine>::readRequest(IStream &istream)
     {
         assert(0);
-
         //read callId
 //        responseWriter = Concrete::readRequest(istream);
 //        responseWriter->setCallId(callId);

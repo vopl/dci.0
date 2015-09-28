@@ -648,7 +648,7 @@ namespace dci { namespace couple { namespace generator { namespace impl
                     {
                         _hpp<< runtimeNamespace()+"::Future< "+methodReplyTypes(m, inBody)+">";
                     }
-                    _hpp<< "("<<methodArgiments(m, false, inBody)<<")> &signal_"<<m->name()<<"()"<<el;
+                    _hpp<< "("<<methodArguments(m, false, inBody)<<")> &signal_"<<m->name()<<"()"<<el;
 
                     _hpp<< "{"<<el;
                     _hpp<< indent;

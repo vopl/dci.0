@@ -34,6 +34,8 @@ namespace dci { namespace async
 
         bool resolved() const;
         void resolveValue(T&&... val);
+        void resolveValue(::std::tuple<T...> &&val);
+        void resolveValue(const ::std::tuple<T...> &val);
         void resolveError(E&& err);
     };
 
@@ -83,6 +85,18 @@ namespace dci { namespace async
     void Promise<E, T...>::resolveValue(T&&... val)
     {
         this->instance().resolveValue(std::forward<T>(val)...);
+    }
+
+    template <class E, class... T>
+    void Promise<E, T...>::resolveValue(::std::tuple<T...> &&val)
+    {
+        this->instance().resolveValue(std::move(val));
+    }
+
+    template <class E, class... T>
+    void Promise<E, T...>::resolveValue(const ::std::tuple<T...> &val)
+    {
+        this->instance().resolveValue(val);
     }
 
     template <class E, class... T>

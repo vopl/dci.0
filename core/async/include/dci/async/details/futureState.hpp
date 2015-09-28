@@ -38,6 +38,8 @@ namespace dci { namespace async { namespace details
         bool resolved2Error() const;
 
         void resolveValue(T &&... val);
+        void resolveValue(Value &&val);
+        void resolveValue(const Value &val);
         void resolveError(E && error);
 
         void wait();
@@ -149,6 +151,27 @@ namespace dci { namespace async { namespace details
         _readyEvent.set();
         execThens();
     }
+
+    template <class E, class... T>
+    void FutureState<E, T...>::resolveValue(Value &&val)
+    {
+        assert(!resolved());
+        new(&_data._value) Value {std::move(val)};
+        _dataState = DataState::value;
+        _readyEvent.set();
+        execThens();
+    }
+
+    template <class E, class... T>
+    void FutureState<E, T...>::resolveValue(const Value &val)
+    {
+        assert(!resolved());
+        new(&_data._value) Value {val};
+        _dataState = DataState::value;
+        _readyEvent.set();
+        execThens();
+    }
+
 
     template <class E, class... T>
     void FutureState<E, T...>::resolveError(E && err)

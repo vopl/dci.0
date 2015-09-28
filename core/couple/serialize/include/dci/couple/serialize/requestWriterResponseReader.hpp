@@ -1,6 +1,7 @@
 #pragma once
 
 #include "writer.hpp"
+#include <system_error>
 
 namespace dci { namespace couple { namespace serialize
 {
@@ -17,6 +18,15 @@ namespace dci { namespace couple { namespace serialize
     protected:
         virtual void write(OStream &ostream) override = 0;
         virtual void read(IStream &istream) = 0;
+
+        enum class ReadResult
+        {
+            ok,
+            error,
+        };
+
+        ReadResult read(IStream &istream, std::error_code &ec);
+
 
     private:
         CallId _callId;
@@ -51,10 +61,10 @@ namespace dci { namespace couple { namespace serialize
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
     template <class OStream, class IStream>
-    void RequestWriterResponseReader<OStream, IStream>::read(IStream &istream)
+    typename RequestWriterResponseReader<OStream, IStream>::ReadResult RequestWriterResponseReader<OStream, IStream>::read(IStream &istream, std::error_code &ec)
     {
         (void)istream;
-        // empty is ok
+        // TODO: read type (error or value), if error - read error and return error-status
     }
 
 }}}

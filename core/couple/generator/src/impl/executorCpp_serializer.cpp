@@ -44,6 +44,7 @@ namespace dci { namespace couple { namespace generator { namespace impl
             {
                 _hpp<< "#pragma once"<<el;
                 _hpp<< "#include <dci/couple/runtime.hpp>"<<el;
+                _hpp<< "#include <dci/couple/serialize.hpp>"<<el;
                 _hpp<< el;
                 _hpp<< "namespace dci { namespace couple { namespace runtime { namespace ser"<<el;
                 _hpp<< "{"<<el;
@@ -103,14 +104,14 @@ namespace dci { namespace couple { namespace generator { namespace impl
         _hpp<< "template <class Engine>"<<el;
         _hpp<< "struct "<<v->name()<<el;
         _hpp<< indent;
-        _hpp<< ": public ::dci::couple::runtime::hs"<<typeName(v->opposite(), inTarget)<<"<"<<v->name()<<"<Engine>>"<<el;
-        _hpp<< ", public ::dci::couple::serialize::InterfaceImplHelper<"<<v->name()<<"<Engine>, Engine>"<<el;
+        _hpp<< ": public "<<runtimeNamespace()<<"::hs"<<typeName(v->opposite(), inTarget)<<"<"<<v->name()<<"<Engine>>"<<el;
+        _hpp<< ", public "<<serializeNamespace()<<"::InterfaceImplHelper<"<<v->name()<<"<Engine>, Engine>"<<el;
         _hpp<< undent;
         _hpp<< "{"<<el;
         _hpp<< indent;
 
-        _hpp<< "using Handler = ::dci::couple::runtime::hs"<<typeName(v->opposite(), inTarget)<<"<"<<v->name()<<"<Engine>>;"<<el;
-        _hpp<< "using ImplHelper = ::dci::couple::serialize::InterfaceImplHelper<"<<v->name()<<"<Engine>, Engine>;"<<el;
+        _hpp<< "using Handler = "<<runtimeNamespace()<<"::hs"<<typeName(v->opposite(), inTarget)<<"<"<<v->name()<<"<Engine>>;"<<el;
+        _hpp<< "using ImplHelper = "<<serializeNamespace()<<"::InterfaceImplHelper<"<<v->name()<<"<Engine>, Engine>;"<<el;
         _hpp<< "using OStream = typename Engine::OStream;"<<el;
         _hpp<< "using IStream = typename Engine::IStream;"<<el;
 
@@ -148,26 +149,6 @@ namespace dci { namespace couple { namespace generator { namespace impl
         }
         _hpp<< el;
 
-        _hpp<< "//method bodies"<<el;
-        {
-            for(const Interface *b : interfaceWithAllBases(v))
-            {
-                _hpp<< "//interface "<<b->name()<<el;
-                for(const Method *m : b->methods())
-                {
-                    if(CallDirection::in == m->direction())
-                    {
-                        _hpp<< methodSignature(m, inTarget)<<" {assert(0);}"<<el;
-                    }
-                    else
-                    {
-                        _hpp<< "//[out] "<<methodSignature(m, inTarget)<<";"<<el;
-                    }
-                }
-                _hpp<< el;
-            }
-        }
-
         _hpp<< el;
         _hpp<< undent;
         _hpp<< "private:"<<el;
@@ -184,7 +165,6 @@ namespace dci { namespace couple { namespace generator { namespace impl
             for(const Interface *b : interfaceWithAllBases(v))
             {
                 _hpp<< "//interface "<<b->name()<<el;
-                //b = b->primary() ? b : b->opposite();
 
                 for(const Method *m : b->methods())
                 {
@@ -198,10 +178,323 @@ namespace dci { namespace couple { namespace generator { namespace impl
             _hpp<< "};"<<el;
 
         }
+        _hpp<< el;
 
         _hpp<< undent;
-        _hpp<< "};"<<el;
-        _hpp<< el;
+        _hpp<< "public:"<<el;
+        _hpp<< indent;
+        _hpp<< "//method implementations"<<el;
+        {
+            for(const Interface *b : interfaceWithAllBases(v))
+            {
+                _hpp<< "//interface "<<b->name()<<el;
+
+                for(const Method *m : b->methods())
+                {
+                    if(CallDirection::in == m->direction())
+                    {
+                        continue;
+                    }
+
+                    _hpp<< methodSignature(m, inTarget)<<el;
+                    _hpp<< "{"<<el;
+                    _hpp<< indent;
+
+                    if(m->noreply())
+                    {
+                        _hpp<< "struct ConcreteMessageWriter"<<el;
+                        _hpp<< indent;
+                            _hpp<< ": public "<<serializeNamespace()<<"::MessageWriter<OStream>"<<el;
+                        _hpp<< undent;
+                        _hpp<< "{"<<el;
+                        _hpp<< indent;
+                            _hpp<< "std::tuple< "<< methodArguments(m, false, inTarget)<<"> _args;"<<el;
+
+                            _hpp<< "ConcreteMessageWriter("<< methodArguments(m, true, inTarget)<<")"<<el;
+                            _hpp<< indent;
+                                _hpp<< ": _args("<<methodArgumentsMove(m)<<")"<<el;
+
+                                _hpp<< undent;
+                                _hpp<< "{"<<el;
+                                _hpp<< indent;
+                                _hpp<< undent;
+                                _hpp<< "}"<<el;
+
+                                _hpp<< "virtual void write(OStream &w) override"<<el;
+                                _hpp<< "{"<<el;
+                                _hpp<< indent;
+                                    _hpp<< serializeNamespace()<<"::MessageWriter<OStream>::write(w);"<<el;
+
+                                    _hpp<< "w << MethodId::"<<methodIdName(b,m)<<";"<<el;
+                                    _hpp<< "w << ::std::move(_args);"<<el;
+                                _hpp<< undent;
+                                _hpp<< "}"<<el;
+
+                        _hpp<< undent;
+                        _hpp<< "};"<<el;
+
+                        _hpp<< "this->pushMessageWriter(std::unique_ptr<ConcreteMessageWriter>(new ConcreteMessageWriter("<<methodArgumentsMove(m)<< ")));"<<el;
+                    }
+                    else
+                    {
+                        _hpp<< "struct ConcreteRequestWriterResponseReader"<<el;
+                        _hpp<< indent;
+                            _hpp<< ": public "<<serializeNamespace()<<"::RequestWriterResponseReader<OStream, IStream>"<<el;
+                        _hpp<< undent;
+                        _hpp<< "{"<<el;
+                        _hpp<< indent;
+                            _hpp<< "std::tuple< "<< methodArguments(m, false, inTarget)<<"> _args;"<<el;
+                            _hpp<< "::dci::couple::runtime::Promise< "<<methodReplyTypes(m, inTarget)<<"> _promise;"<<el;
+
+                            _hpp<< "ConcreteRequestWriterResponseReader("<< methodArguments(m, true, inTarget)<<")"<<el;
+                            _hpp<< indent;
+                                _hpp<< ": _args("<<methodArgumentsMove(m)<<")"<<el;
+
+                                _hpp<< undent;
+                                _hpp<< "{"<<el;
+                                _hpp<< indent;
+                                _hpp<< undent;
+                                _hpp<< "}"<<el;
+
+                                _hpp<< "::dci::couple::runtime::Future< > result()"<<el;
+                                _hpp<< "{"<<el;
+                                _hpp<< indent;
+                                    _hpp<< "return _promise.future();"<<el;
+                                _hpp<< undent;
+                                _hpp<< "}"<<el;
+
+                                _hpp<< "virtual void write(OStream &w) override"<<el;
+                                _hpp<< "{"<<el;
+                                _hpp<< indent;
+                                    _hpp<< ""<<serializeNamespace()<<"::RequestWriterResponseReader<OStream, IStream>::write(w);"<<el;
+
+                                    _hpp<< "w << MethodId::"<<methodIdName(b,m)<<";"<<el;
+                                    _hpp<< "w << ::std::move(_args);"<<el;
+                                _hpp<< undent;
+                                _hpp<< "}"<<el;
+
+                                _hpp<< "virtual void read(IStream &r) override"<<el;
+                                _hpp<< "{"<<el;
+                                _hpp<< indent;
+                                    _hpp<< "::std::error_code ec;"<<el;
+                                    _hpp<< "switch("<<serializeNamespace()<<"::RequestWriterResponseReader<OStream, IStream>::read(r, ec))"<<el;
+                                    _hpp<< "{"<<el;
+                                    _hpp<< "case "<<serializeNamespace()<<"::ResponseWriter<OStream>::ReadResult::error:"<<el;
+                                    _hpp<< indent;
+                                        _hpp<< "_promise.resolveError(::std::move(ec));"<<el;
+                                        _hpp<< "break;"<<el;
+                                    _hpp<< undent;
+                                    _hpp<< "case "<<serializeNamespace()<<"::ResponseWriter<OStream>::ReadResult::ok:"<<el;
+                                    _hpp<< indent;
+                                        _hpp<< "::std::tuple< "<<methodReplyTypes(m, inTarget)<<"> res;"<<el;
+                                        _hpp<< "r >> res;"<<el;
+                                        _hpp<< "_promise.resolveValue(::std::move(res));"<<el;
+                                        _hpp<< "break;"<<el;
+                                    _hpp<< undent;
+                                    _hpp<< "}"<<el;
+
+                                _hpp<< undent;
+                            _hpp<< "}"<<el;
+                        _hpp<< undent;
+                        _hpp<< "};"<<el;
+
+                        _hpp<< "return this->pushRequestWriter(std::unique_ptr<ConcreteRequestWriterResponseReader>(new ConcreteRequestWriterResponseReader("<<methodArgumentsMove(m)<< ")));"<<el;
+                    }
+
+                    _hpp<< undent;
+                    _hpp<< "}"<<el;
+                }
+                _hpp<< el;
+            }
+
+
+            _hpp<< undent;
+            _hpp<< "private:"<<el;
+            _hpp<< indent;
+            _hpp<< "//request reader"<<el;
+            {
+                _hpp<< "void readRequest(IStream &r, "<<serializeNamespace()<<"::CallId callId)"<<el;
+                _hpp<< "{"<<el;
+                _hpp<< indent;
+
+                    _hpp<<"MethodId methodId;"<<el;
+                    _hpp<<"r >> methodId;"<<el;
+
+                    _hpp<<"switch(methodId)"<<el;
+                    _hpp<< "{"<<el;
+
+                    for(const Interface *b : interfaceWithAllBases(v))
+                    {
+                        _hpp<< "//interface "<<b->name()<<el;
+                        for(const Method *m : b->methods())
+                        {
+                            if(CallDirection::out == m->direction())
+                            {
+                                continue;
+                            }
+
+                            if(!m->noreply())
+                            {
+                                _hpp<< "case MethodId::"<<methodIdName(b, m)<<":"<<el;
+                                _hpp<< indent;
+                                _hpp<< "{"<<el;
+                                _hpp<< indent;
+                                    _hpp<< "struct ConcreteResponseWriter"<<el;
+                                    _hpp<< indent;
+                                        _hpp<< ": public "<<serializeNamespace()<<"::ResponseWriter<OStream>"<<el;
+                                    _hpp<< undent;
+                                    _hpp<< "{"<<el;
+                                    _hpp<< indent;
+                                        _hpp<< runtimeNamespace()<<"::Future< "<< methodArguments(m, false, inTarget)<<"> _response;"<<el;
+
+                                        _hpp<< "ConcreteResponseWriter("<<serializeNamespace()<<"::CallId callId, "<<runtimeNamespace()<<"::Future< "<< methodArguments(m, false, inTarget)<<"> &&response)"<<el;
+                                        _hpp<< indent;
+                                            _hpp<< ": "<<serializeNamespace()<<"::ResponseWriter<OStream>(callId)"<<el;
+                                            _hpp<< ", _response(::std::move(response))"<<el;
+
+                                            _hpp<< undent;
+                                            _hpp<< "{"<<el;
+                                            _hpp<< indent;
+                                            _hpp<< undent;
+                                            _hpp<< "}"<<el;
+
+                                            _hpp<< "virtual void write(OStream &w) override"<<el;
+                                            _hpp<< "{"<<el;
+                                            _hpp<< indent;
+                                                _hpp<< "if(_response.hasError())"<<el;
+                                                _hpp<< "{"<<el;
+                                                _hpp<< indent;
+                                                    _hpp<< ""<<serializeNamespace()<<"::ResponseWriter<OStream>::write(w, _response.detachError());"<<el;
+                                                _hpp<< undent;
+                                                _hpp<< "}"<<el;
+                                                _hpp<< "else"<<el;
+                                                _hpp<< "{"<<el;
+                                                _hpp<< indent;
+                                                    _hpp<< ""<<serializeNamespace()<<"::ResponseWriter<OStream>::write(w);"<<el;
+                                                    _hpp<< "w << ::std::move(_response.detachValue());"<<el;
+                                                _hpp<< undent;
+                                                _hpp<< "}"<<el;
+
+                                            _hpp<< undent;
+                                            _hpp<< "}"<<el;
+
+                                    _hpp<< undent;
+                                    _hpp<< "};"<<el;
+
+                                    _hpp<< "::std::tuple< "<<methodArguments(m, false, inTarget)<<"> args;"<<el;
+                                    _hpp<< "r >> args;"<<el;
+
+                                    _hpp<< runtimeNamespace()<<"::Future< "<< methodArguments(m, false, inTarget)<<"> response = "<<methodName(m, inTarget, b)<<"(";
+                                    for(std::size_t i(0); i<m->query().size(); ++i)
+                                    {
+                                        if(i) _hpp<< ", ";
+                                        _hpp<< "::std::get<"<<i<<">(::std::move(args))";
+                                    }
+                                    _hpp<< ");"<<el;
+
+                                    _hpp<< "this->pushMessageWriter(std::unique_ptr<ConcreteResponseWriter>(new ConcreteResponseWriter(callId, ::std::move(response))));"<<el;
+                                _hpp<< undent;
+                                _hpp<< "}"<<el;
+                                _hpp<< "break;"<<el;
+                                _hpp<< undent;
+                            }
+                        }
+                    }
+
+                    _hpp<< "default: "<<el;
+                    _hpp<< indent;
+                    _hpp<< "assert(!\"not implemented, handler for bad method id\");"<<el;
+                    _hpp<< "break;"<<el;
+                    _hpp<< undent;
+
+
+                    _hpp<< "}"<<el;
+
+
+                _hpp<< undent;
+                _hpp<< "}"<<el;
+
+            }
+
+
+
+
+
+
+
+
+
+            _hpp<< undent;
+            _hpp<< "private:"<<el;
+            _hpp<< indent;
+            _hpp<< "//message reader"<<el;
+            {
+                _hpp<< "void readMessage(IStream &r)"<<el;
+                _hpp<< "{"<<el;
+                _hpp<< indent;
+
+                    _hpp<<"MethodId methodId;"<<el;
+                    _hpp<<"r >> methodId;"<<el;
+
+                    _hpp<<"switch(methodId)"<<el;
+                    _hpp<< "{"<<el;
+
+                    for(const Interface *b : interfaceWithAllBases(v))
+                    {
+                        _hpp<< "//interface "<<b->name()<<el;
+                        for(const Method *m : b->methods())
+                        {
+                            if(CallDirection::out == m->direction())
+                            {
+                                continue;
+                            }
+
+                            if(m->noreply())
+                            {
+                                _hpp<< "case MethodId::"<<methodIdName(b, m)<<":"<<el;
+                                _hpp<< indent;
+                                _hpp<< "{"<<el;
+                                _hpp<< indent;
+
+                                    _hpp<< "::std::tuple< "<<methodArguments(m, false, inTarget)<<"> args;"<<el;
+                                    _hpp<< "r >> args;"<<el;
+
+                                    _hpp<< methodName(m, inTarget, b)<<"(";
+                                    for(std::size_t i(0); i<m->query().size(); ++i)
+                                    {
+                                        if(i) _hpp<< ", ";
+                                        _hpp<< "::std::get<"<<i<<">(::std::move(args))";
+                                    }
+                                    _hpp<< ");"<<el;
+
+                                _hpp<< undent;
+                                _hpp<< "}"<<el;
+                                _hpp<< "break;"<<el;
+                                _hpp<< undent;
+                            }
+                        }
+                    }
+
+                    _hpp<< "default: "<<el;
+                    _hpp<< indent;
+                    _hpp<< "assert(!\"not implemented, handler for bad method id\");"<<el;
+                    _hpp<< "break;"<<el;
+                    _hpp<< undent;
+
+
+                    _hpp<< "}"<<el;
+
+
+                _hpp<< undent;
+                _hpp<< "}"<<el;
+
+            }
+
+
+            _hpp<< undent;
+            _hpp<< "};"<<el;
+
+        }
 
         return true;
     }
