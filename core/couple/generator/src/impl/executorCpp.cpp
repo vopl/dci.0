@@ -162,7 +162,7 @@ namespace dci { namespace couple { namespace generator { namespace impl
 
         return
                 std::string(flags&ignoreTemplateTypename ? "" : "typename ")+
-                (flags&forGlobalScope ? _runtimeNamespace+"::generated::" : "")+
+                (flags&forGlobalScope ? _runtimeNamespace+"::generated::basis::" : "")+
                 (flags&inWire ? _wireName : _bodyName)+
                 "<"+(flags&instantiated ? "0" : "i")+">"+scopedName;
     }

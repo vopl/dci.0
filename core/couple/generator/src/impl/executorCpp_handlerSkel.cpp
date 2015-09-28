@@ -44,14 +44,14 @@ namespace dci { namespace couple { namespace generator { namespace impl
                 _hpp<< "#pragma once"<<el;
                 _hpp<< "#include <dci/couple/runtime.hpp>"<<el;
                 _hpp<< el;
-                _hpp<< "namespace dci { namespace couple { namespace runtime { namespace hs"<<el;
+                _hpp<< "namespace dci { namespace couple { namespace runtime { namespace generated { namespace handlers"<<el;
                 _hpp<< "{"<<el;
                 _hpp<< indent;
 
                 writeBody(lib.rootScope(), false);
 
                 _hpp<< undent;
-                _hpp<< "}}}}"<<el;
+                _hpp<< "}}}}}"<<el;
                 _hpp<< el;
 
             }

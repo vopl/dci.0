@@ -46,14 +46,14 @@ namespace dci { namespace couple { namespace generator { namespace impl
                 _hpp<< "#include <dci/couple/runtime.hpp>"<<el;
                 _hpp<< "#include <dci/couple/serialize.hpp>"<<el;
                 _hpp<< el;
-                _hpp<< "namespace dci { namespace couple { namespace runtime { namespace ser"<<el;
+                _hpp<< "namespace dci { namespace couple { namespace runtime { namespace generated { namespace serializers"<<el;
                 _hpp<< "{"<<el;
                 _hpp<< indent;
 
                 writeBody(lib.rootScope(), false);
 
                 _hpp<< undent;
-                _hpp<< "}}}}"<<el;
+                _hpp<< "}}}}}"<<el;
                 _hpp<< el;
 
             }
@@ -104,13 +104,13 @@ namespace dci { namespace couple { namespace generator { namespace impl
         _hpp<< "template <class Engine>"<<el;
         _hpp<< "struct "<<v->name()<<el;
         _hpp<< indent;
-        _hpp<< ": public "<<runtimeNamespace()<<"::hs"<<typeName(v->opposite(), inTarget)<<"<"<<v->name()<<"<Engine>>"<<el;
+        _hpp<< ": public "<<runtimeNamespace()<<"::generated::handlers"<<typeName(v->opposite(), inTarget)<<"<"<<v->name()<<"<Engine>>"<<el;
         _hpp<< ", public "<<serializeNamespace()<<"::InterfaceImplHelper<"<<v->name()<<"<Engine>, Engine>"<<el;
         _hpp<< undent;
         _hpp<< "{"<<el;
         _hpp<< indent;
 
-        _hpp<< "using Handler = "<<runtimeNamespace()<<"::hs"<<typeName(v->opposite(), inTarget)<<"<"<<v->name()<<"<Engine>>;"<<el;
+        _hpp<< "using Handler = "<<runtimeNamespace()<<"::generated::handlers"<<typeName(v->opposite(), inTarget)<<"<"<<v->name()<<"<Engine>>;"<<el;
         _hpp<< "using ImplHelper = "<<serializeNamespace()<<"::InterfaceImplHelper<"<<v->name()<<"<Engine>, Engine>;"<<el;
         _hpp<< "using OStream = typename Engine::OStream;"<<el;
         _hpp<< "using IStream = typename Engine::IStream;"<<el;
@@ -403,7 +403,7 @@ namespace dci { namespace couple { namespace generator { namespace impl
 
                     _hpp<< "default: "<<el;
                     _hpp<< indent;
-                    _hpp<< "assert(!\"not implemented, handler for bad method id\");"<<el;
+                    _hpp<< "this->badMethodRequested(methodId);"<<el;
                     _hpp<< "break;"<<el;
                     _hpp<< undent;
 
@@ -477,7 +477,7 @@ namespace dci { namespace couple { namespace generator { namespace impl
 
                     _hpp<< "default: "<<el;
                     _hpp<< indent;
-                    _hpp<< "assert(!\"not implemented, handler for bad method id\");"<<el;
+                    _hpp<< "this->badMethodMessaged(methodId);"<<el;
                     _hpp<< "break;"<<el;
                     _hpp<< undent;
 

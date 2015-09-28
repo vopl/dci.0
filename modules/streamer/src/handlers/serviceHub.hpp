@@ -10,7 +10,7 @@ namespace handlers
     using namespace streamer;
 
     class ServiceHub
-        : public hs::streamer::ServiceHub<ServiceHub>
+        : public generated::handlers::streamer::ServiceHub<ServiceHub>
     {
     public:
         ServiceHub();

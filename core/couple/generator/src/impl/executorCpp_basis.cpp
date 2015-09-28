@@ -54,7 +54,7 @@ namespace dci { namespace couple { namespace generator { namespace impl
                 }
 
 
-                _hpp<< "namespace dci { namespace couple { namespace runtime { namespace generated"<<el;
+                _hpp<< "namespace dci { namespace couple { namespace runtime { namespace generated { namespace basis"<<el;
                 _hpp<< "{"<<el;
                 _hpp<< indent;
 
@@ -100,7 +100,7 @@ namespace dci { namespace couple { namespace generator { namespace impl
                 }
 
                 _hpp<< undent;
-                _hpp<< "}}}}"<<el;
+                _hpp<< "}}}}}"<<el;
                 _hpp<< el;
 
             }

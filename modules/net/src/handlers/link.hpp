@@ -14,7 +14,7 @@ namespace handlers
     using namespace net;
 
     struct Link
-        : hs::net::Link<Link>
+        : generated::handlers::net::Link<Link>
     {
         Link(::impl::Link *impl);
         ~Link();

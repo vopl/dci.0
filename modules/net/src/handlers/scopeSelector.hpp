@@ -21,7 +21,7 @@ namespace handlers
             using Channel = ip4::datagram::Channel;
 
             template <class H>
-            using ChannelHandlerSkel = hs::net::ip4::datagram::Channel<H>;
+            using ChannelHandlerSkel = generated::handlers::net::ip4::datagram::Channel<H>;
         };
 
         struct stream
@@ -31,13 +31,13 @@ namespace handlers
             using Channel = ip4::stream::Channel;
 
             template <class H>
-            using ServerHandlerSkel = hs::net::ip4::stream::Server<H>;
+            using ServerHandlerSkel = generated::handlers::net::ip4::stream::Server<H>;
 
             template <class H>
-            using ClientHandlerSkel = hs::net::ip4::stream::Client<H>;
+            using ClientHandlerSkel = generated::handlers::net::ip4::stream::Client<H>;
 
             template <class H>
-            using ChannelHandlerSkel = hs::net::ip4::stream::Channel<H>;
+            using ChannelHandlerSkel = generated::handlers::net::ip4::stream::Channel<H>;
         };
     };
 
@@ -51,7 +51,7 @@ namespace handlers
             using Channel = ip6::datagram::Channel;
 
             template <class H>
-            using ChannelHandlerSkel = hs::net::ip6::datagram::Channel<H>;
+            using ChannelHandlerSkel = generated::handlers::net::ip6::datagram::Channel<H>;
         };
 
         struct stream
@@ -61,13 +61,13 @@ namespace handlers
             using Channel = ip6::stream::Channel;
 
             template <class H>
-            using ServerHandlerSkel = hs::net::ip6::stream::Server<H>;
+            using ServerHandlerSkel = generated::handlers::net::ip6::stream::Server<H>;
 
             template <class H>
-            using ClientHandlerSkel = hs::net::ip6::stream::Client<H>;
+            using ClientHandlerSkel = generated::handlers::net::ip6::stream::Client<H>;
 
             template <class H>
-            using ChannelHandlerSkel = hs::net::ip6::stream::Channel<H>;
+            using ChannelHandlerSkel = generated::handlers::net::ip6::stream::Channel<H>;
         };
     };
 
@@ -83,13 +83,13 @@ namespace handlers
             using Channel = local::stream::Channel;
 
             template <class H>
-            using ServerHandlerSkel = hs::net::local::stream::Server<H>;
+            using ServerHandlerSkel = generated::handlers::net::local::stream::Server<H>;
 
             template <class H>
-            using ClientHandlerSkel = hs::net::local::stream::Client<H>;
+            using ClientHandlerSkel = generated::handlers::net::local::stream::Client<H>;
 
             template <class H>
-            using ChannelHandlerSkel = hs::net::local::stream::Channel<H>;
+            using ChannelHandlerSkel = generated::handlers::net::local::stream::Channel<H>;
         };
     };
 }

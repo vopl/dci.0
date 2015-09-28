@@ -12,7 +12,7 @@ namespace handlers
     using namespace streamer;
 
     class ChannelHub
-        : public hs::streamer::ChannelHub<ChannelHub>
+        : public generated::handlers::streamer::ChannelHub<ChannelHub>
     {
     public:
         ChannelHub();

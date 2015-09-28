@@ -158,7 +158,10 @@ TEST(Streamer, Probe)
     {
         xyz::Engine e;
 
-        volatile ::dci::couple::runtime::ser::streamer::Channel<xyz::Engine> h(e, false);
+        ::dci::couple::runtime::generated::serializers::streamer::Channel<xyz::Engine> h(e, false);
+
+        ::streamer::Stream::Traffic tr;
+        h.flow(std::move(tr));
 
     }
 

@@ -16,7 +16,7 @@ namespace handlers
     using namespace net;
 
     struct Host
-        : hs::net::Host<Host>
+        : generated::handlers::net::Host<Host>
     {
         Host(::impl::Host *impl);
         ~Host();
