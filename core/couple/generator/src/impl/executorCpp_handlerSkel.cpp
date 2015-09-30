@@ -170,20 +170,14 @@ namespace dci { namespace couple { namespace generator { namespace impl
         _hpp<< el;
 
         {
-            _hpp<< "//methods, deleted 'in' for implementation and commented 'out' for use"<<el;
+            _hpp<< "//method defenitions, '[in]' for implementation and '[out]' for use"<<el;
             for(const Interface *b : interfaceWithAllBases(v))
             {
                 _hpp<< "//interface "<<b->name()<<el;
                 for(const Method *m : b->methods())
                 {
-                    if(CallDirection::in == m->direction())
-                    {
-                        _hpp<< methodSignature(m, inTarget)<<" = delete;"<<el;
-                    }
-                    else
-                    {
-                        _hpp<< "//"<<methodSignature(m, inTarget)<<";"<<el;
-                    }
+                    _hpp<< "// "<<(CallDirection::in == m->direction() ? "[in] " : "[out]")<<" ";
+                    _hpp<< methodSignature(m, inTarget)<<";"<<el;
                 }
                 _hpp<< el;
             }

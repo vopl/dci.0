@@ -158,10 +158,10 @@ TEST(Streamer, Probe)
     {
         xyz::Engine e;
 
-        ::dci::couple::runtime::generated::serializers::streamer::Channel<xyz::Engine> h(e, false);
+        ::streamer::Channel h;
 
         ::streamer::Stream::Traffic tr;
-        h.flow(std::move(tr));
+        h._out.flow(std::move(tr));
 
     }
 

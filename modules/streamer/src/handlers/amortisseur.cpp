@@ -1,23 +1,22 @@
-#include "serviceHub.hpp"
+#include "amortisseur.hpp"
 #include <dci/couple/runtime.hpp>
 
 namespace handlers
 {
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
-    ServiceHub::ServiceHub()
+    Amortisseur::Amortisseur()
     {
     }
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
-    ServiceHub::~ServiceHub()
+    Amortisseur::~Amortisseur()
     {
     }
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
-    void ServiceHubHandlerFactory::createService(void *outFuture)
+    void AmortisseurHandlerFactory::createService(void *outFuture)
     {
-        auto *res = static_cast<dci::async::Future<std::error_code, ::streamer::ServiceHub> *>(outFuture);
-        *res = ::streamer::ServiceHub(* new ServiceHub);
+        auto *res = static_cast<dci::async::Future<std::error_code, ::streamer::Amortisseur> *>(outFuture);
+        *res = ::streamer::Amortisseur(* new Amortisseur);
     }
-
 }

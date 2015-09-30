@@ -5,6 +5,7 @@
 
 #include "handlers/channelHub.hpp"
 #include "handlers/serviceHub.hpp"
+#include "handlers/amortisseur.hpp"
 
 using namespace dci::couple::runtime;
 using namespace dci::site;
@@ -21,6 +22,7 @@ struct Info
         _id.fromHex("23bd7add4fc9c603b42bb20a41fe80a0");
         _serviceIds.push_back(ChannelHub::_iid);
         _serviceIds.push_back(ServiceHub::_iid);
+        _serviceIds.push_back(Amortisseur::_iid);
 
         _revision = 1;
         _name = "streamer";
@@ -98,6 +100,10 @@ struct Entry
         {
             return new handlers::ServiceHubHandlerFactory;
         }
+        if(Amortisseur::_iid == iid)
+        {
+            return new handlers::AmortisseurHandlerFactory;
+        }
 
         return nullptr;
     }
@@ -110,6 +116,11 @@ struct Entry
             return;
         }
         if(ServiceHub::_iid == iid)
+        {
+            delete factory;
+            return;
+        }
+        if(Amortisseur::_iid == iid)
         {
             delete factory;
             return;

@@ -21,42 +21,67 @@ scope streamer
         in flow:    (Traffic);
     }
 
-    interface Channel: Stream, StreamOpposite
+    struct Channel
     {
+        Stream          _out;
+        StreamOpposite  _in;
     }
 
-    interface ChannelEndpoint
+    interface Endpoint
     {
-        in start:           (Channel)       -> ();
-        in stop:            ()              -> (Channel);
+        in attachChannel:   (Channel)       -> ();
+        in detachChannel:   ()              -> (Channel);
 
-        out channelFail:    (error);
+        out channelFail:    (error)         -> ();
     }
 
-    interface ChannelHub: ChannelEndpoint
+    interface ChannelHub: Endpoint
     {
-        alias ChannelId = uint32;
+        alias SubchannelId = uint32;
 
-        in inject:          (ChannelOpposite)   -> (ChannelId);
-        in eject:           (ChannelId)         -> (ChannelOpposite);
+        in injectSubchannel:    (Channel)       -> (SubchannelId);
+        in ejectSubchannel:     (SubchannelId)  -> (Channel);
 
-        out subchannelFail: (ChannelId, error);
+        out subchannelFail:     (SubchannelId, error);
     }
 
-    interface ServiceHub: ChannelEndpoint
+    interface ServiceHub: Endpoint
     {
         alias ServiceId = uint32;
         alias Local = interface;
         alias Remote = interface;
 
-        in inject:      (Remote)                -> (ServiceId);
-        in invite:      (iid)                   -> (Local, ServiceId);
-        in eject:       (ServiceId)             -> (Remote);
+        in injectService:   (Remote)                -> (ServiceId);
+        in inviteService:   (iid)                   -> (Local, ServiceId);
+        in ejectService:    (ServiceId)             -> (Remote);
 
-        out injected:   (Local, ServiceId);
-        out invited:    (iid, ServiceId)        -> (Remote);
-        out ejected:    (Remote, ServiceId);
+        out serviceInjected:(Local, ServiceId);
+        out serviceInvited: (iid, ServiceId)        -> (Remote);
+        out serviceEjected: (Remote, ServiceId);
 
-        out serviceFail:(ServiceId, error);
+        out serviceFail:    (ServiceId, error);
     }
+
+
+    interface Amortisseur : Endpoint
+    {
+        enum AmortisseurState
+        {
+            stop;
+            run;
+            pause;
+            fail;
+        }
+
+        in startAmortisseur:    (Channel)           -> ();
+        in pauseAmortisseur:    ()                  -> ();
+        in resumeAmortisseur:   ()                  -> ();
+        in migrateAmortisseur:  (Channel)           -> (Channel);
+        in stopAmortisseur:     ()                  -> (Channel);
+
+        in amortisseurState:    ()                  -> (AmortisseurState);
+        out amortisseurState:   (AmortisseurState)  -> ();
+        out amortisseurFail:    (error)             -> ();
+    }
+
 }

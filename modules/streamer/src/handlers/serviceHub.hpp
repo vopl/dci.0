@@ -4,6 +4,9 @@
 #include "streamer.hpp"
 #include "streamerHandlerSkel.hpp"
 
+#include "../impl/endpoint.hpp"
+#include "../impl/serviceHub.hpp"
+
 namespace handlers
 {
     using namespace dci::couple::runtime;
@@ -11,17 +14,12 @@ namespace handlers
 
     class ServiceHub
         : public generated::handlers::streamer::ServiceHub<ServiceHub>
+        , public ::impl::Endpoint<ServiceHub>
+        , public ::impl::ServiceHub<ServiceHub>
     {
     public:
         ServiceHub();
         ~ServiceHub();
-
-        Future< > start(Channel &&arg_0);
-        Future< Channel> stop();
-
-        Future< ServiceId> inject(Interface &&arg_0);
-        Future< Interface, ServiceId> invite(Iid &&arg_0);
-        Future< Interface> eject(ServiceId &&arg_0);
     };
 
     struct ServiceHubHandlerFactory

@@ -4,7 +4,8 @@
 #include "streamer.hpp"
 #include "streamerHandlerSkel.hpp"
 
-#include <experimental/optional>
+#include "../impl/endpoint.hpp"
+#include "../impl/channelHub.hpp"
 
 namespace handlers
 {
@@ -13,16 +14,12 @@ namespace handlers
 
     class ChannelHub
         : public generated::handlers::streamer::ChannelHub<ChannelHub>
+        , public ::impl::Endpoint<ChannelHub>
+        , public ::impl::ChannelHub<ChannelHub>
     {
     public:
         ChannelHub();
         ~ChannelHub();
-
-        Future< > start(Channel &&arg_0);
-        Future< Channel> stop();
-
-        Future< ChannelHub::ChannelId> inject(ChannelOpposite &&arg_0);
-        Future< ChannelOpposite> eject(ChannelHub::ChannelId &&arg_0);
     };
 
     struct ChannelHubHandlerFactory

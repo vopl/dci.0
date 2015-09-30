@@ -11,6 +11,19 @@ set(SRC
     src/handlers/channelHub.cpp
     src/handlers/serviceHub.hpp
     src/handlers/serviceHub.cpp
+    src/handlers/amortisseur.hpp
+    src/handlers/amortisseur.cpp
+
+    src/impl/endpoint.hpp
+    src/impl/endpoint.cpp
+    src/impl/channelHub.hpp
+    src/impl/channelHub.cpp
+    src/impl/serviceHub.hpp
+    src/impl/serviceHub.cpp
+    src/impl/amortisseur.hpp
+    src/impl/amortisseur.cpp
+
+    src/impl/protocol.hpp
 )
 
 
