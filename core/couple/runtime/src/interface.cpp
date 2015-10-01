@@ -3,37 +3,56 @@
 
 namespace dci { namespace couple { namespace runtime
 {
-    Interface::Interface(InterfaceWires *state, bool fwd)
-        : _wires(state)
-        , _fwd(fwd)
+    Interface::Interface(InterfaceDirection direction)
+        : _direction(direction)
+        , _wires()
     {
-        if(_wires)
-        {
-            _wires->involve(_fwd, true);
-        }
+    }
+
+    Interface::Interface(InterfaceDirection direction, InterfaceWires *wires)
+        : _direction(direction)
+        , _wires(wires)
+    {
+        assert(_wires);
+        assert(!_wires->involved(_direction));
+        _wires->involve(_direction, true);
     }
 
     Interface::Interface(Interface &&from)
-        : _wires(from._wires)
-        , _fwd(from._fwd)
+        : _direction(from.direction())
+        , _wires(from._wires)
     {
         if(_wires)
         {
             from._wires = nullptr;
-            //from._fwd = false;
         }
+    }
+
+    Interface::Interface(InterfaceOpposite &from)
+        : _direction(InterfaceDirection::fwd == from.direction() ? InterfaceDirection::bwd : InterfaceDirection::fwd)
+        , _wires(from._wires)
+    {
+        assert(_wires);
+        assert(!_wires->involved(_direction));
+        _wires->involve(_direction, true);
     }
 
     Interface::~Interface()
     {
         if(_wires)
         {
-            _wires->involve(_fwd, false);
+            _wires->involve(_direction, false);
         }
     }
 
     Interface &Interface::operator=(Interface &&from)
     {
+        assert(_direction == from._direction);
+        if(_direction != from._direction)
+        {
+            abort();
+        }
+
         assert(this != &from);
 
         if(_wires == from.wires())
@@ -43,57 +62,91 @@ namespace dci { namespace couple { namespace runtime
 
         if(_wires)
         {
-            _wires->involve(_fwd, false);
+            _wires->involve(_direction, false);
         }
-        _wires = from._wires;
-        _fwd = from._fwd;
 
+        _wires = from._wires;
         from._wires = nullptr;
-        //from._fwd = false;
 
         if(_wires)
         {
-            assert(_wires->involved(_fwd));
+            assert(_wires->involved(_direction));
         }
 
         return *this;
     }
 
-    void Interface::assign(InterfaceWires *wire, bool fwd)
+    Interface &Interface::operator=(InterfaceOpposite &from)
     {
-        if(_wires == wire)
+        assert(_direction != from._direction);
+        if(_direction == from._direction)
         {
-            assert(_fwd == fwd);
+            abort();
+        }
+
+        assert(this != &from);
+
+        if(_wires == from.wires())
+        {
+            return *this;
+        }
+
+        if(_wires)
+        {
+            _wires->involve(_direction, false);
+        }
+
+        _wires = from._wires;
+
+        assert(_wires);
+        if(!_wires)
+        {
+            abort();
+        }
+
+        _wires->involve(_direction, true);
+
+        return *this;
+
+    }
+
+    void Interface::assignWires(InterfaceWires *wires)
+    {
+        if(_wires == wires)
+        {
             return;
         }
 
         if(_wires)
         {
-            _wires->involve(_fwd, false);
+            _wires->involve(_direction, false);
         }
-        _wires = wire;
-        _fwd = fwd;
-        if(_wires)
+
+        _wires = wires;
+
+        assert(_wires);
+        if(!_wires)
         {
-            _wires->involve(_fwd, true);
+            abort();
         }
+
+        _wires->involve(_direction, true);
+    }
+
+    void Interface::virtualAssignOpposite(InterfaceOpposite &from)
+    {
+        (void)from;
+        assert(!"must be overrided");
+    }
+
+    InterfaceDirection Interface::direction() const
+    {
+        return _direction;
     }
 
     InterfaceWires *Interface::wires()
     {
-        //assert(_wires);
         return _wires;
-    }
-
-    bool Interface::fwd() const
-    {
-        return _fwd;
-    }
-
-    bool Interface::oppositeInvolved() const
-    {
-        assert(_wires);
-        return _wires->involved(!_fwd);
     }
 
     Interface::operator bool() const
@@ -105,12 +158,5 @@ namespace dci { namespace couple { namespace runtime
     {
         return !_wires;
     }
-
-    Interface::Interface(NullInterfaceInitializer)
-        : _wires(nullptr)
-        , _fwd(true)
-    {
-    }
-
 
 }}}

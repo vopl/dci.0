@@ -7,6 +7,14 @@
 
 namespace dci { namespace couple { namespace runtime
 {
+    enum class InterfaceDirection
+    {
+        fwd,
+        bwd,
+    };
+
+    struct InterfaceWithWiresInitializer {};
+
     class APIDCI_COUPLE_RUNTIME InterfaceWires
     {
         InterfaceWires(const InterfaceWires&) = delete;
@@ -19,9 +27,9 @@ namespace dci { namespace couple { namespace runtime
         InterfaceWires();
         virtual ~InterfaceWires();
 
-        void involve(bool fwd, bool use);
-        bool involved(bool fwd);
-        void listenUninvolve(bool fwd, UninvolveListener listener, void *userData=0);
+        void involve(InterfaceDirection direction, bool use);
+        bool involved(InterfaceDirection direction);
+        void listenUninvolve(InterfaceDirection direction, UninvolveListener listener, void *userData=0);
 
     public:
         virtual InterfaceWire* concrete(const Iid &iid) = 0;

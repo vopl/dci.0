@@ -18,13 +18,21 @@ scope streamer
     interface Stream
     {
         alias Traffic = bytes;
-        in flow:    (Traffic);
+
+        enum Subscription
+        {
+            none;
+            continuous;
+        }
+
+        in subscribe:   (Subscription);
+        out flow:       (Traffic);
     }
 
     struct Channel
     {
-        Stream          _out;
-        StreamOpposite  _in;
+        Stream          _input;
+        StreamOpposite  _output;
     }
 
     interface Endpoint

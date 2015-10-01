@@ -7,33 +7,38 @@
 
 namespace dci { namespace couple { namespace runtime
 {
+    class APIDCI_COUPLE_RUNTIME Interface;
+    using InterfaceOpposite = Interface;
+
     class APIDCI_COUPLE_RUNTIME Interface
     {
         Interface() = delete;
+        Interface(const Interface &) = delete;
+        void operator=(const Interface &) = delete;
 
     public:
-        Interface(InterfaceWires *wire, bool fwd);
+        Interface(InterfaceDirection direction);
+        Interface(InterfaceDirection direction, InterfaceWires *wires);
         Interface(Interface &&from);
+        Interface(InterfaceOpposite &from);
 
-        ~Interface();
+        virtual ~Interface();
 
         Interface &operator=(Interface &&from);
-        void assign(InterfaceWires *wire, bool fwd);
+        Interface &operator=(InterfaceOpposite &from);
 
+        void assignWires(InterfaceWires *wires);
+        virtual void virtualAssignOpposite(InterfaceOpposite &from);
+
+        InterfaceDirection direction() const;
         InterfaceWires *wires();
-        bool fwd() const;
-        bool oppositeInvolved() const;
 
         operator bool() const;
         bool operator !() const;
 
-    protected:
-        struct NullInterfaceInitializer {};
-        Interface(NullInterfaceInitializer);
-
     private:
-        InterfaceWires*_wires;
-        bool _fwd;
+        InterfaceDirection  _direction;
+        InterfaceWires*     _wires;
     };
 
 }}}

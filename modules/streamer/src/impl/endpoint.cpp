@@ -3,14 +3,27 @@
 namespace impl
 {
     template <class Derived>
+    Endpoint<Derived>::Endpoint()
+        : _state(State::null)
+    {
+    }
+
+    template <class Derived>
+    Endpoint<Derived>::~Endpoint()
+    {
+    }
+
+    template <class Derived>
     Future< > Endpoint<Derived>::attachChannel(Channel &&arg_0)
     {
+        _channel = std::move(arg_0);
         assert(0);
     }
 
     template <class Derived>
     Future< Channel> Endpoint<Derived>::detachChannel()
     {
+        return Future< Channel>(std::move(_channel));
         assert(0);
     }
 }

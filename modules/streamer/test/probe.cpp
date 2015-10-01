@@ -1,5 +1,8 @@
 #include <dci/gtest.hpp>
 #include <dci/site.hpp>
+#include <dci/site/manager.hpp>
+#include <dci/site/test.hpp>
+
 #include <dci/async.hpp>
 #include <dci/couple/runtime.hpp>
 #include <dci/couple/serialize.hpp>
@@ -9,6 +12,11 @@
 
 
 /////////////////////////////////////////////////////////////////////
+
+using namespace dci;
+using namespace dci::site;
+using namespace dci::async;
+using namespace dci::couple::runtime;
 
 using namespace streamer;
 using namespace dci::couple;
@@ -149,20 +157,46 @@ namespace xyz
 
 
 
-
-
-
-
-TEST(Streamer, Probe)
+/////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
+class Streamer
+    : public testing::Test
 {
+protected:
+    virtual void SetUp() override
     {
-        xyz::Engine e;
-
-        ::streamer::Channel h;
-
-        ::streamer::Stream::Traffic tr;
-        h._out.flow(std::move(tr));
-
+        _manager = testManager();
+        EXPECT_NE(_manager, nullptr);
     }
+
+    virtual void TearDown() override
+    {
+        _manager = nullptr;
+    }
+
+    Manager *_manager {nullptr};
+};
+
+
+
+TEST_F(Streamer, Probe)
+{
+//    {
+//        xyz::Engine e;
+
+//        ::streamer::Channel h;
+
+//        ::streamer::Stream::Traffic tr;
+//        h._out.flow(std::move(tr));
+
+//    }
+
+    ::streamer::ServiceHub sh1 = _manager->createService< ::streamer::ServiceHub>();
+    ::streamer::ServiceHub sh2 = _manager->createService< ::streamer::ServiceHub>();
+
+    ::streamer::Channel ch1;
+    ::streamer::Channel ch2 {ch1._output, ch1._input};
+
+    sh1.attachChannel(std::move(ch1));
+    sh2.attachChannel(std::move(ch2));
 
 }

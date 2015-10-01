@@ -20,9 +20,9 @@ namespace dci { namespace couple { namespace runtime
     }
 
 
-    void InterfaceWires::involve(bool fwd, bool use)
+    void InterfaceWires::involve(InterfaceDirection direction, bool use)
     {
-        if(fwd)
+        if(InterfaceDirection::fwd == direction)
         {
             assert(_involvedFwd != use);
             if(_uninvolvFwdListener && !use)
@@ -51,14 +51,14 @@ namespace dci { namespace couple { namespace runtime
         }
     }
 
-    bool InterfaceWires::involved(bool fwd)
+    bool InterfaceWires::involved(InterfaceDirection direction)
     {
-        return fwd ? _involvedFwd : _involvedBwd;
+        return (InterfaceDirection::fwd == direction) ? _involvedFwd : _involvedBwd;
     }
 
-    void InterfaceWires::listenUninvolve(bool fwd, UninvolveListener listener, void *userData)
+    void InterfaceWires::listenUninvolve(InterfaceDirection direction, UninvolveListener listener, void *userData)
     {
-        if(fwd)
+        if(InterfaceDirection::fwd == direction)
         {
             if(_uninvolvFwdListener && listener)
             {

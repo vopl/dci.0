@@ -103,7 +103,7 @@ namespace dci { namespace couple { namespace generator { namespace impl
         _hpp<< "struct "<<v->name()<<el;
         _hpp<< indent;
         _hpp<< ": public "<<typeName(v->opposite(), inTarget)<<el;
-        _hpp<< ", public dci::mm::NewDelete<Handler>"<<el;
+        _hpp<< ", public ::dci::mm::NewDelete<Handler>"<<el;
         _hpp<< undent;
         _hpp<< "{"<<el;
         _hpp<< indent;
@@ -118,26 +118,30 @@ namespace dci { namespace couple { namespace generator { namespace impl
             _hpp<< "//constructor"<<el;
 
             _hpp<< v->name()<<"(bool deleteSelfWhenUninvolved=true)"<<el;
+            _hpp<< indent;
+                _hpp<< ": "<<typeName(v->opposite(), inTarget)<<"("<<runtimeNamespace()<<"::InterfaceWithWiresInitializer())"<<el;
+                _hpp<< ", ::dci::mm::NewDelete<Handler>()"<<el;
+            _hpp<< undent;
             _hpp<< "{"<<el;
             _hpp<< indent;
-            _hpp<< "if(deleteSelfWhenUninvolved) wires()->listenUninvolve(true, [](void *userData){delete static_cast<Handler*>(userData);}, static_cast<Handler*>(this));"<<el;
-            _hpp<< el;
+                _hpp<< "if(deleteSelfWhenUninvolved) wires()->listenUninvolve("<<runtimeNamespace()<<"::InterfaceDirection::"<<(v->primary()?"bwd":"fwd")<<", [](void *userData){delete static_cast<Handler*>(userData);}, static_cast<Handler*>(this));"<<el;
+                _hpp<< el;
 
-            _hpp<< "bool b; (void)b;"<<el;
-            for(const Interface *b : interfaceWithAllBases(v))
-            {
-                _hpp<< "//connect 'in' methods for interface "<<b->name()<<el;
-                _hpp<< "{"<<el<<indent;
-                for(const Method *m : b->methods())
+                _hpp<< "bool b; (void)b;"<<el;
+                for(const Interface *b : interfaceWithAllBases(v))
                 {
-                    if(CallDirection::in == m->direction())
+                    _hpp<< "//connect 'in' methods for interface "<<b->name()<<el;
+                    _hpp<< "{"<<el<<indent;
+                    for(const Method *m : b->methods())
                     {
-                        _hpp<< "b = "<<typeName(v->opposite(), inTarget)<<"::signal_"<<m->name()<<"().connect(&Handler::"<<m->name()<<", static_cast<Handler *>(this));"<<el;
-                        _hpp<< "assert(b);"<<el;
+                        if(CallDirection::in == m->direction())
+                        {
+                            _hpp<< "b = "<<typeName(v->opposite(), inTarget)<<"::signal_"<<m->name()<<"().connect(&Handler::"<<m->name()<<", static_cast<Handler *>(this));"<<el;
+                            _hpp<< "assert(b);"<<el;
+                        }
                     }
+                    _hpp<< undent<<"}"<<el;
                 }
-                _hpp<< undent<<"}"<<el;
-            }
             _hpp<< undent;
             _hpp<< "}"<<el;
         }
