@@ -9,6 +9,8 @@ namespace dci { namespace async
 {
     template <class E, class... T> class Future;
 
+    struct PromiseNullInitializer{};
+
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
     template <class E, class... T>
     class Promise
@@ -24,6 +26,7 @@ namespace dci { namespace async
 
 
     public:
+        explicit Promise(PromiseNullInitializer);
         Promise();
         Promise(Promise &&other);
         Promise &operator=(Promise &&other);
@@ -42,6 +45,12 @@ namespace dci { namespace async
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
     template <class E, class... T>
+    Promise<E, T...>::Promise(PromiseNullInitializer)
+        : StateInstance(dci::mm::SharedInstanceNullInitializer())
+    {
+    }
+
+    template <class E, class... T>
     Promise<E, T...>::Promise()
         : StateInstance()
     {
@@ -57,6 +66,7 @@ namespace dci { namespace async
     Promise<E, T...> &Promise<E, T...>::operator=(Promise &&other)
     {
         this->StateInstance::operator=( std::forward<StateInstance>(other));
+        return *this;
     }
 
     template <class E, class... T>

@@ -196,7 +196,11 @@ TEST_F(Streamer, Probe)
     ::streamer::Channel ch1;
     ::streamer::Channel ch2 {ch1._output, ch1._input};
 
-    sh1.attachChannel(std::move(ch1));
-    sh2.attachChannel(std::move(ch2));
+    auto f1 = sh1.attachChannel(std::move(ch1));
+    //sh1.attachChannel(std::move(ch1));
+    auto f2 = sh2.attachChannel(std::move(ch2));
+
+    f1.wait();
+    f2.wait();
 
 }

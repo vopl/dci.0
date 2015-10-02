@@ -1,6 +1,7 @@
 #pragma once
 
 #include "details/futureState.hpp"
+#include "waitable.hpp"
 
 namespace dci { namespace async
 {
@@ -83,6 +84,7 @@ namespace dci { namespace async
         Future &operator=(const Future &other);
         Future &operator=(Future &&other);
 
+        Waitable *waitable();
         Future &wait();
 
         bool resolved() const;
@@ -169,9 +171,15 @@ namespace dci { namespace async
     }
 
     template <class E, class... T>
+    Waitable *Future<E, T...>::waitable()
+    {
+        return this->instance().waitable();
+    }
+
+    template <class E, class... T>
     Future<E, T...> &Future<E, T...>::wait()
     {
-        this->instance().wait();
+        waitable()->wait();
         return *this;
     }
 

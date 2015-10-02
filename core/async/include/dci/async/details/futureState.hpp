@@ -42,7 +42,8 @@ namespace dci { namespace async { namespace details
         void resolveValue(const Value &val);
         void resolveError(E && error);
 
-        void wait();
+        Waitable *waitable();
+
         Value &value();
         E &error();
 
@@ -184,9 +185,9 @@ namespace dci { namespace async { namespace details
     }
 
     template <class E, class... T>
-    void FutureState<E, T...>::wait()
+    Waitable *FutureState<E, T...>::waitable()
     {
-        _readyEvent.acquire();
+        return &_readyEvent;
     }
 
     template <class E, class... T>

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <dci/couple/runtime.hpp>
+#include <dci/async.hpp>
 #include "streamer.hpp"
 
 namespace impl
@@ -49,6 +50,40 @@ namespace impl
 
 
 
+    namespace
+    {
+        template <class F>
+        struct ScopedCleaner
+        {
+            F _f;
+
+            ScopedCleaner(F &&from)
+                : _f(std::forward<F>(from))
+            {
+            }
+
+            ScopedCleaner(ScopedCleaner &&from)
+                : _f(std::move(from._f))
+            {
+            }
+
+            ScopedCleaner &operator=(ScopedCleaner &&from)
+            {
+                _f = (std::move(from._f));
+            }
+
+            ~ScopedCleaner()
+            {
+                _f();
+            }
+        };
+
+        template <class F>
+        ScopedCleaner<F> makeScopedCleaner(F &&f)
+        {
+            return ScopedCleaner<F>(std::move(f));
+        }
+    }
 
 
 
@@ -63,50 +98,6 @@ namespace impl
         Future< > attachChannel(Channel &&arg_0);
         Future< Channel> detachChannel();
 
-    private:
-        void flow(Bytes &&in);
-
-        //наружу события
-        //  канал присоединен
-        //  канал запущен
-        //  ошибка в канале
-        //  входящее сообщение
-        //  канал отсоединен
-
-        //снаружи события
-        //  исходящее сообщение
-
-
-
-        /*
-         * машины
-         *      общее состояние канала и его опции
-         *          контейнер своих линков, контейнер чужих линков
-         *
-         *
-         */
-
-    private:
-        enum class State
-        {
-            null,           //пустое состояние
-            initialization, //договорится о версии, порядке байт, опциях
-            working,        //штатная работа
-            fail,           //ошибка в канале
-        };
-
-    private:
-        State   _state;
-        Channel _channel;
-
-    private:
-
-        //state
-
-        //settings (version, endianness, options,...)
-
-        //linksLocal2Remote
-        //linksRemote2Local
-
+        //FSM _fsm;
     };
 }

@@ -6,11 +6,62 @@ namespace handlers
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
     ServiceHub::ServiceHub()
     {
+        _fsm.start();
     }
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
     ServiceHub::~ServiceHub()
     {
+        detachChannel().wait();
+        _fsm.stop();
+    }
+
+    /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
+    Future< > ServiceHub::attachChannel(Channel &&arg_0)
+    {
+        if(!arg_0._input || !arg_0._output)
+        {
+            return make_error_code(streamer::error::badChannelValue);
+        }
+
+        if(boost::msm::back::HANDLED_TRUE != _fsm.process_event(FSM::attach{std::move(arg_0)}))
+        {
+            return make_error_code(streamer::error::alreadyAttached);
+        }
+
+        return _fsm.attachFuture();
+    }
+
+    /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
+    Future< Channel> ServiceHub::detachChannel()
+    {
+        if(boost::msm::back::HANDLED_TRUE != _fsm.process_event(FSM::detach()))
+        {
+            return make_error_code(streamer::error::alreadyDetached);
+        }
+
+        return _fsm.detachFuture();
+    }
+
+    /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
+    Future< streamer::ServiceHub::ServiceId> ServiceHub::injectService(Interface &&arg_0)
+    {
+        (void)arg_0;
+        assert(0);
+    }
+
+    /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
+    Future< Interface, streamer::ServiceHub::ServiceId> ServiceHub::inviteService(Iid &&arg_0)
+    {
+        (void)arg_0;
+        assert(0);
+    }
+
+    /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
+    Future< Interface> ServiceHub::ejectService(streamer::ServiceHub::ServiceId &&arg_0)
+    {
+        (void)arg_0;
+        assert(0);
     }
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7

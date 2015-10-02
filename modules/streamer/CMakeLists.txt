@@ -24,6 +24,13 @@ set(SRC
     src/impl/amortisseur.cpp
 
     src/impl/protocol.hpp
+
+
+    src/impl/fsm/endpoint.hpp
+    src/impl/fsm/endpoint/readerSubscription.hpp
+    src/impl/fsm/endpoint/reader.hpp
+    src/impl/fsm/endpoint/writer.hpp
+
 )
 
 

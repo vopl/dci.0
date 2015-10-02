@@ -3,15 +3,18 @@ scope streamer
 {
     errc error
     {
-        incompatibleProtocol:   "запрошенный удаленной стороной протокол не совместим с уже установленным";
-        unsupportedProtocol:    "запрошенный удаленной стороной протокол не поддерживается";
-        malformedData:          "бинарный поток испорчен";
-        channelClosed:          "канал закрыт";
+        badChannelValue;
+        alreadyAttached;
+        alreadyDetached;
+//        incompatibleProtocol:   "запрошенный удаленной стороной протокол не совместим с уже установленным";
+//        unsupportedProtocol:    "запрошенный удаленной стороной протокол не поддерживается";
+//        malformedData:          "бинарный поток испорчен";
+//        channelClosed:          "канал закрыт";
 
-        unknownIid:             "запрошенный идентификатор интерфейса не опознан";
+//        unknownIid:             "запрошенный идентификатор интерфейса не опознан";
 
-        tooManyChannels:        "слишком много каналов";
-        unknownChannelId:       "запрошенный идентификатор канала не опознан";
+//        tooManyChannels:        "слишком много каналов";
+//        unknownChannelId:       "запрошенный идентификатор канала не опознан";
     }
 
 
@@ -22,11 +25,12 @@ scope streamer
         enum Subscription
         {
             none;
-            continuous;
+            stepByStep;
+            unconstrained;
         }
 
-        in subscribe:   (Subscription);
-        out flow:       (Traffic);
+        in subscribe:   (Subscription)  -> ();
+        out flow:       (Traffic)       -> ();
     }
 
     struct Channel
