@@ -101,6 +101,8 @@ namespace dci { namespace mm
         unref();
         _state = other._state;
         ref();
+
+        return *this;
     }
 
     template <class T>

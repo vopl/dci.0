@@ -1,7 +1,6 @@
 #pragma once
 
-#include "details/futureState.hpp"
-#include "waitable.hpp"
+#include "details/future.hpp"
 
 namespace dci { namespace async
 {
@@ -62,13 +61,12 @@ namespace dci { namespace async
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
     template <class E, class... T>
     class Future
-        : private dci::mm::SharedInstance<details::FutureState<E, T...>>
-        , public details::FutureOperators<Future<E, T...>, E, T...>
+        : public details::FutureOperators<Future<E, T...>, E, T...>
     {
         friend class Promise<E, T...>;
-        friend struct details::FutureStateAccessor;
-        using StateInstance = dci::mm::SharedInstance<details::FutureState<E, T...>>;
-        explicit Future(const StateInstance &state);
+        friend class details::future::Engine<E, T...>;
+        using Engine = details::future::Engine<E, T...>;
+        explicit Future(const Engine &engine);
 
     public:
         using Promise = dci::async::Promise<E, T...>;
@@ -109,46 +107,48 @@ namespace dci { namespace async
 
         template <class Et, class... Tt, class F>
         Future<Et, Tt...> thenTransform(F &&);
+
+    private:
+        Engine _engine;
     };
 
     template <class E, class... T>
     Future<E, T...>::Future(FutureNullInitializer)
-        : StateInstance(dci::mm::SharedInstanceNullInitializer())
+        : _engine(details::future::EngineNullInitializer())
     {
     }
 
     template <class E, class... T>
     Future<E, T...>::Future(E && err)
-        : StateInstance()
+        : _engine()
     {
-        this->instance().resolveError(std::forward<E>(err));
+        _engine.resolveError(std::forward<E>(err));
     }
 
     template <class E, class... T>
     Future<E, T...>::Future(T &&... vals)
-        : StateInstance()
+        : _engine()
     {
-        this->instance().resolveValue(std::forward<T>(vals)...);
+        _engine.resolveValue(std::forward<T>(vals)...);
     }
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
     template <class E, class... T>
-    Future<E, T...>::Future(const StateInstance &state)
-        : StateInstance(state)
+    Future<E, T...>::Future(const Engine &engine)
+        : _engine(engine)
     {
     }
 
     template <class E, class... T>
     Future<E, T...>::Future(const Future &other)
-        : StateInstance(static_cast<const StateInstance &>(other))
+        : _engine(other._engine)
     {
     }
 
     template <class E, class... T>
     Future<E, T...>::Future(Future &&other)
-        : StateInstance(std::forward<StateInstance>(other))
+        : _engine(std::move(other._engine))
     {
-
     }
 
     template <class E, class... T>
@@ -159,21 +159,21 @@ namespace dci { namespace async
     template <class E, class... T>
     Future<E, T...> &Future<E, T...>::operator=(const Future &other)
     {
-        this->StateInstance::operator=(other);
+        _engine = other._engine;
         return *this;
     }
 
     template <class E, class... T>
     Future<E, T...> &Future<E, T...>::operator=(Future &&other)
     {
-        this->StateInstance::operator=(std::forward<StateInstance>(other));
+        _engine = std::move(other._engine);
         return *this;
     }
 
     template <class E, class... T>
     Waitable *Future<E, T...>::waitable()
     {
-        return this->instance().waitable();
+        return _engine.waitable();
     }
 
     template <class E, class... T>
@@ -186,28 +186,28 @@ namespace dci { namespace async
     template <class E, class... T>
     bool Future<E, T...>::resolved() const
     {
-        return this->instance().resolved();
+        return _engine.resolved();
     }
 
     template <class E, class... T>
     bool Future<E, T...>::hasError()
     {
         wait();
-        return this->instance().resolved2Error();
+        return _engine.resolved2Error();
     }
 
     template <class E, class... T>
     bool Future<E, T...>::hasValue()
     {
         wait();
-        return this->instance().resolved2Value();
+        return _engine.resolved2Value();
     }
 
     template <class E, class... T>
     const std::tuple<T...> &Future<E, T...>::value()
     {
         wait();
-        return this->instance().value();
+        return _engine.value();
     }
 
     template <class E, class... T>
@@ -215,14 +215,14 @@ namespace dci { namespace async
     const typename std::tuple_element<idx, std::tuple<T...> >::type &Future<E, T...>::value()
     {
         wait();
-        return std::get<idx>(this->instance().value());
+        return std::get<idx>(_engine.value());
     }
 
     template <class E, class... T>
     std::tuple<T...> &&Future<E, T...>::detachValue()
     {
         wait();
-        return std::move(this->instance().value());
+        return std::move(_engine.value());
     }
 
     template <class E, class... T>
@@ -230,21 +230,21 @@ namespace dci { namespace async
     typename std::tuple_element<idx, std::tuple<T...> >::type &&Future<E, T...>::detachValue()
     {
         wait();
-        return std::get<idx>(std::forward<typename details::FutureState<E, T...>::Value>(this->instance().value()));
+        return std::get<idx>(std::forward<typename Engine::Value>(_engine.value()));
     }
 
     template <class E, class... T>
     const E &Future<E, T...>::error()
     {
         wait();
-        return this->instance().error();
+        return _engine.error();
     }
 
     template <class E, class... T>
     E &&Future<E, T...>::detachError()
     {
         wait();
-        return std::move(this->instance().error());
+        return std::move(_engine.error());
     }
 
     template <class E, class... T>
@@ -252,17 +252,16 @@ namespace dci { namespace async
     void Future<E, T...>::then(F &&f)
     {
         struct Then
-            : details::FutureThenBase<E, T...>
+            : details::future::ThenBase<E, T...>
         {
-            Then(F &&call, const Future<E, T...> &srcFuture)
+            Then(F &&call)
                 : _call(std::forward<F>(call))
-                , _srcFuture(srcFuture)
             {
             }
 
-            void call(E *err, T *... vals) override
+            void call(Future<E, T...> &ftr) override
             {
-                _call(err, vals...);
+                _call(ftr);
             }
 
             void destroy() override
@@ -272,10 +271,9 @@ namespace dci { namespace async
             }
 
             std::decay_t<F>                 _call;
-            Future<E, T...>                 _srcFuture;
-        } *then = new(mm::alloc<sizeof(Then)>()) Then(std::forward<F>(f), *this);
+        } *then = new(mm::alloc<sizeof(Then)>()) Then(std::forward<F>(f));
 
-        this->instance().pushThen(then);
+        _engine.pushThen(then);
     }
 
 }}
@@ -289,17 +287,16 @@ namespace dci { namespace async
     Future<Et, Tt...> Future<E, T...>::thenTransform(F &&f)
     {
         struct Then
-            : details::FutureThenBase<E, T...>
+            : details::future::ThenBase<E, T...>
         {
-            Then(F &&call, const Future<E, T...> &srcFuture)
+            Then(F &&call)
                 : _call(std::forward<F>(call))
-                , _srcFuture(srcFuture)
             {
             }
 
-            void call(E *err, T *... vals) override
+            void call(Future<E, T...> &ftr) override
             {
-                _call(err, vals..., _dstPromise);
+                _call(ftr, _dstPromise);
             }
 
             void destroy() override
@@ -309,12 +306,11 @@ namespace dci { namespace async
             }
 
             std::decay_t<F>                 _call;
-            Future<E, T...>                 _srcFuture;
             dci::async::Promise<Et, Tt...>  _dstPromise;
-        } *then = new(mm::alloc<sizeof(Then)>()) Then(std::forward<F>(f), *this);
+        } *then = new(mm::alloc<sizeof(Then)>()) Then(std::forward<F>(f));
 
         auto res = then->_dstPromise.future();
-        this->instance().pushThen(then);
+        _engine.pushThen(then);
         return res;
     }
 

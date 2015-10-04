@@ -1,6 +1,6 @@
 #pragma once
 
-#include "details/futureState.hpp"
+#include "details/future.hpp"
 
 #include <cassert>
 #include <cstdlib>
@@ -14,9 +14,8 @@ namespace dci { namespace async
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
     template <class E, class... T>
     class Promise
-        : private dci::mm::SharedInstance<details::FutureState<E, T...>>
     {
-        using StateInstance = dci::mm::SharedInstance<details::FutureState<E, T...>>;
+        using Engine = details::future::Engine<E, T...>;
 
         Promise(const Promise &other) = delete;
         Promise &operator=(const Promise &other) = delete;
@@ -40,39 +39,42 @@ namespace dci { namespace async
         void resolveValue(::std::tuple<T...> &&val);
         void resolveValue(const ::std::tuple<T...> &val);
         void resolveError(E&& err);
+
+    private:
+        Engine _engine;
     };
 
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
     template <class E, class... T>
     Promise<E, T...>::Promise(PromiseNullInitializer)
-        : StateInstance(dci::mm::SharedInstanceNullInitializer())
+        : _engine(details::future::EngineNullInitializer())
     {
     }
 
     template <class E, class... T>
     Promise<E, T...>::Promise()
-        : StateInstance()
+        : _engine()
     {
     }
 
     template <class E, class... T>
     Promise<E, T...>::Promise(Promise &&other)
-        : StateInstance(std::forward<StateInstance>(other))
+        : _engine(std::move(other._engine))
     {
     }
 
     template <class E, class... T>
     Promise<E, T...> &Promise<E, T...>::operator=(Promise &&other)
     {
-        this->StateInstance::operator=( std::forward<StateInstance>(other));
+        _engine = std::move(other._engine);
         return *this;
     }
 
     template <class E, class... T>
     Promise<E, T...>::~Promise()
     {
-        if(this->counter()>1 && !this->instance().resolved())
+        if(_engine.counter()>1 && !_engine.resolved())
         {
             assert(!"unsetted promise destroyed while futures exists");
             std::abort();
@@ -82,37 +84,37 @@ namespace dci { namespace async
     template <class E, class... T>
     Future<E, T...> Promise<E, T...>::future()
     {
-        return Future(*this);
+        return Future(_engine);
     }
 
     template <class E, class... T>
     bool Promise<E, T...>::resolved() const
     {
-        return this->instance().resolved();
+        return _engine.resolved();
     }
 
     template <class E, class... T>
     void Promise<E, T...>::resolveValue(T&&... val)
     {
-        this->instance().resolveValue(std::forward<T>(val)...);
+        _engine.resolveValue(std::forward<T>(val)...);
     }
 
     template <class E, class... T>
     void Promise<E, T...>::resolveValue(::std::tuple<T...> &&val)
     {
-        this->instance().resolveValue(std::move(val));
+        _engine.resolveValue(std::move(val));
     }
 
     template <class E, class... T>
     void Promise<E, T...>::resolveValue(const ::std::tuple<T...> &val)
     {
-        this->instance().resolveValue(val);
+        _engine.resolveValue(val);
     }
 
     template <class E, class... T>
     void Promise<E, T...>::resolveError(E&& err)
     {
-        this->instance().resolveError(std::forward<E>(err));
+        _engine.resolveError(std::forward<E>(err));
     }
 
 }}

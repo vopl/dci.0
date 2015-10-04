@@ -152,7 +152,7 @@ set(INC
     include/dci/async/wait.hpp
     include/dci/async/future.hpp
     include/dci/async/promise.hpp
-    include/dci/async/details/futureState.hpp
+    include/dci/async/details/future.hpp
     include/dci/async/details/task.hpp
     include/dci/async/details/taskInstance.hpp
     include/dci/async/details/taskPromiseProcessor.hpp
