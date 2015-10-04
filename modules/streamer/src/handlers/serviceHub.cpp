@@ -19,6 +19,7 @@ namespace handlers
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
     Future< > ServiceHub::attachChannel(Channel &&arg_0)
     {
+        LOGT("attach");
         if(!arg_0._input || !arg_0._output)
         {
             return make_error_code(streamer::error::badChannelValue);
@@ -32,6 +33,7 @@ namespace handlers
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
     Future< Channel> ServiceHub::detachChannel()
     {
+        LOGT("detach");
         auto res = _fsm.getDetachFuture();
         _fsm.process_event(::impl::fsm::inEvents::common::Detach());
         return res;

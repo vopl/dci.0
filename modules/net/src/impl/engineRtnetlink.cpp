@@ -65,6 +65,7 @@ namespace impl
             _sock.reset();
             return false;
         }
+        memset(_msgiov.iov_base, 0, _msgiov.iov_len);
 
 //        _msg.msg_name = &_address;
 //        _msg.msg_namelen = sizeof(_address);

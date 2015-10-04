@@ -1,15 +1,27 @@
 #include "stack.hpp"
 
+#include "config.h"
+#ifdef HAVE_VALGRIND
+#   define VALGRIND_INCLUDE <VALGRIND_INCLUDE_DIR/valgrind.h>
+#   include VALGRIND_INCLUDE
+#endif
+
 namespace dci { namespace mm { namespace allocator
 {
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
     Stack::Stack()
     {
+#ifdef HAVE_VALGRIND
+        stackState()._valgringId = VALGRIND_STACK_REGISTER(this, this+1);
+#endif
     }
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
     Stack::~Stack()
     {
+#ifdef HAVE_VALGRIND
+        VALGRIND_STACK_DEREGISTER(stackState()._valgringId);
+#endif
     }
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7

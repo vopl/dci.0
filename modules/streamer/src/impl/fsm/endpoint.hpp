@@ -64,12 +64,13 @@ namespace impl { namespace fsm
         }
 
         template <class Event, class Fsm>
-        void no_transition(const Event &, Fsm &, int)
+        void no_transition(const Event &evt, Fsm &fsm, int state)
         {
+            BaseMachineDef<EndpointDef>::no_transition(evt, fsm, state);
             assert(!"never here");
         }
     };
 
-    using Endpoint = boost::msm::back::state_machine<EndpointDef>;
+    using Endpoint = Machine<EndpointDef>;
 
 }}

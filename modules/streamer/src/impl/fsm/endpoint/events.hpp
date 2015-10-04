@@ -15,7 +15,6 @@ namespace impl { namespace fsm { namespace endpoint
         namespace read
         {
             struct Flow {Bytes _data;};
-            struct FlowComplete {};
 
             struct SubscribeNone {};
             struct SubscribeStepByStep {};

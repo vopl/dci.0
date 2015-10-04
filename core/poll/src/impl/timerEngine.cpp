@@ -7,6 +7,7 @@ namespace dci { namespace poll { namespace impl
 
     TimerEngine::TimerEngine()
         : _now(std::chrono::steady_clock::now())
+        , _lastCheckpoint(std::chrono::duration_cast<LevelsUnit>(_now.time_since_epoch()).count())
         , _lastDistance(std::chrono::milliseconds::max())
         , _grid(std::chrono::duration_cast<LevelsUnit>(_now.time_since_epoch()).count())
     {

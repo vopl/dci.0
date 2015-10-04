@@ -9,6 +9,7 @@ namespace dci { namespace mm { namespace allocator
     struct StackState
         : public dci::mm::Stack
     {
+        unsigned _valgringId;
     };
 
 }}}

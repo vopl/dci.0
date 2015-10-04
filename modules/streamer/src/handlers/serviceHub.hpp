@@ -5,7 +5,6 @@
 #include "streamerHandlerSkel.hpp"
 
 #include "../impl/fsm/endpoint.hpp"
-#include <boost/msm/back/state_machine.hpp>
 
 namespace handlers
 {

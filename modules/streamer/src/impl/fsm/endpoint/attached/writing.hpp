@@ -35,7 +35,7 @@ namespace impl { namespace fsm  { namespace endpoint  { namespace attached
             >;
         };
 
-        using Ok = boost::msm::back::state_machine<OkDef>;
+        using Ok = Machine<OkDef>;
 
         struct Fail : BaseState<Fail> {};
 
@@ -48,6 +48,6 @@ namespace impl { namespace fsm  { namespace endpoint  { namespace attached
         >;
     };
 
-    using Writing = boost::msm::back::state_machine<WritingDef>;
+    using Writing = Machine<WritingDef>;
 
 }}}}

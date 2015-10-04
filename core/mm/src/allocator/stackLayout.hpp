@@ -129,7 +129,7 @@ namespace dci { namespace mm { namespace allocator
             return newBound;
         }
 
-    private:
+    protected:
         StackState &stackState()
         {
             return *reinterpret_cast<StackState *>(&_stackStateArea);
@@ -184,7 +184,7 @@ namespace dci { namespace mm { namespace allocator
             return _withoutGuard.vmAccessHandler(offset - offsetof(StackLayout, _withoutGuard));
         }
 
-    private:
+    protected:
         StackState &stackState()
         {
             return _withoutGuard.stackState();
@@ -308,7 +308,8 @@ namespace dci { namespace mm { namespace allocator
 
             return newBound;
         }
-    private:
+
+    protected:
         StackState &stackState()
         {
             return *reinterpret_cast<StackState *>(&_stackStateArea);
@@ -362,7 +363,7 @@ namespace dci { namespace mm { namespace allocator
             return _withoutGuard.vmAccessHandler(offset - offsetof(StackLayout, _withoutGuard));
         }
 
-    private:
+    protected:
         StackState &stackState()
         {
             return _withoutGuard.stackState();

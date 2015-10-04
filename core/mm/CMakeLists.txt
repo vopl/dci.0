@@ -3,6 +3,19 @@ project(${PROJECT} CXX)
 cmake_minimum_required(VERSION 3.1.0 FATAL_ERROR)
 
 
+############################################################
+include(FindValgrind.cmake)
+if(VALGRIND_FOUND)
+    set(HAVE_VALGRIND TRUE)
+    #message(STATUS "found valgrind: ${VALGRIND_PROGRAM}, ${VALGRIND_INCLUDE_DIR}")
+endif()
+
+############################################################
+configure_file(config.h.in config.h)
+include_directories(${CMAKE_CURRENT_BINARY_DIR})
+
+
+
 
 
 ############################################################

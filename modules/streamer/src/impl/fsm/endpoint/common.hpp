@@ -22,6 +22,11 @@ namespace impl { namespace fsm { namespace endpoint
     std::string demangle()
     {
         const char* name = typeid(T).name();
+        if(!strcmp("N4impl3fsm8endpoint8attached19ReadSubscriptionDef15WaitFinalResultE", name))
+        {
+            return "bad";
+        }
+
         int status = -1;
         std::unique_ptr<char, void(*)(void*)> res {
             abi::__cxa_demangle(name, NULL, NULL, &status),
@@ -33,36 +38,41 @@ namespace impl { namespace fsm { namespace endpoint
     template <typename State>
     struct BaseState : public state<>
     {
-//        template <class Event,class FSM> void on_entry(Event const&,FSM& )
-//        {
-//            std::cout << "on_entry: " << demangle<State>()  << std::endl;
-//        }
-//        template <class Event,class FSM> void on_exit(Event const&,FSM& )
-//        {
-//            std::cout << "on_exit: " << demangle<State>() << std::endl;
-//        }
+        template <class Event, class FSM> void on_entry(const Event &, FSM &)
+        {
+            std::cout << "on_entry: " << demangle<State>()  << std::endl;
+        }
+        template <class Event, class FSM> void on_exit(const Event &, FSM &)
+        {
+            std::cout << "on_exit: " << demangle<State>() << std::endl;
+        }
     };
 
     template <typename MachineDef>
     struct BaseMachineDef : public state_machine_def<MachineDef>
     {
+        using active_state_switch_policy = msm::active_state_switch_after_exit;
+
         template <class Fsm,class Event>
         void no_transition(Event const&, Fsm& ,int state)
         {
             LOGT("no_transition in "<<demangle<MachineDef>()<<": "<<demangle<Event>()<<", "<<state);
         }
 
-//        template <class Event,class FSM> void on_entry(Event const&,FSM& )
-//        {
-//            std::cout << "on_entry: " << demangle<MachineDef>()  << std::endl;
-//        }
-//        template <class Event,class FSM> void on_exit(Event const&,FSM& )
-//        {
-//            std::cout << "on_exit: " << demangle<MachineDef>() << std::endl;
-//        }
+        template <class Event, class FSM> void on_entry(const Event &, FSM &)
+        {
+            std::cout << "on_entry: " << demangle<MachineDef>()  << std::endl;
+        }
+        template <class Event, class FSM> void on_exit(const Event &, FSM &)
+        {
+            std::cout << "on_exit: " << demangle<MachineDef>() << std::endl;
+        }
 
         using no_exception_thrown = int;
         using no_message_queue = int;
     };
+
+    template <typename MachineDef, class... Args>
+    using Machine = boost::msm::back::state_machine<MachineDef, Args...>;
 
 }}}

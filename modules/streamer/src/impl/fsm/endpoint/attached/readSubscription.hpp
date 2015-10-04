@@ -42,6 +42,6 @@ namespace impl { namespace fsm  { namespace endpoint  { namespace attached
 
     };
 
-    using ReadSubscription = boost::msm::back::state_machine<ReadSubscriptionDef>;
+    using ReadSubscription = Machine<ReadSubscriptionDef>;
 
 }}}}

@@ -42,14 +42,16 @@ namespace impl { namespace fsm { namespace endpoint
         template <class FSM>
         void on_entry(const inEvents::common::Attach &evt, FSM &fsm)
         {
+            BaseMachineDef<AttachedDef>::on_entry(evt, fsm);
             _joinCounter = 0;
             _channel = std::move(evt._channel);
             fsm.resolveAttachPromise();
         }
 
         template <class Event, class FSM>
-        void on_exit(const Event &, FSM &fsm)
+        void on_exit(const Event &evt, FSM &fsm)
         {
+            BaseMachineDef<AttachedDef>::on_exit(evt, fsm);
             fsm.resolveDetachPromise(std::move(_channel));
         }
 
@@ -69,6 +71,6 @@ namespace impl { namespace fsm { namespace endpoint
         >;
     };
 
-    using Attached = boost::msm::back::state_machine<AttachedDef>;
+    using Attached = Machine<AttachedDef>;
 
 }}}
