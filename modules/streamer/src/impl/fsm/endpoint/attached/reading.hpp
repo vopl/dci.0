@@ -6,13 +6,17 @@ namespace impl { namespace fsm  { namespace endpoint  { namespace attached
 {
     struct ReadingDef : BaseMachineDef<ReadingDef>
     {
-        struct S1 : BaseState<S1> {};
-        struct Tail : public exit_pseudo_state<none> {};
+    public:
+        struct Continuous : BaseState<Continuous> {};
+        struct Tail : BaseState<Continuous> {};
+        struct Done : public exit_pseudo_state<none> {};
 
-        using initial_state = S1;
+    public:
+        using initial_state = Continuous;
 
         using transition_table = mpl::vector<
-            Row<S1, inEvents::common::Detach, Tail, none, none>
+            Row<Continuous, inEvents::common::Detach,       Tail, none, none>,
+            Row<Tail,       inEvents::read::FlowComplete,   Done, none, none>
         >;
 
 

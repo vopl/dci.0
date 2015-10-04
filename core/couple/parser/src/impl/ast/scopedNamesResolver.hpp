@@ -439,7 +439,7 @@ namespace  dci { namespace couple { namespace parser { namespace impl { namespac
                     {
                         res = false;
                     }
-                    else if((typeid(v) != sn->asDecl.type()))
+                    else if((!boost::get<T*>(&sn->asDecl)))
                     {
                         if(_reportErrors && !_oppositeInterfaceLevel)
                         {

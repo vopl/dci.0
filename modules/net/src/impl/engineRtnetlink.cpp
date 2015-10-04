@@ -197,14 +197,14 @@ namespace impl
                 break;
             }
 
-            memset(address.address.octets.data(), 0, 16);
+            memset(address.address.octets.data(), 0, address.address.octets.size());
 
             while(RTA_OK(rta, len))
             {
                 switch(rta->rta_type)
                 {
                 case IFA_ADDRESS:
-                    memcpy(address.address.octets.data(), RTA_DATA(rta), 16);
+                    memcpy(address.address.octets.data(), RTA_DATA(rta), address.address.octets.size());
                     break;
                 }
 

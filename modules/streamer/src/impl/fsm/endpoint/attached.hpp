@@ -63,16 +63,10 @@ namespace impl { namespace fsm { namespace endpoint
         using transition_table = mpl::vector<
             Row<    Join,                                               AllJoined,                  Exit,   none,   none>,
 
-            Row<    Reading::exit_pt<Reading::Tail>,                    none,                       Join,   none,   none>,
+            Row<    Reading::exit_pt<Reading::Done>,                    none,                       Join,   none,   none>,
             Row<    ReadSubscription::exit_pt<ReadSubscription::Done>,  none,                       Join,   none,   none>,
             Row<    Writing,                                            inEvents::common::Detach,   Join,   none,   none>
         >;
-
-
-
-
-
-
     };
 
     using Attached = boost::msm::back::state_machine<AttachedDef>;

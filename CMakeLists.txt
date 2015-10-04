@@ -55,7 +55,7 @@ include_directories(${LOCALINSTALL_DIR}/include)
 set(CMAKE_SHARED_LINKER_FLAGS "-Wl,--no-undefined")
 set(CMAKE_MODULE_LINKER_FLAGS "-Wl,--no-undefined")
 
-set(CMAKE_CXX_FLAGS "-Wall -Wextra -Wpedantic -ftemplate-depth-1000 -fvisibility=hidden")
+set(CMAKE_CXX_FLAGS "-Wall -Wextra -Wpedantic -ftemplate-depth-1000 -fvisibility=hidden -fvisibility-inlines-hidden")
 
 set(CMAKE_SHARED_LINKER_FLAGS_RELEASE "-flto -O2 -g")
 set(CMAKE_MODULE_LINKER_FLAGS_RELEASE "-flto -O2 -g")
