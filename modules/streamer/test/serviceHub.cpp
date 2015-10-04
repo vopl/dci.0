@@ -18,7 +18,7 @@ using namespace dci::site;
 using namespace dci::async;
 using namespace dci::couple::runtime;
 
-using namespace streamer;
+//using namespace streamer;
 using namespace dci::couple;
 
 namespace  dci { namespace  couple { namespace  serialize
@@ -158,7 +158,7 @@ namespace xyz
 
 
 /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
-class Streamer
+class ServiceHub
     : public testing::Test
 {
 protected:
@@ -178,29 +178,49 @@ protected:
 
 
 
-TEST_F(Streamer, Probe)
+TEST_F(ServiceHub, Create)
 {
-//    {
-//        xyz::Engine e;
+    {
+        ::streamer::ServiceHub sh = _manager->createService< ::streamer::ServiceHub>();
+    }
+}
 
-//        ::streamer::Channel h;
+TEST_F(ServiceHub, CreateAttach)
+{
+    {
+        ::streamer::ServiceHub sh1 = _manager->createService< ::streamer::ServiceHub>();
+        ::streamer::ServiceHub sh2 = _manager->createService< ::streamer::ServiceHub>();
 
-//        ::streamer::Stream::Traffic tr;
-//        h._out.flow(std::move(tr));
+        ::streamer::Channel ch1;
+        ::streamer::Channel ch2 {ch1._output, ch1._input};
 
-//    }
+        auto f1 = sh1.attachChannel(std::move(ch1));
+        auto f2 = sh2.attachChannel(std::move(ch2));
 
-    ::streamer::ServiceHub sh1 = _manager->createService< ::streamer::ServiceHub>();
-    ::streamer::ServiceHub sh2 = _manager->createService< ::streamer::ServiceHub>();
+        ASSERT_TRUE(f1.hasValue());
+        ASSERT_TRUE(f2.hasValue());
+    }
+}
 
-    ::streamer::Channel ch1;
-    ::streamer::Channel ch2 {ch1._output, ch1._input};
+TEST_F(ServiceHub, CreateAttachDetach)
+{
+    {
+        ::streamer::ServiceHub sh1 = _manager->createService< ::streamer::ServiceHub>();
+        ::streamer::ServiceHub sh2 = _manager->createService< ::streamer::ServiceHub>();
 
-    auto f1 = sh1.attachChannel(std::move(ch1));
-    //sh1.attachChannel(std::move(ch1));
-    auto f2 = sh2.attachChannel(std::move(ch2));
+        ::streamer::Channel ch1;
+        ::streamer::Channel ch2 {ch1._output, ch1._input};
 
-    f1.wait();
-    f2.wait();
+        auto f1 = sh1.attachChannel(std::move(ch1));
+        auto f2 = sh2.attachChannel(std::move(ch2));
 
+        ASSERT_TRUE(f1.hasValue());
+        ASSERT_TRUE(f2.hasValue());
+
+        auto f3 = sh1.detachChannel();
+        auto f4 = sh2.detachChannel();
+
+        ASSERT_TRUE(f3.hasValue());
+        ASSERT_TRUE(f4.hasValue());
+    }
 }

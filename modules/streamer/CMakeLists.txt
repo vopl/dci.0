@@ -27,9 +27,13 @@ set(SRC
 
 
     src/impl/fsm/endpoint.hpp
-    src/impl/fsm/endpoint/readerSubscription.hpp
-    src/impl/fsm/endpoint/reader.hpp
-    src/impl/fsm/endpoint/writer.hpp
+    src/impl/fsm/endpoint/common.hpp
+    src/impl/fsm/endpoint/events.hpp
+    src/impl/fsm/endpoint/detached.hpp
+    src/impl/fsm/endpoint/attached.hpp
+    src/impl/fsm/endpoint/attached/reading.hpp
+    src/impl/fsm/endpoint/attached/readSubscription.hpp
+    src/impl/fsm/endpoint/attached/writing.hpp
 
 )
 
@@ -68,6 +72,6 @@ dciDefineModule(streamer
 ############################################################
 include(dciTest)
 dciTest(${PROJECT} mload
-    SRC test/probe.cpp
+    SRC test/serviceHub.cpp
     LINK ${PROJECT}
 )

@@ -124,7 +124,7 @@ namespace dci { namespace couple { namespace generator { namespace impl
             _hpp<< undent;
             _hpp<< "{"<<el;
             _hpp<< indent;
-                _hpp<< "if(deleteSelfWhenUninvolved) wires()->listenUninvolve("<<runtimeNamespace()<<"::InterfaceDirection::"<<(v->primary()?"bwd":"fwd")<<", [](void *userData){delete static_cast<Handler*>(userData);}, static_cast<Handler*>(this));"<<el;
+                _hpp<< "if(deleteSelfWhenUninvolved) wires()->listenUninvolve("<<runtimeNamespace()<<"::InterfaceDirection::"<<(v->primary()?"fwd":"bwd")<<", [](void *userData){delete static_cast<Handler*>(userData);}, static_cast<Handler*>(this));"<<el;
                 _hpp<< el;
 
                 _hpp<< "bool b; (void)b;"<<el;

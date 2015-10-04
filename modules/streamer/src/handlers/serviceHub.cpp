@@ -24,23 +24,17 @@ namespace handlers
             return make_error_code(streamer::error::badChannelValue);
         }
 
-        if(boost::msm::back::HANDLED_TRUE != _fsm.process_event(FSM::attach{std::move(arg_0)}))
-        {
-            return make_error_code(streamer::error::alreadyAttached);
-        }
-
-        return _fsm.attachFuture();
+        auto res = _fsm.getAttachFuture();
+        _fsm.process_event(::impl::fsm::inEvents::common::Attach{std::move(arg_0)});
+        return res;
     }
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
     Future< Channel> ServiceHub::detachChannel()
     {
-        if(boost::msm::back::HANDLED_TRUE != _fsm.process_event(FSM::detach()))
-        {
-            return make_error_code(streamer::error::alreadyDetached);
-        }
-
-        return _fsm.detachFuture();
+        auto res = _fsm.getDetachFuture();
+        _fsm.process_event(::impl::fsm::inEvents::common::Detach());
+        return res;
     }
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7

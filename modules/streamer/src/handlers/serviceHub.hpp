@@ -30,7 +30,7 @@ namespace handlers
 
     private:
 
-        using FSM = ::impl::fsm::msm::back::state_machine< ::impl::fsm::Endpoint>;
+        using FSM = ::impl::fsm::Endpoint;
         FSM _fsm;
     };
 
