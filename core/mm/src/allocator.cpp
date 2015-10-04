@@ -43,6 +43,7 @@ namespace dci { namespace mm
         _stacksBitIndex = new(utils::sized_cast<void *>(addr)) StacksBitIndex;
         addr += _stacksBitIndexAlignedSize;
 
+        static_assert(_stacksAlignedSize == ConfigStack::_stacksAmount * sizeof(allocator::Stack), "stack sizes mismatch");
         addr = ConfigHeap::alignUp(addr, ConfigStack::_stackPages*ConfigMemory::_pageSize);
         _stacks = utils::sized_cast<void *>(addr);
         //addr += _stacksAlignedSize;
@@ -123,6 +124,13 @@ namespace dci { namespace mm
 
             return true;
         }
+
+        if(likely(utils::sized_cast<std::size_t>(addr) - utils::sized_cast<std::size_t>(_stacks) < utils::sized_cast<std::size_t>(ConfigStack::_stacksAmount * sizeof(allocator::Stack))))
+        {
+            allocator::Stack *stack = utils::sized_cast<allocator::Stack *>(utils::sized_cast<std::size_t>(addr) / sizeof(allocator::Stack) * sizeof(allocator::Stack));
+            return stack->vmAccessHandler(utils::sized_cast<std::size_t>(addr) - utils::sized_cast<std::size_t>(stack));
+        }
+
         return false;
     }
 

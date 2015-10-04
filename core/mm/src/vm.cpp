@@ -72,7 +72,14 @@ namespace dci { namespace mm { namespace vm
                     return;
                 }
 
-                fprintf(stderr, "call SIGSEGV default handler for %p\n", info->si_addr);
+
+                char buf[64];
+                std::sprintf(buf, "%p", info->si_addr);
+                fputs("call SIGSEGV default handler for 0x", stderr);
+                fputs(buf, stderr);
+                fputs("\n", stderr);
+                fflush(stderr);
+
                 if(state->_oldAction.sa_flags & SA_SIGINFO)
                 {
                     return state->_oldAction.sa_sigaction(signal_number, info, ptr);
@@ -83,7 +90,12 @@ namespace dci { namespace mm { namespace vm
                 }
             }
 
-            fprintf(stderr, "unable to handle SIGSEGV\n");
+            char buf[64];
+            std::sprintf(buf, "%p", info->si_addr);
+            fputs("unable to handle SIGSEGV for 0x", stderr);
+            fputs(buf, stderr);
+            fputs("\n", stderr);
+            fflush(stderr);
             std::abort();
             return;
         }

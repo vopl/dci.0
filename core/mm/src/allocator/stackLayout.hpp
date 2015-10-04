@@ -14,15 +14,16 @@
 
 namespace dci { namespace mm { namespace allocator
 {
+
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
-    template <bool stackGrowsDown, bool stackUseGuardPage>
+    template <bool stackGrowsDown, bool stackUseGuardPage, bool stackReserveGuardPage = false>
     class StackLayout;
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
-    template <>
-    class StackLayout<false, false>
+    template <bool stackReserveGuardPage>
+    class StackLayout<false, false, stackReserveGuardPage>
     {
-        template <bool, bool> friend class StackLayout;
+        template <bool, bool, bool> friend class StackLayout;
 
     public:
         StackLayout()
@@ -137,7 +138,7 @@ namespace dci { namespace mm { namespace allocator
 
     private:
         using StackStateArea = std::aligned_storage<sizeof(StackState)>::type;
-        using UserArea = std::aligned_storage<Config::_stackPages * Config::_pageSize - sizeof(StackStateArea), 1>::type;
+        using UserArea = std::aligned_storage_t<Config::_stackPages * Config::_pageSize - sizeof(StackStateArea) - (stackReserveGuardPage ? Config::_pageSize : 0), 1>;
 
         StackStateArea  _stackStateArea;
         UserArea        _userArea;
@@ -145,7 +146,7 @@ namespace dci { namespace mm { namespace allocator
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
     template <>
-    class StackLayout<false, true>
+    class StackLayout<false, true, false>
     {
 
     public:
@@ -192,17 +193,17 @@ namespace dci { namespace mm { namespace allocator
 
     private:
         using GuardArea = std::aligned_storage<Config::_pageSize, Config::_pageSize>::type;
-        using WithoutGuard = StackLayout<false, false>;
+        using WithoutGuard = StackLayout<false, false, true>;
 
         WithoutGuard    _withoutGuard;
         GuardArea       _guardArea;
     };
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
-    template <>
-    class StackLayout<true, false>
+    template <bool stackReserveGuardPage>
+    class StackLayout<true, false, stackReserveGuardPage>
     {
-        template <bool, bool> friend class StackLayout;
+        template <bool, bool, bool> friend class StackLayout;
 
     public:
         StackLayout()
@@ -317,7 +318,7 @@ namespace dci { namespace mm { namespace allocator
 
     private:
         using StackStateArea = std::aligned_storage<sizeof(StackState)>::type;
-        using UserArea = std::aligned_storage<Config::_stackPages * Config::_pageSize - sizeof(StackStateArea), 1>::type;
+        using UserArea = std::aligned_storage_t<Config::_stackPages * Config::_pageSize - sizeof(StackStateArea) - (stackReserveGuardPage ? Config::_pageSize : 0), 1>;
 
         UserArea        _userArea;
         StackStateArea  _stackStateArea;
@@ -325,7 +326,7 @@ namespace dci { namespace mm { namespace allocator
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
     template <>
-    class StackLayout<true, true>
+    class StackLayout<true, true, false>
     {
     public:
         StackLayout()
@@ -371,7 +372,7 @@ namespace dci { namespace mm { namespace allocator
 
     private:
         using GuardArea = std::aligned_storage<Config::_pageSize, Config::_pageSize>::type;
-        using WithoutGuard = StackLayout<true, false>;
+        using WithoutGuard = StackLayout<true, false, true>;
 
         GuardArea       _guardArea;
         WithoutGuard    _withoutGuard;
