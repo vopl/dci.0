@@ -8,7 +8,6 @@ scope datagram
         
         in receiveData:     ()                  -> (bytes);
         in receive:         ()                  -> (bytes, Address);
-        out received:       (bytes, Address)    -> ();
         
         in send:            (bytes, Address)    -> ();
         

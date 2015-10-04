@@ -21,16 +21,7 @@ scope streamer
     interface Stream
     {
         alias Traffic = bytes;
-
-        enum Subscription
-        {
-            none;
-            stepByStep;
-            unconstrained;
-        }
-
-        in subscribe:   (Subscription)  -> ();
-        out flow:       (Traffic)       -> ();
+        in flow: () -> (Traffic);
     }
 
     struct Channel

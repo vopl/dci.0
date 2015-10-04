@@ -178,7 +178,8 @@ namespace dci { namespace mm { namespace allocator
         {
             if(offset >= offsetof(StackLayout, _guardArea))
             {
-                fprintf(stderr, "prevent access to stack guard page\n");
+                fputs("prevent access to stack guard page\n", stderr);
+                fflush(stderr);
                 return false;
             }
 
@@ -357,7 +358,8 @@ namespace dci { namespace mm { namespace allocator
         {
             if(offset <= offsetof(StackLayout, _withoutGuard))
             {
-                fprintf(stderr, "prevent access to stack guard page\n");
+                fputs("prevent access to stack guard page\n", stderr);
+                fflush(stderr);
                 return false;
             }
 

@@ -7,7 +7,6 @@ scope stream
         in bind:        (Address v) -> ();
         in listen:      ()          -> ();
         in accept:      ()          -> Channel;
-        out accepted:   (Channel v) -> ();
         in close:       ()          -> ();
         out closed:     ();
     }
@@ -27,7 +26,6 @@ scope stream
         in peer:        ()          -> Address;
         
         in read:        ()          -> bytes;
-        out readed:     (bytes v)   -> ();
         
         in write:       (bytes v)   -> ();
         
