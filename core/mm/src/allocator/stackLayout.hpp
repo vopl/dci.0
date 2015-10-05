@@ -10,6 +10,7 @@
 #include <new>
 #include <alloca.h>
 #include <cstdio>
+#include <cassert>
 
 
 namespace dci { namespace mm { namespace allocator
@@ -82,8 +83,11 @@ namespace dci { namespace mm { namespace allocator
         }
 
     private:
-        static char *reduce(char *oldBount, char *newBound)
+        char *reduce(char *oldBound, char *newBound)
         {
+            assert(oldBound >= (char *)this && oldBound <= (char *)this + sizeof(*this));
+            assert(newBound >= (char *)this && newBound <= (char *)this + sizeof(*this));
+
             std::uintptr_t inewBound = reinterpret_cast<std::uintptr_t>(newBound);
 
             if(inewBound % Config::_pageSize)
@@ -93,21 +97,24 @@ namespace dci { namespace mm { namespace allocator
 
             newBound = reinterpret_cast<char *>(inewBound);
 
-            if(newBound >= oldBount)
+            if(newBound >= oldBound)
             {
-                return oldBount;
+                return oldBound;
             }
 
             vm::protect(
                         newBound,
-                        oldBount - newBound,
+                        oldBound - newBound,
                         false);
 
             return newBound;
         }
 
-        static char *extend(char *oldBound, char *newBound)
+        char *extend(char *oldBound, char *newBound)
         {
+            assert(oldBound >= (char *)this && oldBound <= (char *)this + sizeof(*this));
+            assert(newBound >= (char *)this && newBound <= (char *)this + sizeof(*this));
+
             std::uintptr_t inewBound = reinterpret_cast<std::uintptr_t>(newBound);
 
             if(inewBound % Config::_pageSize)
@@ -253,7 +260,7 @@ namespace dci { namespace mm { namespace allocator
         bool vmAccessHandler(std::uintptr_t offset)
         {
             char *bound = stackState()._userspaceMapped;
-            bound = extend(bound, reinterpret_cast<char *>(this) - offset);
+            bound = extend(bound, reinterpret_cast<char *>(this) + offset);
             if(bound != stackState()._userspaceMapped)
             {
                 stackState()._userspaceMapped = bound;
@@ -263,8 +270,11 @@ namespace dci { namespace mm { namespace allocator
         }
 
     private:
-        static char *reduce(char *oldBound, char *newBound)
+        char *reduce(char *oldBound, char *newBound)
         {
+            assert(oldBound >= (char *)this && oldBound <= (char *)this + sizeof(*this));
+            assert(newBound >= (char *)this && newBound <= (char *)this + sizeof(*this));
+
             std::uintptr_t inewBound = reinterpret_cast<std::uintptr_t>(newBound);
 
             if(inewBound % Config::_pageSize)
@@ -287,8 +297,11 @@ namespace dci { namespace mm { namespace allocator
             return newBound;
         }
 
-        static char *extend(char *oldBound, char *newBound)
+        char *extend(char *oldBound, char *newBound)
         {
+            assert(oldBound >= (char *)this && oldBound <= (char *)this + sizeof(*this));
+            assert(newBound >= (char *)this && newBound <= (char *)this + sizeof(*this));
+
             std::uintptr_t inewBound = reinterpret_cast<std::uintptr_t>(newBound);
 
             if(inewBound % Config::_pageSize)

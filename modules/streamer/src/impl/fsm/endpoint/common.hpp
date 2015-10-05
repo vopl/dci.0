@@ -22,11 +22,6 @@ namespace impl { namespace fsm { namespace endpoint
     std::string demangle()
     {
         const char* name = typeid(T).name();
-        if(!strcmp("N4impl3fsm8endpoint8attached19ReadSubscriptionDef15WaitFinalResultE", name))
-        {
-            return "bad";
-        }
-
         int status = -1;
         std::unique_ptr<char, void(*)(void*)> res {
             abi::__cxa_demangle(name, NULL, NULL, &status),
