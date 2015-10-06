@@ -6,6 +6,7 @@ namespace impl
     template <class Derived>
     Future< > Amortisseur<Derived>::startAmortisseur(Channel &&arg_0)
     {
+        (void)arg_0;
         assert(0);
     }
 
@@ -24,6 +25,7 @@ namespace impl
     template <class Derived>
     Future< Channel> Amortisseur<Derived>::migrateAmortisseur(Channel &&arg_0)
     {
+        (void)arg_0;
         assert(0);
     }
 

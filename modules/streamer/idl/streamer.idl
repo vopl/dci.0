@@ -6,6 +6,10 @@ scope streamer
         badChannelValue;
         alreadyAttached;
         alreadyDetached;
+        detachingInProgress;
+        flowRemitted;
+        flowAborted;
+
 //        incompatibleProtocol:   "запрошенный удаленной стороной протокол не совместим с уже установленным";
 //        unsupportedProtocol:    "запрошенный удаленной стороной протокол не поддерживается";
 //        malformedData:          "бинарный поток испорчен";
@@ -21,6 +25,7 @@ scope streamer
     interface Stream
     {
         alias Traffic = bytes;
+        in remit: ();
         in flow: () -> (Traffic);
     }
 

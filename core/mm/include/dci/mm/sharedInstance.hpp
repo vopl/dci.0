@@ -32,6 +32,8 @@ namespace dci { namespace mm
         SharedInstance &operator=(const SharedInstance &other);
         SharedInstance &operator=(SharedInstance &&other);
 
+        operator bool() const;
+
         std::int32_t counter() const;
 
         Instance &instance();
@@ -50,7 +52,7 @@ namespace dci { namespace mm
         struct State
         {
             Instance        _instance;
-            std::int32_t    _counter;
+            std::uint32_t   _counter;
         };
 
         State *_state;
@@ -119,10 +121,17 @@ namespace dci { namespace mm
     }
 
     template <class T>
+    SharedInstance<T>::operator bool() const
+    {
+        return !!_state;
+    }
+
+    template <class T>
     std::int32_t SharedInstance<T>::counter() const
     {
         if(_state)
         {
+            assert(_state->_counter);
             return _state->_counter;
         }
 

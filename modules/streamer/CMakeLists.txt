@@ -3,6 +3,10 @@ project(${PROJECT} CXX)
 cmake_minimum_required(VERSION 3.1.0 FATAL_ERROR)
 
 
+set(IDL
+    idl/streamer.idl
+)
+
 
 set(SRC
     src/entry.cpp
@@ -42,7 +46,7 @@ set(SRC
 ############################################################
 add_library(${PROJECT} SHARED
     ${SRC}
-    idl/streamer.idl
+    ${IDL} idl/test.idl
 )
 target_link_libraries(${PROJECT} dci-site dci-couple-runtime dci-couple-serialize)
 
@@ -55,8 +59,14 @@ set_property(TARGET ${PROJECT} PROPERTY CXX_STANDARD_REQUIRED ON)
 include(dciUseIdl)
 dciUseIdl(${PROJECT}
     GEN cpp_basis cpp_handler_skel cpp_serializer
+    INCLUDE ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/idl
+    SOURCES ${IDL}
+)
+
+dciUseIdl(${PROJECT}
+    GEN cpp_basis cpp_handler_skel cpp_serializer
     INCLUDE ${CMAKE_CURRENT_SOURCE_DIR}/idl
-    SOURCES streamer.idl
+    SOURCES test.idl
 )
 
 

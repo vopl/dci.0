@@ -86,6 +86,13 @@ namespace impl
     }
 
 
+    struct Message
+    {
+        std::uint32_t   _type;
+        std::uint32_t   _linkId;
+
+        Bytes   _body;
+    };
 
     template <class Derived>
     class Endpoint
@@ -98,6 +105,46 @@ namespace impl
         Future< > attachChannel(Channel &&arg_0);
         Future< Channel> detachChannel();
 
-        //FSM _fsm;
+    public:
+        Future<> write(Message);
+        Future<Message> read();
+
+    private:
+        void requestInputFlow();
+        void onInputFlow(Future<Bytes> &f);
+
+        Future<Bytes> onOutputRequested();
+        void onOutputRemit();
+
+        void resolveDetach();
+    private:
+        Channel             _channel;
+        Promise<Channel>    _detachPromise{dci::async::PromiseNullInitializer()};
+
+        //input
+        bool                _inputFlowRequested{false};
+        Bytes               _inputAccumuler;
+        Message             _messageAccumuler;
+        enum class InputMode
+        {
+            headerStart,
+            bodyChunkStart,
+            bodyChunkContinue,
+            bodyLastChunkContinue,
+        };
+        InputMode _inputMode {InputMode::headerStart};
+        bool _lastInputFlowFailed {false};
+
+        std::size_t _tailBodySize{0};
+
+        //output
+        Bytes               _outputAccumuler;
+
+        struct OutputRequest : public dci::mm::IntrusiveDlistElement<OutputRequest>
+        {
+            Promise<Bytes>      _promise;
+        };
+
+        dci::mm::IntrusiveDlist<OutputRequest> _outputRequests;
     };
 }

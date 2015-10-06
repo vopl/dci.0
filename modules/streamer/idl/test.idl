@@ -1,0 +1,8 @@
+
+scope streamer
+{
+    interface X1
+    {
+        in test: ();
+    }
+}

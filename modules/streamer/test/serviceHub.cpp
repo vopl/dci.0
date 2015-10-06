@@ -7,6 +7,7 @@
 #include <dci/couple/runtime.hpp>
 #include <dci/couple/serialize.hpp>
 #include "streamer.hpp"
+#include "test.hpp"
 #include "streamerHandlerSkel.hpp"
 #include "streamerSerializer.hpp"
 
@@ -222,5 +223,37 @@ TEST_F(ServiceHub, CreateAttachDetach)
 
         ASSERT_TRUE(f3.hasValue());
         ASSERT_TRUE(f4.hasValue());
+    }
+}
+
+TEST_F(ServiceHub, SimpleExchange)
+{
+    {
+        ::streamer::ServiceHub sh1 = _manager->createService< ::streamer::ServiceHub>();
+        ::streamer::ServiceHub sh2 = _manager->createService< ::streamer::ServiceHub>();
+
+        ::streamer::Channel ch1;
+        ::streamer::Channel ch2 {ch1._output, ch1._input};
+
+        auto f1 = sh1.attachChannel(std::move(ch1));
+        auto f2 = sh2.attachChannel(std::move(ch2));
+
+        ASSERT_TRUE(f1.hasValue());
+        ASSERT_TRUE(f2.hasValue());
+
+        streamer::X1 x1;
+        streamer::X1Opposite x1Opposite(x1);
+
+        bool handled = false;
+        sh2.signal_serviceInjected().connect([&handled](Interface &&interface, std::uint32_t &&serviceId)->void{
+            (void)interface;
+            (void)serviceId;
+
+            handled = true;
+
+        });
+        ASSERT_TRUE(sh1.injectService(std::move(x1)).hasValue());
+        dci::async::yield();
+        ASSERT_TRUE(handled);
     }
 }

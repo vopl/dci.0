@@ -50,9 +50,9 @@ else()
         endif()
 
         set(include --include ${LOCALINSTALL_DIR}/idl)
-        if(OPTS_INCLUDE)
-            set(include ${include} --include ${OPTS_INCLUDE})
-        endif()
+        foreach(s ${OPTS_INCLUDE})
+            set(include ${include} --include ${s})
+        endforeach()
 
         set(translatorStdoutFile ${CMAKE_CURRENT_BINARY_DIR}/translate-${NAME}.out)
 

@@ -82,6 +82,8 @@ namespace dci { namespace async
         Future &operator=(const Future &other);
         Future &operator=(Future &&other);
 
+        operator bool() const;
+
         Waitable *waitable();
         Future &wait();
 
@@ -168,6 +170,12 @@ namespace dci { namespace async
     {
         _engine = std::move(other._engine);
         return *this;
+    }
+
+    template <class E, class... T>
+    Future<E, T...>::operator bool() const
+    {
+        return _engine.operator bool();
     }
 
     template <class E, class... T>

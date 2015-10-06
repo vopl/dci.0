@@ -32,6 +32,8 @@ namespace dci { namespace async
 
         ~Promise();
 
+        operator bool() const;
+
         Future future();
 
         bool resolved() const;
@@ -79,6 +81,12 @@ namespace dci { namespace async
             assert(!"unsetted promise destroyed while futures exists");
             std::abort();
         }
+    }
+
+    template <class E, class... T>
+    Promise<E, T...>::operator bool() const
+    {
+        return _engine.operator bool();
     }
 
     template <class E, class... T>
