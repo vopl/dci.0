@@ -4,6 +4,8 @@
 
 namespace impl
 {
+    using namespace endpoint;
+
     template <class Derived>
     Endpoint<Derived>::Endpoint()
     {
@@ -31,7 +33,7 @@ namespace impl
 
         _channel = std::move(arg_0);
 
-        _channel._output.signal_flow().connect(&Endpoint::onOutputRequested, this);
+        _channel._output.signal_flow().connect(&Endpoint::onOutputFlow, this);
         _channel._output.signal_remit().connect(&Endpoint::onOutputRemit, this);
         requestInputFlow();
 
@@ -58,7 +60,7 @@ namespace impl
         Future<Channel> res = _detachPromise.future();
         if(_inputFlowRequested)
         {
-            _channel._input.remit();
+            requestInputRemit();
         }
         else
         {
@@ -69,15 +71,43 @@ namespace impl
     }
 
     template <class Derived>
-    Future<> Endpoint<Derived>::write(Message)
+    Future<> Endpoint<Derived>::write(Message &&msg)
     {
-        assert(0);
+        Bytes data = serialize(std::move(msg));
+
+        if(!_outputFlowRequests.empty())
+        {
+            assert(_outputWriteRequests.empty());
+            _outputFlowRequests.first()->_promise.resolveValue(std::move(data));
+            _outputFlowRequests.remove(_outputFlowRequests.first());
+
+            return Future<>();
+        }
+
+        OutputWriteRequest *outputWriteRequest = new OutputWriteRequest;
+        outputWriteRequest->_data = std::move(data);
+        _outputWriteRequests.push(outputWriteRequest);
+
+        return outputWriteRequest->_promise.future();
     }
 
     template <class Derived>
     Future<Message> Endpoint<Derived>::read()
     {
-        assert(0);
+        if(!_inputMessagesAccumuler.empty())
+        {
+            assert(_inputReadRequests.empty());
+
+            Future<Message> res(std::move(_inputMessagesAccumuler.first()->_message));
+            _inputMessagesAccumuler.remove(_inputMessagesAccumuler.first());
+
+            return res;
+        }
+
+        InputReadRequest *inputReadRequest = new InputReadRequest;
+        _inputReadRequests.push(inputReadRequest);
+
+        return inputReadRequest->_promise.future();
     }
 
     template <class Derived>
@@ -85,100 +115,109 @@ namespace impl
     {
         assert(_channel._input);
         assert(!_detachPromise);
-        assert(!_inputFlowRequested);
 
-        //TODO object live guard
-
-        _inputFlowRequested = true;
-        _channel._input.flow().then(std::bind(&Endpoint::onInputFlow, this, std::placeholders::_1));
+        _inputFlowRequested++;
+        _channel._input.flow().then(&Endpoint::onInputFlowed, this);
     }
 
     template <class Derived>
-    void Endpoint<Derived>::onInputFlow(Future<Bytes> &f)
+    void Endpoint<Derived>::requestInputRemit()
+    {
+        _inputRemitRequested++;
+        _channel._input.remit().then(&Endpoint::onInputRemitted, this);
+    }
+
+    template <class Derived>
+    void Endpoint<Derived>::onInputFlowed(Future<Bytes> &f)
     {
         assert(_inputFlowRequested);
-        _inputFlowRequested = false;
+        _inputFlowRequested--;
 
         if(f.hasError())
         {
-            _lastInputFlowFailed = true;
             //TODO: handle error
             //assert(0);
 
-            if(_detachPromise)
+            if(_detachPromise && !_inputFlowRequested && !_inputRemitRequested)
             {
                 resolveDetach();
             }
             return;
         }
 
-        if(_lastInputFlowFailed)
-        {
-            _lastInputFlowFailed = false;
-        }
+        _inputFlowParser.process(f.detachValue<0>(), [this](Message &&msg){
 
-        _inputAccumuler.append(f);
-
-        switch(_inputMode)
-        {
-        case InputMode::headerStart:
-            //try header
-            assert(0);
-            break;
-        case InputMode::bodyChunkStart:
-            //try chunk start
-            assert(0);
-            break;
-        case InputMode::bodyChunkContinue:
-            //continue chunk
-            assert(0);
-            break;
-        case InputMode::bodyLastChunkContinue:
-            //continue chunk
-            assert(0);
-
-//            if(last chunk complete)
+            if(!_inputReadRequests.empty())
             {
-                if(_detachPromise)
-                {
-                    resolveDetach();
-                }
-            }
-            break;
+                assert(_inputMessagesAccumuler.empty());
 
+                InputReadRequest *inputReadRequest = _inputReadRequests.first();
+                inputReadRequest->_promise.resolveValue(std::move(msg));
+                _inputReadRequests.remove(inputReadRequest);
+            }
+            else
+            {
+                InputMessage *inputMessage = new InputMessage;
+                inputMessage->_message = std::move(msg);
+                _inputMessagesAccumuler.push(inputMessage);
+            }
+        });
+
+
+        if(_detachPromise && !_inputFlowRequested && !_inputRemitRequested)
+        {
+            resolveDetach();
         }
     }
 
     template <class Derived>
-    Future<Bytes> Endpoint<Derived>::onOutputRequested()
+    void Endpoint<Derived>::onInputRemitted(Future<>&)
     {
-        if(_lastInputFlowFailed)
+        assert(_inputRemitRequested);
+        _inputRemitRequested--;
+
+        if(_detachPromise && !_inputFlowRequested && !_inputRemitRequested)
+        {
+            resolveDetach();
+        }
+    }
+
+
+    template <class Derived>
+    Future<Bytes> Endpoint<Derived>::onOutputFlow()
+    {
+        if(!_inputFlowRequested && !_detachPromise)
         {
             requestInputFlow();
         }
 
-        if(!_outputAccumuler.empty())
+        if(!_outputWriteRequests.empty())
         {
-            return std::move(_outputAccumuler);
+            Bytes data;
+
+            _outputWriteRequests.flush([&](auto *v){
+                data.append(std::move(v->_data));
+                v->_promise.resolveValue();
+            });
+
+            return std::move(data);
         }
 
-        OutputRequest *outputRequest = new OutputRequest;
-        _outputRequests.push(outputRequest);
+        OutputFlowRequest *outputRequest = new OutputFlowRequest;
+        _outputFlowRequests.push(outputRequest);
         return outputRequest->_promise.future();
     }
 
     template <class Derived>
-    void Endpoint<Derived>::onOutputRemit()
+    Future<> Endpoint<Derived>::onOutputRemit()
     {
-        assert(_outputAccumuler.empty());
+        assert(_outputWriteRequests.empty());
 
-        while(!_outputRequests.empty())
-        {
-            OutputRequest *outputRequest = _outputRequests.first();
-            _outputRequests.remove(outputRequest);
-            outputRequest->_promise.resolveError(error::flowRemitted);
-            delete outputRequest;
-        }
+        _outputFlowRequests.flush([](auto *v){
+            v->_promise.resolveError(error::flowRemitted);
+        });
+
+        return Future<>();
     }
 
     template <class Derived>
@@ -186,22 +225,31 @@ namespace impl
     {
         assert(_detachPromise);
         assert(!_inputFlowRequested);
-        assert(_inputAccumuler.empty());
-        assert(_messageAccumuler._body.empty());
-        assert(InputMode::headerStart == _inputMode);
-        assert(!_tailBodySize);
-        assert(_outputAccumuler.empty());//may be not
+        assert(!_inputRemitRequested);
 
-        while(!_outputRequests.empty())
-        {
-            OutputRequest *outputRequest = _outputRequests.first();
-            _outputRequests.remove(outputRequest);
-            outputRequest->_promise.resolveError(error::flowAborted);
-            delete outputRequest;
-        }
+        //input
+        _inputFlowParser.reset();
 
-        assert(_outputRequests.empty());
+        _inputMessagesAccumuler.clear();
 
+        _inputReadRequests.flush([](auto *v){
+            v->_promise.resolveError(error::detachingInProgress);
+        });
+
+
+
+        //output
+        _outputWriteRequests.flush([](auto *v){
+            v->_promise.resolveError(error::detachingInProgress);
+        });
+
+        _outputFlowRequests.flush([](auto *v){
+            v->_promise.resolveError(error::detachingInProgress);
+        });
+
+
+
+        //common
         _channel._output.signal_flow().disconnect();
         _channel._output.signal_remit().disconnect();
         _detachPromise.resolveValue(std::move(_channel));

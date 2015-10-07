@@ -27,16 +27,16 @@ namespace dci { namespace mm
     }
 
     ////////////////////////////////////////////////////////////////////////////////
-    template <class T>
-    IntrusiveDlist<T>::IntrusiveDlist()
+    template <class T, class RemoveCleaner>
+    IntrusiveDlist<T, RemoveCleaner>::IntrusiveDlist()
         : _first(intrusiveDlistElementCast(&_last, (T*)nullptr), nullptr)
         , _last(nullptr, intrusiveDlistElementCast(&_first, (T*)nullptr))
     {
     }
 
     ////////////////////////////////////////////////////////////////////////////////
-    template <class T>
-    IntrusiveDlist<T>::IntrusiveDlist(T *element)
+    template <class T, class RemoveCleaner>
+    IntrusiveDlist<T, RemoveCleaner>::IntrusiveDlist(T *element)
         : _first(element, nullptr)
         , _last(nullptr, element)
     {
@@ -46,8 +46,29 @@ namespace dci { namespace mm
     }
 
     ////////////////////////////////////////////////////////////////////////////////
-    template <class T>
-    IntrusiveDlist<T>::~IntrusiveDlist()
+    template <class T, class RemoveCleaner>
+    IntrusiveDlist<T, RemoveCleaner>::IntrusiveDlist(RemoveCleaner &&removeCleaner)
+        : _first(intrusiveDlistElementCast(&_last, (T*)nullptr), nullptr)
+        , _last(nullptr, intrusiveDlistElementCast(&_first, (T*)nullptr))
+        , RemoveCleanExecutor<RemoveCleaner>(std::forward<RemoveCleaner>(removeCleaner))
+    {
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////
+    template <class T, class RemoveCleaner>
+    IntrusiveDlist<T, RemoveCleaner>::IntrusiveDlist(T *element, RemoveCleaner &&removeCleaner)
+        : _first(element, nullptr)
+        , _last(nullptr, element)
+        , RemoveCleanExecutor<RemoveCleaner>(std::forward<RemoveCleaner>(removeCleaner))
+    {
+        auto idee = intrusiveDlistElementCast(element);
+        idee->_prev = &_first;
+        idee->_next = &_last;
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////
+    template <class T, class RemoveCleaner>
+    IntrusiveDlist<T, RemoveCleaner>::~IntrusiveDlist()
     {
         assert(!_first._prev && !_last._next);
         assert(intrusiveDlistElementCast(_first._next) == &_last);
@@ -55,15 +76,15 @@ namespace dci { namespace mm
     }
 
     ////////////////////////////////////////////////////////////////////////////////
-    template <class T>
-    bool IntrusiveDlist<T>::empty() const
+    template <class T, class RemoveCleaner>
+    bool IntrusiveDlist<T, RemoveCleaner>::empty() const
     {
         return intrusiveDlistElementCast(_first._next) == &_last;
     }
 
     ////////////////////////////////////////////////////////////////////////////////
-    template <class T>
-    T *IntrusiveDlist<T>::first() const
+    template <class T, class RemoveCleaner>
+    T *IntrusiveDlist<T, RemoveCleaner>::first() const
     {
         if(empty())
         {
@@ -74,8 +95,8 @@ namespace dci { namespace mm
     }
 
     ////////////////////////////////////////////////////////////////////////////////
-    template <class T>
-    T *IntrusiveDlist<T>::last() const
+    template <class T, class RemoveCleaner>
+    T *IntrusiveDlist<T, RemoveCleaner>::last() const
     {
         if(empty())
         {
@@ -86,8 +107,8 @@ namespace dci { namespace mm
     }
 
     ////////////////////////////////////////////////////////////////////////////////
-    template <class T>
-    std::pair<T*, T*> IntrusiveDlist<T>::range() const
+    template <class T, class RemoveCleaner>
+    std::pair<T*, T*> IntrusiveDlist<T, RemoveCleaner>::range() const
     {
         IntrusiveDlistElement<T> *first = _first._next;
         IntrusiveDlistElement<T> *last = const_cast<IntrusiveDlistElement<T> *>(&_last);
@@ -97,8 +118,8 @@ namespace dci { namespace mm
     }
 
     ////////////////////////////////////////////////////////////////////////////////
-    template <class T>
-    bool IntrusiveDlist<T>::contain(T *element) const
+    template <class T, class RemoveCleaner>
+    bool IntrusiveDlist<T, RemoveCleaner>::contain(T *element) const
     {
         IntrusiveDlistElement<T> *first = intrusiveDlistElementCast(element);
         //T *last = element;
@@ -110,8 +131,8 @@ namespace dci { namespace mm
     }
 
     ////////////////////////////////////////////////////////////////////////////////
-    template <class T>
-    void IntrusiveDlist<T>::push(T *element)
+    template <class T, class RemoveCleaner>
+    void IntrusiveDlist<T, RemoveCleaner>::push(T *element)
     {
         auto idee = intrusiveDlistElementCast(element);
 
@@ -125,8 +146,8 @@ namespace dci { namespace mm
     }
 
     ////////////////////////////////////////////////////////////////////////////////
-    template <class T>
-    void IntrusiveDlist<T>::remove(T *element)
+    template <class T, class RemoveCleaner>
+    void IntrusiveDlist<T, RemoveCleaner>::remove(T *element)
     {
         assert(contain(element));
 
@@ -137,5 +158,58 @@ namespace dci { namespace mm
 
 //        idee->_prev = nullptr;
 //        idee->_next = nullptr;
+        RemoveCleanExecutor<RemoveCleaner>::operator ()(element);
     }
+
+    ////////////////////////////////////////////////////////////////////////////////
+    template <class T, class RemoveCleaner>
+    void IntrusiveDlist<T, RemoveCleaner>::clear()
+    {
+        if(!RemoveCleanExecutor<RemoveCleaner>::_isNull)
+        {
+            T *element = _first._next;
+            while(element != intrusiveDlistElementCast(&_last, (T*)nullptr))
+            {
+                T *next = element->_next;
+                RemoveCleanExecutor<RemoveCleaner>::operator ()(element);
+
+                element = next;
+            }
+        }
+
+        _first._next = intrusiveDlistElementCast(&_last, (T*)nullptr);
+        _last._prev = intrusiveDlistElementCast(&_first, (T*)nullptr);
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////
+    template <class T, class RemoveCleaner>
+    template <class F>
+    void IntrusiveDlist<T, RemoveCleaner>::each(F &&f)
+    {
+        T *element = _first._next;
+        while(element != intrusiveDlistElementCast(&_last, (T*)nullptr))
+        {
+            f(element);
+            element = element->_next;
+        }
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////
+    template <class T, class RemoveCleaner>
+    template <class F>
+    void IntrusiveDlist<T, RemoveCleaner>::flush(F &&f)
+    {
+        T *element = _first._next;
+        while(element != intrusiveDlistElementCast(&_last, (T*)nullptr))
+        {
+            f(element);
+            T *next = element->_next;
+            RemoveCleanExecutor<RemoveCleaner>::operator ()(element);
+            element = next;
+        }
+
+        _first._next = intrusiveDlistElementCast(&_last, (T*)nullptr);
+        _last._prev = intrusiveDlistElementCast(&_first, (T*)nullptr);
+    }
+
 }}

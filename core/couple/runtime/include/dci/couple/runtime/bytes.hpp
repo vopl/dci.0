@@ -17,6 +17,8 @@ namespace dci { namespace couple { namespace runtime
         class Bytes;
     }
 
+    using byte = bytes::byte;
+
     class APIDCI_COUPLE_RUNTIME Bytes
         : public himpl::FaceLayout<impl::Bytes>
     {
@@ -37,10 +39,12 @@ namespace dci { namespace couple { namespace runtime
 
         bool empty() const;
         std::size_t size() const;
+        byte &operator[](std::size_t index) const;
 
         void append(Bytes &&data);
         void append(const char *str);
         void append(const char *str, std::size_t size);
+        void append(const byte *data, std::size_t size);
         void enlargeAtLeast(std::size_t size);
 
         void clear();
@@ -55,6 +59,9 @@ namespace dci { namespace couple { namespace runtime
 
         Bytes detachFirst(std::size_t size);
         Bytes detachLast(std::size_t size);
+
+        void fillAndDropFirst(byte *data, std::size_t size);
+        void fillAndDropLast(byte *data, std::size_t size);
 
         std::string toString();
     };

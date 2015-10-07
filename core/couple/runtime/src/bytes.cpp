@@ -50,6 +50,11 @@ namespace dci { namespace couple { namespace runtime
         return impl().size();
     }
 
+    byte &Bytes::operator[](std::size_t index) const
+    {
+        return impl()[index];
+    }
+
     void Bytes::append(Bytes &&data)
     {
         return impl().append(std::move(data.impl()));
@@ -63,6 +68,11 @@ namespace dci { namespace couple { namespace runtime
     void Bytes::append(const char *str, std::size_t size)
     {
         return impl().append(str, size);
+    }
+
+    void Bytes::append(const byte *data, std::size_t size)
+    {
+        return impl().append(data, size);
     }
 
     void Bytes::enlargeAtLeast(std::size_t size)
@@ -109,6 +119,16 @@ namespace dci { namespace couple { namespace runtime
     Bytes Bytes::detachLast(std::size_t size)
     {
         return impl().detachLast(size);
+    }
+
+    void Bytes::fillAndDropFirst(byte *data, std::size_t size)
+    {
+        return impl().fillAndDropFirst(data, size);
+    }
+
+    void Bytes::fillAndDropLast(byte *data, std::size_t size)
+    {
+        return impl().fillAndDropLast(data, size);
     }
 
     std::string Bytes::toString()

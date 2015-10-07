@@ -6,6 +6,8 @@
 
 namespace dci { namespace couple { namespace runtime { namespace bytes
 {
+    using byte = std::uint8_t;
+
     struct Segment
         : public mm::NewDelete<Segment>
     {
@@ -13,7 +15,7 @@ namespace dci { namespace couple { namespace runtime { namespace bytes
 
         static constexpr std::size_t _granula = 1024;
 
-        char _buffer[_granula];
+        byte _buffer[_granula];
 
         std::uint32_t _size;
         std::uint32_t _offset;

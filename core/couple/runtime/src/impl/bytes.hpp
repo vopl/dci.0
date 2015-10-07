@@ -7,7 +7,7 @@
 
 namespace dci { namespace couple { namespace runtime { namespace impl
 {
-
+    using namespace bytes;
     class Bytes
     {
         Bytes(const Bytes &) = delete;
@@ -16,7 +16,7 @@ namespace dci { namespace couple { namespace runtime { namespace impl
     public:
         Bytes();
         Bytes(Bytes &&from);
-        Bytes(std::size_t size, bytes::Segment *first, bytes::Segment *last);
+        Bytes(std::size_t size, Segment *first, Segment *last);
         ~Bytes();
 
         Bytes &operator=(Bytes &&);
@@ -25,10 +25,12 @@ namespace dci { namespace couple { namespace runtime { namespace impl
 
         void append(Bytes &&bytes);
         void append(const char *str, std::size_t size);
+        void append(const byte *data, std::size_t size);
         void enlargeAtLeast(std::size_t size);
 
         bool empty() const;
         std::size_t size() const;
+        byte &operator[](std::size_t index) const;
 
         void clear();
 
@@ -41,13 +43,16 @@ namespace dci { namespace couple { namespace runtime { namespace impl
         Bytes detachFirst(std::size_t size);
         Bytes detachLast(std::size_t size);
 
+        void fillAndDropFirst(byte *data, std::size_t size);
+        void fillAndDropLast(byte *data, std::size_t size);
+
         std::string toString();
 
     private:
-        static constexpr std::size_t _segmentSize = sizeof(bytes::Segment);
+        static constexpr std::size_t _segmentSize = sizeof(Segment);
 
         std::size_t _size;
-        bytes::Segment *_first;
-        bytes::Segment *_last;
+        Segment *_first;
+        Segment *_last;
     };
 }}}}

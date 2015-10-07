@@ -25,7 +25,7 @@ scope streamer
     interface Stream
     {
         alias Traffic = bytes;
-        in remit: ();
+        in remit: () -> ();
         in flow: () -> (Traffic);
     }
 

@@ -20,6 +20,10 @@ set(SRC
 
     src/impl/endpoint.hpp
     src/impl/endpoint.cpp
+    src/impl/endpoint/message.hpp
+    src/impl/endpoint/message.cpp
+    src/impl/endpoint/inputFlowParser.hpp
+    src/impl/endpoint/inputFlowParser.cpp
     src/impl/channelHub.hpp
     src/impl/channelHub.cpp
     src/impl/serviceHub.hpp

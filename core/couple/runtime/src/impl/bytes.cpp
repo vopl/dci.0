@@ -131,6 +131,12 @@ namespace dci { namespace couple { namespace runtime { namespace impl
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
     void Bytes::append(const char *str, std::size_t size)
     {
+        return append((const bytes::byte *)str, size);
+    }
+
+    /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
+    void Bytes::append(const bytes::byte *data, std::size_t size)
+    {
         if(!size)
         {
             return;
@@ -156,10 +162,11 @@ namespace dci { namespace couple { namespace runtime { namespace impl
                 space = size;
             }
 
-            memcpy(&cur->_buffer[cur->_offset + cur->_size], str, space);
+            memcpy(&cur->_buffer[cur->_offset + cur->_size], data, space);
 
             cur->_size += space;
             size -= space;
+            data += space;
 
             if(size)
             {
@@ -217,6 +224,24 @@ namespace dci { namespace couple { namespace runtime { namespace impl
     std::size_t Bytes::size() const
     {
         return _size;
+    }
+
+    /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
+    bytes::byte &Bytes::operator[](std::size_t index) const
+    {
+        for(bytes::Segment *iter = _first; iter; iter=iter->_next)
+        {
+            if(index < iter->_size)
+            {
+                return iter->_buffer[iter->_offset + index];
+            }
+            index -= iter->_size;
+        }
+
+        assert(!"bad index");
+        abort();
+        static bytes::byte stub;
+        return stub;
     }
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
@@ -390,9 +415,65 @@ namespace dci { namespace couple { namespace runtime { namespace impl
     Bytes Bytes::detachLast(std::size_t size)
     {
         (void)size;
-        assert(0);
+        assert(!"not implemented");
+        abort();
 
         return Bytes();
+    }
+
+    /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
+    void Bytes::fillAndDropFirst(byte *data, std::size_t size)
+    {
+        bytes::Segment *iter = _first;
+
+        for(;;)
+        {
+            bytes::Segment *cur = iter;
+
+            if(size > cur->_size)
+            {
+                iter = iter->_next;
+
+                memcpy(data, cur->_buffer+cur->_offset, cur->_size);
+                data += cur->_size;
+                size -= cur->_size;
+                delete cur;
+            }
+            else if(size < cur->_size)
+            {
+                //iter = iter;
+
+                memcpy(data, cur->_buffer+cur->_offset, size);
+                //data += size;
+                //size -= size;
+
+                cur->_offset += size;
+                cur->_size -= size;
+                break;
+            }
+            else
+            {
+                iter = iter->_next;
+
+                memcpy(data, cur->_buffer+cur->_offset, cur->_size);
+                //data += cur->_size;
+                //size -= cur->_size;
+
+                delete cur;
+                break;
+            }
+        }
+
+        _first = iter;
+    }
+
+    /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
+    void Bytes::fillAndDropLast(byte *data, std::size_t size)
+    {
+        (void)data;
+        (void)size;
+        assert(!"not implemented");
+        abort();
     }
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7

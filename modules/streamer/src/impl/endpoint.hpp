@@ -3,6 +3,8 @@
 #include <dci/couple/runtime.hpp>
 #include <dci/async.hpp>
 #include "streamer.hpp"
+#include "endpoint/message.hpp"
+#include "endpoint/inputFlowParser.hpp"
 
 namespace impl
 {
@@ -50,50 +52,6 @@ namespace impl
 
 
 
-    namespace
-    {
-        template <class F>
-        struct ScopedCleaner
-        {
-            F _f;
-
-            ScopedCleaner(F &&from)
-                : _f(std::forward<F>(from))
-            {
-            }
-
-            ScopedCleaner(ScopedCleaner &&from)
-                : _f(std::move(from._f))
-            {
-            }
-
-            ScopedCleaner &operator=(ScopedCleaner &&from)
-            {
-                _f = (std::move(from._f));
-            }
-
-            ~ScopedCleaner()
-            {
-                _f();
-            }
-        };
-
-        template <class F>
-        ScopedCleaner<F> makeScopedCleaner(F &&f)
-        {
-            return ScopedCleaner<F>(std::move(f));
-        }
-    }
-
-
-    struct Message
-    {
-        std::uint32_t   _type;
-        std::uint32_t   _linkId;
-
-        Bytes   _body;
-    };
-
     template <class Derived>
     class Endpoint
     {
@@ -106,45 +64,75 @@ namespace impl
         Future< Channel> detachChannel();
 
     public:
-        Future<> write(Message);
-        Future<Message> read();
+        Future<> write(endpoint::Message &&msg);
+        Future<endpoint::Message> read();
 
     private:
         void requestInputFlow();
-        void onInputFlow(Future<Bytes> &f);
+        void requestInputRemit();
+        void onInputFlowed(Future<Bytes> &f);
+        void onInputRemitted(Future<> &f);
 
-        Future<Bytes> onOutputRequested();
-        void onOutputRemit();
+        Future<Bytes> onOutputFlow();
+        Future<> onOutputRemit();
 
         void resolveDetach();
+
+    private:
+        struct Deleter
+        {
+            template <class T>
+            void operator()(T *v)
+            {
+                delete v;
+            }
+        };
+
+        struct InputMessage
+            : public dci::mm::IntrusiveDlistElement<InputMessage>
+            , public dci::mm::NewDelete<InputMessage>
+        {
+            endpoint::Message _message;
+        };
+
+        struct InputReadRequest
+            : public dci::mm::IntrusiveDlistElement<InputReadRequest>
+            , public dci::mm::NewDelete<InputReadRequest>
+        {
+            Promise<endpoint::Message>    _promise;
+        };
+
+        struct OutputWriteRequest
+            : public dci::mm::IntrusiveDlistElement<OutputWriteRequest>
+            , public dci::mm::NewDelete<OutputWriteRequest>
+        {
+            Bytes       _data;
+            Promise<>   _promise;
+        };
+
+        struct OutputFlowRequest
+            : public dci::mm::IntrusiveDlistElement<OutputFlowRequest>
+            , public dci::mm::NewDelete<OutputFlowRequest>
+        {
+            Promise<Bytes>  _promise;
+        };
+
+
     private:
         Channel             _channel;
         Promise<Channel>    _detachPromise{dci::async::PromiseNullInitializer()};
 
-        //input
-        bool                _inputFlowRequested{false};
-        Bytes               _inputAccumuler;
-        Message             _messageAccumuler;
-        enum class InputMode
-        {
-            headerStart,
-            bodyChunkStart,
-            bodyChunkContinue,
-            bodyLastChunkContinue,
-        };
-        InputMode _inputMode {InputMode::headerStart};
-        bool _lastInputFlowFailed {false};
+        //input waiters
+        std::size_t         _inputFlowRequested{0};
+        std::size_t         _inputRemitRequested{0};
 
-        std::size_t _tailBodySize{0};
+        //input
+        endpoint::InputFlowParser                               _inputFlowParser;
+        dci::mm::IntrusiveDlist<InputMessage, Deleter>          _inputMessagesAccumuler;
+        dci::mm::IntrusiveDlist<InputReadRequest, Deleter>      _inputReadRequests;
 
         //output
-        Bytes               _outputAccumuler;
-
-        struct OutputRequest : public dci::mm::IntrusiveDlistElement<OutputRequest>
-        {
-            Promise<Bytes>      _promise;
-        };
-
-        dci::mm::IntrusiveDlist<OutputRequest> _outputRequests;
+        dci::mm::IntrusiveDlist<OutputWriteRequest, Deleter>    _outputWriteRequests;
+        dci::mm::IntrusiveDlist<OutputFlowRequest, Deleter>     _outputFlowRequests;
     };
 }

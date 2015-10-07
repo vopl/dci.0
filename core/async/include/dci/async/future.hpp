@@ -1,6 +1,7 @@
 #pragma once
 
 #include "details/future.hpp"
+#include <functional>
 
 namespace dci { namespace async
 {
@@ -104,11 +105,11 @@ namespace dci { namespace async
         const E &error();
         E &&detachError();
 
-        template <class F>
-        void then(F &&);
+        template <class F, class... Args>
+        void then(F &&, Args &&...);
 
-        template <class Et, class... Tt, class F>
-        Future<Et, Tt...> thenTransform(F &&);
+        template <class Et, class... Tt, class F, class... Args>
+        Future<Et, Tt...> thenTransform(F &&, Args &&...);
 
     private:
         Engine _engine;
@@ -256,14 +257,14 @@ namespace dci { namespace async
     }
 
     template <class E, class... T>
-    template <class F>
-    void Future<E, T...>::then(F &&f)
+    template <class F, class... Args>
+    void Future<E, T...>::then(F &&f, Args &&... args)
     {
         struct Then
             : details::future::ThenBase<E, T...>
         {
-            Then(F &&call)
-                : _call(std::forward<F>(call))
+            Then(F &&f, Args &&... args)
+                : _call(std::bind(std::forward<F>(f), std::forward<Args>(args)..., std::placeholders::_1))
             {
             }
 
@@ -278,8 +279,8 @@ namespace dci { namespace async
                 mm::free<sizeof(Then)>(this);
             }
 
-            std::decay_t<F>                 _call;
-        } *then = new(mm::alloc<sizeof(Then)>()) Then(std::forward<F>(f));
+            std::decay_t<decltype(std::bind(std::forward<F>(std::declval<F>()), std::forward<Args>(std::declval<Args>())..., std::placeholders::_1))> _call;
+        } *then = new(mm::alloc<sizeof(Then)>()) Then(std::forward<F>(f), std::forward<Args>(args)...);
 
         _engine.pushThen(then);
     }
@@ -291,14 +292,14 @@ namespace dci { namespace async
 namespace dci { namespace async
 {
     template <class E, class... T>
-    template <class Et, class... Tt, class F>
-    Future<Et, Tt...> Future<E, T...>::thenTransform(F &&f)
+    template <class Et, class... Tt, class F, class... Args>
+    Future<Et, Tt...> Future<E, T...>::thenTransform(F &&f, Args &&... args)
     {
         struct Then
             : details::future::ThenBase<E, T...>
         {
-            Then(F &&call)
-                : _call(std::forward<F>(call))
+            Then(F &&f, Args &&... args)
+                : _call(std::bind(std::forward<F>(f), std::forward<Args>(args)..., std::placeholders::_1, std::placeholders::_2))
             {
             }
 
@@ -313,9 +314,9 @@ namespace dci { namespace async
                 mm::free<sizeof(Then)>(this);
             }
 
-            std::decay_t<F>                 _call;
+            std::decay_t<decltype(std::bind(std::forward<F>(std::declval<F>()), std::forward<Args>(std::declval<Args>())..., std::placeholders::_1, std::placeholders::_2))> _call;
             dci::async::Promise<Et, Tt...>  _dstPromise;
-        } *then = new(mm::alloc<sizeof(Then)>()) Then(std::forward<F>(f));
+        } *then = new(mm::alloc<sizeof(Then)>()) Then(std::forward<F>(f), std::forward<Args>(args)...);
 
         auto res = then->_dstPromise.future();
         _engine.pushThen(then);
