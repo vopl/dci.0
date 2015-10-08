@@ -1,4 +1,5 @@
 #include "message.hpp"
+#include "streamer.hpp"
 
 namespace impl { namespace endpoint
 {
@@ -187,11 +188,11 @@ namespace impl { namespace endpoint
 
     }
 
-    bool deserializeHeader(Bytes &data, Message &msg, std::uint32_t &bodyLength)
+    std::error_code deserializeHeader(Bytes &data, Message &msg, std::uint32_t &bodyLength)
     {
         if(data.size()<1)
         {
-            return false;
+            return streamer::error::lowData;
         }
 
         std::size_t headerLen = 1;
@@ -203,7 +204,7 @@ namespace impl { namespace endpoint
 
         if(headerLen < data.size())
         {
-            return false;
+            return streamer::error::lowData;
         }
 
         std::uint8_t header[16];
@@ -216,7 +217,7 @@ namespace impl { namespace endpoint
         assert(headerLen == headerLen2);
 
         data.dropFirst(headerLen);
-        return true;
+        return std::error_code();
     }
 
     Bytes serialize(Message &&msg)

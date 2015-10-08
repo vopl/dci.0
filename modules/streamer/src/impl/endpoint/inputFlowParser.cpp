@@ -17,6 +17,12 @@ namespace impl { namespace endpoint
         _headerReaded = false;
         _currentMessage._body.clear();
         _currentBodyLength = 0;
+        _lastError = std::error_code();
+    }
+
+    const std::error_code &InputFlowParser::lastError() const
+    {
+        return _lastError;
     }
 
 }}

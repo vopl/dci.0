@@ -6,17 +6,20 @@ namespace impl
 {
     using namespace endpoint;
 
+    /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
     template <class Derived>
     Endpoint<Derived>::Endpoint()
     {
     }
 
+    /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
     template <class Derived>
     Endpoint<Derived>::~Endpoint()
     {
         detachChannel().wait();
     }
 
+    /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
     template <class Derived>
     Future< > Endpoint<Derived>::attachChannel(Channel &&arg_0)
     {
@@ -35,11 +38,11 @@ namespace impl
 
         _channel._output.signal_flow().connect(&Endpoint::onOutputFlow, this);
         _channel._output.signal_remit().connect(&Endpoint::onOutputRemit, this);
-        requestInputFlow();
 
         return Future< >();
     }
 
+    /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
     template <class Derived>
     Future< Channel> Endpoint<Derived>::detachChannel()
     {
@@ -70,6 +73,7 @@ namespace impl
         return res;
     }
 
+    /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
     template <class Derived>
     Future<> Endpoint<Derived>::write(Message &&msg)
     {
@@ -91,6 +95,7 @@ namespace impl
         return outputWriteRequest->_promise.future();
     }
 
+    /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
     template <class Derived>
     Future<Message> Endpoint<Derived>::read()
     {
@@ -104,22 +109,47 @@ namespace impl
             return res;
         }
 
+        if(_inputFlowParser.lastError())
+        {
+            return std::error_code(_inputFlowParser.lastError());
+        }
+
+        requestInputFlowIfNeed();
+
         InputReadRequest *inputReadRequest = new InputReadRequest;
         _inputReadRequests.push(inputReadRequest);
 
         return inputReadRequest->_promise.future();
     }
 
+    /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
     template <class Derived>
-    void Endpoint<Derived>::requestInputFlow()
+    void Endpoint<Derived>::requestInputFlowIfNeed()
     {
         assert(_channel._input);
         assert(!_detachPromise);
+
+        if(_inputFlowRequested > 0)
+        {
+            return;
+        }
+
+        if(_inputReadRequests.empty())
+        {
+            return;
+        }
+        assert(_inputMessagesAccumuler.empty());
+
+        if(_inputFlowParser.lastError())
+        {
+            return;
+        }
 
         _inputFlowRequested++;
         _channel._input.flow().then(&Endpoint::onInputFlowed, this);
     }
 
+    /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
     template <class Derived>
     void Endpoint<Derived>::requestInputRemit()
     {
@@ -127,6 +157,7 @@ namespace impl
         _channel._input.remit().then(&Endpoint::onInputRemitted, this);
     }
 
+    /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
     template <class Derived>
     void Endpoint<Derived>::onInputFlowed(Future<Bytes> &f)
     {
@@ -135,8 +166,9 @@ namespace impl
 
         if(f.hasError())
         {
-            //TODO: handle error
-            //assert(0);
+            _inputReadRequests.flush([&](InputReadRequest *inputReadRequest){
+                inputReadRequest->_promise.resolveError(std::error_code(f.error()));
+            });
 
             if(_detachPromise && !_inputFlowRequested && !_inputRemitRequested)
             {
@@ -145,7 +177,7 @@ namespace impl
             return;
         }
 
-        _inputFlowParser.process(f.detachValue<0>(), [this](Message &&msg){
+        std::error_code ec = _inputFlowParser.process(f.detachValue<0>(), [this](Message &&msg){
 
             if(!_inputReadRequests.empty())
             {
@@ -163,6 +195,16 @@ namespace impl
             }
         });
 
+        if(ec)
+        {
+            _inputReadRequests.flush([&](InputReadRequest *inputReadRequest){
+                inputReadRequest->_promise.resolveError(std::error_code(ec));
+            });
+        }
+        else
+        {
+            requestInputFlowIfNeed();
+        }
 
         if(_detachPromise && !_inputFlowRequested && !_inputRemitRequested)
         {
@@ -170,6 +212,7 @@ namespace impl
         }
     }
 
+    /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
     template <class Derived>
     void Endpoint<Derived>::onInputRemitted(Future<>&)
     {
@@ -182,14 +225,11 @@ namespace impl
         }
     }
 
-
+    /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
     template <class Derived>
     Future<Bytes> Endpoint<Derived>::onOutputFlow()
     {
-        if(!_inputFlowRequested && !_detachPromise)
-        {
-            requestInputFlow();
-        }
+        requestInputFlowIfNeed();
 
         if(!_outputWriteRequests.empty())
         {
@@ -208,6 +248,7 @@ namespace impl
         return outputRequest->_promise.future();
     }
 
+    /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
     template <class Derived>
     Future<> Endpoint<Derived>::onOutputRemit()
     {
@@ -220,6 +261,7 @@ namespace impl
         return Future<>();
     }
 
+    /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
     template <class Derived>
     void Endpoint<Derived>::resolveDetach()
     {

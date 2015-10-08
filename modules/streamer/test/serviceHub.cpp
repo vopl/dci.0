@@ -209,20 +209,42 @@ TEST_F(ServiceHub, CreateAttachDetach)
         ::streamer::ServiceHub sh1 = _manager->createService< ::streamer::ServiceHub>();
         ::streamer::ServiceHub sh2 = _manager->createService< ::streamer::ServiceHub>();
 
-        ::streamer::Channel ch1;
-        ::streamer::Channel ch2 {ch1._output, ch1._input};
 
-        auto f1 = sh1.attachChannel(std::move(ch1));
-        auto f2 = sh2.attachChannel(std::move(ch2));
+        {
+            auto f1 = sh1.detachChannel();
+            auto f2 = sh2.detachChannel();
 
-        ASSERT_TRUE(f1.hasValue());
-        ASSERT_TRUE(f2.hasValue());
+            ASSERT_TRUE(f1.hasError());
+            ASSERT_TRUE(f2.hasError());
+        }
 
-        auto f3 = sh1.detachChannel();
-        auto f4 = sh2.detachChannel();
 
-        ASSERT_TRUE(f3.hasValue());
-        ASSERT_TRUE(f4.hasValue());
+        {
+            ::streamer::Channel ch1;
+            ::streamer::Channel ch2 {ch1._output, ch1._input};
+
+            auto f1 = sh1.attachChannel(std::move(ch1));
+            auto f2 = sh2.attachChannel(std::move(ch2));
+
+            ASSERT_TRUE(f1.hasValue());
+            ASSERT_TRUE(f2.hasValue());
+        }
+
+        {
+            auto f1 = sh1.detachChannel();
+            auto f2 = sh2.detachChannel();
+
+            ASSERT_TRUE(f1.hasValue());
+            ASSERT_TRUE(f2.hasValue());
+        }
+
+        {
+            auto f1 = sh1.detachChannel();
+            auto f2 = sh2.detachChannel();
+
+            ASSERT_TRUE(f1.hasError());
+            ASSERT_TRUE(f2.hasError());
+        }
     }
 }
 

@@ -2,6 +2,7 @@
 
 #include <dci/couple/runtime.hpp>
 #include "message.hpp"
+#include "streamer.hpp"
 
 namespace impl { namespace endpoint
 {
@@ -17,7 +18,9 @@ namespace impl { namespace endpoint
         void reset();
 
         template <class F>
-        void process(Bytes &&input, F &&resultReceiver);
+        std::error_code process(Bytes &&input, F &&resultReceiver);
+
+        const std::error_code &lastError() const;
 
     private:
         Bytes           _accumuler;
@@ -27,13 +30,20 @@ namespace impl { namespace endpoint
         Message         _currentMessage;
         std::uint32_t   _currentBodyLength {0};
 
+        std::error_code _lastError;
+
     };
 
 
 
     template <class F>
-    void InputFlowParser::process(Bytes &&input, F &&resultReceiver)
+    std::error_code InputFlowParser::process(Bytes &&input, F &&resultReceiver)
     {
+        if(_lastError)
+        {
+            return _lastError;
+        }
+
         _accumuler.append(std::move(input));
 
         while(!_accumuler.empty())
@@ -56,22 +66,30 @@ namespace impl { namespace endpoint
                 else
                 {
                     _currentMessage._body.append(std::move(_accumuler));
-                    return;
+                    return _lastError;
                 }
             }
             else
             {
-                if(deserializeHeader(_accumuler, _currentMessage, _currentBodyLength))
+                std::error_code ec = deserializeHeader(_accumuler, _currentMessage, _currentBodyLength);
+
+                if(ec)
                 {
-                    _headerReaded = true;
-                    continue;
+                    if(::streamer::error::lowData == ec)
+                    {
+                        return _lastError;
+                    }
+
+                    _lastError = ec;
+                    return _lastError;
                 }
-                else
-                {
-                    return;
-                }
+
+                _headerReaded = true;
+                continue;
             }
         }
+
+        return _lastError;
     }
 
 }}

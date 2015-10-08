@@ -68,7 +68,7 @@ namespace impl
         Future<endpoint::Message> read();
 
     private:
-        void requestInputFlow();
+        void requestInputFlowIfNeed();
         void requestInputRemit();
         void onInputFlowed(Future<Bytes> &f);
         void onInputRemitted(Future<> &f);

@@ -10,6 +10,9 @@ scope streamer
         flowRemitted;
         flowAborted;
 
+        lowData;
+        malformedData:          "бинарный поток испорчен";
+
 //        incompatibleProtocol:   "запрошенный удаленной стороной протокол не совместим с уже установленным";
 //        unsupportedProtocol:    "запрошенный удаленной стороной протокол не поддерживается";
 //        malformedData:          "бинарный поток испорчен";

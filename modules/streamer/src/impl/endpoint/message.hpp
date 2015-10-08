@@ -38,6 +38,6 @@ namespace impl { namespace endpoint
     };
 
 
-    bool deserializeHeader(Bytes &data, Message &msg, std::uint32_t &bodyLength);
+    std::error_code deserializeHeader(Bytes &data, Message &msg, std::uint32_t &bodyLength);
     Bytes serialize(Message &&msg);
 }}
