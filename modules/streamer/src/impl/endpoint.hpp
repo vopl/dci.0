@@ -18,11 +18,6 @@ namespace impl
     struct attach {};
     struct detach {};
 
-    struct start {};
-    struct stop {};
-    struct reset {};
-
-
     struct null {};
     struct unknown {};
 
@@ -31,10 +26,10 @@ namespace impl
     struct bye {};
 
     //links
-    struct links_create {};
-    struct links_destroy {};
-    struct links_generation {};
-    struct links_commitGeneration {};
+//    struct links_create {};
+//    struct links_destroy {};
+//    struct links_generation {};
+//    struct links_commitGeneration {};
 
 
     //link

@@ -3,24 +3,43 @@
 namespace impl
 {
     template <class Derived>
-    Future< streamer::ServiceHub::ServiceId> ServiceHub<Derived>::injectService(Interface &&arg_0)
+    ServiceHub<Derived>::ServiceHub()
     {
-        (void)arg_0;
-        assert(0);
     }
 
     template <class Derived>
-    Future< Interface, streamer::ServiceHub::ServiceId> ServiceHub<Derived>::inviteService(Iid &&arg_0)
+    ServiceHub<Derived>::~ServiceHub()
     {
-        (void)arg_0;
-        assert(0);
     }
 
     template <class Derived>
-    Future< Interface> ServiceHub<Derived>::ejectService(streamer::ServiceHub::ServiceId &&arg_0)
+    void ServiceHub<Derived>::start()
     {
-        (void)arg_0;
-        assert(0);
+
+    }
+
+    template <class Derived>
+    void ServiceHub<Derived>::stop()
+    {
+
+    }
+
+    template <class Derived>
+    Future< streamer::ServiceHub::ServiceId> ServiceHub<Derived>::injectService(streamer::ServiceHub::Remote &&arg_0)
+    {
+        return _localLinks.add()->inject(std::move(arg_0));
+    }
+
+    template <class Derived>
+    Future< streamer::ServiceHub::Local, streamer::ServiceHub::ServiceId> ServiceHub<Derived>::inviteService(Iid &&arg_0)
+    {
+        return _localLinks.add()->invite(std::move(arg_0));
+    }
+
+    template <class Derived>
+    Future< streamer::ServiceHub::Remote> ServiceHub<Derived>::ejectService(streamer::ServiceHub::ServiceId &&arg_0)
+    {
+        return _localLinks.del(std::move(arg_0));
     }
 
 }

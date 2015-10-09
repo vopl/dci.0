@@ -24,14 +24,32 @@ set(SRC
     src/impl/endpoint/message.cpp
     src/impl/endpoint/inputFlowParser.hpp
     src/impl/endpoint/inputFlowParser.cpp
+
+    src/impl/accord.hpp
+    src/impl/accord.cpp
+
     src/impl/channelHub.hpp
     src/impl/channelHub.cpp
+
     src/impl/serviceHub.hpp
     src/impl/serviceHub.cpp
+    src/impl/serviceHub/link.hpp
+
     src/impl/amortisseur.hpp
     src/impl/amortisseur.cpp
 
     src/impl/protocol.hpp
+
+    src/impl/links/local.hpp
+    src/impl/links/local/linkId.hpp
+    src/impl/links/local/linkId.cpp
+    src/impl/links/local/levelNode.hpp
+    src/impl/links/local/levelNode0.hpp
+    src/impl/links/local/levelNodeBase.hpp
+    src/impl/links/local/levelNodeMaxStub.hpp
+    src/impl/links/local/switchExpander.hpp
+
+    src/impl/links/remote.hpp
 
 
     src/impl/fsm/endpoint.hpp
@@ -42,6 +60,8 @@ set(SRC
     src/impl/fsm/endpoint/attached/reading.hpp
     src/impl/fsm/endpoint/attached/readSubscription.hpp
     src/impl/fsm/endpoint/attached/writing.hpp
+
+
 
 )
 
