@@ -2,44 +2,17 @@
 
 #include "address.hpp"
 #include "level.hpp"
+#include <dci/utils/bits.hpp>
 
 namespace dci { namespace mm { namespace allocator { namespace bitIndex
 {
-
-    namespace
-    {
-//        std::size_t bits_itz(std::uint8_t x);//index of least significant zero or overflow if absent
-//        std::size_t bits_itz(std::uint16_t x);
-//        std::size_t bits_itz(std::uint32_t x);
-
-        inline std::size_t bits_itz(std::uint64_t x)
-        {
-            std::size_t res = __builtin_ffsll(~x);
-            if(!res)
-            {
-                return 64;
-            }
-
-            return res - 1;
-        }
-
-        inline std::size_t bits_clz(std::uint64_t x)
-        {
-            if(!x)
-            {
-                return 64;
-            }
-
-            return __builtin_clzll(x);
-        }
-    }
 
     template <std::size_t lineSize>
     Address Level<0, lineSize>::allocate()
     {
         for(std::size_t bitHolderIdx(0); bitHolderIdx<_bitHoldersAmount; ++bitHolderIdx)
         {
-            Address addr = bits_itz(_bitHolders[bitHolderIdx]);
+            Address addr = dci::utils::bits::least1Count(_bitHolders[bitHolderIdx]);
             if(addr < 64)
             {
                 _bitHolders[bitHolderIdx] |= (1ULL << addr);
@@ -77,10 +50,10 @@ namespace dci { namespace mm { namespace allocator { namespace bitIndex
     {
         for(std::size_t bitHolderIdx(_bitHoldersAmount-1); bitHolderIdx<_bitHoldersAmount; --bitHolderIdx)
         {
-            std::size_t clz = bits_clz(_bitHolders[bitHolderIdx]);
-            if(clz < 64)
+            Address addr = dci::utils::bits::most0Count(_bitHolders[bitHolderIdx]);
+            if(addr < 64)
             {
-                return (64 - clz - 1) + bitHolderIdx * 64;
+                return addr + bitHolderIdx * 64;
             }
         }
 

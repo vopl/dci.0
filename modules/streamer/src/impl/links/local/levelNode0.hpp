@@ -21,7 +21,7 @@ namespace impl { namespace links { namespace local
         using LevelNodeBase<Link, width, levels>::_idOffset;
 
     private:
-        int _useMask = {};
+        std::size_t _useMask = 0;
         std::unique_ptr<Link> _links[width] = {};
     };
 
