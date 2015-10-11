@@ -1,28 +1,42 @@
 #pragma once
 #include "levelNodeBase.hpp"
+#include <dci/utils/bits.hpp>
 
 namespace impl { namespace links { namespace local
 {
-    template <class Link, std::size_t width, std::size_t levels>
-    class LevelNode<Link, width, levels, 0>
-        : public LevelNodeBase<Link, width, levels>
+    template <class Cfg>
+    class LevelNode<Cfg, 0>
+        : public LevelNodeBase<Cfg>
+        , public dci::mm::NewDelete<LevelNode<Cfg, 0>>
     {
-        using Parent = LevelNode<Link, width, levels, 1>;
+    public:
+        using Parent = LevelNode<Cfg, 1>;
+
+        using Container = typename Cfg::Container;
+        using Link = typename Cfg::Link;
+        static const std::size_t _width = Cfg::_width;
+        static const std::size_t _levels = Cfg::_levels;
+        static const std::size_t _volume = _width * 1;
+
+        using Mask = std::size_t;
+        static const Mask _fullUseMask = (bitsof(Mask)==_width ? (~std::size_t(0)) : ((1ull<<_width) - 1));
+
+        using LinkPtr = std::unique_ptr<Link>;
 
     public:
-        LevelNode(const LinkId &idOffset);
+        LevelNode();
         ~LevelNode();
 
-        LinkId add(Local<Link> *container, std::unique_ptr<Link> &&link);
-        Link *get(const LinkId &id);
-        std::unique_ptr<Link> del(Local<Link> *container, const LinkId &id);
+        LinkId add(Container *container, LinkPtr &&link);
+        Link *get(const LinkId &id) const;
+        LinkPtr del(Container *container, const LinkId &id);
+
+        bool isFull() const;
 
     private:
-        using LevelNodeBase<Link, width, levels>::_idOffset;
-
-    private:
-        std::size_t _useMask = 0;
-        std::unique_ptr<Link> _links[width] = {};
+        Mask _useMask = 0;
+        static_assert(bitsof(_useMask) >= _width, "width must not be greater then _useMask");
+        LinkPtr _links[_width] = {};
     };
 
 
@@ -35,58 +49,71 @@ namespace impl { namespace links { namespace local
 
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
-    template <class Link, std::size_t width, std::size_t levels>
-    LevelNode<Link, width, levels, 0>::LevelNode(const LinkId &idOffset)
-        : LevelNodeBase<Link, width, levels>(idOffset)
+    template <class Cfg>
+    LevelNode<Cfg, 0>::LevelNode()
+        : LevelNodeBase<Cfg>()
     {
 
     }
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
-    template <class Link, std::size_t width, std::size_t levels>
-    LevelNode<Link, width, levels, 0>::~LevelNode()
+    template <class Cfg>
+    LevelNode<Cfg, 0>::~LevelNode()
     {
-
+        assert(!_useMask);
     }
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
-    template <class Link, std::size_t width, std::size_t levels>
-    LinkId LevelNode<Link, width, levels, 0>::add(Local<Link> *container, std::unique_ptr<Link> &&link)
+    template <class Cfg>
+    LinkId LevelNode<Cfg, 0>::add(Container *container, LinkPtr &&link)
     {
-        for(std::size_t i(0); i<width; ++i)
+        LinkId id = dci::utils::bits::least1Count(_useMask);
+
+        assert(id <= _width);
+        if(id >= _width)
         {
-            if(!_links[i])
-            {
-                _links[i] = std::move(link);
-
-                LinkId id = _idOffset + i;
-                return id;
-            }
+            return container->levelUpAdd(std::move(link));
         }
 
-        return container->levelUpAdd(std::move(link));
+        assert(link && "null link added?");
+        assert(!_links[id]);
+        _links[id] = std::move(link);
+        _useMask |= 1ull<<id;
+
+        return id;
     }
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
-    template <class Link, std::size_t width, std::size_t levels>
-    Link *LevelNode<Link, width, levels, 0>::get(const LinkId &id)
+    template <class Cfg>
+    typename LevelNode<Cfg, 0>::Link *LevelNode<Cfg, 0>::get(const LinkId &id) const
     {
-        assert(id >= _idOffset && id < _idOffset+width);
-        assert(_links[id-_idOffset]);
-        return _links[id-_idOffset].get();
+        assert(id < _width);
+        assert(_links[id]);
+        assert((_useMask>>id) & 1);
+
+        return _links[id].get();
     }
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
-    template <class Link, std::size_t width, std::size_t levels>
-    std::unique_ptr<Link> LevelNode<Link, width, levels, 0>::del(Local<Link> *container, const LinkId &id)
+    template <class Cfg>
+    typename LevelNode<Cfg, 0>::LinkPtr LevelNode<Cfg, 0>::del(Container *container, const LinkId &id)
     {
-        assert(id >= _idOffset && id < _idOffset+width);
-        assert(_links[id-_idOffset]);
+        assert(id < _width);
+        assert(_links[id]);
+        assert((_useMask>>id) & 1);
 
         (void)container;
         assert(!"remove empty nodes");
 
-        return std::move(_links[id-_idOffset]);
+        _useMask &= ~(1u<<id);
+        return std::move(_links[id]);
+    }
+
+    /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
+    template <class Cfg>
+    bool LevelNode<Cfg, 0>::isFull() const
+    {
+        return _fullUseMask == _useMask;
     }
 
 }}}

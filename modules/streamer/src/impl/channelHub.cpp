@@ -7,6 +7,7 @@ namespace impl
     {
         (void)arg_0;
         assert(0);
+        return Future< streamer::ChannelHub::SubchannelId>(make_error_code(std::errc::address_not_available));
     }
 
     template <class Derived>
@@ -14,6 +15,7 @@ namespace impl
     {
         (void)arg_0;
         assert(0);
+        return Future< Channel>(make_error_code(std::errc::address_not_available));
     }
 }
 

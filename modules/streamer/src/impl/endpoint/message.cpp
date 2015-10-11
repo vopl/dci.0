@@ -3,6 +3,7 @@
 
 namespace impl { namespace endpoint
 {
+    static_assert(8 == CHAR_BIT, "this code launched only for 8 bits in byte, CHECK OTHERS!");
 
     namespace
     {

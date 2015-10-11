@@ -78,6 +78,7 @@ namespace dci { namespace async { namespace impl
             {
                 bool b = link->_waitable->tryAcquire();
                 assert(b);
+                (void)b;
             }
 
             return;
@@ -169,6 +170,7 @@ namespace dci { namespace async { namespace impl
 
                     bool b = iter->_waitable->tryAcquire();
                     assert(b);
+                    (void)b;
                 }
                 Scheduler::instance().ready(_coro);
             }

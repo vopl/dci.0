@@ -44,13 +44,13 @@ template <class Integral> Integral get(std::size_t index)
 template <class Integral> void test_least1Count()
 {
     ASSERT_EQ(0u, least1Count(Integral(0)));
-    ASSERT_EQ(sizeof(Integral)*8, least1Count(Integral(~Integral(0))));
+    ASSERT_EQ(bitsof(Integral), least1Count(Integral(~Integral(0))));
 
     for(std::size_t i(0); i<sizeof(Integral)*256; ++i)
     {
         Integral v = get<Integral>(i);
 
-        for(std::size_t b(0); b<sizeof(Integral)*8; ++b)
+        for(std::size_t b(0); b<bitsof(Integral); ++b)
         {
             Integral mask1 = ((1ull<<b)-1);
             Integral mask2 = ~(1ull<<b);
@@ -64,14 +64,14 @@ template <class Integral> void test_least1Count()
 
 template <class Integral> void test_most1Count()
 {
-    ASSERT_EQ(sizeof(Integral)*8-1, most1Count(Integral(0)));
-    ASSERT_EQ(sizeof(Integral)*8, most1Count(Integral(~Integral(0))));
+    ASSERT_EQ(bitsof(Integral)-1, most1Count(Integral(0)));
+    ASSERT_EQ(bitsof(Integral), most1Count(Integral(~Integral(0))));
 
     for(std::size_t i(0); i<sizeof(Integral)*256; ++i)
     {
         Integral v = get<Integral>(i);
 
-        for(std::size_t b(0); b<sizeof(Integral)*8; ++b)
+        for(std::size_t b(0); b<bitsof(Integral); ++b)
         {
             Integral mask1 = ~((1ull<<b)-1);
             Integral mask2 = ~(1ull<<b);
@@ -85,14 +85,14 @@ template <class Integral> void test_most1Count()
 
 template <class Integral> void test_least0Count()
 {
-    ASSERT_EQ(sizeof(Integral)*8, least0Count(Integral(0)));
+    ASSERT_EQ(bitsof(Integral), least0Count(Integral(0)));
     ASSERT_EQ(0u, least0Count(Integral(~Integral(0))));
 
     for(std::size_t i(0); i<sizeof(Integral)*256; ++i)
     {
         Integral v = get<Integral>(i);
 
-        for(std::size_t b(0); b<sizeof(Integral)*8; ++b)
+        for(std::size_t b(0); b<bitsof(Integral); ++b)
         {
             Integral mask1 = ~((1ull<<b)-1);
             Integral mask2 = (1ull<<b);
@@ -106,14 +106,14 @@ template <class Integral> void test_least0Count()
 
 template <class Integral> void test_most0Count()
 {
-    ASSERT_EQ(sizeof(Integral)*8, most0Count(Integral(0)));
-    ASSERT_EQ(sizeof(Integral)*8-1, most0Count(Integral(~Integral(0))));
+    ASSERT_EQ(bitsof(Integral), most0Count(Integral(0)));
+    ASSERT_EQ(bitsof(Integral)-1, most0Count(Integral(~Integral(0))));
 
     for(std::size_t i(0); i<sizeof(Integral)*256; ++i)
     {
         Integral v = get<Integral>(i);
 
-        for(std::size_t b(0); b<sizeof(Integral)*8; ++b)
+        for(std::size_t b(0); b<bitsof(Integral); ++b)
         {
             Integral mask1 = ((1ull<<b)-1);
             Integral mask2 = (1ull<<b);

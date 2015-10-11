@@ -1,9 +1,11 @@
 #pragma once
 
 #include "address.hpp"
+#include <dci/utils/integer.hpp>
 
 #include <type_traits>
 #include <cassert>
+#include <climits>
 
 namespace dci { namespace mm { namespace allocator { namespace bitIndex
 {
@@ -14,7 +16,7 @@ namespace dci { namespace mm { namespace allocator { namespace bitIndex
     class Level<0, lineSize>
     {
     public:
-        static constexpr std::size_t _volume = lineSize*8;
+        static constexpr std::size_t _volume = lineSize*CHAR_BIT;
         static constexpr std::size_t _subLevelsAmount = 0;
         static constexpr std::size_t _sizeofCounter = 0;
         static constexpr std::size_t _lineSize = lineSize;
@@ -40,17 +42,7 @@ namespace dci { namespace mm { namespace allocator { namespace bitIndex
     namespace
     {
         template <std::size_t value>
-        using coveredUnsignedIntegral =
-            typename std::conditional< (value < 1ULL << 8),
-                std::uint8_t,
-                typename std::conditional< (value < 1ULL << 16),
-                    std::uint16_t,
-                    typename std::conditional< (value < 1ULL << 32),
-                        std::uint32_t,
-                       std::uint64_t
-                    >::type
-                >::type
-            >::type;
+        using coveredUnsignedIntegral = dci::utils::integer::uintCounter<value>;
     }
 
     template <std::size_t order, std::size_t lineSize>

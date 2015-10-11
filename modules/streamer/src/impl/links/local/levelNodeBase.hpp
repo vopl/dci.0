@@ -12,28 +12,54 @@ namespace impl { namespace links {
 
 namespace impl { namespace links { namespace local
 {
-    template <class Link, std::size_t width, std::size_t levels, std::size_t level> class LevelNode;
+    template <class Cfg, std::size_t level> class LevelNode;
+
+    template <class Cfg> class LevelNodeBase;
+
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
-    template <class Link, std::size_t width, std::size_t levels>
+    template <class Cfg>
     class LevelNodeBase
     {
     public:
-        LevelNodeBase(const LinkId &idOffset);
-        ~LevelNodeBase();
+        using Container = typename Cfg::Container;
+        using Link = typename Cfg::Link;
+        static const std::size_t _width = Cfg::_width;
+        static const std::size_t _levels = Cfg::_levels;
 
+        struct Deleter
+        {
+            void operator()(LevelNodeBase<Cfg> *);
+        };
 
-        LinkId add(std::size_t level, Local<Link> *container, std::unique_ptr<Link> &&link);
-        Link *get(std::size_t level, const LinkId &id);
-        std::unique_ptr<Link> del(std::size_t level, Local<Link> *container, const LinkId &id);
+        using LevelNodeBasePtr = std::unique_ptr<LevelNodeBase, Deleter>;
+        using LinkPtr = std::unique_ptr<Link>;
 
     protected:
+        LevelNodeBase();
+        ~LevelNodeBase();
 
-        LinkId _idOffset;
+    public:
+        static LevelNodeBasePtr create(std::size_t level, LevelNodeBasePtr &&child);
+        void destroy(std::size_t level);
+
+        LinkId add(std::size_t level, Container *container, LinkPtr &&link);
+        Link *get(std::size_t level, const LinkId &id) const;
+        LinkPtr del(std::size_t level, Container *container, const LinkId &id);
+
+    private:
+        template <class F>
+        static auto expandSwitch(std::size_t level, F &&f);
     };
 
-    template <class Link, std::size_t width, std::size_t levels>
-    using LevelNodeBasePtr = std::unique_ptr<LevelNodeBase<Link, width, levels>>;
+
+    template <class Cfg>
+    using LevelNodeBasePtr = typename LevelNodeBase<Cfg>::LevelNodeBasePtr;
+
+
+    template <class Cfg, std::size_t level>
+    using LevelNodePtr = std::unique_ptr<LevelNode<Cfg, level>>;
+
 
 
 
@@ -45,44 +71,87 @@ namespace impl { namespace links { namespace local
 
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
-    template <class Link, std::size_t width, std::size_t levels>
-    LevelNodeBase<Link, width, levels>::LevelNodeBase(const LinkId &idOffset)
-        : _idOffset(idOffset)
+    template <class Cfg>
+    void LevelNodeBase<Cfg>::Deleter::operator()(LevelNodeBase<Cfg> *)
+    {
+        assert(!"never here");
+        abort();
+    }
+
+    /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
+    template <class Cfg>
+    LevelNodeBase<Cfg>::LevelNodeBase()
     {
     }
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
-    template <class Link, std::size_t width, std::size_t levels>
-    LevelNodeBase<Link, width, levels>::~LevelNodeBase()
+    template <class Cfg>
+    LevelNodeBase<Cfg>::~LevelNodeBase()
     {
         //assert(0);
     }
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
-    template <class Link, std::size_t width, std::size_t levels>
-    LinkId LevelNodeBase<Link, width, levels>::add(std::size_t level, Local<Link> *container, std::unique_ptr<Link> &&link)
+    template <class Cfg>
+    typename LevelNodeBase<Cfg>::LevelNodeBasePtr LevelNodeBase<Cfg>::create(std::size_t level, LevelNodeBasePtr &&child)
     {
-        return SwitchExpander<std::make_index_sequence<levels>>::exec(level, [&](auto vholder){
-            return static_cast<LevelNode<Link, width, levels, vholder.value>*>(this)->add(container, std::move(link));
+        assert(level > 0);
+        return expandSwitch(level-1, [&](auto vholder){
+
+            using Child = LevelNode<Cfg, vholder.value>;
+            using ChildPtr = LevelNodePtr<Cfg, vholder.value>;
+
+            using This = local::LevelNode<Cfg, vholder.value+1>;
+            using ThisPtr = local::LevelNodeBasePtr<Cfg>;
+
+            auto concreteChild = ChildPtr(static_cast<Child *>(child.release()));
+
+            return ThisPtr(new This(std::move(concreteChild)));
         });
     }
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
-    template <class Link, std::size_t width, std::size_t levels>
-    Link *LevelNodeBase<Link, width, levels>::get(std::size_t level, const LinkId &id)
+    template <class Cfg>
+    void LevelNodeBase<Cfg>::destroy(std::size_t level)
     {
-        return SwitchExpander<std::make_index_sequence<levels>>::exec(level, [&](auto vholder){
-            return static_cast<LevelNode<Link, width, levels, vholder.value>*>(this)->get(id);
+        expandSwitch(level, [&](auto vholder){
+            delete static_cast<LevelNode<Cfg, vholder.value>*>(this);
         });
     }
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
-    template <class Link, std::size_t width, std::size_t levels>
-    std::unique_ptr<Link> LevelNodeBase<Link, width, levels>::del(std::size_t level, Local<Link> *container, const LinkId &id)
+    template <class Cfg>
+    LinkId LevelNodeBase<Cfg>::add(std::size_t level, Container *container, LinkPtr &&link)
     {
-        return SwitchExpander<std::make_index_sequence<levels>>::exec(level, [&](auto vholder){
-            return static_cast<LevelNode<Link, width, levels, vholder.value>*>(this)->del(container, id);
+        return expandSwitch(level, [&](auto vholder){
+            return static_cast<LevelNode<Cfg, vholder.value>*>(this)->add(container, std::move(link));
         });
+    }
+
+    /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
+    template <class Cfg>
+    typename LevelNodeBase<Cfg>::Link *LevelNodeBase<Cfg>::get(std::size_t level, const LinkId &id) const
+    {
+        return expandSwitch(level, [&](auto vholder){
+            return static_cast<const LevelNode<Cfg, vholder.value>*>(this)->get(id);
+        });
+    }
+
+    /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
+    template <class Cfg>
+    std::unique_ptr<typename LevelNodeBase<Cfg>::Link> LevelNodeBase<Cfg>::del(std::size_t level, Container *container, const LinkId &id)
+    {
+        return expandSwitch(level, [&](auto vholder){
+            return static_cast<LevelNode<Cfg, vholder.value>*>(this)->del(container, id);
+        });
+    }
+
+    /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
+    template <class Cfg>
+    template <class F>
+    auto LevelNodeBase<Cfg>::expandSwitch(std::size_t level, F &&f)
+    {
+        return SwitchExpander<std::make_index_sequence<_levels>>::exec(level, std::move(f));
     }
 
 

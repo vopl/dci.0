@@ -8,6 +8,7 @@
 
 #include "runtime/bytes.hpp"
 #include <dci/async/future.hpp>
+#include <dci/utils/bits.hpp>
 
 #include <cstdint>
 #include <climits>
@@ -32,8 +33,8 @@ namespace dci { namespace couple { namespace runtime
     using real32    = float;
     using real64    = double;
 
-    static_assert(32 == CHAR_BIT*sizeof(real32), "wrong real32 type");
-    static_assert(64 == CHAR_BIT*sizeof(real64), "wrong real64 type");
+    static_assert(32 == bitsof(real32), "wrong real32 type");
+    static_assert(64 == bitsof(real64), "wrong real64 type");
 
     template <class T, std::size_t N>
     using array = std::array<T, N>;

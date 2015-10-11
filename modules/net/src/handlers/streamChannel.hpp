@@ -58,6 +58,7 @@ namespace handlers
     Future< Address> StreamChannel<Address>::self()
     {
         assert(0);
+        return Future< Address>(make_error_code(std::errc::address_not_available));
     }
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
@@ -65,6 +66,7 @@ namespace handlers
     Future< Address> StreamChannel<Address>::peer()
     {
         assert(0);
+        return Future< Address>(make_error_code(std::errc::address_not_available));
     }
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7

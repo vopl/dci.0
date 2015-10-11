@@ -1,6 +1,10 @@
 #pragma once
 #include <cstdint>
 #include <type_traits>
+#include <climits>
+
+
+#define bitsof(x) (sizeof(x)*CHAR_BIT)
 
 namespace dci { namespace utils { namespace bits
 {
@@ -30,7 +34,7 @@ namespace dci { namespace utils { namespace bits
 
         template <class Integral> std::enable_if_t<(sizeof(Integral) <= sizeof(int)), std::size_t> clz(Integral x)
         {
-            return __builtin_clz(std::make_unsigned_t<Integral>(x)) - sizeof(int)*8 + sizeof(Integral)*8;
+            return __builtin_clz(std::make_unsigned_t<Integral>(x)) - bitsof(int) + bitsof(Integral);
         }
 
         template <class Integral> std::enable_if_t<(sizeof(Integral) > sizeof(int) && sizeof(Integral) <= sizeof(long)), std::size_t> clz(Integral x)
@@ -49,7 +53,7 @@ namespace dci { namespace utils { namespace bits
     {
         if(0 == x)
         {
-            return sizeof(x)*8;
+            return bitsof(x);
         }
 
         return details::ctz(x);
@@ -60,10 +64,10 @@ namespace dci { namespace utils { namespace bits
     {
         if(0 == x)
         {
-            return sizeof(x)*8;
+            return bitsof(x);
         }
 
-        return sizeof(x)*8 - details::clz(x) - 1;
+        return bitsof(x) - details::clz(x) - 1;
     }
 
     template <class Integral>
@@ -71,7 +75,7 @@ namespace dci { namespace utils { namespace bits
     {
         if(Integral(~Integral(0)) == x)
         {
-            return sizeof(x)*8;
+            return bitsof(x);
         }
 
         return details::ctz(Integral(~x));
@@ -82,10 +86,10 @@ namespace dci { namespace utils { namespace bits
     {
         if(Integral(~Integral(0)) == x)
         {
-            return sizeof(x)*8;
+            return bitsof(x);
         }
 
-        return sizeof(x)*8 - details::clz(Integral(~x)) - 1;
+        return bitsof(x) - details::clz(Integral(~x)) - 1;
     }
 
 

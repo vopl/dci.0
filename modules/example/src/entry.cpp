@@ -274,6 +274,7 @@ struct Entry
     {
         (void)iid;
         assert(0);
+        return nullptr;
     }
 
     void freeServiceFactory(const dci::couple::runtime::Iid &iid, dci::site::ServiceFactory *factory) override

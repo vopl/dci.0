@@ -87,12 +87,14 @@ struct Entry
     ServiceFactory *allocServiceFactory(const Iid &iid) override
     {
         assert(iid == info._serviceIds[0]);
+        (void)iid;
         return new handlers::HostHandlerFactory;
     }
 
     void freeServiceFactory(const Iid &iid, ServiceFactory *factory) override
     {
         assert(iid == info._serviceIds[0]);
+        (void)iid;
         delete factory;
     }
 

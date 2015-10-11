@@ -219,7 +219,9 @@ namespace dci { namespace couple { namespace runtime { namespace impl
 
             *_buffer = 0x80;
         }
-        *(std::uint64_t*)&_buffer[SHORT_BLOCK_LENGTH] = _bitcount;
+
+        void *bcPtr = &_buffer[SHORT_BLOCK_LENGTH];
+        *(std::uint64_t*)bcPtr = _bitcount;
 
         transform((std::uint32_t*)_buffer);
 
