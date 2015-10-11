@@ -3,6 +3,10 @@
 namespace impl { namespace links { namespace local
 {
 
+    LinkId::LinkId()
+    {
+    }
+
     LinkId::LinkId(std::size_t raw)
         : _raw(raw)
     {

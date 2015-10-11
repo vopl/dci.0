@@ -28,6 +28,7 @@ namespace impl { namespace links { namespace local
         ~LevelNode();
 
         LinkId add(Container *container, LinkPtr &&link);
+        LinkId add(LinkPtr &&link);
         Link *get(const LinkId &id) const;
         LinkPtr del(Container *container, const LinkId &id);
 
@@ -74,6 +75,22 @@ namespace impl { namespace links { namespace local
         {
             return container->levelUpAdd(std::move(link));
         }
+
+        assert(link && "null link added?");
+        assert(!_links[id]);
+        _links[id] = std::move(link);
+        _useMask |= 1ull<<id;
+
+        return id;
+    }
+
+    /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
+    template <class Cfg>
+    LinkId LevelNode<Cfg, 0>::add(LinkPtr &&link)
+    {
+        LinkId id = dci::utils::bits::least1Count(_useMask);
+
+        assert(id <= _width);
 
         assert(link && "null link added?");
         assert(!_links[id]);

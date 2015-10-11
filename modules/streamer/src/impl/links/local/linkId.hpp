@@ -6,6 +6,7 @@ namespace impl { namespace links { namespace local
     class LinkId
     {
     public:
+        LinkId();
         LinkId(std::size_t raw);
 
         LinkId operator+(LinkId) const;

@@ -33,6 +33,7 @@ namespace impl { namespace links { namespace local
         ~LevelNode();
 
         LinkId add(Container *container, LinkPtr &&link);
+        LinkId add(LinkPtr &&link);
         Link *get(const LinkId &id) const;
         LinkPtr del(Container *container, const LinkId &id);
 
@@ -88,18 +89,57 @@ namespace impl { namespace links { namespace local
 
         assert(link && "null link added?");
 
+        LinkId childId;
+
         if(!_children[id])
         {
             _children[id].reset(new Child());
+            childId = _children[id]->add(std::move(link));
+        }
+        else
+        {
+            assert(!_children[id]->isFull());
+
+            childId = _children[id]->add(std::move(link));
+
+            if(_children[id]->isFull())
+            {
+                assert(childId == Child::_volume-1);
+                _fullMask |= 1ull<<id;
+            }
         }
 
-        assert(!_children[id]->isFull());
+        return id * Child::_volume + childId;
+    }
 
-        LinkId childId = _children[id]->add(container, std::move(link));
+    /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
+    template <class Cfg, std::size_t level>
+    LinkId LevelNode<Cfg, level>::add(LinkPtr &&link)
+    {
+        LinkId id = dci::utils::bits::least1Count(_fullMask);
 
-        if(_children[id]->isFull())
+        assert(id <= _width);
+
+        assert(link && "null link added?");
+
+        LinkId childId;
+
+        if(!_children[id])
         {
-            _fullMask |= 1ull<<id;
+            _children[id].reset(new Child());
+            childId = _children[id]->add(std::move(link));
+        }
+        else
+        {
+            assert(!_children[id]->isFull());
+
+            childId = _children[id]->add(std::move(link));
+
+            if(_children[id]->isFull())
+            {
+                assert(childId == Child::_volume-1);
+                _fullMask |= 1ull<<id;
+            }
         }
 
         return id * Child::_volume + childId;
