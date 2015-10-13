@@ -21,23 +21,25 @@ namespace impl { namespace links { namespace local
         using Mask = std::size_t;
         static const Mask _fullUseMask = (bitsof(Mask)==_width ? (~std::size_t(0)) : ((1ull<<_width) - 1));
 
-        using LinkPtr = std::unique_ptr<Link>;
-
     public:
         LevelNode();
         ~LevelNode();
 
-        LinkId add(Container *container, LinkPtr &&link);
-        LinkId add(LinkPtr &&link);
+        LinkId add(Container *container, Link *link);
+        LinkId add(Link *link);
         Link *get(const LinkId &id) const;
-        LinkPtr del(Container *container, const LinkId &id);
+        Link *del(Container *container, const LinkId &id);
+        Link *del(const LinkId &id);
 
+        void stayInContainer(Container *container);
+
+        bool isEmpty() const;
         bool isFull() const;
 
     private:
         Mask _useMask = 0;
         static_assert(bitsof(_useMask) >= _width, "width must not be greater then _useMask");
-        LinkPtr _links[_width] = {};
+        Link *_links[_width] = {};
     };
 
 
@@ -66,19 +68,19 @@ namespace impl { namespace links { namespace local
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
     template <class Cfg>
-    LinkId LevelNode<Cfg, 0>::add(Container *container, LinkPtr &&link)
+    LinkId LevelNode<Cfg, 0>::add(Container *container, Link *link)
     {
         LinkId id = dci::utils::bits::least1Count(_useMask);
 
         assert(id <= _width);
         if(id >= _width)
         {
-            return container->levelUpAdd(std::move(link));
+            return container->levelUpAdd(link);
         }
 
         assert(link && "null link added?");
         assert(!_links[id]);
-        _links[id] = std::move(link);
+        _links[id] = link;
         _useMask |= 1ull<<id;
 
         return id;
@@ -86,7 +88,7 @@ namespace impl { namespace links { namespace local
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
     template <class Cfg>
-    LinkId LevelNode<Cfg, 0>::add(LinkPtr &&link)
+    LinkId LevelNode<Cfg, 0>::add(Link *link)
     {
         LinkId id = dci::utils::bits::least1Count(_useMask);
 
@@ -94,7 +96,7 @@ namespace impl { namespace links { namespace local
 
         assert(link && "null link added?");
         assert(!_links[id]);
-        _links[id] = std::move(link);
+        _links[id] = link;
         _useMask |= 1ull<<id;
 
         return id;
@@ -108,22 +110,48 @@ namespace impl { namespace links { namespace local
         assert(_links[id]);
         assert((_useMask>>id) & 1);
 
-        return _links[id].get();
+        return _links[id];
     }
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
     template <class Cfg>
-    typename LevelNode<Cfg, 0>::LinkPtr LevelNode<Cfg, 0>::del(Container *container, const LinkId &id)
+    typename LevelNode<Cfg, 0>::Link *LevelNode<Cfg, 0>::del(Container *container, const LinkId &id)
+    {
+        (void)container;
+        return del(id);
+    }
+
+    /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
+    template <class Cfg>
+    typename LevelNode<Cfg, 0>::Link *LevelNode<Cfg, 0>::del(const LinkId &id)
     {
         assert(id < _width);
         assert(_links[id]);
         assert((_useMask>>id) & 1);
 
-        (void)container;
-        assert(!"remove empty nodes");
+        _useMask &= ~(1ull<<id);
+        Link *link = _links[id];
+        _links[id] = nullptr;
+        return link;
+    }
 
-        _useMask &= ~(1u<<id);
-        return std::move(_links[id]);
+    /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
+    template <class Cfg>
+    void LevelNode<Cfg, 0>::stayInContainer(Container *container)
+    {
+        container->levelDown(this, 0);
+    }
+
+    /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
+    template <class Cfg>
+    bool LevelNode<Cfg, 0>::isEmpty() const
+    {
+        if(!_useMask)
+        {
+            int kk = 220;
+        }
+
+        return !_useMask;
     }
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7

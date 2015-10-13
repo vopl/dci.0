@@ -106,6 +106,6 @@ dciDefineModule(streamer
 ############################################################
 include(dciTest)
 dciTest(${PROJECT} mload
-    SRC test/serviceHub.cpp
+    SRC test/localLinksContainer.cpp test/serviceHub.cpp
     LINK ${PROJECT}
 )

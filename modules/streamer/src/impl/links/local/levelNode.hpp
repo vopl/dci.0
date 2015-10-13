@@ -24,25 +24,28 @@ namespace impl { namespace links { namespace local
         using Mask = std::size_t;
         static const Mask _fullFullMask = (bitsof(Mask)==_width ? (~std::size_t(0)) : ((1ull<<_width) - 1));
 
-        using LinkPtr = std::unique_ptr<Link>;
-        using ChildPtr = std::unique_ptr<Child>;
-
     public:
         LevelNode();
-        LevelNode(ChildPtr &&child);
+        LevelNode(Child *child);
         ~LevelNode();
 
-        LinkId add(Container *container, LinkPtr &&link);
-        LinkId add(LinkPtr &&link);
+        LinkId add(Container *container, Link *link);
+        LinkId add(Link *link);
         Link *get(const LinkId &id) const;
-        LinkPtr del(Container *container, const LinkId &id);
+        Link *del(Container *container, const LinkId &id);
+        Link *del(const LinkId &id);
 
+        void stayInContainer(Container *container);
+
+        bool isEmptyExceptFirst() const;
+        bool isEmpty() const;
         bool isFull() const;
 
     private:
+        Mask _useMask = 0;
         Mask _fullMask = 0;
         static_assert(bitsof(_fullMask) >= _width, "width must not be greater then _fullMask");
-        ChildPtr _children[_width] = {};
+        Child *_children[_width] = {};
     };
 
 
@@ -60,31 +63,39 @@ namespace impl { namespace links { namespace local
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
     template <class Cfg, std::size_t level>
-    LevelNode<Cfg, level>::LevelNode(ChildPtr &&child)
+    LevelNode<Cfg, level>::LevelNode(Child *child)
         : LevelNodeBase<Cfg>()
+        , _useMask(1ull<<0)
         , _fullMask(1ull<<0)
     {
         assert(child->isFull());
-        _children[0] = std::move(child);
+        _children[0] = child;
     }
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
     template <class Cfg, std::size_t level>
     LevelNode<Cfg, level>::~LevelNode()
     {
+        assert(isEmptyExceptFirst());
+        if(_children[0])
+        {
+            delete _children[0];
+            _useMask &= ~(1ull<<0);
+        }
+        assert(!_useMask);
         assert(!_fullMask);
     }
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
     template <class Cfg, std::size_t level>
-    LinkId LevelNode<Cfg, level>::add(Container *container, LinkPtr &&link)
+    LinkId LevelNode<Cfg, level>::add(Container *container, Link *link)
     {
         LinkId id = dci::utils::bits::least1Count(_fullMask);
 
         assert(id <= _width);
         if(id >= _width)
         {
-            return container->levelUpAdd(std::move(link));
+            return container->levelUpAdd(link);
         }
 
         assert(link && "null link added?");
@@ -93,14 +104,16 @@ namespace impl { namespace links { namespace local
 
         if(!_children[id])
         {
-            _children[id].reset(new Child());
-            childId = _children[id]->add(std::move(link));
+            _children[id] = new Child();
+            _useMask |= 1ull<<id;
+
+            childId = _children[id]->add(link);
         }
         else
         {
             assert(!_children[id]->isFull());
 
-            childId = _children[id]->add(std::move(link));
+            childId = _children[id]->add(link);
 
             if(_children[id]->isFull())
             {
@@ -114,7 +127,7 @@ namespace impl { namespace links { namespace local
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
     template <class Cfg, std::size_t level>
-    LinkId LevelNode<Cfg, level>::add(LinkPtr &&link)
+    LinkId LevelNode<Cfg, level>::add(Link *link)
     {
         LinkId id = dci::utils::bits::least1Count(_fullMask);
 
@@ -126,14 +139,16 @@ namespace impl { namespace links { namespace local
 
         if(!_children[id])
         {
-            _children[id].reset(new Child());
-            childId = _children[id]->add(std::move(link));
+            _children[id] = new Child();
+            _useMask |= 1ull<<id;
+
+            childId = _children[id]->add(link);
         }
         else
         {
             assert(!_children[id]->isFull());
 
-            childId = _children[id]->add(std::move(link));
+            childId = _children[id]->add(link);
 
             if(_children[id]->isFull())
             {
@@ -149,18 +164,111 @@ namespace impl { namespace links { namespace local
     template <class Cfg, std::size_t level>
     typename LevelNode<Cfg, level>::Link *LevelNode<Cfg, level>::get(const LinkId &id) const
     {
-        (void)id;
-        assert(0);
+        auto cid = id / Child::_volume;
+        assert(_children[cid]);
+        return _children[cid]->get(id - cid*Child::_volume);
     }
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
     template <class Cfg, std::size_t level>
-    typename LevelNode<Cfg, level>::LinkPtr LevelNode<Cfg, level>::del(Container *container, const LinkId &id)
+    typename LevelNode<Cfg, level>::Link *LevelNode<Cfg, level>::del(Container *container, const LinkId &id)
     {
-        (void)container;
-        (void)id;
-        assert(0);
-        return LinkPtr();
+        auto cid = id / Child::_volume;
+        assert(_children[cid]);
+
+        _fullMask &= ~(1ull<<cid);
+
+        Link *link = _children[cid]->del(id - cid*Child::_volume);
+        if(2 == level && cid)
+        {
+            int k = 220;
+        }
+        if(cid && _children[cid]->isEmpty())
+        {
+            delete _children[cid];
+            _children[cid] = nullptr;
+            _useMask &= ~(1ull<<cid);
+
+            if(isEmptyExceptFirst())
+            {
+                Child *first = _children[0];
+                assert(first);
+
+                _children[0] = nullptr;
+                _useMask &= ~(1ull<<0);
+                _fullMask &= ~(1ull<<0);
+
+                first->stayInContainer(container);
+
+                delete this;
+            }
+        }
+
+        return link;
+    }
+
+    /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
+    template <class Cfg, std::size_t level>
+    typename LevelNode<Cfg, level>::Link *LevelNode<Cfg, level>::del(const LinkId &id)
+    {
+        auto cid = id / Child::_volume;
+        assert(_children[cid]);
+
+        _fullMask &= ~(1ull<<cid);
+
+        Link *link = _children[cid]->del(id - cid*Child::_volume);
+        assert(link);
+
+        if(cid && _children[cid]->isEmpty())
+        {
+            delete _children[cid];
+            _children[cid] = nullptr;
+            _useMask &= ~(1ull<<cid);
+        }
+
+        return link;
+    }
+
+    /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
+    template <class Cfg, std::size_t level>
+    void LevelNode<Cfg, level>::stayInContainer(Container *container)
+    {
+        if(isEmptyExceptFirst())
+        {
+            Child *first = _children[0];
+            assert(first);
+
+            _children[0] = nullptr;
+            _useMask &= ~(1ull<<0);
+            _fullMask &= ~(1ull<<0);
+
+            first->stayInContainer(container);
+
+            delete this;
+            return;
+        }
+
+        container->levelDown(this, level);
+    }
+
+    /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
+    template <class Cfg, std::size_t level>
+    bool LevelNode<Cfg, level>::isEmptyExceptFirst() const
+    {
+        return !(_useMask >> 1);
+    }
+
+    /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
+    template <class Cfg, std::size_t level>
+    bool LevelNode<Cfg, level>::isEmpty() const
+    {
+        assert(_children[0]);
+        if(!_children[0]->isEmpty())
+        {
+            return false;
+        }
+
+        return !(_useMask >> 1);
     }
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
