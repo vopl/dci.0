@@ -60,7 +60,8 @@ set(CMAKE_CXX_FLAGS "-Wall -Wextra -Wpedantic -ftemplate-depth-1000 -fvisibility
 #set(CMAKE_SHARED_LINKER_FLAGS_RELEASE "-march=native -flto -O3 -g")
 #set(CMAKE_MODULE_LINKER_FLAGS_RELEASE "-march=native -flto -O3 -g")
 
-set(CMAKE_CXX_FLAGS_RELEASE "-march=native -flto -O3 -g -DNDEBUG -fomit-frame-pointer")
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DDEBUG")
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -march=native -flto -O3 -g -DNDEBUG -fomit-frame-pointer")
 
 ###########################################
 enable_testing()

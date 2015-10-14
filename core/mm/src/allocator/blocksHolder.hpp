@@ -16,6 +16,7 @@ namespace dci { namespace mm { namespace allocator
         template <std::size_t sizeClass> void *alloc();
 
         void *alloc(std::size_t sizeClass);
+        std::size_t occupied();
 
     public:
         //callbacks to block

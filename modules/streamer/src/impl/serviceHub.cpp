@@ -39,7 +39,7 @@ namespace impl
     template <class Derived>
     Future< streamer::ServiceHub::Remote> ServiceHub<Derived>::ejectService(streamer::ServiceHub::ServiceId &&arg_0)
     {
-        return _localLinks.del(std::move(arg_0));
+        return _localLinks.del(std::move(arg_0))->shutdown();
     }
 
 }

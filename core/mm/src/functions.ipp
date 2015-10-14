@@ -28,6 +28,12 @@ namespace dci { namespace mm
             g_allocator.free<sizeClass>(ptr);
         }
 
+        template <std::size_t sizeClass>
+        inline std::size_t occupiedBySizeClass()
+        {
+            return g_allocator.occupied<sizeClass>();
+        }
+
         template <>
         inline void *allocBySizeClass<ConfigHeap::_bigSizeClass>(std::size_t size)
         {
@@ -38,6 +44,12 @@ namespace dci { namespace mm
         inline void freeBySizeClass<ConfigHeap::_bigSizeClass>(void *ptr)
         {
             system::free(ptr);
+        }
+
+        template <>
+        inline std::size_t occupiedBySizeClass<ConfigHeap::_bigSizeClass>()
+        {
+            return 0;
         }
     }
 
@@ -54,6 +66,11 @@ namespace dci { namespace mm
     inline std::size_t size(void *ptr)
     {
         return g_allocator.size(ptr);
+    }
+
+    std::size_t occupied()
+    {
+        return g_allocator.occupied();
     }
 
 }}

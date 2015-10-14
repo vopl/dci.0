@@ -33,6 +33,8 @@ namespace dci { namespace mm { namespace allocator
         bool empty() const;
         bool full() const;
 
+        std::size_t occupied() const;
+
         std::size_t getSizeClass() const;
 
     private:

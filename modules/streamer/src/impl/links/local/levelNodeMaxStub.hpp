@@ -3,10 +3,29 @@
 
 namespace impl { namespace links { namespace local
 {
-//    template <class Cfg>
-//    class LevelNode<Cfg, 9>
-//    {
+    template <class Cfg>
+    struct LevelNodeMaxStub
+        : public LevelNodeBase<Cfg>
+    {
+        std::size_t _level = 100500;
 
-//    };
+        LevelNodeMaxStub(...)
+        {
+            assert(!"never here");
+        }
+
+        LinkId add(void *, void *)
+        {
+            assert(!"never here");
+            return 0;
+        }
+
+        bool add(void *, std::size_t, void *)
+        {
+            assert(!"never here");
+            return false;
+        }
+
+    };
 
 }}}

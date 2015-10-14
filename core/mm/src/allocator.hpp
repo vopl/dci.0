@@ -22,10 +22,12 @@ namespace dci { namespace mm
         ////////////////////////////////////////////////////////////////
         template <std::size_t sizeClass> void *alloc();
         template <std::size_t sizeClass> void free(void *ptr);
+        template <std::size_t sizeClass> std::size_t occupied();
 
         void *alloc(std::size_t size);
         void free(void *ptr);
-        size_t size(void *ptr);
+        std::size_t size(void *ptr);
+        std::size_t occupied();
 
         ////////////////////////////////////////////////////////////////
         void *allocateBlock();

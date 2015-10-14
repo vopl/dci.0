@@ -3,12 +3,6 @@
 #include "linkId.hpp"
 #include "switchExpander.hpp"
 
-namespace impl { namespace links {
-    using namespace dci::couple::runtime;
-
-    template <class Link> class Local;
-}}
-
 namespace impl { namespace links { namespace local
 {
     template <class Cfg, std::size_t level> class LevelNode;
@@ -35,6 +29,7 @@ namespace impl { namespace links { namespace local
         void destroy(std::size_t level);
 
         LinkId add(std::size_t level, Container *container, Link *link);
+        bool add(std::size_t level, Container *container, LinkId id, Link *link);
         Link *get(std::size_t level, const LinkId &id) const;
         Link *del(std::size_t level, Container *container, const LinkId &id);
 
@@ -102,6 +97,15 @@ namespace impl { namespace links { namespace local
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
     template <class Cfg>
+    bool LevelNodeBase<Cfg>::add(std::size_t level, Container *container, LinkId id, Link *link)
+    {
+        return expandSwitch(level, [&](auto vholder){
+            return static_cast<LevelNode<Cfg, vholder.value>*>(this)->add(container, id, link);
+        });
+    }
+
+    /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
+    template <class Cfg>
     typename LevelNodeBase<Cfg>::Link *LevelNodeBase<Cfg>::get(std::size_t level, const LinkId &id) const
     {
         return expandSwitch(level, [&](auto vholder){
@@ -123,7 +127,7 @@ namespace impl { namespace links { namespace local
     template <class F>
     auto LevelNodeBase<Cfg>::expandSwitch(std::size_t level, F &&f)
     {
-        return SwitchExpander<std::make_index_sequence<_levels>>::exec(level, std::move(f));
+        return SwitchExpander<std::make_index_sequence<_levels+1>>::exec(level, std::move(f));
     }
 
 

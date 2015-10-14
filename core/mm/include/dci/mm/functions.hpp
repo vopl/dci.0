@@ -11,6 +11,7 @@ namespace dci { namespace mm
         ////////////////////////////////////////////////////////////////
         template <std::size_t sizeClass> APIDCI_MM void *allocBySizeClass(std::size_t size);
         template <std::size_t sizeClass> APIDCI_MM void freeBySizeClass(void *ptr);
+        template <std::size_t sizeClass> APIDCI_MM std::size_t occupiedBySizeClass();
     }
 
     ////////////////////////////////////////////////////////////////
@@ -24,10 +25,16 @@ namespace dci { namespace mm
         return details::freeBySizeClass<ConfigHeap::evalSizeClass(size)>(ptr);
     }
 
+    template <std::size_t size> std::size_t occupied()
+    {
+        return details::occupiedBySizeClass<ConfigHeap::evalSizeClass(size)>();
+    }
+
     ////////////////////////////////////////////////////////////////
     APIDCI_MM void *alloc(std::size_t size);
     APIDCI_MM void free(void *ptr);
     APIDCI_MM std::size_t size(void *ptr);
+    APIDCI_MM std::size_t occupied();
 
 
 

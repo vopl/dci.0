@@ -5,7 +5,6 @@
 
 #include "local/levelNode0.hpp"
 #include "local/levelNode.hpp"
-#include "local/levelNodeMaxStub.hpp"
 
 #include "streamer.hpp"
 #include <boost/pool/pool_alloc.hpp>
@@ -24,7 +23,7 @@ namespace impl { namespace links
 
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
-    template <class Link_>
+    template <class Link_, std::size_t volume = 1ull<<31 >
     class Local
     {
 
@@ -41,7 +40,7 @@ namespace impl { namespace links
                 return sum >= totalVolume ? 0 : evelLevels(width, totalVolume, width * sum)+1;
             }
 
-            static const std::size_t _levels = evelLevels(_width, 1ull<<31);
+            static const std::size_t _levels = evelLevels(_width, volume);
         };
 
     public:
@@ -50,8 +49,9 @@ namespace impl { namespace links
         ~Local();
 
         Link *add();
+        Link *add(const local::LinkId &id);
         Link *get(const local::LinkId &id);
-        Future<Interface> del(const local::LinkId &id);
+        std::unique_ptr<Link> del(const local::LinkId &id);
 
 
     private:
@@ -59,7 +59,7 @@ namespace impl { namespace links
         template <class Cfg_, std::size_t level>
         friend class local::LevelNode;
 
-        local::LinkId levelUpAdd(Link *link);
+        void levelUp(local::LevelNodeBase<Cfg> *node, std::size_t level);
         void levelDown(local::LevelNodeBase<Cfg> *node, std::size_t level);
 
 
@@ -72,122 +72,89 @@ namespace impl { namespace links
 
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
-    template <class Link>
-    Local<Link>::Local()
+    template <class Link, std::size_t volume>
+    Local<Link, volume>::Local()
         : _currentLevel(0)
         , _currentLevelNode(new local::LevelNode<Cfg, 0>())
     {
     }
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
-    template <class Link>
-    Local<Link>::~Local()
+    template <class Link, std::size_t volume>
+    Local<Link, volume>::~Local()
     {
         assert(_currentLevelNode);
         _currentLevelNode->destroy(_currentLevel);
     }
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
-    template <class Link>
-    Link *Local<Link>::add()
+    template <class Link, std::size_t volume>
+    Link *Local<Link, volume>::add()
     {
-
-
-
-
-//        if(1)
-//        {
-//            using set = std::unordered_set<
-//                    Link *,
-//                    std::hash<Link *>,
-//                    std::equal_to<Link *>,
-//                    boost::fast_pool_allocator<
-//                        Link*,
-//                        boost::default_user_allocator_new_delete,
-//                        boost::details::pool::null_mutex>>;
-
-////            using set = std::set<
-////                    Link *,
-////                    std::less<Link *>,
-////                    boost::fast_pool_allocator<
-////                        Link*,
-////                        boost::default_user_allocator_new_delete,
-////                        boost::details::pool::null_mutex>>;
-
-//            set &slinks = *(new set);
-
-//            auto start = std::chrono::high_resolution_clock::now();
-//            for(std::size_t x(0); x<4000000; ++x)
-//            {
-//                Link *link = new Link;
-//                slinks.insert(link);
-//                //link->setId(220);
-//            }
-
-//            std::cout<< (std::chrono::high_resolution_clock::now() - start).count()<<std::endl;
-//        }
-
-//        if(1)
-//        {
-//            auto start = std::chrono::high_resolution_clock::now();
-//            for(std::size_t x(0); x<4000000; ++x)
-//            {
-//                Link *link = new Link;
-//                local::LinkId id = _currentLevelNode->add(_currentLevel, this, link);
-//                //link->setId(id<<1 | _serviceIdScopeMark);
-//            }
-
-//            std::cout<< (std::chrono::high_resolution_clock::now() - start).count()<<std::endl;
-//        }
-
-//        //exit(0);
-
         Link *link = new Link;
         local::LinkId id = _currentLevelNode->add(_currentLevel, this, link);
-        link->setId(id);
-        return link;
+        if(id < volume)
+        {
+            link->setId(id);
+            return link;
+        }
+
+        _currentLevelNode->del(_currentLevel, this, id);
+        delete link;
+        return nullptr;
     }
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
-    template <class Link>
-    Link *Local<Link>::get(const local::LinkId &id)
+    template <class Link, std::size_t volume>
+    Link *Local<Link, volume>::add(const local::LinkId &id)
     {
+        if(id < volume)
+        {
+            Link *link = new Link;
+
+            if(_currentLevelNode->add(_currentLevel, this, id, link))
+            {
+                link->setId(id);
+                return link;
+            }
+
+            delete link;
+        }
+
+        return nullptr;
+    }
+
+    /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
+    template <class Link, std::size_t volume>
+    Link *Local<Link, volume>::get(const local::LinkId &id)
+    {
+        assert(id < volume);
         return _currentLevelNode->get(_currentLevel, id);
     }
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
-    template <class Link>
-    Future<Interface> Local<Link>::del(const local::LinkId &id)
+    template <class Link, std::size_t volume>
+    std::unique_ptr<Link> Local<Link, volume>::del(const local::LinkId &id)
     {
+        assert(id < volume);
         Link *link = _currentLevelNode->del(_currentLevel, this, id);
-        if(!link)
-        {
-            return Future<Interface>(make_error_code(streamer::error::badServiceId));
-        }
-
-        return link->shutdown();
+        return std::unique_ptr<Link>(link);
     }
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
-    template <class Link>
-    local::LinkId Local<Link>::levelUpAdd(Link *link)
+    template <class Link, std::size_t volume>
+    void Local<Link, volume>::levelUp(local::LevelNodeBase<Cfg> *node, std::size_t level)
     {
-        if(_currentLevel >= Cfg::_levels)
-        {
-            assert(!"no more space left. What now? Handle error");
-            abort();
-        }
-
-        _currentLevel++;
-        _currentLevelNode = local::LevelNodeBase<Cfg>::create(_currentLevel, _currentLevelNode);
-
-        return _currentLevelNode->add(_currentLevel, this, link);
+        assert(_currentLevel < level);
+        _currentLevelNode = node;
+        _currentLevel = level;
     }
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
-    template <class Link>
-    void Local<Link>::levelDown(local::LevelNodeBase<Cfg> *node, std::size_t level)
+    template <class Link, std::size_t volume>
+    void Local<Link, volume>::levelDown(local::LevelNodeBase<Cfg> *node, std::size_t level)
     {
+        assert(_currentLevel > level);
         _currentLevelNode = node;
         _currentLevel = level;
     }

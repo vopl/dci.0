@@ -110,11 +110,11 @@ namespace dci { namespace mm
     template <class T, class RemoveCleaner>
     std::pair<T*, T*> IntrusiveDlist<T, RemoveCleaner>::range() const
     {
-        IntrusiveDlistElement<T> *first = _first._next;
-        IntrusiveDlistElement<T> *last = const_cast<IntrusiveDlistElement<T> *>(&_last);
+        T *first = _first._next;
+        T *last = intrusiveDlistElementCast(const_cast<IntrusiveDlistElement<T> *>(&_last), (T*)nullptr);
         return std::make_pair(
-                    intrusiveDlistElementCast(first, (T*)nullptr),
-                    intrusiveDlistElementCast(last, (T*)nullptr));
+                    first,
+                    last);
     }
 
     ////////////////////////////////////////////////////////////////////////////////
@@ -190,7 +190,7 @@ namespace dci { namespace mm
         while(element != intrusiveDlistElementCast(&_last, (T*)nullptr))
         {
             f(element);
-            element = element->_next;
+            element = intrusiveDlistElementCast(element)->_next;
         }
     }
 

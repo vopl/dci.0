@@ -99,6 +99,26 @@ namespace dci { namespace mm { namespace allocator
     }
 
     ////////////////////////////////////////////////////////////////////////////////
+    inline std::size_t BlocksHolder::occupied()
+    {
+        std::size_t amount = 0;
+
+        _empty.each([&](Block *b){
+            amount += b->occupied();
+        });
+
+        _middle.each([&](Block *b){
+            amount += b->occupied();
+        });
+
+        _full.each([&](Block *b){
+            amount += b->occupied();
+        });
+
+        return amount;
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////
     inline void BlocksHolder::blockEmptyToMiddle(Block *block)
     {
         assert(_empty.contain(block));

@@ -177,6 +177,12 @@ namespace dci { namespace mm { namespace allocator
     }
 
     ////////////////////////////////////////////////////////////////////////////////
+    inline std::size_t Block::occupied() const
+    {
+        return _allocated * getSizeClass();
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////
     inline bool Block::full() const
     {
         return _elementsAmount == _allocated;

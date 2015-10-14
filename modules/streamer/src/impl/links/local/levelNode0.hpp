@@ -16,6 +16,7 @@ namespace impl { namespace links { namespace local
         using Link = typename Cfg::Link;
         static const std::size_t _width = Cfg::_width;
         static const std::size_t _levels = Cfg::_levels;
+        static const std::size_t _level = 0;
         static const std::size_t _volume = _width * 1;
 
         using Mask = std::size_t;
@@ -27,11 +28,16 @@ namespace impl { namespace links { namespace local
 
         LinkId add(Container *container, Link *link);
         LinkId add(Link *link);
+
+        bool add(Container *container, LinkId id, Link *link);
+        bool add(LinkId id, Link *link);
+
         Link *get(const LinkId &id) const;
+
         Link *del(Container *container, const LinkId &id);
         Link *del(const LinkId &id);
 
-        void stayInContainer(Container *container);
+        void probablyDown(Container *container);
 
         bool isEmpty() const;
         bool isFull() const;
@@ -75,7 +81,9 @@ namespace impl { namespace links { namespace local
         assert(id <= _width);
         if(id >= _width)
         {
-            return container->levelUpAdd(link);
+            Parent *p = new Parent(this);
+            container->levelUp(p, p->_level);
+            return p->add(link);
         }
 
         assert(link && "null link added?");
@@ -104,13 +112,54 @@ namespace impl { namespace links { namespace local
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
     template <class Cfg>
-    typename LevelNode<Cfg, 0>::Link *LevelNode<Cfg, 0>::get(const LinkId &id) const
+    bool LevelNode<Cfg, 0>::add(Container *container, LinkId id, Link *link)
+    {
+        if(id >= _width)
+        {
+            Parent *p = new Parent(this);
+            container->levelUp(p, p->_level);
+            return p->add(container, id, link);
+        }
+
+        if(_links[id])
+        {
+            return false;
+        }
+
+        assert(link && "null link added?");
+        _links[id] = link;
+        _useMask |= 1ull<<id;
+        return true;
+    }
+
+    /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
+    template <class Cfg>
+    bool LevelNode<Cfg, 0>::add(LinkId id, Link *link)
     {
         assert(id < _width);
-        assert(_links[id]);
-        assert((_useMask>>id) & 1);
 
-        return _links[id];
+        if(_links[id])
+        {
+            return false;
+        }
+
+        assert(link && "null link added?");
+        _links[id] = link;
+        _useMask |= 1ull<<id;
+        return true;
+    }
+
+    /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
+    template <class Cfg>
+    typename LevelNode<Cfg, 0>::Link *LevelNode<Cfg, 0>::get(const LinkId &id) const
+    {
+        if(id < _width && _links[id])
+        {
+            assert((_useMask>>id) & 1);
+            return _links[id];
+        }
+
+        return nullptr;
     }
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
@@ -125,32 +174,30 @@ namespace impl { namespace links { namespace local
     template <class Cfg>
     typename LevelNode<Cfg, 0>::Link *LevelNode<Cfg, 0>::del(const LinkId &id)
     {
-        assert(id < _width);
-        assert(_links[id]);
-        assert((_useMask>>id) & 1);
+        if(id < _width && _links[id])
+        {
+            assert((_useMask>>id) & 1);
 
-        _useMask &= ~(1ull<<id);
-        Link *link = _links[id];
-        _links[id] = nullptr;
-        return link;
+            _useMask &= ~(1ull<<id);
+            Link *link = _links[id];
+            _links[id] = nullptr;
+            return link;
+        }
+
+        return nullptr;
     }
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
     template <class Cfg>
-    void LevelNode<Cfg, 0>::stayInContainer(Container *container)
+    void LevelNode<Cfg, 0>::probablyDown(Container *container)
     {
-        container->levelDown(this, 0);
+        container->levelDown(this, _level);
     }
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
     template <class Cfg>
     bool LevelNode<Cfg, 0>::isEmpty() const
     {
-        if(!_useMask)
-        {
-            int kk = 220;
-        }
-
         return !_useMask;
     }
 

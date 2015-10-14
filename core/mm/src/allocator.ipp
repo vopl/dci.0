@@ -29,6 +29,12 @@ namespace dci { namespace mm
         block->free<sizeClass>(ptr);
     }
 
+    template <std::size_t sizeClass> std::size_t Allocator::occupied()
+    {
+        const std::size_t sizeClassIndex = ConfigHeap::evalSizeClassIndex(sizeClass);
+        return _blocksHolders[sizeClassIndex].occupied();
+    }
+
     inline void *Allocator::alloc(std::size_t size)
     {
         std::size_t sizeClassIndex;
@@ -83,6 +89,17 @@ namespace dci { namespace mm
         allocator::Block *block = utils::sized_cast<allocator::Block *>(blockPtr);
 
         return block->getSizeClass();
+    }
+
+    inline std::size_t Allocator::occupied()
+    {
+        std::size_t amount = 0;
+        for(allocator::BlocksHolder &b : _blocksHolders)
+        {
+            amount += b.occupied();
+        }
+
+        return amount;
     }
 
     inline void *Allocator::allocateBlock()

@@ -39,7 +39,9 @@ namespace dci { namespace mm
             return
                 bySizeClassInstantiate<ConfigHeap::evalPrevSizeClass(sizeClass-1)>() +
                 reinterpret_cast<std::uintptr_t>(&details::allocBySizeClass<sizeClass>) +
-                reinterpret_cast<std::uintptr_t>(&details::freeBySizeClass<sizeClass>);
+                reinterpret_cast<std::uintptr_t>(&details::freeBySizeClass<sizeClass>) +
+                reinterpret_cast<std::uintptr_t>(&details::occupiedBySizeClass<sizeClass>) +
+                0;
         }
 
         /////////////////////////////////////////////////////////////////////////////////
@@ -48,7 +50,9 @@ namespace dci { namespace mm
         {
             return
                 reinterpret_cast<std::uintptr_t>(&details::allocBySizeClass<ConfigHeap::_minSize>) +
-                reinterpret_cast<std::uintptr_t>(&details::freeBySizeClass<ConfigHeap::_minSize>);
+                reinterpret_cast<std::uintptr_t>(&details::freeBySizeClass<ConfigHeap::_minSize>) +
+                reinterpret_cast<std::uintptr_t>(&details::occupiedBySizeClass<ConfigHeap::_minSize>) +
+                0;
         }
 
         static const volatile std::uintptr_t bySizeClassInstantiateSideEffect = bySizeClassInstantiate<ConfigHeap::_maxSize>();
