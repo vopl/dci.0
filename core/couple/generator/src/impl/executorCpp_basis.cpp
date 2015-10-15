@@ -970,7 +970,7 @@ namespace dci { namespace couple { namespace generator { namespace impl
         _hpp<< "namespace std { template<> struct is_error_code_enum< "<<typeName(v, inTarget)<<"> : public true_type {}; }"<<el;
 
         //initializer
-        _hpp<< "template class "<<runtimeNamespace()<<"::ErrcInitializer< "<<typeName(v, inTarget)<<">;"<<el;
+        _hpp<< "template struct "<<runtimeNamespace()<<"::ErrcInitializer< "<<typeName(v, inTarget)<<">;"<<el;
     }
 
 }}}}

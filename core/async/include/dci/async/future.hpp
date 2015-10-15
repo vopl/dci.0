@@ -65,7 +65,7 @@ namespace dci { namespace async
         : public details::FutureOperators<Future<E, T...>, E, T...>
     {
         friend class Promise<E, T...>;
-        friend class details::future::Engine<E, T...>;
+        friend struct details::future::Engine<E, T...>;
         using Engine = details::future::Engine<E, T...>;
         explicit Future(const Engine &engine);
 

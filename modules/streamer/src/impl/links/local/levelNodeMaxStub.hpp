@@ -7,7 +7,7 @@ namespace impl { namespace links { namespace local
     struct LevelNodeMaxStub
         : public LevelNodeBase<Cfg>
     {
-        std::size_t _level = 100500;
+        static const std::size_t _level = 100500;
 
         LevelNodeMaxStub(...)
         {
@@ -17,7 +17,7 @@ namespace impl { namespace links { namespace local
         LinkId add(void *, void *)
         {
             assert(!"never here");
-            return 0;
+            return Cfg::_badLinkId;
         }
 
         bool add(void *, std::size_t, void *)

@@ -101,9 +101,14 @@ namespace impl { namespace links { namespace local
         assert(id <= _width);
         if(id >= _width)
         {
-            Parent *p = new Parent(this);
-            container->levelUp(p, p->_level);
-            return p->add(container, link);
+            if(Parent::_level < _levels)
+            {
+                Parent *p = new Parent(this);
+                container->levelUp(p, p->_level);
+                return p->add(container, link);
+            }
+
+            return Cfg::_badLinkId;
         }
 
         assert(link && "null link added?");
@@ -174,9 +179,14 @@ namespace impl { namespace links { namespace local
 
         if(cid >= _width)
         {
-            Parent *p = new Parent(this);
-            container->levelUp(p, p->_level);
-            return p->add(container, id, link);
+            if(Parent::_level < _levels)
+            {
+                Parent *p = new Parent(this);
+                container->levelUp(p, p->_level);
+                return p->add(container, id, link);
+            }
+
+            return Cfg::_badLinkId;
         }
 
         assert(link && "null link added?");

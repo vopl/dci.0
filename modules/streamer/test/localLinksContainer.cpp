@@ -1,6 +1,5 @@
 #include <dci/gtest.hpp>
 #include "../src/impl/links/local.hpp"
-#include "../src/impl/links/local/linkId.cpp"
 
 #include <deque>
 
@@ -99,7 +98,7 @@ TEST(LocalLinksContainer, AddDelMax)
     f(std::integral_constant<std::size_t, 512>());
     f(std::integral_constant<std::size_t, 1024>());
     f(std::integral_constant<std::size_t, 2048>());
-    f(std::integral_constant<std::size_t, 4094>());
+    f(std::integral_constant<std::size_t, 4096>());
     f(std::integral_constant<std::size_t, 8192>());
 
     ASSERT_EQ(mBefore, dci::mm::occupied());

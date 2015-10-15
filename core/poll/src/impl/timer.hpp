@@ -6,7 +6,7 @@ namespace dci { namespace poll { namespace impl
 {
     namespace timerEngine
     {
-        class GridPoint;
+        struct GridPoint;
         struct TimerState
         {
             TimerState(TimerState *next = nullptr, TimerState *prev = nullptr);

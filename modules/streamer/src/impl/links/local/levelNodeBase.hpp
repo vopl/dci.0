@@ -127,7 +127,7 @@ namespace impl { namespace links { namespace local
     template <class F>
     auto LevelNodeBase<Cfg>::expandSwitch(std::size_t level, F &&f)
     {
-        return SwitchExpander<std::make_index_sequence<_levels+1>>::exec(level, std::move(f));
+        return SwitchExpander<std::make_index_sequence<_levels>>::exec(level, std::move(f));
     }
 
 

@@ -34,6 +34,7 @@ namespace impl { namespace links
             using Container = Local;
             using Link = Link_;
             static const std::size_t _width = bitsof(void*);
+            static const std::size_t _badLinkId = -1;
 
             static constexpr std::size_t evelLevels(std::size_t width, std::size_t totalVolume, std::size_t sum = 1)
             {
