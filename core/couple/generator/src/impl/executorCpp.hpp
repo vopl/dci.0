@@ -26,8 +26,9 @@ namespace dci { namespace couple { namespace generator { namespace impl
             inBody = 2,
             inWire = 4,
             instantiated = 32,
-            ignoreTemplateTypename = 64,
-            forGlobalScope = 128,
+            instantiatedNext = 64,
+            ignoreTemplateTypename = 128,
+            forGlobalScope = 256,
         };
 
         std::string typeName(const dci::couple::meta::Type *v, int flags);

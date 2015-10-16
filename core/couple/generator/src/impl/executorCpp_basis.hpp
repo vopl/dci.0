@@ -31,13 +31,13 @@ namespace dci { namespace couple { namespace generator { namespace impl
         std::string interfaceWireMemberName(const dci::couple::meta::Interface *v, bool invertPrimary);
 
     private:
-        void writeBody(const dci::couple::meta::Scope *scope, bool withSelf);
-        void writeBody(const dci::couple::meta::Struct *v);
-        void writeBody(const dci::couple::meta::Variant *v);
-        void writeBody(const dci::couple::meta::Enum *v);
-        void writeBody(const dci::couple::meta::Errc *v);
-        void writeBody(const dci::couple::meta::Alias *v);
-        void writeBody(const dci::couple::meta::Interface *v);
+        void writeBody(const dci::couple::meta::Scope *scope, bool withSelf, bool aliasFromNext = false);
+        void writeBody(const dci::couple::meta::Struct *v, bool aliasFromNext);
+        void writeBody(const dci::couple::meta::Variant *v, bool aliasFromNext);
+        void writeBody(const dci::couple::meta::Enum *v, bool aliasFromNext);
+        void writeBody(const dci::couple::meta::Errc *v, bool aliasFromNext);
+        void writeBody(const dci::couple::meta::Alias *v, bool aliasFromNext);
+        void writeBody(const dci::couple::meta::Interface *v, bool aliasFromNext);
 
     private:
         void writeIid(const dci::couple::meta::Scope *v);

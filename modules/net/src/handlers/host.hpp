@@ -15,9 +15,10 @@ namespace handlers
     using namespace dci::couple::runtime;
     using namespace net;
 
-    struct Host
-        : generated::handlers::net::Host<Host>
+    class Host
+        : public generated::handlers::net::Host<Host>
     {
+    public:
         Host(::impl::Host *impl);
         ~Host();
 

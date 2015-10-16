@@ -93,6 +93,20 @@ namespace dci { namespace couple { namespace generator { namespace impl
             {
                 _hpp<< undent;
                 _hpp<< "};"<<el;
+                _hpp<< el;
+
+
+                _hpp<< "template <>"<<el;
+                _hpp<< "struct "<<bodyName()<<"<1>"<< el;
+                _hpp<< "{"<< el;
+                _hpp<< indent;
+                    if(lib.rootScope())
+                    {
+                        writeBody(lib.rootScope(), false, true);
+                    }
+                _hpp<< undent;
+                _hpp<< "};"<<el;
+                _hpp<< el;
 
                 if(lib.rootScope())
                 {
@@ -230,7 +244,7 @@ namespace dci { namespace couple { namespace generator { namespace impl
                     if(first) first = false;
                     else _hpp<< ", ";
 
-                    _hpp<< typeName(t, inBody);
+                    _hpp<< typeName(t, inBody|instantiatedNext);
                 }
                 _hpp<< ">";
             }
@@ -243,7 +257,7 @@ namespace dci { namespace couple { namespace generator { namespace impl
                 if(first) first = false;
                 else _hpp<< ", ";
 
-                _hpp<< typeName(a->type(), inBody);
+                _hpp<< typeName(a->type(), inBody|instantiatedNext);
             }
 
             _hpp<< ") > ";
@@ -311,7 +325,7 @@ namespace dci { namespace couple { namespace generator { namespace impl
         return memberName;
     }
 
-    void ExecutorCpp_basis::writeBody(const Scope *scope, bool withSelf)
+    void ExecutorCpp_basis::writeBody(const Scope *scope, bool withSelf, bool aliasFromNext)
     {
         if(withSelf)
         {
@@ -321,13 +335,13 @@ namespace dci { namespace couple { namespace generator { namespace impl
             _hpp<<indent;
         }
 
-        for(auto child : scope->structs())  writeBody(child);
-        for(auto child : scope->variants()) writeBody(child);
-        for(auto child : scope->enums())    writeBody(child);
-        for(auto child : scope->errcs())    writeBody(child);
-        for(auto child : scope->aliases())  writeBody(child);
-        for(auto child : scope->interfaces())   writeBody(child);
-        for(auto child : scope->scopes())   writeBody(child, true);
+        for(auto child : scope->structs())      writeBody(child, aliasFromNext);
+        for(auto child : scope->variants())     writeBody(child, aliasFromNext);
+        for(auto child : scope->enums())        writeBody(child, aliasFromNext);
+        for(auto child : scope->errcs())        writeBody(child, aliasFromNext);
+        for(auto child : scope->aliases())      writeBody(child, aliasFromNext);
+        for(auto child : scope->interfaces())   writeBody(child, aliasFromNext);
+        for(auto child : scope->scopes())       writeBody(child, true, aliasFromNext);
 
         if(withSelf)
         {
@@ -336,9 +350,16 @@ namespace dci { namespace couple { namespace generator { namespace impl
         }
     }
 
-    void ExecutorCpp_basis::writeBody(const Struct *v)
+    void ExecutorCpp_basis::writeBody(const Struct *v, bool aliasFromNext)
     {
         _hpp<< "// struct "<<v->name()<<el;
+
+        if(aliasFromNext)
+        {
+            _hpp<< "using "<<v->name()<<" = "<<typeName(v, inBody|instantiated)<<";"<<el;
+            return;
+        }
+
         _hpp<< "struct "<<v->name()<<el;
         if(!v->bases().empty())
         {
@@ -369,16 +390,23 @@ namespace dci { namespace couple { namespace generator { namespace impl
 
         for(auto f : v->fields())
         {
-            _hpp<< typeName(f->type(), inBody)<<" "<<f->name()<<";"<<el;
+            _hpp<< typeName(f->type(), inBody|instantiatedNext)<<" "<<f->name()<<";"<<el;
         }
 
         _hpp<< undent;
         _hpp<< "};"<<el;
     }
 
-    void ExecutorCpp_basis::writeBody(const Variant *v)
+    void ExecutorCpp_basis::writeBody(const Variant *v, bool aliasFromNext)
     {
         _hpp<< "// variant "<<v->name()<<el;
+
+        if(aliasFromNext)
+        {
+            _hpp<< "using "<<v->name()<<" = "<<typeName(v, inBody|instantiated)<<";"<<el;
+            return;
+        }
+
         _hpp<< "struct "<<v->name()<<el;
 
         _hpp<< indent;
@@ -398,7 +426,7 @@ namespace dci { namespace couple { namespace generator { namespace impl
                 _hpp<< ", ";
             }
 
-            _hpp<< typeName(a->type(), inBody)<<el;
+            _hpp<< typeName(a->type(), inBody|instantiatedNext)<<el;
         }
         _hpp<< undent;
 
@@ -414,9 +442,16 @@ namespace dci { namespace couple { namespace generator { namespace impl
         _hpp<< "};"<<el;
     }
 
-    void ExecutorCpp_basis::writeBody(const Enum *v)
+    void ExecutorCpp_basis::writeBody(const Enum *v, bool aliasFromNext)
     {
         _hpp<< "// enum "<<v->name()<<el;
+
+        if(aliasFromNext)
+        {
+            _hpp<< "using "<<v->name()<<" = "<<typeName(v, inBody|instantiated)<<";"<<el;
+            return;
+        }
+
         _hpp<< "enum class "<<v->name()<<el;
 
         _hpp<< "{"<<el;
@@ -436,21 +471,36 @@ namespace dci { namespace couple { namespace generator { namespace impl
         _hpp<< "};"<<el;
     }
 
-    void ExecutorCpp_basis::writeBody(const Errc *v)
+    void ExecutorCpp_basis::writeBody(const Errc *v, bool aliasFromNext)
     {
         (void)v;
+        (void)aliasFromNext;
         //nothing here
     }
 
-    void ExecutorCpp_basis::writeBody(const Alias *v)
+    void ExecutorCpp_basis::writeBody(const Alias *v, bool aliasFromNext)
     {
         _hpp<< "// alias "<<v->name()<<el;
+
+        if(aliasFromNext)
+        {
+            _hpp<< "using "<<v->name()<<" = "<<typeName(v, inBody|instantiated)<<";"<<el;
+            return;
+        }
+
         _hpp<< "using "<<v->name()<<" = "<<typeName(v->type(), inBody)<<";"<<el;
     }
 
-    void ExecutorCpp_basis::writeBody(const Interface *v)
+    void ExecutorCpp_basis::writeBody(const Interface *v, bool aliasFromNext)
     {
         _hpp<< "// "<<"interface "<<v->name()<<el;
+
+        if(aliasFromNext)
+        {
+            _hpp<< "using "<<v->name()<<" = "<<typeName(v, inBody|instantiated)<<";"<<el;
+            return;
+        }
+
         _hpp<< "struct "<<v->name()<<el;
 
         _hpp<< indent;
@@ -517,7 +567,7 @@ namespace dci { namespace couple { namespace generator { namespace impl
 
         //ctor from opposite
         {
-            _hpp<< v->name()<<"("<<typeName(v->opposite(), inBody)<<" &from)"<<el;
+            _hpp<< v->name()<<"("<<typeName(v->opposite(), inBody|instantiatedNext)<<" &from)"<<el;
             _hpp<< indent;
                 _hpp<< ": "<<v->name()<<"()"<<el;
             _hpp<< undent;
@@ -605,7 +655,7 @@ namespace dci { namespace couple { namespace generator { namespace impl
 
         //assignment from opposite
         {
-            _hpp<< v->name()<<" &operator=("<<typeName(v->opposite(), inBody)<<" &from)"<<el;
+            _hpp<< v->name()<<" &operator=("<<typeName(v->opposite(), inBody|instantiatedNext)<<" &from)"<<el;
             _hpp<< "{"<<el;
             _hpp<< indent;
 
@@ -802,9 +852,9 @@ namespace dci { namespace couple { namespace generator { namespace impl
                     }
                     else
                     {
-                        _hpp<< runtimeNamespace()+"::Future< "+methodReplyTypes(m, inBody)+">";
+                        _hpp<< runtimeNamespace()+"::Future< "+methodReplyTypes(m, inBody|instantiatedNext)+">";
                     }
-                    _hpp<< "("<<methodArguments(m, false, inBody)<<")> &signal_"<<m->name()<<"()"<<el;
+                    _hpp<< "("<<methodArguments(m, false, inBody|instantiatedNext)<<")> &signal_"<<m->name()<<"()"<<el;
 
                     _hpp<< "{"<<el;
                     _hpp<< indent;
@@ -814,7 +864,7 @@ namespace dci { namespace couple { namespace generator { namespace impl
                 }
                 else
                 {
-                    _hpp<< methodSignature(m, inBody)<<el;
+                    _hpp<< methodSignature(m, inBody|instantiatedNext)<<el;
 
                     _hpp<< "{"<<el;
                     _hpp<< indent;
@@ -827,7 +877,7 @@ namespace dci { namespace couple { namespace generator { namespace impl
                         if(first) first = false;
                         else _hpp<< ", ";
 
-                        _hpp<< "std::forward< "<<typeName(a->type(), inBody)<<">("<<a->name()<<")";
+                        _hpp<< "std::forward< "<<typeName(a->type(), inBody|instantiatedNext)<<">("<<a->name()<<")";
                     }
                     _hpp<< ");"<<el;
 

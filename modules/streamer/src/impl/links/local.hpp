@@ -41,7 +41,7 @@ namespace impl { namespace links
                 return sum >= totalVolume ? 0 : evelLevels(width, totalVolume, width * sum)+1;
             }
 
-            static const std::size_t _levels = evelLevels(_width, volume);
+            static const std::size_t _levels = evelLevels(_width, volume, 1);
         };
 
     public:

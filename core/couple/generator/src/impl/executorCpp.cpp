@@ -166,7 +166,7 @@ namespace dci { namespace couple { namespace generator { namespace impl
                 std::string(flags&ignoreTemplateTypename ? "" : "typename ")+
                 (flags&forGlobalScope ? _runtimeNamespace+"::generated::basis::" : "")+
                 (flags&inWire ? _wireName : _bodyName)+
-                "<"+(flags&instantiated ? "0" : "i")+">"+scopedName;
+                "<"+(flags&instantiated ? "0" : (flags&instantiatedNext ? "i+1" : "i"))+">"+scopedName;
     }
 
     std::string ExecutorCpp::methodArguments(const Method *m, bool forRealMethod, int typesFlags)

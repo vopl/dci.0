@@ -16,25 +16,25 @@ namespace dci { namespace async { namespace details
     class TaskPromiseProcessor
     {
     private:
-        template <class F1, class R1, class... Args1>
-        static std::tuple<Args1...> mkArgs(R1(F1::*)(Args1...) const);
+        template <class F1, class R1, class... TailArgs>
+        static std::tuple<TailArgs...> mkTailArgs(R1(F1::*)(Args..., TailArgs...) const);
 
-        template <class F1, class R1, class... Args1>
-        static std::tuple<Args1...> mkArgs(R1(F1::*)(Args1...) volatile);
+        template <class F1, class R1, class... TailArgs>
+        static std::tuple<TailArgs...> mkTailArgs(R1(F1::*)(Args..., TailArgs...) volatile);
 
-        template <class F1, class R1, class... Args1>
-        static std::tuple<Args1...> mkArgs(R1(F1::*)(Args1...) const volatile);
+        template <class F1, class R1, class... TailArgs>
+        static std::tuple<TailArgs...> mkTailArgs(R1(F1::*)(Args..., TailArgs...) const volatile);
 
-        template <class F1, class R1, class... Args1>
-        static std::tuple<Args1...> mkArgs(R1(F1::*)(Args1...));
+        template <class F1, class R1, class... TailArgs>
+        static std::tuple<TailArgs...> mkTailArgs(R1(F1::*)(Args..., TailArgs...));
 
-        template <class R1, class... Args1>
-        static std::tuple<Args1...> mkArgs(R1(*)(Args1...));
+        template <class R1, class... TailArgs>
+        static std::tuple<TailArgs...> mkTailArgs(R1(*)(Args..., TailArgs...));
 
         template <class F1>
-        static std::enable_if_t<(sizeof(&F1::operator())>0), decltype(mkArgs(&F1::operator()))> mkArgs(F1 f);
+        static std::enable_if_t<(sizeof(&F1::operator())>0), decltype(mkTailArgs(&F1::operator()))> mkTailArgs(F1 f);
 
-        static std::tuple<> mkArgs(...);
+        static std::tuple<> mkTailArgs(...);
 
 
         template <class T>
@@ -43,10 +43,10 @@ namespace dci { namespace async { namespace details
             using result = std::tuple<>;
         };
 
-        template <class... ArgsTail>
-        struct MkPromises<std::tuple<Args..., ArgsTail...>>
+        template <class... TailArgs>
+        struct MkPromises<std::tuple<TailArgs...>>
         {
-            using result = std::tuple<std::decay_t<ArgsTail>...>;
+            using result = std::tuple<std::decay_t<TailArgs>...>;
         };
 
         template <class T> struct MkFutures;
@@ -70,10 +70,10 @@ namespace dci { namespace async { namespace details
             using result = typename Expander<std::make_integer_sequence<int, std::tuple_size<Promises>::value>>::result;
         };
 
-        using AllArgs = decltype(mkArgs(std::declval<F>()));
+        using TailArgs = decltype(mkTailArgs(std::declval<F>()));
 
     public:
-        using Promises = typename MkPromises<AllArgs>::result;
+        using Promises = typename MkPromises<TailArgs>::result;
 
     private:
         using Futures = typename MkFutures<Promises>::result;

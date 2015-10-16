@@ -64,6 +64,7 @@ namespace dci { namespace couple { namespace serialize
     typename RequestWriterResponseReader<OStream, IStream>::ReadResult RequestWriterResponseReader<OStream, IStream>::read(IStream &istream, std::error_code &ec)
     {
         (void)istream;
+        (void)ec;
         // TODO: read type (error or value), if error - read error and return error-status
     }
 

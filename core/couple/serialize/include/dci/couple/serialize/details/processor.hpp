@@ -247,7 +247,7 @@ namespace dci { namespace couple { namespace serialize { namespace details
         template <class Value> std::enable_if_t<ValueKind::variant == ValueTraits<Value>::_kind> save(const Value &value)
         {
             save(static_cast<std::uint32_t>(value.typeId()));
-            value.visit([](const auto &subval){
+            value.visit([this](const auto &subval){
                 save(subval);
             });
         }
@@ -255,7 +255,7 @@ namespace dci { namespace couple { namespace serialize { namespace details
         template <class Value> std::enable_if_t<ValueKind::variant == ValueTraits<Value>::_kind> save(Value &&value)
         {
             save(static_cast<std::uint32_t>(value.typeId()));
-            value.visit([](auto &&subval){
+            value.visit([this](auto &&subval){
                 save(std::forward<std::remove_reference_t<decltype(subval)>>(subval));
             });
         }
@@ -269,7 +269,7 @@ namespace dci { namespace couple { namespace serialize { namespace details
                 throw std::system_error(err_general::bad_input);
             }
             value.ensureType(typeId);
-            value.visit([](auto &subval){
+            value.visit([this](auto &subval){
                 load(subval);
             });
         }
@@ -278,21 +278,27 @@ namespace dci { namespace couple { namespace serialize { namespace details
         //struct
         template <class Value> std::enable_if_t<ValueKind::struct_ == ValueTraits<Value>::_kind> save(const Value &value)
         {
-            ValueTraits<Value>::enumerateFields([](const auto &subval){
+            (void)value;
+            assert(0);
+            ValueTraits<Value>::enumerateFields([this](const auto &subval){
                 save(subval);
             });
         }
 
         template <class Value> std::enable_if_t<ValueKind::struct_ == ValueTraits<Value>::_kind> save(Value &&value)
         {
-            ValueTraits<Value>::enumerateFields([](auto &&subval){
+            (void)value;
+            assert(0);
+            ValueTraits<Value>::enumerateFields([this](auto &&subval){
                 save(std::forward<std::remove_reference_t<decltype(subval)>>(subval));
             });
         }
 
         template <class Value> std::enable_if_t<ValueKind::struct_ == ValueTraits<Value>::_kind> load(Value &value)
         {
-            ValueTraits<Value>::enumerateFields([](auto &subval){
+            (void)value;
+            assert(0);
+            ValueTraits<Value>::enumerateFields([this](auto &subval){
                 load(subval);
             });
         }

@@ -13,9 +13,10 @@ namespace handlers
     using namespace dci::couple::runtime;
     using namespace net;
 
-    struct Link
-        : generated::handlers::net::Link<Link>
+    class Link
+        : public generated::handlers::net::Link<Link>
     {
+    public:
         Link(::impl::Link *impl);
         ~Link();
 

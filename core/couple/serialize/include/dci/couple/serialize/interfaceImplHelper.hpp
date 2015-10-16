@@ -84,6 +84,7 @@ namespace dci { namespace couple { namespace serialize
     template <class Concrete, class Engine>
     void InterfaceImplHelper<Concrete, Engine>::pushResponseWriter(WriterPtr<OStream> &&writer)
     {
+        (void)writer;
         assert(0);
     }
 
@@ -91,6 +92,7 @@ namespace dci { namespace couple { namespace serialize
     template <class Concrete, class Engine>
     void InterfaceImplHelper<Concrete, Engine>::pushMessageWriter(WriterPtr<OStream> &&writer)
     {
+        (void)writer;
         assert(0);
     }
 
@@ -98,6 +100,7 @@ namespace dci { namespace couple { namespace serialize
     template <class Concrete, class Engine>
     void InterfaceImplHelper<Concrete, Engine>::readRequest(IStream &istream)
     {
+        (void)istream;
         assert(0);
         //read callId
 //        responseWriter = Concrete::readRequest(istream);
