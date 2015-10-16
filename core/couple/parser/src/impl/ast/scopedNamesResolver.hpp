@@ -122,8 +122,8 @@ namespace  dci { namespace couple { namespace parser { namespace impl { namespac
                                     v->reply.begin(),
                                     v->reply.end(),
                                     state,
-                                    [&](bool state, TypeUse &t)->bool {
-                                        return resolve(v->owner, t) && state;
+                                    [&](bool lstate, TypeUse &t)->bool {
+                                        return resolve(v->owner, t) && lstate;
                                     }
                                 );
                     return state;

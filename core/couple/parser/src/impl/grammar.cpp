@@ -54,7 +54,7 @@ namespace dci { namespace couple { namespace parser { namespace impl
         std::size_t pos{0};
         while(std::string::npos != (pos = content.find("\\\"", pos, 2)))
         {
-            content.erase(content.begin() + pos);
+            content.erase(content.begin() + static_cast<std::string::difference_type>(pos));
         }
 
         return content;

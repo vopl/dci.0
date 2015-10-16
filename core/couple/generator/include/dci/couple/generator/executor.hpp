@@ -11,6 +11,7 @@ namespace dci { namespace couple { namespace generator
 
     struct APIDCI_COUPLE_GENERATOR Executor
     {
+        virtual ~Executor() {}
 
         virtual std::string name() = 0;
         virtual std::string description() = 0;

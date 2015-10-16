@@ -21,7 +21,7 @@ namespace dci { namespace site { namespace impl
             return std::string();
         }
 
-        void **ppe = (void **)dlsym(mainBinaryHandle, "dciModuleEntry");
+        void **ppe = static_cast<void **>(dlsym(mainBinaryHandle, "dciModuleEntry"));
         if(!ppe)
         {
             dlclose(mainBinaryHandle);
@@ -292,7 +292,7 @@ namespace dci { namespace site { namespace impl
 
             assert(!_entry);
 
-            void **ppe = (void **)dlsym(_mainBinaryHandle, "dciModuleEntry");
+            void **ppe = static_cast<void **>(dlsym(_mainBinaryHandle, "dciModuleEntry"));
             if(!ppe)
             {
                 LOGE("loading module \""<<_info._name<<"\": entry point is absent");

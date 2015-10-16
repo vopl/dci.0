@@ -137,13 +137,15 @@ namespace dci { namespace couple { namespace generator { namespace impl
                 case PrimitiveKind::iid:    return _runtimeNamespace+"::Iid";
                 }
 
+                assert(!"never here");
                 abort();
-                return "";
+                //return "";
             }
         }
 
+        assert(!"never here");
         abort();
-        return "";
+        //return "";
     }
 
     std::string ExecutorCpp::typeName(const Scope *v, const std::string &name, int flags)

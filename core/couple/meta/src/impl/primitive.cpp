@@ -28,7 +28,7 @@ namespace dci { namespace couple { namespace meta { namespace impl
         runtime::SignBuilder s;
 
         s.add("primitive");
-        s.add((std::uint32_t)_kind);
+        s.add(static_cast<std::uint32_t>(_kind));
 
         setSign(s.finish());
     }

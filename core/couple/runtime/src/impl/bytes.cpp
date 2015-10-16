@@ -131,7 +131,7 @@ namespace dci { namespace couple { namespace runtime { namespace impl
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
     void Bytes::append(const char *str, std::size_t size)
     {
-        return append((const bytes::byte *)str, size);
+        return append(reinterpret_cast<const bytes::byte *>(str), size);
     }
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
@@ -240,8 +240,8 @@ namespace dci { namespace couple { namespace runtime { namespace impl
 
         assert(!"bad index");
         abort();
-        static bytes::byte stub;
-        return stub;
+//        static bytes::byte stub;
+//        return stub;
     }
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
@@ -343,7 +343,7 @@ namespace dci { namespace couple { namespace runtime { namespace impl
         if(keepSize)
         {
             _last = iter;
-            iter->_size = keepSize;
+            iter->_size = static_cast<std::uint32_t>(keepSize);
             iter = iter->_next;
         }
 
@@ -418,7 +418,7 @@ namespace dci { namespace couple { namespace runtime { namespace impl
         assert(!"not implemented");
         abort();
 
-        return Bytes();
+//        return Bytes();
     }
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7

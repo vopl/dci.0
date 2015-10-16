@@ -7,9 +7,9 @@ namespace dci { namespace poll { namespace impl
 
     TimerEngine::TimerEngine()
         : _now(std::chrono::steady_clock::now())
-        , _lastCheckpoint(std::chrono::duration_cast<LevelsUnit>(_now.time_since_epoch()).count())
+        , _lastCheckpoint(static_cast<timerEngine::time>(std::chrono::duration_cast<LevelsUnit>(_now.time_since_epoch()).count()))
         , _lastDistance(std::chrono::milliseconds::max())
-        , _grid(std::chrono::duration_cast<LevelsUnit>(_now.time_since_epoch()).count())
+        , _grid(_lastCheckpoint)
     {
 
     }
@@ -22,7 +22,7 @@ namespace dci { namespace poll { namespace impl
     std::chrono::milliseconds TimerEngine::fireTicks()
     {
         _now = std::chrono::steady_clock::now();
-        time now = std::chrono::duration_cast<LevelsUnit>(_now.time_since_epoch()).count();
+        time now = static_cast<timerEngine::time>(std::chrono::duration_cast<LevelsUnit>(_now.time_since_epoch()).count());
 
         if(_lastCheckpoint == now)
         {
@@ -45,12 +45,12 @@ namespace dci { namespace poll { namespace impl
 
     void TimerEngine::update(Timer *t)
     {
-        _grid.replace(t, std::chrono::duration_cast<LevelsUnit>(t->bound().time_since_epoch()).count());
+        _grid.replace(t, static_cast<timerEngine::time>(std::chrono::duration_cast<LevelsUnit>(t->bound().time_since_epoch()).count()));
     }
 
     void TimerEngine::start(Timer *t)
     {
-        _grid.insert(t, std::chrono::duration_cast<LevelsUnit>(t->bound().time_since_epoch()).count());
+        _grid.insert(t, static_cast<timerEngine::time>(std::chrono::duration_cast<LevelsUnit>(t->bound().time_since_epoch()).count()));
     }
 
     void TimerEngine::stop(Timer *t)
@@ -66,7 +66,7 @@ namespace dci { namespace poll { namespace impl
         }
         else
         {
-            _grid.insert(t, std::chrono::duration_cast<LevelsUnit>(t->bound().time_since_epoch()).count());
+            _grid.insert(t, static_cast<timerEngine::time>(std::chrono::duration_cast<LevelsUnit>(t->bound().time_since_epoch()).count()));
         }
     }
 }}}

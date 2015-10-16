@@ -85,8 +85,8 @@ namespace dci { namespace mm { namespace allocator
     private:
         char *reduce(char *oldBound, char *newBound)
         {
-            assert(oldBound >= (char *)this && oldBound <= (char *)this + sizeof(*this));
-            assert(newBound >= (char *)this && newBound <= (char *)this + sizeof(*this));
+            assert(oldBound >= reinterpret_cast<char *>(this) && oldBound <= reinterpret_cast<char *>(this) + sizeof(*this));
+            assert(newBound >= reinterpret_cast<char *>(this) && newBound <= reinterpret_cast<char *>(this) + sizeof(*this));
 
             std::uintptr_t inewBound = reinterpret_cast<std::uintptr_t>(newBound);
 
@@ -104,7 +104,7 @@ namespace dci { namespace mm { namespace allocator
 
             vm::protect(
                         newBound,
-                        oldBound - newBound,
+                        static_cast<std::size_t>(oldBound - newBound),
                         false);
 
             return newBound;
@@ -112,8 +112,8 @@ namespace dci { namespace mm { namespace allocator
 
         char *extend(char *oldBound, char *newBound)
         {
-            assert(oldBound >= (char *)this && oldBound <= (char *)this + sizeof(*this));
-            assert(newBound >= (char *)this && newBound <= (char *)this + sizeof(*this));
+            assert(oldBound >= reinterpret_cast<char *>(this) && oldBound <= reinterpret_cast<char *>(this) + sizeof(*this));
+            assert(newBound >= reinterpret_cast<char *>(this) && newBound <= reinterpret_cast<char *>(this) + sizeof(*this));
 
             std::uintptr_t inewBound = reinterpret_cast<std::uintptr_t>(newBound);
 
@@ -131,7 +131,7 @@ namespace dci { namespace mm { namespace allocator
 
             vm::protect(
                         oldBound,
-                        newBound - oldBound,
+                        static_cast<std::size_t>(newBound - oldBound),
                         true);
 
             return newBound;
@@ -272,8 +272,8 @@ namespace dci { namespace mm { namespace allocator
     private:
         char *reduce(char *oldBound, char *newBound)
         {
-            assert(oldBound >= (char *)this && oldBound <= (char *)this + sizeof(*this));
-            assert(newBound >= (char *)this && newBound <= (char *)this + sizeof(*this));
+            assert(oldBound >= reinterpret_cast<char *>(this) && oldBound <= reinterpret_cast<char *>(this) + sizeof(*this));
+            assert(newBound >= reinterpret_cast<char *>(this) && newBound <= reinterpret_cast<char *>(this) + sizeof(*this));
 
             std::uintptr_t inewBound = reinterpret_cast<std::uintptr_t>(newBound);
 
@@ -291,7 +291,7 @@ namespace dci { namespace mm { namespace allocator
 
             vm::protect(
                         oldBound,
-                        newBound - oldBound,
+                        static_cast<std::size_t>(newBound - oldBound),
                         false);
 
             return newBound;
@@ -299,8 +299,8 @@ namespace dci { namespace mm { namespace allocator
 
         char *extend(char *oldBound, char *newBound)
         {
-            assert(oldBound >= (char *)this && oldBound <= (char *)this + sizeof(*this));
-            assert(newBound >= (char *)this && newBound <= (char *)this + sizeof(*this));
+            assert(oldBound >= reinterpret_cast<char *>(this) && oldBound <= reinterpret_cast<char *>(this) + sizeof(*this));
+            assert(newBound >= reinterpret_cast<char *>(this) && newBound <= reinterpret_cast<char *>(this) + sizeof(*this));
 
             std::uintptr_t inewBound = reinterpret_cast<std::uintptr_t>(newBound);
 
@@ -318,7 +318,7 @@ namespace dci { namespace mm { namespace allocator
 
             vm::protect(
                         newBound,
-                        oldBound - newBound,
+                        static_cast<std::size_t>(oldBound - newBound),
                         true);
 
             return newBound;

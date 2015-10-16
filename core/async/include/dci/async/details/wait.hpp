@@ -105,7 +105,7 @@ namespace dci { namespace async { namespace details
     {
         const std::size_t amount = waitablesAmount(waitables...);
 
-        WWLink *links = (WWLink *)alloca(sizeof(WWLink) * amount);
+        WWLink *links = static_cast<WWLink *>(alloca(sizeof(WWLink) * amount));
         collectWaitables<waitFor>(links, waitables...);
 
         Waiter waiter(links, amount);

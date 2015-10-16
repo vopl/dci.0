@@ -65,6 +65,6 @@ namespace dci { namespace async { namespace impl { namespace ctx
     ////////////////////////////////////////////////////////////////////////////////
     void Engine::switchTo(Engine *to)
     {
-        boost::context::jump_fcontext(&_ctx, to->_ctx, to->_coroArg, false);
+        boost::context::jump_fcontext(&_ctx, to->_ctx, static_cast<intptr_t>(to->_coroArg), false);
     }
 }}}}

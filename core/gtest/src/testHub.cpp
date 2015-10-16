@@ -2,6 +2,8 @@
 
 extern "C"
 {
+    DCI_API_EXPORT int dciTestHubEntryPoint(int argc, char *argv[]);
+
     DCI_API_EXPORT int dciTestHubEntryPoint(int argc, char *argv[])
     {
         testing::InitGoogleTest(&argc, argv);

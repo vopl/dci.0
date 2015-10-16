@@ -61,20 +61,41 @@ namespace dci { namespace couple { namespace runtime { namespace impl
             return (S32(17, x) ^ S32(19, x) ^ R(10,   x));
         }
 
+        std::uint16_t REVERSE16(std::uint16_t w)
+        {
+            std::uint16_t tmp = (w);
+            return std::uint16_t(((tmp & std::uint16_t(0xff00UL)) >> 8) | ((tmp & std::uint16_t(0x00ffUL)) << 8));
+        }
+
+        std::int16_t REVERSE16(std::int16_t w)
+        {
+            return std::int16_t(REVERSE16(std::uint16_t(w)));
+        }
+
         std::uint32_t REVERSE32(std::uint32_t w)
         {
             std::uint32_t tmp = (w);
             tmp = (tmp >> 16) | (tmp << 16);
-            return ((tmp & 0xff00ff00UL) >> 8) | ((tmp & 0x00ff00ffUL) << 8);
+            return std::uint32_t(((tmp & std::uint32_t(0xff00ff00UL)) >> 8) | ((tmp & std::uint32_t(0x00ff00ffUL)) << 8));
+        }
+
+        std::int32_t REVERSE32(std::int32_t w)
+        {
+            return std::int32_t(REVERSE32(std::uint32_t(w)));
         }
 
         std::uint64_t REVERSE64(std::uint64_t w)
         {
             std::uint64_t tmp = (w);
             tmp = (tmp >> 32) | (tmp << 32);
-            tmp = ((tmp & 0xff00ff00ff00ff00ULL) >> 8) | ((tmp & 0x00ff00ff00ff00ffULL) << 8);
+            tmp = ((tmp & std::uint64_t(0xff00ff00ff00ff00ULL)) >> 8) | ((tmp & std::uint64_t(0x00ff00ff00ff00ffULL)) << 8);
 
-            return ((tmp & 0xffff0000ffff0000ULL) >> 16) | ((tmp & 0x0000ffff0000ffffULL) << 16);
+            return std::uint64_t(((tmp & 0xffff0000ffff0000ULL) >> 16) | ((tmp & 0x0000ffff0000ffffULL) << 16));
+        }
+
+        std::int64_t REVERSE64(std::int64_t w)
+        {
+            return std::int64_t(REVERSE64(std::uint64_t(w)));
         }
 
         const static std::uint32_t K256[64] =
@@ -129,16 +150,6 @@ namespace dci { namespace couple { namespace runtime { namespace impl
         add(v.data(), v.size());
     }
 
-    void SignBuilder::add(const std::uint32_t &v)
-    {
-#if BYTE_ORDER == LITTLE_ENDIAN
-        std::uint32_t buf = REVERSE32(v);
-#else
-        std::uint32_t buf = v;
-#endif
-        add((char *)&buf, sizeof(buf));
-    }
-
     void SignBuilder::add(const char *csz)
     {
         add(csz, strlen(csz));
@@ -165,7 +176,7 @@ namespace dci { namespace couple { namespace runtime { namespace impl
                 _bitcount += freespace << 3;
                 len -= freespace;
                 data += freespace;
-                transform((std::uint32_t*)_buffer);
+                transform(reinterpret_cast<std::uint32_t*>(_buffer));
             }
             else
             {
@@ -176,7 +187,7 @@ namespace dci { namespace couple { namespace runtime { namespace impl
         }
         while (len >= BLOCK_LENGTH)
         {
-            transform((std::uint32_t*)data);
+            transform(reinterpret_cast<const std::uint32_t*>(data));
             _bitcount += BLOCK_LENGTH << 3;
             len -= BLOCK_LENGTH;
             data += BLOCK_LENGTH;
@@ -186,6 +197,78 @@ namespace dci { namespace couple { namespace runtime { namespace impl
             memcpy(_buffer, data, len);
             _bitcount += len << 3;
         }
+    }
+
+    void SignBuilder::add(const std::uint8_t &v)
+    {
+        auto buf = v;
+        add(reinterpret_cast<char *>(&buf), sizeof(buf));
+    }
+
+    void SignBuilder::add(const std::uint16_t &v)
+    {
+#if BYTE_ORDER == LITTLE_ENDIAN
+        auto buf = REVERSE16(v);
+#else
+        auto buf = v;
+#endif
+        add(reinterpret_cast<char *>(&buf), sizeof(buf));
+    }
+
+    void SignBuilder::add(const std::uint32_t &v)
+    {
+#if BYTE_ORDER == LITTLE_ENDIAN
+        auto buf = REVERSE32(v);
+#else
+        auto buf = v;
+#endif
+        add(reinterpret_cast<char *>(&buf), sizeof(buf));
+    }
+
+    void SignBuilder::add(const std::uint64_t &v)
+    {
+#if BYTE_ORDER == LITTLE_ENDIAN
+        auto buf = REVERSE64(v);
+#else
+        auto buf = v;
+#endif
+        add(reinterpret_cast<char *>(&buf), sizeof(buf));
+    }
+
+    void SignBuilder::add(const std::int8_t &v)
+    {
+        auto buf = v;
+        add(reinterpret_cast<char *>(&buf), sizeof(buf));
+    }
+
+    void SignBuilder::add(const std::int16_t &v)
+    {
+#if BYTE_ORDER == LITTLE_ENDIAN
+        auto buf = REVERSE16(v);
+#else
+        auto buf = v;
+#endif
+        add(reinterpret_cast<char *>(&buf), sizeof(buf));
+    }
+
+    void SignBuilder::add(const std::int32_t &v)
+    {
+#if BYTE_ORDER == LITTLE_ENDIAN
+        auto buf = REVERSE32(v);
+#else
+        auto buf = v;
+#endif
+        add(reinterpret_cast<char *>(&buf), sizeof(buf));
+    }
+
+    void SignBuilder::add(const std::int64_t &v)
+    {
+#if BYTE_ORDER == LITTLE_ENDIAN
+        auto buf = REVERSE64(v);
+#else
+        auto buf = v;
+#endif
+        add(reinterpret_cast<char *>(&buf), sizeof(buf));
     }
 
     Sign SignBuilder::finish()
@@ -208,7 +291,7 @@ namespace dci { namespace couple { namespace runtime { namespace impl
                 {
                     memset(&_buffer[usedspace], 0, BLOCK_LENGTH - usedspace);
                 }
-                transform((std::uint32_t*)_buffer);
+                transform(reinterpret_cast<const std::uint32_t*>(_buffer));
 
                 memset(_buffer, 0, SHORT_BLOCK_LENGTH);
             }
@@ -221,16 +304,16 @@ namespace dci { namespace couple { namespace runtime { namespace impl
         }
 
         void *bcPtr = &_buffer[SHORT_BLOCK_LENGTH];
-        *(std::uint64_t*)bcPtr = _bitcount;
+        *static_cast<std::uint64_t*>(bcPtr) = _bitcount;
 
-        transform((std::uint32_t*)_buffer);
+        transform(reinterpret_cast<const std::uint32_t*>(_buffer));
 
         Sign digest;
         static_assert(digest._size <= DIGEST_LENGTH, "Sign is too big as a digest here");
 
 #if BYTE_ORDER == LITTLE_ENDIAN
         {
-            std::uint32_t *d = (std::uint32_t*)digest.data();
+            std::uint32_t *d = reinterpret_cast<std::uint32_t*>(digest.data());
             for(std::size_t j = 0; j < digest._size/4; j++)
             {
                 _state[j] = REVERSE32(_state[j]);
@@ -249,7 +332,7 @@ namespace dci { namespace couple { namespace runtime { namespace impl
         std::uint32_t a, b, c, d, e, f, g, h, s0, s1;
         std::uint32_t T1, T2, *W256;
 
-        W256 = (std::uint32_t*)_buffer;
+        W256 = reinterpret_cast<std::uint32_t*>(_buffer);
 
         a = _state[0];
         b = _state[1];

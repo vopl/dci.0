@@ -14,6 +14,10 @@ namespace dci { namespace couple { namespace parser { namespace impl
     {
     }
 
+    GrammarError::~GrammarError()
+    {
+    }
+
     const CharIterator &GrammarError::pos() const
     {
         return _pos;

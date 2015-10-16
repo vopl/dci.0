@@ -6,12 +6,12 @@ namespace dci { namespace couple { namespace parser { namespace impl
     {
         ////////////////////////////////////////////////////////////////////////////////
         interface =
-            toks.kwinterface[qi::_val = phx::construct<Interface>(phx::new_<SInterface>())] >>
+            toks.kwinterface[qi::_val = phx::construct<Interface>(phx::new_<SInterface>())] >
             (
                 name[phx::bind(&SInterface::name, deref(qi::_val)) = qi::_1] |
                 error(+"interface name expected")
-            ) >>
-            -baseInterfaces[phx::bind(&SInterface::bases, deref(qi::_val)) = qi::_1] >>
+            ) >
+            -baseInterfaces[phx::bind(&SInterface::bases, deref(qi::_val)) = qi::_1] >
             (toks.ocb /*| error(+"'{' expected")*/) >
             *(
                 //decls[phx::insert(phx::bind(&SInterface::decls, deref(qi::_val)), phx::end(phx::bind(&SInterface::decls, deref(qi::_val))), phx::begin(qi::_1), phx::end(qi::_1))] |

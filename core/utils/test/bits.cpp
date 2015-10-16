@@ -26,17 +26,17 @@ static const std::uint8_t testset8[256] = {
 
 template <class Integral> Integral get(std::size_t index)
 {
-    Integral res = testset8[(index+0)%256];
+    Integral res = static_cast<Integral>(testset8[(index+0)%256]);
 
-    if(sizeof(res) <= 16) res |= (std::uint16_t)testset8[(index+41)%256]<<8;
+    if(sizeof(res) <= 16) res |= static_cast<std::uint16_t>(static_cast<std::uint16_t>(testset8[(index+41)%256])<<8);
 
-    if(sizeof(res) <= 32) res |= (std::uint32_t)testset8[(index+43)%256]<<16;
-    if(sizeof(res) <= 32) res |= (std::uint32_t)testset8[(index+47)%256]<<24;
+    if(sizeof(res) <= 32) res |= static_cast<std::uint32_t>(testset8[(index+43)%256])<<16;
+    if(sizeof(res) <= 32) res |= static_cast<std::uint32_t>(testset8[(index+47)%256])<<24;
 
-    if(sizeof(res) <= 64) res |= (std::uint64_t)testset8[(index+53)%256]<<32;
-    if(sizeof(res) <= 64) res |= (std::uint64_t)testset8[(index+59)%256]<<40;
-    if(sizeof(res) <= 64) res |= (std::uint64_t)testset8[(index+61)%256]<<48;
-    if(sizeof(res) <= 64) res |= (std::uint64_t)testset8[(index+67)%256]<<54;
+    if(sizeof(res) <= 64) res |= static_cast<std::uint64_t>(testset8[(index+53)%256])<<32;
+    if(sizeof(res) <= 64) res |= static_cast<std::uint64_t>(testset8[(index+59)%256])<<40;
+    if(sizeof(res) <= 64) res |= static_cast<std::uint64_t>(testset8[(index+61)%256])<<48;
+    if(sizeof(res) <= 64) res |= static_cast<std::uint64_t>(testset8[(index+67)%256])<<54;
 
     return res;
 }
@@ -52,8 +52,8 @@ template <class Integral> void test_least1Count()
 
         for(std::size_t b(0); b<bitsof(Integral); ++b)
         {
-            Integral mask1 = ((1ull<<b)-1);
-            Integral mask2 = ~(1ull<<b);
+            Integral mask1 = static_cast<Integral>((1ull<<b)-1);
+            Integral mask2 = static_cast<Integral>(~(1ull<<b));
             Integral vv = (v | mask1) & mask2;
 
             //std::cout<<"0x"<<std::setw(sizeof(Integral)*2)<<std::setfill('0')<<std::hex<<(std::uint64_t)vv<<std::endl;
@@ -73,8 +73,8 @@ template <class Integral> void test_most1Count()
 
         for(std::size_t b(0); b<bitsof(Integral); ++b)
         {
-            Integral mask1 = ~((1ull<<b)-1);
-            Integral mask2 = ~(1ull<<b);
+            Integral mask1 = static_cast<Integral>(~((1ull<<b)-1));
+            Integral mask2 = static_cast<Integral>(~(1ull<<b));
             Integral vv = (v | mask1) & mask2;
 
             //std::cout<<"0x"<<std::setw(sizeof(Integral)*2)<<std::setfill('0')<<std::hex<<(std::uint64_t)vv<<std::endl;
@@ -94,8 +94,8 @@ template <class Integral> void test_least0Count()
 
         for(std::size_t b(0); b<bitsof(Integral); ++b)
         {
-            Integral mask1 = ~((1ull<<b)-1);
-            Integral mask2 = (1ull<<b);
+            Integral mask1 = static_cast<Integral>(~((1ull<<b)-1));
+            Integral mask2 = static_cast<Integral>(1ull<<b);
             Integral vv = (v & mask1) | mask2;
 
             //std::cout<<"0x"<<std::setw(sizeof(Integral)*2)<<std::setfill('0')<<std::hex<<(std::uint64_t)vv<<std::endl;
@@ -115,8 +115,8 @@ template <class Integral> void test_most0Count()
 
         for(std::size_t b(0); b<bitsof(Integral); ++b)
         {
-            Integral mask1 = ((1ull<<b)-1);
-            Integral mask2 = (1ull<<b);
+            Integral mask1 = static_cast<Integral>((1ull<<b)-1);
+            Integral mask2 = static_cast<Integral>(1ull<<b);
             Integral vv = (v & mask1) | mask2;
 
             //std::cout<<"0x"<<std::setw(sizeof(Integral)*2)<<std::setfill('0')<<std::hex<<(std::uint64_t)vv<<std::endl;

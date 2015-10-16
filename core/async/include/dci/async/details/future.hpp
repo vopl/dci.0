@@ -121,6 +121,7 @@ namespace dci { namespace async { namespace details { namespace future
         case Mode::error:
             _data._error.~E();
             break;
+        case Mode::null:
         default:
             break;
         }

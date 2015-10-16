@@ -60,7 +60,19 @@ include_directories(${LOCALINSTALL_DIR}/include)
 set(CMAKE_SHARED_LINKER_FLAGS "-Wl,--no-undefined")
 set(CMAKE_MODULE_LINKER_FLAGS "-Wl,--no-undefined")
 
-set(CMAKE_CXX_FLAGS "-Wall -Wextra -Wpedantic -ftemplate-depth-1000 -fvisibility=hidden -fvisibility-inlines-hidden")
+set(CLANG_WARNS "-Weverything -Wno-c++98-compat -Wno-c++98-compat-pedantic -Wno-global-constructors -Wno-exit-time-destructors -Wno-padded -Wno-string-conversion")
+
+set(CLANG_WARNS "${CLANG_WARNS} -Wno-disabled-macro-expansion -Wno-reserved-id-macro -Wno-undef -Wno-unused-macros")
+
+set(CLANG_WARNS "${CLANG_WARNS} -Wno-weak-vtables -Wno-missing-noreturn -Wno-covered-switch-default")
+
+set(CLANG_WARNS "")
+
+
+
+
+
+set(CMAKE_CXX_FLAGS "-Wall -Wextra -Wpedantic ${CLANG_WARNS} -ftemplate-depth-1000 -fvisibility=hidden -fvisibility-inlines-hidden")
 
 #set(CMAKE_SHARED_LINKER_FLAGS_RELEASE "-march=native -flto -O3 -g")
 #set(CMAKE_MODULE_LINKER_FLAGS_RELEASE "-march=native -flto -O3 -g")

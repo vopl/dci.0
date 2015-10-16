@@ -45,12 +45,12 @@ namespace dci { namespace couple { namespace runtime { namespace impl
 
     char *Sign::data()
     {
-        return (char *)_data;
+        return reinterpret_cast<char *>(_data);
     }
 
     const char *Sign::data() const
     {
-        return (const char *)_data;
+        return reinterpret_cast<const char *>(_data);
     }
 
     std::string Sign::toHex(std::size_t chars) const
@@ -77,11 +77,11 @@ namespace dci { namespace couple { namespace runtime { namespace impl
 
             if(u<10)
             {
-                res[c] = '0'+u;
+                res[c] = static_cast<char>('0'+u);
             }
             else
             {
-                res[c] = 'a'+u-10;
+                res[c] = static_cast<char>('a'+u-10);
             }
         }
 
@@ -110,7 +110,7 @@ namespace dci { namespace couple { namespace runtime { namespace impl
             else if(l >= '0' && l <='9') l -= '0';
             else return false;
 
-            _data[i] = h<<4 | l;
+            _data[i] = static_cast<std::uint8_t>(h<<4 | l);
         }
 
         return true;

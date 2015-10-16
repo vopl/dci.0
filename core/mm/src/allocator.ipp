@@ -19,7 +19,7 @@ namespace dci { namespace mm
     template <std::size_t sizeClass> void Allocator::free(void *ptr)
     {
 #ifndef NDEBUG
-        allocator::bitIndex::Address blockBitAddr = (utils::sized_cast<char *>(ptr) - utils::sized_cast<char *>(_blocks)) / ConfigHeap::_blockSize;
+        allocator::bitIndex::Address blockBitAddr = static_cast<std::size_t>(utils::sized_cast<char *>(ptr) - utils::sized_cast<char *>(_blocks)) / ConfigHeap::_blockSize;
         assert(_blocksBitIndex->isAllocated(blockBitAddr));
 #endif
 
@@ -29,7 +29,7 @@ namespace dci { namespace mm
         block->free<sizeClass>(ptr);
     }
 
-    template <std::size_t sizeClass> std::size_t Allocator::occupied()
+    template <std::size_t sizeClass> std::size_t Allocator::occupied() const
     {
         const std::size_t sizeClassIndex = ConfigHeap::evalSizeClassIndex(sizeClass);
         return _blocksHolders[sizeClassIndex].occupied();
@@ -63,7 +63,7 @@ namespace dci { namespace mm
         }
 
 #ifndef NDEBUG
-        allocator::bitIndex::Address blockBitAddr = (utils::sized_cast<char *>(ptr) - utils::sized_cast<char *>(_blocks)) / ConfigHeap::_blockSize;
+        allocator::bitIndex::Address blockBitAddr = static_cast<std::size_t>(utils::sized_cast<char *>(ptr) - utils::sized_cast<char *>(_blocks)) / ConfigHeap::_blockSize;
         assert(_blocksBitIndex->isAllocated(blockBitAddr));
 #endif
 
@@ -81,7 +81,7 @@ namespace dci { namespace mm
         }
 
 #ifndef NDEBUG
-        allocator::bitIndex::Address blockBitAddr = (utils::sized_cast<char *>(ptr) - utils::sized_cast<char *>(_blocks)) / ConfigHeap::_blockSize;
+        allocator::bitIndex::Address blockBitAddr = static_cast<std::size_t>(utils::sized_cast<char *>(ptr) - utils::sized_cast<char *>(_blocks)) / ConfigHeap::_blockSize;
         assert(_blocksBitIndex->isAllocated(blockBitAddr));
 #endif
 
@@ -91,10 +91,10 @@ namespace dci { namespace mm
         return block->getSizeClass();
     }
 
-    inline std::size_t Allocator::occupied()
+    inline std::size_t Allocator::occupied() const
     {
         std::size_t amount = 0;
-        for(allocator::BlocksHolder &b : _blocksHolders)
+        for(const allocator::BlocksHolder &b : _blocksHolders)
         {
             amount += b.occupied();
         }
@@ -118,7 +118,7 @@ namespace dci { namespace mm
     {
         assert(_blocksBitIndex && _blocks);
 
-        allocator::bitIndex::Address bitAddr = (static_cast<char *>(ptr) - static_cast<char *>(_blocks)) / ConfigHeap::_blockSize;
+        allocator::bitIndex::Address bitAddr = static_cast<std::size_t>(static_cast<char *>(ptr) - static_cast<char *>(_blocks)) / ConfigHeap::_blockSize;
         assert(_blocksBitIndex->isAllocated(bitAddr));
         assert(ptr == static_cast<char *>(_blocks) + bitAddr * ConfigHeap::_blockSize);
         _blocksBitIndex->deallocate(bitAddr);

@@ -92,7 +92,7 @@ namespace dci { namespace mm
     void Allocator::stackFree(const dci::mm::Stack *stack)
     {
         allocator::Stack *inst = allocator::Stack::face2Impl(stack);
-        allocator::bitIndex::Address addr = inst - utils::sized_cast<allocator::Stack *>(_stacks);
+        allocator::bitIndex::Address addr = static_cast<std::size_t>(inst - utils::sized_cast<allocator::Stack *>(_stacks));
 
         _stacksBitIndex->deallocate(addr);
 
@@ -111,7 +111,7 @@ namespace dci { namespace mm
         if(likely(utils::sized_cast<std::size_t>(addr) - utils::sized_cast<std::size_t>(_blocks) < utils::sized_cast<std::size_t>(ConfigHeap::_blocksAmount * ConfigHeap::_blockSize)))
         {
 #ifndef NDEBUG
-            allocator::bitIndex::Address blockBitAddr = (utils::sized_cast<char *>(addr) - utils::sized_cast<char *>(_blocks)) / ConfigHeap::_blockSize;
+            allocator::bitIndex::Address blockBitAddr = static_cast<std::size_t>(utils::sized_cast<char *>(addr) - utils::sized_cast<char *>(_blocks)) / ConfigHeap::_blockSize;
             assert(_blocksBitIndex->isAllocated(blockBitAddr));
 #endif
             void *pagePtr = utils::sized_cast<void *>(utils::sized_cast<std::size_t>(addr) / ConfigMemory::_pageSize * ConfigMemory::_pageSize);
@@ -119,7 +119,7 @@ namespace dci { namespace mm
             if(!vm::protect(pagePtr, ConfigMemory::_pageSize, true))
             {
                 std::abort();
-                return false;
+                //return false;
             }
 
             return true;

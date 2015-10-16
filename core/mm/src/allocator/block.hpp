@@ -67,13 +67,13 @@ namespace dci { namespace mm { namespace allocator
     inline IntrusiveDlistElement<Block> *intrusiveDlistElementCast(Block *e)
     {
         //static_assert(0 == offsetof(Block, _intrusiveDequeElement), "");
-        return (IntrusiveDlistElement<Block> *)(void *)e;
+        return reinterpret_cast<IntrusiveDlistElement<Block> *>(e);
     }
 
     ////////////////////////////////////////////////////////////////////////////////
     inline Block *intrusiveDlistElementCast(IntrusiveDlistElement<Block> *e, Block *)
     {
-        return (Block *)(void *)e;
+        return reinterpret_cast<Block *>(e);
     }
 
     ////////////////////////////////////////////////////////////////////////////////

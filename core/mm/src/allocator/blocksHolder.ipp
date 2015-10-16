@@ -99,19 +99,19 @@ namespace dci { namespace mm { namespace allocator
     }
 
     ////////////////////////////////////////////////////////////////////////////////
-    inline std::size_t BlocksHolder::occupied()
+    inline std::size_t BlocksHolder::occupied() const
     {
         std::size_t amount = 0;
 
-        _empty.each([&](Block *b){
+        _empty.each([&](const Block *b){
             amount += b->occupied();
         });
 
-        _middle.each([&](Block *b){
+        _middle.each([&](const Block *b){
             amount += b->occupied();
         });
 
-        _full.each([&](Block *b){
+        _full.each([&](const Block *b){
             amount += b->occupied();
         });
 

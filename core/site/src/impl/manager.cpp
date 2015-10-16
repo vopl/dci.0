@@ -240,6 +240,7 @@ namespace dci { namespace site { namespace impl
         case TestStage::mstart:
             stageStr = "mstart";
             break;
+        case TestStage::null:
         default:
             assert(0);
             abort();
@@ -254,16 +255,16 @@ namespace dci { namespace site { namespace impl
         {
             LOGF("unable to load test hub module for stage "<<stageStr<<", "<<dlerror());
             abort();
-            return -1;
+            //return -1;
         }
 
-        int(*hubEntryPoint)(int, char *[]) = (int(*)(int, char *[]))dlsym(hubModule, "dciTestHubEntryPoint");
+        int(*hubEntryPoint)(int, char *[]) = reinterpret_cast<int(*)(int, char *[])>(dlsym(hubModule, "dciTestHubEntryPoint"));
         if(!hubEntryPoint)
         {
             dlclose(hubModule);
             LOGF("missing entry point in test hub module for stage "<<stageStr);
             abort();
-            return -1;
+            //return -1;
         }
 
         g_testStage = stage;
@@ -276,7 +277,7 @@ namespace dci { namespace site { namespace impl
         {
             LOGF("unable to unload test hub module for stage "<<stageStr<<", "<<dlerror());
             abort();
-            return -1;
+            //return -1;
         }
 
         return res;

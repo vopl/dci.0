@@ -218,8 +218,8 @@ namespace  dci { namespace couple { namespace parser { namespace impl { namespac
                 v->methods.begin(),
                 v->methods.end(),
                 checker.exec(v->decls),
-                [&](bool v, const Method &d)->bool{
-                    return checker(d) && v;
+                [&](bool lv, const Method &d)->bool{
+                    return checker(d) && lv;
                 });
         }
 

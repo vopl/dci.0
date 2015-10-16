@@ -19,32 +19,32 @@ namespace dci { namespace utils { namespace bits
     {
         template <class Integral> std::enable_if_t<(sizeof(Integral) <= sizeof(int)), std::size_t> ctz(Integral x)
         {
-            return __builtin_ctz(std::make_unsigned_t<Integral>(x));
+            return static_cast<std::size_t>(__builtin_ctz(std::make_unsigned_t<Integral>(x)));
         }
 
         template <class Integral> std::enable_if_t<(sizeof(Integral) > sizeof(int) && sizeof(Integral) <= sizeof(long)), std::size_t> ctz(Integral x)
         {
-            return __builtin_ctzl(std::make_unsigned_t<Integral>(x));
+            return static_cast<std::size_t>(__builtin_ctzl(std::make_unsigned_t<Integral>(x)));
         }
 
         template <class Integral> std::enable_if_t<(sizeof(Integral) > sizeof(long) && sizeof(Integral) <= sizeof(long long)), std::size_t> ctz(Integral x)
         {
-            return __builtin_ctzll(std::make_unsigned_t<Integral>(x));
+            return static_cast<std::size_t>(__builtin_ctzll(std::make_unsigned_t<Integral>(x)));
         }
 
         template <class Integral> std::enable_if_t<(sizeof(Integral) <= sizeof(int)), std::size_t> clz(Integral x)
         {
-            return __builtin_clz(std::make_unsigned_t<Integral>(x)) - bitsof(int) + bitsof(Integral);
+            return static_cast<std::size_t>(static_cast<std::size_t>(__builtin_clz(std::make_unsigned_t<Integral>(x))) - bitsof(int) + bitsof(Integral));
         }
 
         template <class Integral> std::enable_if_t<(sizeof(Integral) > sizeof(int) && sizeof(Integral) <= sizeof(long)), std::size_t> clz(Integral x)
         {
-            return __builtin_clzl(std::make_unsigned_t<Integral>(x));
+            return static_cast<std::size_t>(__builtin_clzl(std::make_unsigned_t<Integral>(x)));
         }
 
         template <class Integral> std::enable_if_t<(sizeof(Integral) > sizeof(long) && sizeof(Integral) <= sizeof(long long)), std::size_t> clz(Integral x)
         {
-            return __builtin_clzll(std::make_unsigned_t<Integral>(x));
+            return static_cast<std::size_t>(__builtin_clzll(std::make_unsigned_t<Integral>(x)));
         }
     }
 

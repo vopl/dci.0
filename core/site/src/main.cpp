@@ -17,8 +17,9 @@
 namespace po = boost::program_options;
 namespace fs = boost::filesystem;
 
-dci::site::Manager *manager = nullptr;
+static dci::site::Manager *manager = nullptr;
 
+void signalHandler(int signum);
 void signalHandler(int signum)
 {
     switch(signum)
@@ -204,10 +205,10 @@ bool printoutput(const po::variables_map &vars, const std::string &content)
             return false;
         }
 
-        out.write(content.data(), content.size());
+        out.write(content.data(), static_cast<std::streamsize>(content.size()));
         return true;
     }
 
-    std::cout.write(content.data(), content.size());
+    std::cout.write(content.data(), static_cast<std::streamsize>(content.size()));
     return true;
 }

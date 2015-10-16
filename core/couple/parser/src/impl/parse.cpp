@@ -91,7 +91,8 @@ namespace  dci { namespace couple { namespace parser { namespace impl
                 return std::string();
             }
 
-            errorMessage = "not found";
+            assert(!"never here");
+//            errorMessage = "not found";
             return std::string();
         }
     }

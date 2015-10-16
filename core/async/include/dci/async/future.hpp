@@ -263,8 +263,8 @@ namespace dci { namespace async
         struct Then
             : details::future::ThenBase<E, T...>
         {
-            Then(F &&f, Args &&... args)
-                : _call(std::bind(std::forward<F>(f), std::forward<Args>(args)..., std::placeholders::_1))
+            Then(F &&lf, Args &&... largs)
+                : _call(std::bind(std::forward<F>(lf), std::forward<Args>(largs)..., std::placeholders::_1))
             {
             }
 
@@ -298,8 +298,8 @@ namespace dci { namespace async
         struct Then
             : details::future::ThenBase<E, T...>
         {
-            Then(F &&f, Args &&... args)
-                : _call(std::bind(std::forward<F>(f), std::forward<Args>(args)..., std::placeholders::_1, std::placeholders::_2))
+            Then(F &&lf, Args &&... largs)
+                : _call(std::bind(std::forward<F>(lf), std::forward<Args>(largs)..., std::placeholders::_1, std::placeholders::_2))
             {
             }
 

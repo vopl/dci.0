@@ -126,11 +126,11 @@ int main(int argc, const char **argv)
 
         for(const std::string &in: vars["in"].as<std::vector<std::string>>())
         {
-            dci::couple::meta::Library lib;
-            switch(lib.load(in))
+            dci::couple::meta::Library llib;
+            switch(llib.load(in))
             {
             case dci::couple::meta::LoadResult::ok:
-                lb.merge(lib);
+                lb.merge(llib);
                 std::cout << "file loaded: " << in << std::endl;
                 break;
             case dci::couple::meta::LoadResult::corruptedFile:
@@ -206,7 +206,7 @@ int main(int argc, const char **argv)
             {
                 executor = dci::couple::generator::Executor::getAll().at(gen);
             }
-            catch(const std::out_of_range &e)
+            catch(const std::out_of_range &)
             {
                 std::cerr << "generator " << gen << " is not found" << std::endl;
                 return EXIT_FAILURE;

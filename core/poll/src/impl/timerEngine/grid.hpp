@@ -10,7 +10,7 @@ namespace dci { namespace poll { namespace impl
 namespace dci { namespace poll { namespace impl { namespace timerEngine
 {
     using time = std::uint64_t;
-    static constexpr time _maxtime = -1;
+    static constexpr time _maxtime = static_cast<time>(-1);
 
     template <int volumeBits, int ordersAmount, int order=0>
     struct Grid

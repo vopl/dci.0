@@ -1844,8 +1844,8 @@ inline void Abort() { abort(); }
 // We cannot rely on numeric_limits in STL, as __int64 and long long
 // are not part of standard C++ and numeric_limits doesn't need to be
 // defined for them.
-const BiggestInt kMaxBiggestInt =
-    ~(static_cast<BiggestInt>(1) << (8*sizeof(BiggestInt) - 1));
+//const BiggestInt kMaxBiggestInt =
+//    ~(static_cast<BiggestInt>(1) << (8*sizeof(BiggestInt) - 1));
 
 // This template class serves as a compile-time function from size to
 // type.  It maps a size in bytes to a primitive type with that

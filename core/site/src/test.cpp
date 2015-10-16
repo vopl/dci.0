@@ -3,6 +3,9 @@
 
 namespace dci { namespace site
 {
+    extern TestStage g_testStage;
+    extern Manager *g_testManager;
+
     TestStage g_testStage = TestStage::null;
     Manager *g_testManager = nullptr;
 

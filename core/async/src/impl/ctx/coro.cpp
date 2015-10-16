@@ -37,18 +37,18 @@ namespace dci { namespace async { namespace impl { namespace ctx
             char *end = reinterpret_cast<char *>(this);
             constructCoro(
                         _stack->_userspaceBegin,
-                        end - _stack->_userspaceBegin,
+                        static_cast<std::size_t>(end - _stack->_userspaceBegin),
                         &Coro::s_contextProc,
-                        reinterpret_cast<std::intptr_t>(this));
+                        reinterpret_cast<std::uintptr_t>(this));
         }
         else
         {
             char *begin = reinterpret_cast<char *>(this) + sizeof(Coro);
             constructCoro(
                         begin,
-                        _stack->_userspaceEnd - begin,
+                        static_cast<std::size_t>(_stack->_userspaceEnd - begin),
                         &Coro::s_contextProc,
-                        reinterpret_cast<std::intptr_t>(this));
+                        reinterpret_cast<std::uintptr_t>(this));
         }
     }
 

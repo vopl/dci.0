@@ -90,7 +90,7 @@ namespace dci { namespace mm { namespace allocator
     void BitIndex<volume>::updateProtection(void *addr)
     {
         assert(addr > this && addr < this+1);
-        std::size_t protectedSize = (static_cast<char *>(addr) - utils::sized_cast<char *>(this)) / ConfigMemory::_pageSize * ConfigMemory::_pageSize + ConfigMemory::_pageSize*2;
+        std::size_t protectedSize = static_cast<std::size_t>(static_cast<char *>(addr) - utils::sized_cast<char *>(this)) / ConfigMemory::_pageSize * ConfigMemory::_pageSize + ConfigMemory::_pageSize*2;
 
         if(protectedSize > _header._protectedSize)
         {

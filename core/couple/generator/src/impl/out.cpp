@@ -79,7 +79,7 @@ namespace dci { namespace couple { namespace generator
 
         if(commit)
         {
-            _currentStream->write(content.data(), content.size());
+            _currentStream->write(content.data(), static_cast<std::streamsize>(content.size()));
         }
     }
 

@@ -190,7 +190,7 @@ namespace dci { namespace couple { namespace parser { namespace impl
         meta::Primitive     *meta{nullptr};
 
         SPrimitive() {}
-        SPrimitive(meta::PrimitiveKind kind) : kind{kind} {}
+        SPrimitive(meta::PrimitiveKind pk) : kind{pk} {}
     };
 
     //    list

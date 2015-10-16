@@ -34,7 +34,7 @@ namespace dci { namespace mm
 
         operator bool() const;
 
-        std::int32_t counter() const;
+        std::uint32_t counter() const;
 
         Instance &instance();
         Instance *instancePtr();
@@ -127,7 +127,7 @@ namespace dci { namespace mm
     }
 
     template <class T>
-    std::int32_t SharedInstance<T>::counter() const
+    uint32_t SharedInstance<T>::counter() const
     {
         if(_state)
         {

@@ -7,6 +7,8 @@
 #include <cstring>
 #include <sys/mman.h>
 
+#include <iostream>
+
 /*
  * системное ограничение на количество сегментов vm для процесса,
  * /proc/sys/vm/max_map_count,
@@ -97,7 +99,6 @@ namespace dci { namespace mm { namespace vm
             fputs("\n", stderr);
             fflush(stderr);
             std::abort();
-            return;
         }
     }
 
@@ -208,6 +209,7 @@ namespace dci { namespace mm { namespace vm
     ////////////////////////////////////////////////////////////////////////////////
     bool protect(void *addr, std::size_t size, bool access)
     {
+        //std::cout<<(access ? "protect" : "unprotect")<<", "<<addr<<", "<<size<<std::endl;
         if(mprotect(addr, size, access ? (PROT_READ|PROT_WRITE) : PROT_NONE))
         {
             perror("mprotect");

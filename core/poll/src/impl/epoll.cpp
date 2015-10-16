@@ -45,7 +45,7 @@ namespace dci { namespace poll { namespace impl
             _fd,
             eventsBuffer,
             sizeof(eventsBuffer)/sizeof(eventsBuffer[0]),
-            timeout.count());
+            static_cast<int>(timeout.count()));
 
         if(-1 == eventsAmount)
         {
@@ -71,9 +71,9 @@ namespace dci { namespace poll { namespace impl
             Descriptor *d = static_cast<Descriptor *>(evt.data.ptr);
 
             std::uint_fast32_t flags =
-                    ((evt.events & (EPOLLIN|EPOLLPRI)) ? (std::uint_fast32_t)poll::Descriptor::rsf_read : 0) |
-                    ((evt.events & (EPOLLOUT)) ? (std::uint_fast32_t)poll::Descriptor::rsf_write : 0) |
-                    ((evt.events & (EPOLLERR|EPOLLHUP)) ? (std::uint_fast32_t)poll::Descriptor::rsf_error : 0) |
+                    ((evt.events & (EPOLLIN|EPOLLPRI))  ? static_cast<std::uint_fast32_t>(poll::Descriptor::rsf_read ) : 0) |
+                    ((evt.events & (EPOLLOUT))          ? static_cast<std::uint_fast32_t>(poll::Descriptor::rsf_write) : 0) |
+                    ((evt.events & (EPOLLERR|EPOLLHUP)) ? static_cast<std::uint_fast32_t>(poll::Descriptor::rsf_error) : 0) |
                     0;
 
             setReadyState(d, flags);

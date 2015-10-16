@@ -14,6 +14,8 @@ namespace dci { namespace site
 {
     struct ModuleEntry
     {
+        virtual ~ModuleEntry() {}
+
         virtual const ModuleInfo &getInfo() = 0;
 
         virtual async::Future<std::error_code> install(const ModulePlace &place) = 0;

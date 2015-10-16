@@ -98,7 +98,7 @@ namespace dci { namespace couple { namespace runtime
 
         int sys = ec.value();
 
-#define X_DCI_COUPLE_RUNTIME_ERR_SYSTEM(v, d) if((int)std::errc::v == sys) return err_system::v;
+#define X_DCI_COUPLE_RUNTIME_ERR_SYSTEM(v, d) if(static_cast<int>(std::errc::v) == sys) return err_system::v;
 #include <dci/couple/runtime/err_system.x>
 #undef X_DCI_COUPLE_RUNTIME_ERR_SYSTEM
 

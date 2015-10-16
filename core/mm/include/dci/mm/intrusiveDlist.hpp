@@ -73,6 +73,9 @@ namespace dci { namespace mm
         void each(F &&f);
 
         template <class F>
+        void each(F &&f) const;
+
+        template <class F>
         void flush(F &&f);
 
     private:

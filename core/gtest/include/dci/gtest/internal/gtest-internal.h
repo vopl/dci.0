@@ -167,7 +167,7 @@ class GTEST_API_ ScopedTrace {
 
  private:
   GTEST_DISALLOW_COPY_AND_ASSIGN_(ScopedTrace);
-} GTEST_ATTRIBUTE_UNUSED_;  // A ScopedTrace object does its job in its
+};  // A ScopedTrace object does its job in its
                             // c'tor and d'tor.  Therefore it doesn't
                             // need to be used otherwise.
 

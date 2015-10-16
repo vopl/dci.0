@@ -38,7 +38,7 @@ namespace dci { namespace couple { namespace meta { namespace impl
         runtime::SignBuilder s;
 
         s.add("method");
-        s.add((std::uint32_t)_direction);
+        s.add(static_cast<std::uint32_t>(_direction));
         s.add(_name);
 
         for(auto v : Compound<Attribute>::elements())

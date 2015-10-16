@@ -11,6 +11,7 @@ using namespace ::impl::links::local;
 #define AMOUNT 4000
 
 struct LinkStub
+    : public dci::mm::NewDelete<LinkStub>
 {
     ServiceHub::ServiceId _id = 0;
 
@@ -59,6 +60,7 @@ TEST(LocalLinksContainer, AddDelMax)
         c.del(max.value-1);
 
         ASSERT_TRUE(!c.add(max.value));
+        c.add(max.value);
 
 
         for(std::size_t i(0); i<max.value; ++i)

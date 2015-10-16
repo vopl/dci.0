@@ -37,7 +37,7 @@ namespace dci { namespace async { namespace impl
                 {
                     link2->_waitable->endAcquire(link2);
                 }
-                return link - _links;
+                return static_cast<std::size_t>(link - _links);
             }
             else
             {
@@ -133,6 +133,9 @@ namespace dci { namespace async { namespace impl
 
         switch(_mode)
         {
+        case Mode::null:
+            return true;
+
         case Mode::any:
             {
                 WWLink *linksEnd = _links + _amount;
@@ -140,7 +143,7 @@ namespace dci { namespace async { namespace impl
                 {
                     iter->_waitable->endAcquire(iter);
                 }
-                _perModeState._acquiredIndex = link - _links;
+                _perModeState._acquiredIndex = static_cast<std::size_t>(link - _links);
                 Scheduler::instance().ready(_coro);
             }
             return true;
