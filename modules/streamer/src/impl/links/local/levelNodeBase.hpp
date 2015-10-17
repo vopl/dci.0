@@ -14,6 +14,9 @@ namespace impl { namespace links { namespace local
     template <class Cfg>
     class LevelNodeBase
     {
+        LevelNodeBase(const LevelNodeBase &) = delete;
+        LevelNodeBase &operator=(const LevelNodeBase &) = delete;
+
     public:
         using Container = typename Cfg::Container;
         using Link = typename Cfg::Link;

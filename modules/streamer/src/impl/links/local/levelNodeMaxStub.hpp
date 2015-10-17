@@ -9,7 +9,7 @@ namespace impl { namespace links { namespace local
     {
         static const std::size_t _level = 100500;
 
-        LevelNodeMaxStub(...)
+        LevelNodeMaxStub(void *)
         {
             assert(!"never here");
         }

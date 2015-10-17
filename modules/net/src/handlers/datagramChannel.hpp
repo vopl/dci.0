@@ -84,7 +84,7 @@ namespace handlers
         typename utils::AddressSpares<Address>::SockAddr sa;
         utils::fillSockaddr(v, sa);
 
-        if(::bind(_d, (sockaddr *)&sa, sizeof(sa)))
+        if(::bind(_d, reinterpret_cast<sockaddr *>(&sa), sizeof(sa)))
         {
             return systemError();
         }

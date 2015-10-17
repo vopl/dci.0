@@ -34,7 +34,7 @@ namespace impl { namespace links
             using Container = Local;
             using Link = Link_;
             static const std::size_t _width = bitsof(void*);
-            static const std::size_t _badLinkId = -1;
+            static const local::LinkId _badLinkId = static_cast<local::LinkId>(-1);
 
             static constexpr std::size_t evelLevels(std::size_t width, std::size_t totalVolume, std::size_t sum = 1)
             {
@@ -96,7 +96,7 @@ namespace impl { namespace links
         local::LinkId id = _currentLevelNode->add(_currentLevel, this, link);
         if(id < volume)
         {
-            link->setId(id);
+            link->setId(static_cast<streamer::ServiceHub::ServiceId>(id));
             return link;
         }
 
@@ -115,7 +115,7 @@ namespace impl { namespace links
 
             if(_currentLevelNode->add(_currentLevel, this, id, link))
             {
-                link->setId(id);
+                link->setId(static_cast<streamer::ServiceHub::ServiceId>(id));
                 return link;
             }
 

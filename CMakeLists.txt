@@ -1,5 +1,5 @@
-#set(CMAKE_CXX_COMPILER /usr/bin/clang++)
-#set(CMAKE_C_COMPILER /usr/bin/clang)
+set(CMAKE_CXX_COMPILER /usr/bin/clang++)
+set(CMAKE_C_COMPILER /usr/bin/clang)
 
 set(CMAKE_BUILD_TYPE Debug)
 
@@ -64,9 +64,12 @@ set(CLANG_WARNS "-Weverything -Wno-c++98-compat -Wno-c++98-compat-pedantic -Wno-
 
 set(CLANG_WARNS "${CLANG_WARNS} -Wno-disabled-macro-expansion -Wno-reserved-id-macro -Wno-undef -Wno-unused-macros")
 
-set(CLANG_WARNS "${CLANG_WARNS} -Wno-weak-vtables -Wno-missing-noreturn -Wno-covered-switch-default")
+set(CLANG_WARNS "${CLANG_WARNS} -Wno-weak-vtables -Wno-missing-noreturn -Wno-covered-switch-default -Wno-non-virtual-dtor")
 
-set(CLANG_WARNS "")
+
+
+#set(CLANG_WARNS "")
+
 
 
 

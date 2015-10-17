@@ -52,28 +52,28 @@ namespace impl { namespace endpoint
                 {
                     if(su < 1<<8)
                     {
-                        data[dataLen++] = (std::uint8_t)(su >> 0);
+                        data[dataLen++] = static_cast<std::uint8_t>(su >> 0);
                         return 0;
                     }
                     else if(su < 1<<16)
                     {
-                        data[dataLen++] = (std::uint8_t)(su >> 0);
-                        data[dataLen++] = (std::uint8_t)(su >> 8);
+                        data[dataLen++] = static_cast<std::uint8_t>(su >> 0);
+                        data[dataLen++] = static_cast<std::uint8_t>(su >> 8);
                         return 1;
                     }
                     else if(su < 1<<24)
                     {
-                        data[dataLen++] = (std::uint8_t)(su >> 0);
-                        data[dataLen++] = (std::uint8_t)(su >> 8);
-                        data[dataLen++] = (std::uint8_t)(su >> 16);
+                        data[dataLen++] = static_cast<std::uint8_t>(su >> 0);
+                        data[dataLen++] = static_cast<std::uint8_t>(su >> 8);
+                        data[dataLen++] = static_cast<std::uint8_t>(su >> 16);
                         return 2;
                     }
                     else
                     {
-                        data[dataLen++] = (std::uint8_t)(su >> 0);
-                        data[dataLen++] = (std::uint8_t)(su >> 8);
-                        data[dataLen++] = (std::uint8_t)(su >> 16);
-                        data[dataLen++] = (std::uint8_t)(su >> 24);
+                        data[dataLen++] = static_cast<std::uint8_t>(su >> 0);
+                        data[dataLen++] = static_cast<std::uint8_t>(su >> 8);
+                        data[dataLen++] = static_cast<std::uint8_t>(su >> 16);
+                        data[dataLen++] = static_cast<std::uint8_t>(su >> 24);
                         return 3;
                     }
                 }
@@ -86,21 +86,21 @@ namespace impl { namespace endpoint
                     }
                     if(su < 1<<8)
                     {
-                        data[dataLen++] = (std::uint8_t)(su >> 0);
+                        data[dataLen++] = static_cast<std::uint8_t>(su >> 0);
                         return 1;
                     }
                     else if(su < 1<<16)
                     {
-                        data[dataLen++] = (std::uint8_t)(su >> 0);
-                        data[dataLen++] = (std::uint8_t)(su >> 8);
+                        data[dataLen++] = static_cast<std::uint8_t>(su >> 0);
+                        data[dataLen++] = static_cast<std::uint8_t>(su >> 8);
                         return 2;
                     }
                     else
                     {
-                        data[dataLen++] = (std::uint8_t)(su >> 0);
-                        data[dataLen++] = (std::uint8_t)(su >> 8);
-                        data[dataLen++] = (std::uint8_t)(su >> 16);
-                        data[dataLen++] = (std::uint8_t)(su >> 24);
+                        data[dataLen++] = static_cast<std::uint8_t>(su >> 0);
+                        data[dataLen++] = static_cast<std::uint8_t>(su >> 8);
+                        data[dataLen++] = static_cast<std::uint8_t>(su >> 16);
+                        data[dataLen++] = static_cast<std::uint8_t>(su >> 24);
                         return 3;
                     }
                 }
@@ -119,31 +119,31 @@ namespace impl { namespace endpoint
                 case 0:
                     {
                         std::uint32_t sm = 0;
-                        sm |= data[dataLen++] << 0;
+                        sm |= static_cast<std::uint32_t>(data[dataLen++] << 0);
                         return sm;
                     }
                 case 1:
                     {
                         std::uint32_t sm = 0;
-                        sm |= data[dataLen++] << 0;
-                        sm |= data[dataLen++] << 8;
+                        sm |= static_cast<std::uint32_t>(data[dataLen++] << 0);
+                        sm |= static_cast<std::uint32_t>(data[dataLen++] << 8);
                         return sm;
                     }
                 case 2:
                     {
                         std::uint32_t sm = 0;
-                        sm |= data[dataLen++] << 0;
-                        sm |= data[dataLen++] << 8;
-                        sm |= data[dataLen++] << 16;
+                        sm |= static_cast<std::uint32_t>(data[dataLen++] << 0);
+                        sm |= static_cast<std::uint32_t>(data[dataLen++] << 8);
+                        sm |= static_cast<std::uint32_t>(data[dataLen++] << 16);
                         return sm;
                     }
                 case 3:
                     {
                         std::uint32_t sm = 0;
-                        sm |= data[dataLen++] << 0;
-                        sm |= data[dataLen++] << 8;
-                        sm |= data[dataLen++] << 16;
-                        sm |= data[dataLen++] << 24;
+                        sm |= static_cast<std::uint32_t>(data[dataLen++] << 0);
+                        sm |= static_cast<std::uint32_t>(data[dataLen++] << 8);
+                        sm |= static_cast<std::uint32_t>(data[dataLen++] << 16);
+                        sm |= static_cast<std::uint32_t>(data[dataLen++] << 24);
                         return sm;
                     }
                 }
@@ -160,23 +160,23 @@ namespace impl { namespace endpoint
                 case 1:
                     {
                         std::uint32_t sm = 0;
-                        sm |= data[dataLen++] << 0;
+                        sm |= static_cast<std::uint32_t>(data[dataLen++] << 0);
                         return sm;
                     }
                 case 2:
                     {
                         std::uint32_t sm = 0;
-                        sm |= data[dataLen++] << 0;
-                        sm |= data[dataLen++] << 8;
+                        sm |= static_cast<std::uint32_t>(data[dataLen++] << 0);
+                        sm |= static_cast<std::uint32_t>(data[dataLen++] << 8);
                         return sm;
                     }
                 case 3:
                     {
                         std::uint32_t sm = 0;
-                        sm |= data[dataLen++] << 0;
-                        sm |= data[dataLen++] << 8;
-                        sm |= data[dataLen++] << 16;
-                        sm |= data[dataLen++] << 24;
+                        sm |= static_cast<std::uint32_t>(data[dataLen++] << 0);
+                        sm |= static_cast<std::uint32_t>(data[dataLen++] << 8);
+                        sm |= static_cast<std::uint32_t>(data[dataLen++] << 16);
+                        sm |= static_cast<std::uint32_t>(data[dataLen++] << 24);
                         return sm;
                     }
                 }
@@ -229,10 +229,10 @@ namespace impl { namespace endpoint
 
         header[0] |= writeSmallUnsigned<SmallUnsignedMode::_1234>(msg._type, header, headerLen);
         header[0] |= writeSmallUnsigned<SmallUnsignedMode::_0124>(msg._linkId, header, headerLen)<<2;
-        header[0] |= writeSmallUnsigned<SmallUnsignedMode::_0124>(msg._body.size(), header, headerLen)<<4;
+        header[0] |= writeSmallUnsigned<SmallUnsignedMode::_0124>(static_cast<std::uint32_t>(msg._body.size()), header, headerLen)<<4;
 
         Bytes res;
-        res.append((const char *)&header, headerLen);
+        res.append(reinterpret_cast<const char *>(&header), headerLen);
         res.append(std::move(msg._body));
         return res;
     }

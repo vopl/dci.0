@@ -221,6 +221,14 @@ namespace dci { namespace site { namespace impl
         case ModuleState::loadError:
             break;
 
+        case ModuleState::null:
+        case ModuleState::loading:
+        case ModuleState::loaded:
+        case ModuleState::unloading:
+        case ModuleState::starting:
+        case ModuleState::started:
+        case ModuleState::startError:
+        case ModuleState::stopping:
         default:
             return err_module::wrong_state;
         }
@@ -266,6 +274,15 @@ namespace dci { namespace site { namespace impl
         case ModuleState::loadError:
             break;
 
+        case ModuleState::null:
+        case ModuleState::attachError:
+        case ModuleState::loading:
+        case ModuleState::loaded:
+        case ModuleState::unloading:
+        case ModuleState::starting:
+        case ModuleState::started:
+        case ModuleState::startError:
+        case ModuleState::stopping:
         default:
             return async::Future<std::error_code>(make_error_code(err_module::wrong_state));
         }
@@ -340,6 +357,15 @@ namespace dci { namespace site { namespace impl
         case ModuleState::loadError:
             break;
 
+        case ModuleState::null:
+        case ModuleState::attached:
+        case ModuleState::attachError:
+        case ModuleState::loading:
+        case ModuleState::unloading:
+        case ModuleState::starting:
+        case ModuleState::started:
+        case ModuleState::startError:
+        case ModuleState::stopping:
         default:
             return async::Future<std::error_code>(make_error_code(err_module::wrong_state));
         }
@@ -381,6 +407,16 @@ namespace dci { namespace site { namespace impl
         case ModuleState::loaded:
             break;
 
+        case ModuleState::null:
+        case ModuleState::attached:
+        case ModuleState::attachError:
+        case ModuleState::loading:
+        case ModuleState::loadError:
+        case ModuleState::unloading:
+        case ModuleState::starting:
+        case ModuleState::started:
+        case ModuleState::startError:
+        case ModuleState::stopping:
         default:
             return async::Future<std::error_code>(make_error_code(err_module::wrong_state));
         }
@@ -415,6 +451,15 @@ namespace dci { namespace site { namespace impl
         case ModuleState::startError:
             break;
 
+        case ModuleState::null:
+        case ModuleState::attached:
+        case ModuleState::attachError:
+        case ModuleState::loading:
+        case ModuleState::loadError:
+        case ModuleState::loaded:
+        case ModuleState::unloading:
+        case ModuleState::starting:
+        case ModuleState::stopping:
         default:
             return async::Future<std::error_code>(make_error_code(err_module::wrong_state));
         }

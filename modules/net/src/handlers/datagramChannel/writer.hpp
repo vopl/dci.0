@@ -116,7 +116,7 @@ namespace handlers { namespace datagramChannel
         {
             assert(!_mmsgs.empty());
 
-            ssize_t res = ::sendmmsg(d, _mmsgs.data(), _mmsgs.size(), 0);
+            ssize_t res = ::sendmmsg(d, _mmsgs.data(), static_cast<unsigned int>(_mmsgs.size()), 0);
 
             assert(0 != res);
 

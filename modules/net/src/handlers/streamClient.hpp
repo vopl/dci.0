@@ -70,7 +70,7 @@ namespace handlers
             typename utils::AddressSpares<Address>::SockAddr sa;
             utils::fillSockaddr(_boundAddress, sa);
 
-            if(::bind(sock, (sockaddr *)&sa, sizeof(sa)))
+            if(::bind(sock, reinterpret_cast<sockaddr *>(&sa), sizeof(sa)))
             {
                 close(sock);
                 return systemError();
@@ -88,7 +88,7 @@ namespace handlers
                 typename utils::AddressSpares<Address>::SockAddr sa;
                 utils::fillSockaddr(address, sa);
 
-                int res = ::connect(channel->_d, (sockaddr *)&sa, sizeof(sa));
+                int res = ::connect(channel->_d, reinterpret_cast<sockaddr *>(&sa), sizeof(sa));
                 if(!res)
                 {
                     ec = std::error_code();

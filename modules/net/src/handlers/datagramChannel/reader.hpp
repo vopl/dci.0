@@ -251,13 +251,13 @@ namespace handlers { namespace datagramChannel
 
         while(_requestsFirst)
         {
-            ssize_t res = ::recvmmsg(d, mmsgs.data(), std::min(_requestsAmount, mmsgs.size()), 0, nullptr);
+            ssize_t res = ::recvmmsg(d, mmsgs.data(), static_cast<unsigned int>(std::min(_requestsAmount, mmsgs.size())), 0, nullptr);
 
             assert(0 != res);
 
             if(0 < res)
             {
-                for(std::size_t index(0); index < (std::size_t)res; ++index)
+                for(std::size_t index(0); index < static_cast<std::size_t>(res); ++index)
                 {
                     Request *request = _requestsFirst;
                     _requestsFirst = _requestsFirst->_next;
@@ -271,7 +271,7 @@ namespace handlers { namespace datagramChannel
                     else
                     {
                         Address a;
-                        utils::fillSockaddr(*(typename utils::AddressSpares<Address>::SockAddr *)&addresses[index], a);
+                        utils::fillSockaddr(*reinterpret_cast<typename utils::AddressSpares<Address>::SockAddr *>(&addresses[index]), a);
                         request->_promiseHolder._da.resolveValue(
                                     buffers[index].emitBytes(h.msg_len, h.msg_hdr.msg_iov),
                                     std::move(a));
@@ -280,13 +280,13 @@ namespace handlers { namespace datagramChannel
                     delete request;
                 }
 
-                _requestsAmount -= res;
+                _requestsAmount -= static_cast<std::size_t>(res);
 
                 if(!_requestsFirst)
                 {
                     _requestsLast = nullptr;
                 }
-                else if((std::size_t)res < mmsgs.size())
+                else if(static_cast<std::size_t>(res) < mmsgs.size())
                 {
                     readyState &= ~Descriptor::rsf_write;
                 }

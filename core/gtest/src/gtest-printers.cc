@@ -1,3 +1,7 @@
+#pragma clang diagnostic ignored "-Wold-style-cast"
+#pragma clang diagnostic ignored "-Wsign-conversion"
+#pragma clang diagnostic ignored "-Wmissing-prototypes"
+
 // Copyright 2007, Google Inc.
 // All rights reserved.
 //
