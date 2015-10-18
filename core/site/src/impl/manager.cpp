@@ -250,7 +250,7 @@ namespace dci { namespace site { namespace impl
         hubModuleName += stageStr;
         hubModuleName += ".so";
 
-        void *hubModule = dlopen(hubModuleName.c_str(), RTLD_NOW | RTLD_LOCAL);
+        void *hubModule = dlopen(hubModuleName.c_str(), RTLD_NOW|RTLD_LOCAL|RTLD_NODELETE);
         if(!hubModule)
         {
             LOGF("unable to load test hub module for stage "<<stageStr<<", "<<dlerror());

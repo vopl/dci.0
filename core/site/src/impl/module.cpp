@@ -13,7 +13,7 @@ namespace dci { namespace site { namespace impl
 {
     std::string Module::generateManifest(const std::string &mainBinaryFullPath)
     {
-        void *mainBinaryHandle = dlopen(mainBinaryFullPath.c_str(), RTLD_LAZY|RTLD_LOCAL);
+        void *mainBinaryHandle = dlopen(mainBinaryFullPath.c_str(), RTLD_LAZY|RTLD_LOCAL|RTLD_NODELETE);
 
         if(!mainBinaryHandle)
         {
@@ -297,7 +297,7 @@ namespace dci { namespace site { namespace impl
             mainBinaryPath /= _mainBinary;
 
             assert(!_mainBinaryHandle);
-            _mainBinaryHandle = dlopen(mainBinaryPath.string().c_str(), RTLD_NOW|RTLD_LOCAL);
+            _mainBinaryHandle = dlopen(mainBinaryPath.string().c_str(), RTLD_NOW|RTLD_LOCAL|RTLD_NODELETE);
 
             if(!_mainBinaryHandle)
             {
