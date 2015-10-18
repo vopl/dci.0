@@ -1,6 +1,9 @@
-#pragma clang diagnostic ignored "-Wold-style-cast"
-#pragma clang diagnostic ignored "-Wsign-conversion"
-#pragma clang diagnostic ignored "-Wmissing-prototypes"
+//#pragma clang diagnostic ignored "-Wold-style-cast"
+//#pragma clang diagnostic ignored "-Wsign-conversion"
+//#pragma clang diagnostic ignored "-Wmissing-prototypes"
+//#pragma clang diagnostic ignored "-Wmissing-noreturn"
+//#pragma clang diagnostic ignored "-Wweak-vtables"
+//#pragma clang diagnostic ignored "-Wcovered-switch-default"
 
 // Copyright 2008, Google Inc.
 // All rights reserved.

@@ -25,6 +25,9 @@ namespace dci { namespace couple { namespace generator
         } executorsMap;
     }
 
+    Executor::~Executor()
+    {
+    }
 
     const std::map<std::string, Executor *> &Executor::getAll()
     {

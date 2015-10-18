@@ -119,7 +119,7 @@ namespace dci { namespace mm
             if(!vm::protect(pagePtr, ConfigMemory::_pageSize, true))
             {
                 std::abort();
-                //return false;
+                return false;
             }
 
             return true;

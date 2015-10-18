@@ -54,7 +54,7 @@ namespace dci { namespace site { namespace impl
             return err_general::stopping_in_progress;
 
         default:
-            assert("unknown work state");
+            assert(0&&"unknown work state");
             abort();
         }
 
@@ -167,7 +167,7 @@ namespace dci { namespace site { namespace impl
             return async::Future<std::error_code>(make_error_code(err_general::stopping_in_progress));
 
         default:
-            assert("unknown work state");
+            assert(0&&"unknown work state");
             abort();
         }
 
@@ -242,7 +242,7 @@ namespace dci { namespace site { namespace impl
             break;
         case TestStage::null:
         default:
-            assert(0);
+            assert(0&&"bad test stage");
             abort();
         }
 
@@ -255,7 +255,7 @@ namespace dci { namespace site { namespace impl
         {
             LOGF("unable to load test hub module for stage "<<stageStr<<", "<<dlerror());
             abort();
-            //return -1;
+            return -1;
         }
 
         int(*hubEntryPoint)(int, char *[]) = reinterpret_cast<int(*)(int, char *[])>(dlsym(hubModule, "dciTestHubEntryPoint"));
@@ -264,7 +264,7 @@ namespace dci { namespace site { namespace impl
             dlclose(hubModule);
             LOGF("missing entry point in test hub module for stage "<<stageStr);
             abort();
-            //return -1;
+            return -1;
         }
 
         g_testStage = stage;
@@ -277,7 +277,7 @@ namespace dci { namespace site { namespace impl
         {
             LOGF("unable to unload test hub module for stage "<<stageStr<<", "<<dlerror());
             abort();
-            //return -1;
+            return -1;
         }
 
         return res;

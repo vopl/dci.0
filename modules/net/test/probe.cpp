@@ -18,23 +18,26 @@ using namespace net;
 
 
 /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
-class Net
-    : public testing::Test
+namespace
 {
-protected:
-    virtual void SetUp() override
+    class Net
+        : public testing::Test
     {
-        _manager = testManager();
-        EXPECT_NE(_manager, nullptr);
-    }
+    protected:
+        virtual void SetUp() override
+        {
+            _manager = testManager();
+            EXPECT_NE(_manager, nullptr);
+        }
 
-    virtual void TearDown() override
-    {
-        _manager = nullptr;
-    }
+        virtual void TearDown() override
+        {
+            _manager = nullptr;
+        }
 
-    Manager *_manager {nullptr};
-};
+        Manager *_manager {nullptr};
+    };
+}
 
 /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
 TEST_F(Net, Host)

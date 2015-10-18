@@ -114,7 +114,7 @@ namespace handlers
                     }
                     else
                     {
-                        assert(!"impossible");
+                        assert(0&&"impossible");
                         channel->_d.close();
                         ec = err_system::unknown;
                     }

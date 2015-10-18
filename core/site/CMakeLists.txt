@@ -19,7 +19,9 @@ set(INC
 set(SRC
     src/error.cpp
     src/manager.cpp
+    src/moduleEntry.cpp
     src/modulePlace.cpp
+    src/serviceFactory.cpp
     src/test.cpp
 
     src/impl/manager.hpp

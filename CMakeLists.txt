@@ -1,5 +1,5 @@
-set(CMAKE_CXX_COMPILER /usr/bin/clang++)
-set(CMAKE_C_COMPILER /usr/bin/clang)
+#set(CMAKE_CXX_COMPILER /usr/bin/clang++)
+#set(CMAKE_C_COMPILER /usr/bin/clang)
 
 set(CMAKE_BUILD_TYPE Debug)
 
@@ -60,22 +60,20 @@ include_directories(${LOCALINSTALL_DIR}/include)
 set(CMAKE_SHARED_LINKER_FLAGS "-Wl,--no-undefined")
 set(CMAKE_MODULE_LINKER_FLAGS "-Wl,--no-undefined")
 
-set(CLANG_WARNS "-Weverything -Wno-c++98-compat -Wno-c++98-compat-pedantic -Wno-global-constructors -Wno-exit-time-destructors -Wno-padded -Wno-string-conversion")
-
-set(CLANG_WARNS "${CLANG_WARNS} -Wno-disabled-macro-expansion -Wno-reserved-id-macro -Wno-undef -Wno-unused-macros")
-
-set(CLANG_WARNS "${CLANG_WARNS} -Wno-weak-vtables -Wno-missing-noreturn -Wno-covered-switch-default -Wno-non-virtual-dtor")
 
 
 
-#set(CLANG_WARNS "")
+#set(CLANG_WARNS "-Weverything -Wno-c++98-compat -Wno-c++98-compat-pedantic")
+#set(CLANG_WARNS "${CLANG_WARNS} -Wno-disabled-macro-expansion -Wno-reserved-id-macro -Wno-undef -Wno-unused-macros")
+#set(CLANG_WARNS "${CLANG_WARNS} -Wno-global-constructors -Wno-exit-time-destructors")
+#set(CLANG_WARNS "${CLANG_WARNS} -Wno-missing-noreturn")
+#set(CLANG_WARNS "${CLANG_WARNS} -Wno-unreachable-code-return")
+#set(CLANG_WARNS "${CLANG_WARNS} -Wno-covered-switch-default")
+#set(CLANG_WARNS "${CLANG_WARNS} -Wno-cast-align -Wno-padded")
 
 
 
-
-
-
-set(CMAKE_CXX_FLAGS "-Wall -Wextra -Wpedantic ${CLANG_WARNS} -ftemplate-depth-1000 -fvisibility=hidden -fvisibility-inlines-hidden")
+set(CMAKE_CXX_FLAGS "-Wall -Wextra -Wpedantic -Werror ${CLANG_WARNS} -ftemplate-depth-1000 -fvisibility=hidden -fvisibility-inlines-hidden")
 
 #set(CMAKE_SHARED_LINKER_FLAGS_RELEASE "-march=native -flto -O3 -g")
 #set(CMAKE_MODULE_LINKER_FLAGS_RELEASE "-march=native -flto -O3 -g")

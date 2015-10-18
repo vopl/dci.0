@@ -6,7 +6,7 @@ namespace dci { namespace async
     Waitable::Waitable()
         : himpl::FaceLayout<impl::Waitable>(nullptr, nullptr)
     {
-        assert(!"never here");
+        assert(0&&"never here");
     }
 
     Waitable::~Waitable()

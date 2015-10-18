@@ -47,7 +47,7 @@ namespace impl { namespace links
                 {                                                                                   \
                     BOOST_PP_REPEAT(n, _98302384578923645975873452345_entry, )                      \
                 }                                                                                   \
-                assert(!"never here");                                                              \
+                assert(0&&"never here");                                                              \
                 __builtin_unreachable();                                                            \
             }                                                                                       \
         };                                                                                          \

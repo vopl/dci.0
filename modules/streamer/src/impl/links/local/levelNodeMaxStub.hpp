@@ -11,18 +11,18 @@ namespace impl { namespace links { namespace local
 
         LevelNodeMaxStub(void *)
         {
-            assert(!"never here");
+            assert(0&&"never here");
         }
 
         LinkId add(void *, void *)
         {
-            assert(!"never here");
+            assert(0&&"never here");
             return Cfg::_badLinkId;
         }
 
         bool add(void *, std::size_t, void *)
         {
-            assert(!"never here");
+            assert(0&&"never here");
             return false;
         }
 

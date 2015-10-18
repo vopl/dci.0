@@ -78,7 +78,7 @@ namespace dci { namespace async
     {
         if(_engine.counter()>1 && !_engine.resolved())
         {
-            assert(!"unsetted promise destroyed while futures exists");
+            assert(0&&"unsetted promise destroyed while futures exists");
             std::abort();
         }
     }

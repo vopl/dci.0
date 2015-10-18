@@ -67,12 +67,12 @@ namespace handlers { namespace streamChannel
 
         if(!_buffer.empty())
         {
-            int iovAmount = _buffer.segmentsAmount();
+            std::size_t iovAmount = _buffer.segmentsAmount();
 
-            iovec *iov = (iovec *)alloca(iovAmount * sizeof(iovec));
+            iovec *iov = static_cast<iovec *>(alloca(iovAmount * sizeof(iovec)));
             _buffer.fillIovec(iov);
 
-            ssize_t res = ::writev(d, iov, iovAmount);
+            ssize_t res = ::writev(d, iov, static_cast<int>(iovAmount));
 
             if(0 > res)
             {
@@ -80,7 +80,7 @@ namespace handlers { namespace streamChannel
                 return;
             }
 
-            std::size_t writedSize = res;
+            std::size_t writedSize = static_cast<std::size_t>(res);
 
             _buffer.dropFirst(writedSize);
 

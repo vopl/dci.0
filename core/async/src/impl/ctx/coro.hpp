@@ -33,8 +33,8 @@ namespace dci { namespace async { namespace impl { namespace ctx
         void switchTo(Engine *to);
 
     private:
-        static void s_contextProc(std::intptr_t self);
-        void contextProc();
+        [[noreturn]] static void s_contextProc(std::intptr_t self);
+        [[noreturn]] void contextProc();
 
     private:
         Scheduler *             _scheduler;

@@ -97,7 +97,7 @@ namespace dci { namespace async { namespace details
         case WaitFor::each: waiter.each(); return 0;
         }
 
-        assert(!"never here");
+        assert(0&&"never here");
     }
 
     template <WaitFor waitFor, class... Waitables>

@@ -137,7 +137,7 @@ namespace dci { namespace couple { namespace meta { namespace impl
     {
         if(items<T>().end() == items<T>().find(p))
         {
-            assert(!"requested object is not presented in builder");
+            assert(0&&"requested object is not presented in builder");
             abort();
         }
     }

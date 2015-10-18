@@ -23,7 +23,7 @@ namespace impl
         return _host;
     }
 
-    Link *Engine::addLink(int32_t id)
+    Link *Engine::addLink(uint32_t id)
     {
         auto &p = _links.insert(std::make_pair(id, std::unique_ptr<Link>())).first->second;
         assert(!p);
@@ -35,7 +35,7 @@ namespace impl
         return p.get();
     }
 
-    Link *Engine::getLink(int32_t id)
+    Link *Engine::getLink(uint32_t id)
     {
         auto iter = _links.find(id);
         if(_links.end() != iter)
@@ -46,7 +46,7 @@ namespace impl
         return nullptr;
     }
 
-    void Engine::delLink(int32_t id)
+    void Engine::delLink(uint32_t id)
     {
         _links.erase(id);
     }

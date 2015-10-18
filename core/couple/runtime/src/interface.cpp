@@ -136,7 +136,7 @@ namespace dci { namespace couple { namespace runtime
     void Interface::virtualAssignOpposite(InterfaceOpposite &from)
     {
         (void)from;
-        assert(!"must be overrided");
+        assert(0&&"must be overrided");
     }
 
     InterfaceDirection Interface::direction() const

@@ -6,15 +6,16 @@
 #include "serviceFactory.hpp"
 #include <dci/async/future.hpp>
 #include <dci/couple/runtime/interface.hpp>
+#include <dci/site/api.hpp>
 
 #include <system_error>
 
 
 namespace dci { namespace site
 {
-    struct ModuleEntry
+    struct APIDCI_SITE ModuleEntry
     {
-        virtual ~ModuleEntry() {}
+        virtual ~ModuleEntry();
 
         virtual const ModuleInfo &getInfo() = 0;
 

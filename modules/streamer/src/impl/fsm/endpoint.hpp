@@ -67,7 +67,7 @@ namespace impl { namespace fsm
         void no_transition(const Event &evt, Fsm &fsm, int state)
         {
             BaseMachineDef<EndpointDef>::no_transition(evt, fsm, state);
-            assert(!"never here");
+            assert(0&&"never here");
         }
     };
 

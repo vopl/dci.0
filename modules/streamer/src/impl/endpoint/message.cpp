@@ -39,7 +39,7 @@ namespace impl { namespace endpoint
                 break;
             }
 
-            assert(!"never here");
+            assert(0&&"never here");
             return 0;
         }
 
@@ -183,7 +183,7 @@ namespace impl { namespace endpoint
                 break;
             }
 
-            assert(!"never here");
+            assert(0&&"never here");
             return 0;
         }
 

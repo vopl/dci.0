@@ -30,14 +30,14 @@ namespace dci { namespace mm { namespace allocator
         bitIndex::Address addr = _topLevel.allocate();
         if(unlikely(bitIndex::_badAddress == addr))
         {
-            assert(!"unable to allocate address, bitIndex full");
+            assert(0&&"unable to allocate address, bitIndex full");
             std::abort();
         }
 
         if(unlikely(ConfigHeap::_blocksAmount == addr))
         {
             _topLevel.deallocate(addr);
-            assert(!"unable to allocate address, blocks exhausted");
+            assert(0&&"unable to allocate address, blocks exhausted");
             std::abort();
         }
 
@@ -99,7 +99,7 @@ namespace dci { namespace mm { namespace allocator
                         protectedSize - _header._protectedSize,
                         true))
             {
-                assert("unable to protect region");
+                assert(0&&"unable to protect region");
                 std::abort();
             }
             _header._protectedSize = protectedSize;
@@ -111,7 +111,7 @@ namespace dci { namespace mm { namespace allocator
                         _header._protectedSize - protectedSize,
                         false))
             {
-                assert("unable to protect region");
+                assert(0&&"unable to protect region");
                 std::abort();
             }
             _header._protectedSize = protectedSize;

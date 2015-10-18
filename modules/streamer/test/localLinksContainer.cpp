@@ -190,7 +190,7 @@ TEST(LocalLinksContainer, AddDelRndGet)
 
         for(std::size_t i(0); i<AMOUNT; i++)
         {
-            LinkStub *l = links[rand()%links.size()];
+            LinkStub *l = links[static_cast<std::size_t>(rand())%links.size()];
 
             ASSERT_NE(l, nullptr);
             ASSERT_EQ(c.get(l->_id), l);
@@ -198,7 +198,7 @@ TEST(LocalLinksContainer, AddDelRndGet)
 
         while(!links.empty())
         {
-            auto iter = links.begin()+(rand()%links.size());
+            auto iter = links.begin()+static_cast<std::ptrdiff_t>((static_cast<std::size_t>(rand())%links.size()));
             LinkStub *l = *iter;
             links.erase(iter);
 
@@ -238,10 +238,10 @@ TEST(LocalLinksContainer, RndAddDelGet)
 
         for(std::size_t i(0); i<10; i++)
         {
-            std::size_t delAmount = random() % (AMOUNT/10);
-            for(std::size_t i(0); i<delAmount && links.size() > 0; i++)
+            std::size_t delAmount = rand() % (AMOUNT/10);
+            for(std::size_t idel(0); idel<delAmount && links.size() > 0; idel++)
             {
-                auto iter = links.begin()+(rand()%links.size());
+                auto iter = links.begin()+static_cast<std::ptrdiff_t>(static_cast<std::size_t>(rand())%links.size());
                 LinkStub *l = *iter;
                 links.erase(iter);
 
@@ -256,8 +256,8 @@ TEST(LocalLinksContainer, RndAddDelGet)
 
             }
 
-            std::size_t addAmount = random() % (AMOUNT/10);
-            for(std::size_t i(0); i<addAmount && links.size() < AMOUNT; i++)
+            std::size_t addAmount = rand() % (AMOUNT/10);
+            for(std::size_t iadd(0); iadd<addAmount && links.size() < AMOUNT; iadd++)
             {
                 LinkStub *l = c.add();
 
@@ -270,7 +270,7 @@ TEST(LocalLinksContainer, RndAddDelGet)
 
         while(!links.empty())
         {
-            auto iter = links.begin()+(rand()%links.size());
+            auto iter = links.begin()+static_cast<std::ptrdiff_t>(static_cast<std::size_t>(rand())%links.size());
             LinkStub *l = *iter;
             links.erase(iter);
 
@@ -294,7 +294,7 @@ TEST(LocalLinksContainer, RndAddIdDelGet)
 
         for(std::size_t i(0); i<AMOUNT; i++)
         {
-            LinkId id = rand();
+            LinkId id = static_cast<LinkId>(rand());
             if(!c.get(id))
             {
                 LinkStub *l = c.add(id);
@@ -309,10 +309,10 @@ TEST(LocalLinksContainer, RndAddIdDelGet)
 
         for(std::size_t i(0); i<10; i++)
         {
-            std::size_t delAmount = random() % (AMOUNT/10);
-            for(std::size_t i(0); i<delAmount && links.size() > 0; i++)
+            std::size_t delAmount = rand() % (AMOUNT/10);
+            for(std::size_t idel(0); idel<delAmount && links.size() > 0; idel++)
             {
-                auto iter = links.begin()+(rand()%links.size());
+                auto iter = links.begin()+static_cast<std::ptrdiff_t>(static_cast<std::size_t>(rand())%links.size());
                 LinkStub *l = *iter;
                 links.erase(iter);
 
@@ -327,10 +327,10 @@ TEST(LocalLinksContainer, RndAddIdDelGet)
 
             }
 
-            std::size_t addAmount = random() % (AMOUNT/10);
-            for(std::size_t i(0); i<addAmount && links.size() < AMOUNT; i++)
+            std::size_t addAmount = rand() % (AMOUNT/10);
+            for(std::size_t iadd(0); iadd<addAmount && links.size() < AMOUNT; iadd++)
             {
-                LinkId id = rand();
+                LinkId id = static_cast<LinkId>(rand());
                 if(!c.get(id))
                 {
                     LinkStub *l = c.add(id);
@@ -345,7 +345,7 @@ TEST(LocalLinksContainer, RndAddIdDelGet)
 
         while(!links.empty())
         {
-            auto iter = links.begin()+(rand()%links.size());
+            auto iter = links.begin()+static_cast<std::ptrdiff_t>(static_cast<std::size_t>(rand())%links.size());
             LinkStub *l = *iter;
             links.erase(iter);
 

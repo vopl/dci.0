@@ -59,14 +59,14 @@ namespace handlers { namespace streamChannel
         static const std::size_t bufLen = 1024*2;
         std::pair<iovec *, std::size_t> buf = _preparedBuffer.prepare(bufLen);
 
-        ssize_t res = ::readv(d, buf.first, buf.second);
+        ssize_t res = ::readv(d, buf.first, static_cast<int>(buf.second));
 
         if(0 > res)
         {
             close(systemError());
             return;
         }
-        assert((std::size_t)res <= bufLen);
+        assert(static_cast<std::size_t>(res) <= bufLen);
 
         Request *request = _requestsFirst;
         _requestsFirst = _requestsFirst->_next;
@@ -75,12 +75,12 @@ namespace handlers { namespace streamChannel
             _requestsLast = nullptr;
         }
 
-        if((std::size_t)res < bufLen)
+        if(static_cast<std::size_t>(res) < bufLen)
         {
             readyState &= ~Descriptor::rsf_read;
         }
 
-        request->_promise.resolveValue(_preparedBuffer.flush(res));
+        request->_promise.resolveValue(_preparedBuffer.flush(static_cast<std::size_t>(res)));
 
         delete request;
     }
@@ -158,8 +158,8 @@ namespace handlers { namespace streamChannel
         _segmentFirst = last->_next;
 
         last->_next = nullptr;
-        last->_size = size - (segmentsAmount-1) * bytes::Segment::_granula;
-        _iovecs.erase(_iovecs.begin(), _iovecs.begin()+segmentsAmount);
+        last->_size = static_cast<std::uint32_t>(size - (segmentsAmount-1) * bytes::Segment::_granula);
+        _iovecs.erase(_iovecs.begin(), _iovecs.begin()+static_cast<ptrdiff_t>(segmentsAmount));
 
         return Bytes(size, first, last);
     }

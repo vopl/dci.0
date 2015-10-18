@@ -106,5 +106,6 @@ namespace
 
 extern "C"
 {
+    extern ModuleEntry *dciModuleEntry;
     DCI_API_EXPORT ModuleEntry *dciModuleEntry = &entry;
 }

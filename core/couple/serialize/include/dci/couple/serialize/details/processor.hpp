@@ -223,12 +223,14 @@ namespace dci { namespace couple { namespace serialize { namespace details
         //set
         template <class Element, class... OtherParams> void save(const std::set<Element, OtherParams...> &value)
         {
-            saveSequence(value.begin(), value.size());
+            assert(value.size() < 1ull<<31);
+            saveSequence(value.begin(), static_cast<std::uint32_t>(value.size()));
         }
 
         template <class Element, class... OtherParams> void save(std::set<Element, OtherParams...> &&value)
         {
-            saveSequence(value.begin(), value.size());
+            assert(value.size() < 1ull<<31);
+            saveSequence(value.begin(), static_cast<std::uint32_t>(value.size()));
         }
 
         template <class Element, class... OtherParams> void load(std::set<Element, OtherParams...> &value)
@@ -260,7 +262,7 @@ namespace dci { namespace couple { namespace serialize { namespace details
             });
         }
 
-        template <class Value> std::enable_if_t<ValueKind::variant == ValueTraits<Value>::_kind> load(Value &value) throw (std::system_error)
+        template <class Value> std::enable_if_t<ValueKind::variant == ValueTraits<Value>::_kind> load(Value &value)
         {
             std::uint32_t typeId;
             load(typeId);
@@ -402,7 +404,7 @@ namespace dci { namespace couple { namespace serialize { namespace details
         }
 
     private:
-        void checkProcessedSize(std::size_t size) const throw (std::system_error)
+        void checkProcessedSize(std::size_t size) const
         {
             if(Settings::_maxSize > _processedSize + size)
             {
@@ -412,7 +414,7 @@ namespace dci { namespace couple { namespace serialize { namespace details
             throw std::system_error(err_general::quote_exhausted);
         }
 
-        void meterProcessedSize(std::size_t size) throw (std::system_error)
+        void meterProcessedSize(std::size_t size)
         {
             _processedSize += size;
             if(Settings::_maxSize > _processedSize)
@@ -460,7 +462,7 @@ namespace dci { namespace couple { namespace serialize { namespace details
         {
             if(Settings::_endianness == Endianness::unknown || _currentEndianness == Endianness::unknown)
             {
-                assert(!"unknown endianness");
+                assert(0&&"unknown endianness");
                 abort();
                 return src;
             }
@@ -483,30 +485,30 @@ namespace dci { namespace couple { namespace serialize { namespace details
 
                     if(2 == sizeof(Value))
                     {
-                        return   ((src & 0x00FF) << 8)
-                               | ((src & 0xFF00) >> 8);
+                        return   static_cast<Value>((src & Value(0x00FF)) << 8)
+                               | static_cast<Value>((src & Value(0xFF00)) >> 8);
                     }
                     else if(4 == sizeof(Value))
                     {
-                        return   ((src & 0x000000FF) << 24)
-                               | ((src & 0x0000FF00) <<  8)
-                               | ((src & 0x00FF0000) >>  8)
-                               | ((src & 0xFF000000) >> 24);
+                        return   static_cast<Value>((src & Value(0x000000FF)) << 24)
+                               | static_cast<Value>((src & Value(0x0000FF00)) <<  8)
+                               | static_cast<Value>((src & Value(0x00FF0000)) >>  8)
+                               | static_cast<Value>((src & Value(0xFF000000)) >> 24);
                     }
                     else if(8 == sizeof(Value))
                     {
-                        return   ((src & 0xFF00000000000000ull) >> 56)
-                               | ((src & 0x00FF000000000000ull) >> 40)
-                               | ((src & 0x0000FF0000000000ull) >> 24)
-                               | ((src & 0x000000FF00000000ull) >>  8)
-                               | ((src & 0x00000000FF000000ull) <<  8)
-                               | ((src & 0x0000000000FF0000ull) << 24)
-                               | ((src & 0x000000000000FF00ull) << 40)
-                               | ((src & 0x00000000000000FFull) << 56);
+                        return   static_cast<Value>((src & 0xFF00000000000000ll) >> 56)
+                               | static_cast<Value>((src & 0x00FF000000000000ll) >> 40)
+                               | static_cast<Value>((src & 0x0000FF0000000000ll) >> 24)
+                               | static_cast<Value>((src & 0x000000FF00000000ll) >>  8)
+                               | static_cast<Value>((src & 0x00000000FF000000ll) <<  8)
+                               | static_cast<Value>((src & 0x0000000000FF0000ll) << 24)
+                               | static_cast<Value>((src & 0x000000000000FF00ll) << 40)
+                               | static_cast<Value>((src & 0x00000000000000FFll) << 56);
                     }
                     else
                     {
-                        assert(!"massive value");
+                        assert(0&&"massive value");
                     }
                 }
                 else
@@ -520,19 +522,19 @@ namespace dci { namespace couple { namespace serialize { namespace details
                     }
                     else if(4 == sizeof(Value))
                     {
-                        return   ((src & 0x0000FFFF) << 16)
-                               | ((src & 0xFFFF0000) >> 16);
+                        return   static_cast<Value>((src & Value(0x0000FFFF)) << 16)
+                               | static_cast<Value>((src & Value(0xFFFF0000)) >> 16);
                     }
                     else if(8 == sizeof(Value))
                     {
-                        return   ((src & 0xFFFF000000000000ull) >> 48)
-                               | ((src & 0x0000FFFF00000000ull) >> 16)
-                               | ((src & 0x00000000FFFF0000ull) << 16)
-                               | ((src & 0x000000000000FFFFull) << 48);
+                        return   static_cast<Value>((src & 0xFFFF000000000000ll) >> 48)
+                               | static_cast<Value>((src & 0x0000FFFF00000000ll) >> 16)
+                               | static_cast<Value>((src & 0x00000000FFFF0000ll) << 16)
+                               | static_cast<Value>((src & 0x000000000000FFFFll) << 48);
                     }
                     else
                     {
-                        assert(!"massive value");
+                        assert(0&&"massive value");
                     }
                 }
             }
@@ -543,30 +545,30 @@ namespace dci { namespace couple { namespace serialize { namespace details
 
                 if(2 == sizeof(Value))
                 {
-                    return   ((src & 0x00FF) << 8)
-                           | ((src & 0xFF00) >> 8);
+                    return   static_cast<Value>((src & Value(0x00FF)) << 8)
+                           | static_cast<Value>((src & Value(0xFF00)) >> 8);
                 }
                 else if(4 == sizeof(Value))
                 {
-                    return   ((src & 0x000000FF) <<  8)
-                           | ((src & 0x0000FF00) >>  8)
-                           | ((src & 0x00FF0000) <<  8)
-                           | ((src & 0xFF000000) >>  8);
+                    return   static_cast<Value>((src & Value(0x000000FF)) <<  8)
+                           | static_cast<Value>((src & Value(0x0000FF00)) >>  8)
+                           | static_cast<Value>((src & Value(0x00FF0000)) <<  8)
+                           | static_cast<Value>((src & Value(0xFF000000)) >>  8);
                 }
                 else if(8 == sizeof(Value))
                 {
-                    return   ((src & 0xFF00000000000000ull) >>  8)
-                           | ((src & 0x00FF000000000000ull) <<  8)
-                           | ((src & 0x0000FF0000000000ull) >>  8)
-                           | ((src & 0x000000FF00000000ull) <<  8)
-                           | ((src & 0x00000000FF000000ull) >>  8)
-                           | ((src & 0x0000000000FF0000ull) <<  8)
-                           | ((src & 0x000000000000FF00ull) >>  8)
-                           | ((src & 0x00000000000000FFull) <<  8);
+                    return   static_cast<Value>((src & 0xFF00000000000000ll) >>  8)
+                           | static_cast<Value>((src & 0x00FF000000000000ll) <<  8)
+                           | static_cast<Value>((src & 0x0000FF0000000000ll) >>  8)
+                           | static_cast<Value>((src & 0x000000FF00000000ll) <<  8)
+                           | static_cast<Value>((src & 0x00000000FF000000ll) >>  8)
+                           | static_cast<Value>((src & 0x0000000000FF0000ll) <<  8)
+                           | static_cast<Value>((src & 0x000000000000FF00ll) >>  8)
+                           | static_cast<Value>((src & 0x00000000000000FFll) <<  8);
                 }
                 else
                 {
-                    assert(!"massive value");
+                    assert(0&&"massive value");
                 }
             }
 

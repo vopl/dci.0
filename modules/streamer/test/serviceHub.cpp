@@ -48,20 +48,20 @@ namespace xyz
     {
         //sink
         template <class T>
-        void writePod(const T &v) throw (std::system_error)
+        void writePod(const T &v)
         {
             assert(0);
-            std::cout<<(int)v<<std::endl;
+            std::cout<<static_cast<int>(v)<<std::endl;
         }
 
-        void writeBinary(const char *data, std::size_t size) throw (std::system_error)
+        void writeBinary(const char *data, std::size_t size)
         {
             assert(0);
             (void)data;
             (void)size;
         }
 
-        void writeBytes(Bytes &&data) throw (std::system_error)
+        void writeBytes(Bytes &&data)
         {
             assert(0);
             (void)data;
@@ -69,20 +69,20 @@ namespace xyz
 
         //source
         template <class T>
-        void readPod(T &v)  throw (std::system_error)
+        void readPod(T &v)
         {
             assert(0);
             v = 220;
         }
 
-        void readBinary(char *data, std::size_t size) throw (std::system_error)
+        void readBinary(char *data, std::size_t size)
         {
             assert(0);
             (void)data;
             (void)size;
         }
 
-        Bytes readBytes(std::size_t size) throw (std::system_error)
+        Bytes readBytes(std::size_t size)
         {
             assert(0);
             (void)size;
@@ -119,11 +119,15 @@ namespace xyz
         }
     };
 
-    struct Context
+    namespace
     {
-      std::uint32_t setService(...);
-    } context;
+        struct Context
+        {
+          //std::uint32_t setService(...);
+        } context;
+    }
 
+    int f();
     int f()
     {
 
@@ -159,23 +163,27 @@ namespace xyz
 
 
 /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
-class ServiceHub
-    : public testing::Test
+
+namespace
 {
-protected:
-    virtual void SetUp() override
+    class ServiceHub
+        : public testing::Test
     {
-        _manager = testManager();
-        EXPECT_NE(_manager, nullptr);
-    }
+    protected:
+        virtual void SetUp() override
+        {
+            _manager = testManager();
+            EXPECT_NE(_manager, nullptr);
+        }
 
-    virtual void TearDown() override
-    {
-        _manager = nullptr;
-    }
+        virtual void TearDown() override
+        {
+            _manager = nullptr;
+        }
 
-    Manager *_manager {nullptr};
-};
+        Manager *_manager {nullptr};
+    };
+}
 
 
 

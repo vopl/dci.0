@@ -238,10 +238,10 @@ namespace dci { namespace couple { namespace runtime { namespace impl
             index -= iter->_size;
         }
 
-        assert(!"bad index");
+        assert(0&&"bad index");
         abort();
-//        static bytes::byte stub;
-//        return stub;
+        static bytes::byte stub;
+        return stub;
     }
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
@@ -408,17 +408,17 @@ namespace dci { namespace couple { namespace runtime { namespace impl
             }
         }
 
-        assert(!"never here");
+        assert(0&&"never here");
     }
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
     Bytes Bytes::detachLast(std::size_t size)
     {
         (void)size;
-        assert(!"not implemented");
+        assert(0&&"not implemented");
         abort();
 
-//        return Bytes();
+        return Bytes();
     }
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
@@ -472,7 +472,8 @@ namespace dci { namespace couple { namespace runtime { namespace impl
     {
         (void)data;
         (void)size;
-        assert(!"not implemented");
+
+        assert(0&&"not implemented");
         abort();
     }
 

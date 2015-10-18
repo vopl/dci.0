@@ -29,9 +29,9 @@ namespace impl
         Host *host() const;
 
     protected:
-        Link *addLink(int32_t id);
-        Link *getLink(int32_t id);
-        void delLink(int32_t id);
+        Link *addLink(uint32_t id);
+        Link *getLink(uint32_t id);
+        void delLink(uint32_t id);
 
     private:
         Host *_host;

@@ -17,7 +17,7 @@ namespace dci { namespace couple { namespace meta { namespace impl
     void LibraryBuilder::merge(const Library &lib)
     {
         (void)lib;
-        assert(0);
+        assert(0&&"not implemented yet");
     }
 
     Primitive *LibraryBuilder::addPrimitive()

@@ -20,6 +20,7 @@ namespace dci { namespace async { namespace details { namespace future
     struct ThenBase
     {
         ThenBase *_next;
+        virtual ~ThenBase() {}
         virtual void call(Future<E, T...> &) = 0;
         virtual void destroy() = 0;
     };

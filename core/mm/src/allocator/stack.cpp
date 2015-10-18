@@ -3,7 +3,7 @@
 #include "config.h"
 #ifdef HAVE_VALGRIND
 #   define VALGRIND_INCLUDE <VALGRIND_INCLUDE_DIR/valgrind.h>
-#   pragma clang diagnostic ignored "-Wold-style-cast"
+//#   pragma clang diagnostic ignored "-Wold-style-cast"
 #   include VALGRIND_INCLUDE
 #endif
 

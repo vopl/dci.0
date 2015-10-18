@@ -62,9 +62,9 @@ namespace dci { namespace couple { namespace runtime
         {
             if(_uninvolvFwdListener && listener)
             {
-                assert("_uninvolvFwdListener already setted");
+                assert(0&&"_uninvolvFwdListener already setted");
                 abort();
-//                return;
+                return;
             }
 
             _uninvolvFwdListener = listener;
@@ -74,9 +74,9 @@ namespace dci { namespace couple { namespace runtime
 
         if(_uninvolvBwdListener && listener)
         {
-            assert("_uninvolvBwdListener already setted");
+            assert(0&&"_uninvolvBwdListener already setted");
             abort();
-//            return;
+            return;
         }
 
         _uninvolvBwdListener = listener;

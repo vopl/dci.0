@@ -260,7 +260,7 @@ namespace impl
                 case RTM_NEWLINK:
                     {
                         ifinfomsg *ifi = static_cast<ifinfomsg*>(NLMSG_DATA(h));
-                        Link *link = getLink(ifi->ifi_index);
+                        Link *link = getLink(static_cast<uint32_t>(ifi->ifi_index));
                         bool isNew = !link;
 
                         LinkAttrs attrs;
@@ -274,7 +274,7 @@ namespace impl
                                 continue;
                             }
 
-                            link = addLink(ifi->ifi_index);
+                            link = addLink(static_cast<uint32_t>(ifi->ifi_index));
                         }
 
                         link->setName(attrs._name);
@@ -303,10 +303,10 @@ namespace impl
                 case RTM_DELLINK:
                     {
                         ifinfomsg *ifi = static_cast<ifinfomsg*>(NLMSG_DATA(h));
-                        Link *link = getLink(ifi->ifi_index);
+                        Link *link = getLink(static_cast<uint32_t>(ifi->ifi_index));
                         if(link)
                         {
-                            delLink(ifi->ifi_index);
+                            delLink(static_cast<uint32_t>(ifi->ifi_index));
                         }
                     }
                     break;
@@ -315,7 +315,7 @@ namespace impl
                 case RTM_DELADDR:
                     {
                         ifaddrmsg *ifa = static_cast<ifaddrmsg *>(NLMSG_DATA(h));
-                        Link *link = getLink(static_cast<int32_t>(ifa->ifa_index));
+                        Link *link = getLink(static_cast<uint32_t>(ifa->ifa_index));
                         assert(link);
 
                         if(!link)

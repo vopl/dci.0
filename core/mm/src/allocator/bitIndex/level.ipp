@@ -57,7 +57,7 @@ namespace dci { namespace mm { namespace allocator { namespace bitIndex
             }
         }
 
-        assert(!"must not be called if empty");
+        assert(0&&"must not be called if empty");
         return _badAddress;
     }
 

@@ -256,13 +256,13 @@ namespace dci { namespace site { namespace impl
     async::Future<std::error_code> Module::install(const ModulePlace &place)
     {
         (void)place;
-        assert(!"not impl");
+        assert(0&&"not impl");
         return async::Future<std::error_code>(make_error_code(std::errc::address_not_available));
     }
 
     async::Future<std::error_code> Module::uninstall()
     {
-        assert(!"not impl");
+        assert(0&&"not impl");
         return async::Future<std::error_code>(make_error_code(std::errc::address_not_available));
     }
 

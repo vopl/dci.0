@@ -76,7 +76,7 @@ namespace dci { namespace couple { namespace runtime
     {
         if(_call)
         {
-            assert(!"signal already connected");
+            assert(0&&"signal already connected");
             return false;
         }
 

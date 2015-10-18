@@ -195,7 +195,7 @@ namespace dci { namespace async { namespace impl
             break;
         }
 
-        assert(!"never here");
+        assert(0&&"never here");
         abort();
     }
 }}}
