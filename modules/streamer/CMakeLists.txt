@@ -40,25 +40,13 @@ set(SRC
 
     src/impl/protocol.hpp
 
-    src/impl/links/local.hpp
-    src/impl/links/local/linkId.hpp
-    src/impl/links/local/levelNode.hpp
-    src/impl/links/local/levelNode0.hpp
-    src/impl/links/local/levelNodeBase.hpp
-    src/impl/links/local/levelNodeMaxStub.hpp
-    src/impl/links/local/switchExpander.hpp
+    src/impl/links/container.hpp
+    src/impl/links/id.hpp
+    src/impl/links/node.hpp
+    src/impl/links/node0.hpp
+    src/impl/links/nodeBase.hpp
+    src/impl/links/nodeMaxStub.hpp
 
-    src/impl/links/remote.hpp
-
-
-    src/impl/fsm/endpoint.hpp
-    src/impl/fsm/endpoint/common.hpp
-    src/impl/fsm/endpoint/events.hpp
-    src/impl/fsm/endpoint/detached.hpp
-    src/impl/fsm/endpoint/attached.hpp
-    src/impl/fsm/endpoint/attached/reading.hpp
-    src/impl/fsm/endpoint/attached/readSubscription.hpp
-    src/impl/fsm/endpoint/attached/writing.hpp
 
 
 
@@ -105,6 +93,6 @@ dciDefineModule(streamer
 ############################################################
 include(dciTest)
 dciTest(${PROJECT} mload
-    SRC test/localLinksContainer.cpp test/serviceHub.cpp
+    SRC test/linksContainer.cpp test/serviceHub.cpp
     LINK ${PROJECT}
 )

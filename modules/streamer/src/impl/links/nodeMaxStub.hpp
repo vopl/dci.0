@@ -1,20 +1,20 @@
 #pragma once
-#include "levelNodeBase.hpp"
+#include "nodeBase.hpp"
 
-namespace impl { namespace links { namespace local
+namespace impl { namespace links
 {
     template <class Cfg>
-    struct LevelNodeMaxStub
-        : public LevelNodeBase<Cfg>
+    struct NodeMaxStub
+        : public NodeBase<Cfg>
     {
         static const std::size_t _level = 100500;
 
-        LevelNodeMaxStub(void *)
+        NodeMaxStub(void *)
         {
             assert(0&&"never here");
         }
 
-        LinkId add(void *, void *)
+        Id add(void *, void *)
         {
             assert(0&&"never here");
             return Cfg::_badLinkId;
@@ -28,4 +28,4 @@ namespace impl { namespace links { namespace local
 
     };
 
-}}}
+}}

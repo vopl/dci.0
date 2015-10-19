@@ -1,22 +1,22 @@
 #pragma once
 #include <dci/mm/newDelete.hpp>
-#include "levelNodeMaxStub.hpp"
+#include "nodeMaxStub.hpp"
 
-namespace impl { namespace links { namespace local
+namespace impl { namespace links
 {
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
     template <class Cfg, std::size_t level>
-    class LevelNode
-        : public LevelNodeBase<Cfg>
-        , public dci::mm::NewDelete<LevelNode<Cfg, level>>
+    class Node
+        : public NodeBase<Cfg>
+        , public dci::mm::NewDelete<Node<Cfg, level>>
     {
     public:
         using Parent = std::conditional_t<
             (level<Cfg::_levels),
-            LevelNode<Cfg, level+1>,
-            LevelNodeMaxStub<Cfg>>;
+            Node<Cfg, level+1>,
+            NodeMaxStub<Cfg>>;
 
-        using Child = LevelNode<Cfg, level-1>;
+        using Child = Node<Cfg, level-1>;
 
         using Container = typename Cfg::Container;
         using Link = typename Cfg::Link;
@@ -29,19 +29,19 @@ namespace impl { namespace links { namespace local
         static const Mask _fullFullMask = (bitsof(Mask)==_width ? (~std::size_t(0)) : ((1ull<<_width) - 1));
 
     public:
-        LevelNode();
-        LevelNode(Child *child);
-        ~LevelNode();
+        Node();
+        Node(Child *child);
+        ~Node();
 
-        LinkId add(Container *container, Link *link);
-        LinkId add(Link *link);
+        Id add(Container *container, Link *link);
+        Id add(Link *link);
 
-        bool add(Container *container, LinkId id, Link *link);
-        bool add(LinkId id, Link *link);
+        bool add(Container *container, Id id, Link *link);
+        bool add(Id id, Link *link);
 
-        Link *get(const LinkId &id) const;
-        Link *del(Container *container, const LinkId &id);
-        Link *del(const LinkId &id);
+        Link *get(const Id &id) const;
+        Link *del(Container *container, const Id &id);
+        Link *del(const Id &id);
 
         void probablyDown(Container *container);
 
@@ -62,15 +62,15 @@ namespace impl { namespace links { namespace local
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
     template <class Cfg, std::size_t level>
-    LevelNode<Cfg, level>::LevelNode()
-        : LevelNodeBase<Cfg>()
+    Node<Cfg, level>::Node()
+        : NodeBase<Cfg>()
     {
     }
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
     template <class Cfg, std::size_t level>
-    LevelNode<Cfg, level>::LevelNode(Child *child)
-        : LevelNodeBase<Cfg>()
+    Node<Cfg, level>::Node(Child *child)
+        : NodeBase<Cfg>()
         , _useMask(1ull<<0)
         , _fullMask(1ull<<0)
     {
@@ -80,7 +80,7 @@ namespace impl { namespace links { namespace local
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
     template <class Cfg, std::size_t level>
-    LevelNode<Cfg, level>::~LevelNode()
+    Node<Cfg, level>::~Node()
     {
         assert(isEmptyExceptFirst());
         if(_children[0])
@@ -94,9 +94,9 @@ namespace impl { namespace links { namespace local
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
     template <class Cfg, std::size_t level>
-    LinkId LevelNode<Cfg, level>::add(Container *container, Link *link)
+    Id Node<Cfg, level>::add(Container *container, Link *link)
     {
-        LinkId id = dci::utils::bits::least1Count(_fullMask);
+        Id id = dci::utils::bits::least1Count(_fullMask);
 
         assert(id <= _width);
         if(id >= _width)
@@ -113,7 +113,7 @@ namespace impl { namespace links { namespace local
 
         assert(link && "null link added?");
 
-        LinkId childId;
+        Id childId;
 
         if(!_children[id])
         {
@@ -139,15 +139,15 @@ namespace impl { namespace links { namespace local
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
     template <class Cfg, std::size_t level>
-    LinkId LevelNode<Cfg, level>::add(Link *link)
+    Id Node<Cfg, level>::add(Link *link)
     {
-        LinkId id = dci::utils::bits::least1Count(_fullMask);
+        Id id = dci::utils::bits::least1Count(_fullMask);
 
         assert(id <= _width);
 
         assert(link && "null link added?");
 
-        LinkId childId;
+        Id childId;
 
         if(!_children[id])
         {
@@ -173,7 +173,7 @@ namespace impl { namespace links { namespace local
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
     template <class Cfg, std::size_t level>
-    bool LevelNode<Cfg, level>::add(Container *container, LinkId id, Link *link)
+    bool Node<Cfg, level>::add(Container *container, Id id, Link *link)
     {
         auto cid = id / Child::_volume;
 
@@ -211,7 +211,7 @@ namespace impl { namespace links { namespace local
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
     template <class Cfg, std::size_t level>
-    bool LevelNode<Cfg, level>::add(LinkId id, Link *link)
+    bool Node<Cfg, level>::add(Id id, Link *link)
     {
         auto cid = id / Child::_volume;
 
@@ -239,7 +239,7 @@ namespace impl { namespace links { namespace local
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
     template <class Cfg, std::size_t level>
-    typename LevelNode<Cfg, level>::Link *LevelNode<Cfg, level>::get(const LinkId &id) const
+    typename Node<Cfg, level>::Link *Node<Cfg, level>::get(const Id &id) const
     {
         auto cid = id / Child::_volume;
         if(cid < _width && _children[cid])
@@ -252,7 +252,7 @@ namespace impl { namespace links { namespace local
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
     template <class Cfg, std::size_t level>
-    typename LevelNode<Cfg, level>::Link *LevelNode<Cfg, level>::del(Container *container, const LinkId &id)
+    typename Node<Cfg, level>::Link *Node<Cfg, level>::del(Container *container, const Id &id)
     {
         auto cid = id / Child::_volume;
         if(cid < _width && _children[cid])
@@ -289,7 +289,7 @@ namespace impl { namespace links { namespace local
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
     template <class Cfg, std::size_t level>
-    typename LevelNode<Cfg, level>::Link *LevelNode<Cfg, level>::del(const LinkId &id)
+    typename Node<Cfg, level>::Link *Node<Cfg, level>::del(const Id &id)
     {
         auto cid = id / Child::_volume;
         if(cid < _width && _children[cid])
@@ -313,7 +313,7 @@ namespace impl { namespace links { namespace local
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
     template <class Cfg, std::size_t level>
-    void LevelNode<Cfg, level>::probablyDown(Container *container)
+    void Node<Cfg, level>::probablyDown(Container *container)
     {
         if(isEmptyExceptFirst())
         {
@@ -335,14 +335,14 @@ namespace impl { namespace links { namespace local
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
     template <class Cfg, std::size_t level>
-    bool LevelNode<Cfg, level>::isEmptyExceptFirst() const
+    bool Node<Cfg, level>::isEmptyExceptFirst() const
     {
         return !(_useMask >> 1);
     }
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
     template <class Cfg, std::size_t level>
-    bool LevelNode<Cfg, level>::isEmpty() const
+    bool Node<Cfg, level>::isEmpty() const
     {
         if(_children[0] && !_children[0]->isEmpty())
         {
@@ -354,8 +354,8 @@ namespace impl { namespace links { namespace local
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
     template <class Cfg, std::size_t level>
-    bool LevelNode<Cfg, level>::isFull() const
+    bool Node<Cfg, level>::isFull() const
     {
         return _fullFullMask == _fullMask;
     }
-}}}
+}}

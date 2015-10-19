@@ -1,12 +1,11 @@
 #include <dci/gtest.hpp>
-#include "../src/impl/links/local.hpp"
+#include "../src/impl/links/container.hpp"
 
 #include <deque>
 
 using namespace dci::couple::runtime;
 using namespace streamer;
 using namespace ::impl::links;
-using namespace ::impl::links::local;
 
 #define AMOUNT 4000
 
@@ -21,22 +20,22 @@ struct LinkStub
     }
 };
 
-TEST(LocalLinksContainer, Create)
+TEST(LinksContainer, Create)
 {
     //создать-удалить пустой объект
     std::size_t mBefore = dci::mm::occupied();
     {
-        Local<LinkStub> c;
+        Container<LinkStub> c;
     }
     ASSERT_EQ(mBefore, dci::mm::occupied());
 }
 
-TEST(LocalLinksContainer, AddDel)
+TEST(LinksContainer, AddDel)
 {
     //добавить-удалить один линк
     std::size_t mBefore = dci::mm::occupied();
     {
-        Local<LinkStub> c;
+        Container<LinkStub> c;
 
         LinkStub *l = c.add();
         ASSERT_NE(l, nullptr);
@@ -46,14 +45,14 @@ TEST(LocalLinksContainer, AddDel)
     ASSERT_EQ(mBefore, dci::mm::occupied());
 }
 
-TEST(LocalLinksContainer, AddDelMax)
+TEST(LinksContainer, AddDelMax)
 {
     //добавить-удалить до максимума
     std::size_t mBefore = dci::mm::occupied();
 
     auto f = [](auto max) {
 
-        Local<LinkStub, max.value> c;
+        Container<LinkStub, max.value> c;
 
 
         ASSERT_TRUE(c.add(max.value-1));
@@ -106,12 +105,12 @@ TEST(LocalLinksContainer, AddDelMax)
     ASSERT_EQ(mBefore, dci::mm::occupied());
 }
 
-TEST(LocalLinksContainer, InvalidDel)
+TEST(LinksContainer, InvalidDel)
 {
     //удалять неправильные линки
     std::size_t mBefore = dci::mm::occupied();
     {
-        Local<LinkStub> c;
+        Container<LinkStub> c;
 
         for(std::size_t i(0); i<AMOUNT; ++i)
         {
@@ -123,16 +122,16 @@ TEST(LocalLinksContainer, InvalidDel)
 }
 
 
-TEST(LocalLinksContainer, AddDelMany)
+TEST(LinksContainer, AddDelMany)
 {
     //добавить-удалить много линков
 
     std::set<LinkStub *> links;
-    std::map<LinkId, LinkStub *> id2link;
+    std::map<Id, LinkStub *> id2link;
 
     std::size_t mBefore = dci::mm::occupied();
     {
-        Local<LinkStub> c;
+        Container<LinkStub> c;
 
         for(std::size_t i(0); i<AMOUNT; i++)
         {
@@ -149,7 +148,7 @@ TEST(LocalLinksContainer, AddDelMany)
 
             //удалить неправильный линк
             {
-                LinkId id = AMOUNT + 100500;
+                Id id = AMOUNT + 100500;
                 ASSERT_TRUE(!c.get(id));
                 ASSERT_TRUE(!c.del(id));
             }
@@ -168,7 +167,7 @@ TEST(LocalLinksContainer, AddDelMany)
     ASSERT_EQ(mBefore, dci::mm::occupied());
 }
 
-TEST(LocalLinksContainer, AddDelRndGet)
+TEST(LinksContainer, AddDelRndGet)
 {
     //добавить-удалить много линков, несколько раз рандомом
 
@@ -176,7 +175,7 @@ TEST(LocalLinksContainer, AddDelRndGet)
 
     std::size_t mBefore = dci::mm::occupied();
     {
-        Local<LinkStub> c;
+        Container<LinkStub> c;
 
         for(std::size_t i(0); i<AMOUNT; i++)
         {
@@ -216,7 +215,7 @@ TEST(LocalLinksContainer, AddDelRndGet)
 }
 
 
-TEST(LocalLinksContainer, RndAddDelGet)
+TEST(LinksContainer, RndAddDelGet)
 {
     //добавить-удалить много линков, несколько раз рандомом, получать их
 
@@ -224,7 +223,7 @@ TEST(LocalLinksContainer, RndAddDelGet)
 
     std::size_t mBefore = dci::mm::occupied();
     {
-        Local<LinkStub> c;
+        Container<LinkStub> c;
 
         for(std::size_t i(0); i<AMOUNT; i++)
         {
@@ -281,7 +280,7 @@ TEST(LocalLinksContainer, RndAddDelGet)
     ASSERT_EQ(mBefore, dci::mm::occupied());
 }
 
-TEST(LocalLinksContainer, RndAddIdDelGet)
+TEST(LinksContainer, RndAddIdDelGet)
 {
     //добавитьПоID-удалить много линков, несколько раз рандомом, получать их
 
@@ -290,11 +289,11 @@ TEST(LocalLinksContainer, RndAddIdDelGet)
 
     std::size_t mBefore = dci::mm::occupied();
     {
-        Local<LinkStub> c;
+        Container<LinkStub> c;
 
         for(std::size_t i(0); i<AMOUNT; i++)
         {
-            LinkId id = static_cast<LinkId>(rand());
+            Id id = static_cast<Id>(rand());
             if(!c.get(id))
             {
                 LinkStub *l = c.add(id);
@@ -330,7 +329,7 @@ TEST(LocalLinksContainer, RndAddIdDelGet)
             std::size_t addAmount = rand() % (AMOUNT/10);
             for(std::size_t iadd(0); iadd<addAmount && links.size() < AMOUNT; iadd++)
             {
-                LinkId id = static_cast<LinkId>(rand());
+                Id id = static_cast<Id>(rand());
                 if(!c.get(id))
                 {
                     LinkStub *l = c.add(id);

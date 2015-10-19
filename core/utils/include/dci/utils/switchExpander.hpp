@@ -1,7 +1,9 @@
 #pragma once
 #include <boost/preprocessor/repetition/repeat.hpp>
+#include <tuple>
+#include <type_traits>
 
-namespace impl { namespace links
+namespace dci { namespace utils
 {
     template <class Sequence>
     struct SwitchExpander
@@ -37,7 +39,7 @@ namespace impl { namespace links
 
 #define _98302384578923645975873452345_entry(z, n, text)  case tvalue<n>::value: return f(tvalue<n>());
 
-#define _98302384578923645975873452345(n)                                                                   \
+#define _98302384578923645975873452345(n)                                                           \
         template <class F>                                                                          \
         struct Impl<n, F>                                                                           \
         {                                                                                           \
@@ -47,7 +49,7 @@ namespace impl { namespace links
                 {                                                                                   \
                     BOOST_PP_REPEAT(n, _98302384578923645975873452345_entry, )                      \
                 }                                                                                   \
-                assert(0&&"never here");                                                              \
+                assert(0&&"never here");                                                            \
                 __builtin_unreachable();                                                            \
             }                                                                                       \
         };                                                                                          \

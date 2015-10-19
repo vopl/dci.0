@@ -1,16 +1,16 @@
 #pragma once
-#include "levelNodeBase.hpp"
+#include "nodeBase.hpp"
 #include <dci/utils/bits.hpp>
 
-namespace impl { namespace links { namespace local
+namespace impl { namespace links
 {
     template <class Cfg>
-    class LevelNode<Cfg, 0>
-        : public LevelNodeBase<Cfg>
-        , public dci::mm::NewDelete<LevelNode<Cfg, 0>>
+    class Node<Cfg, 0>
+        : public NodeBase<Cfg>
+        , public dci::mm::NewDelete<Node<Cfg, 0>>
     {
     public:
-        using Parent = LevelNode<Cfg, 1>;
+        using Parent = Node<Cfg, 1>;
 
         using Container = typename Cfg::Container;
         using Link = typename Cfg::Link;
@@ -23,19 +23,19 @@ namespace impl { namespace links { namespace local
         static const Mask _fullUseMask = (bitsof(Mask)==_width ? (~std::size_t(0)) : ((1ull<<_width) - 1));
 
     public:
-        LevelNode();
-        ~LevelNode();
+        Node();
+        ~Node();
 
-        LinkId add(Container *container, Link *link);
-        LinkId add(Link *link);
+        Id add(Container *container, Link *link);
+        Id add(Link *link);
 
-        bool add(Container *container, LinkId id, Link *link);
-        bool add(LinkId id, Link *link);
+        bool add(Container *container, Id id, Link *link);
+        bool add(Id id, Link *link);
 
-        Link *get(const LinkId &id) const;
+        Link *get(const Id &id) const;
 
-        Link *del(Container *container, const LinkId &id);
-        Link *del(const LinkId &id);
+        Link *del(Container *container, const Id &id);
+        Link *del(const Id &id);
 
         void probablyDown(Container *container);
 
@@ -59,24 +59,24 @@ namespace impl { namespace links { namespace local
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
     template <class Cfg>
-    LevelNode<Cfg, 0>::LevelNode()
-        : LevelNodeBase<Cfg>()
+    Node<Cfg, 0>::Node()
+        : NodeBase<Cfg>()
     {
 
     }
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
     template <class Cfg>
-    LevelNode<Cfg, 0>::~LevelNode()
+    Node<Cfg, 0>::~Node()
     {
         assert(!_useMask);
     }
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
     template <class Cfg>
-    LinkId LevelNode<Cfg, 0>::add(Container *container, Link *link)
+    Id Node<Cfg, 0>::add(Container *container, Link *link)
     {
-        LinkId id = dci::utils::bits::least1Count(_useMask);
+        Id id = dci::utils::bits::least1Count(_useMask);
 
         assert(id <= _width);
         if(id >= _width)
@@ -101,9 +101,9 @@ namespace impl { namespace links { namespace local
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
     template <class Cfg>
-    LinkId LevelNode<Cfg, 0>::add(Link *link)
+    Id Node<Cfg, 0>::add(Link *link)
     {
-        LinkId id = dci::utils::bits::least1Count(_useMask);
+        Id id = dci::utils::bits::least1Count(_useMask);
 
         assert(id <= _width);
 
@@ -117,7 +117,7 @@ namespace impl { namespace links { namespace local
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
     template <class Cfg>
-    bool LevelNode<Cfg, 0>::add(Container *container, LinkId id, Link *link)
+    bool Node<Cfg, 0>::add(Container *container, Id id, Link *link)
     {
         if(id >= _width)
         {
@@ -144,7 +144,7 @@ namespace impl { namespace links { namespace local
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
     template <class Cfg>
-    bool LevelNode<Cfg, 0>::add(LinkId id, Link *link)
+    bool Node<Cfg, 0>::add(Id id, Link *link)
     {
         assert(id < _width);
 
@@ -161,7 +161,7 @@ namespace impl { namespace links { namespace local
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
     template <class Cfg>
-    typename LevelNode<Cfg, 0>::Link *LevelNode<Cfg, 0>::get(const LinkId &id) const
+    typename Node<Cfg, 0>::Link *Node<Cfg, 0>::get(const Id &id) const
     {
         if(id < _width && _links[id])
         {
@@ -174,7 +174,7 @@ namespace impl { namespace links { namespace local
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
     template <class Cfg>
-    typename LevelNode<Cfg, 0>::Link *LevelNode<Cfg, 0>::del(Container *container, const LinkId &id)
+    typename Node<Cfg, 0>::Link *Node<Cfg, 0>::del(Container *container, const Id &id)
     {
         (void)container;
         return del(id);
@@ -182,7 +182,7 @@ namespace impl { namespace links { namespace local
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
     template <class Cfg>
-    typename LevelNode<Cfg, 0>::Link *LevelNode<Cfg, 0>::del(const LinkId &id)
+    typename Node<Cfg, 0>::Link *Node<Cfg, 0>::del(const Id &id)
     {
         if(id < _width && _links[id])
         {
@@ -199,23 +199,23 @@ namespace impl { namespace links { namespace local
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
     template <class Cfg>
-    void LevelNode<Cfg, 0>::probablyDown(Container *container)
+    void Node<Cfg, 0>::probablyDown(Container *container)
     {
         container->levelDown(this, _level);
     }
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
     template <class Cfg>
-    bool LevelNode<Cfg, 0>::isEmpty() const
+    bool Node<Cfg, 0>::isEmpty() const
     {
         return !_useMask;
     }
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
     template <class Cfg>
-    bool LevelNode<Cfg, 0>::isFull() const
+    bool Node<Cfg, 0>::isFull() const
     {
         return _fullUseMask == _useMask;
     }
 
-}}}
+}}
