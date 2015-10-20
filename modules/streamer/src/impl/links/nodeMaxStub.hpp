@@ -17,7 +17,7 @@ namespace impl { namespace links
         Id add(void *, void *)
         {
             assert(0&&"never here");
-            return Cfg::_badLinkId;
+            return _badId;
         }
 
         bool add(void *, std::size_t, void *)

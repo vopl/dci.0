@@ -3,8 +3,9 @@
 #include <dci/couple/runtime.hpp>
 #include "streamer.hpp"
 
-#include "links/container.hpp"
-#include "serviceHub/link.hpp"
+#include "links/pool.hpp"
+#include "serviceHub/localLink.hpp"
+#include "serviceHub/remoteLink.hpp"
 
 namespace impl
 {
@@ -28,7 +29,7 @@ namespace impl
         Future< streamer::ServiceHub::Remote> ejectService(streamer::ServiceHub::ServiceId &&arg_0);
 
     private:
-        links::Container<serviceHub::Link> _localLinks;
-        //links::Remote<serviceHub::Link> _remoteLinks;
+        links::Pool<serviceHub::LocalLink> _localLinks;
+        links::Pool<serviceHub::RemoteLink> _remoteLinks;
     };
 }

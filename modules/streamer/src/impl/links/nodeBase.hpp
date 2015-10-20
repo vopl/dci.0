@@ -18,7 +18,7 @@ namespace impl { namespace links
         NodeBase &operator=(const NodeBase &) = delete;
 
     public:
-        using Container = typename Cfg::Container;
+        using Pool = typename Cfg::Pool;
         using Link = typename Cfg::Link;
         static const std::size_t _width = Cfg::_width;
         static const std::size_t _levels = Cfg::_levels;
@@ -31,10 +31,15 @@ namespace impl { namespace links
         static NodeBase *create(std::size_t level, NodeBase *child);
         void destroy(std::size_t level);
 
-        Id add(std::size_t level, Container *container, Link *link);
-        bool add(std::size_t level, Container *container, Id id, Link *link);
+        Id add(std::size_t level, Pool *pool, Link *link);
+        bool add(std::size_t level, Pool *pool, Id id, Link *link);
         Link *get(std::size_t level, const Id &id) const;
-        Link *del(std::size_t level, Container *container, const Id &id);
+        Link *del(std::size_t level, Pool *pool, const Id &id);
+
+        bool isEmpty(std::size_t level) const;
+
+        template <class F>
+        void clean(std::size_t level, F &&f);
 
     private:
         template <class F>
@@ -91,19 +96,19 @@ namespace impl { namespace links
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
     template <class Cfg>
-    Id NodeBase<Cfg>::add(std::size_t level, Container *container, Link *link)
+    Id NodeBase<Cfg>::add(std::size_t level, Pool *pool, Link *link)
     {
         return expandSwitch(level, [&](auto vholder){
-            return static_cast<Node<Cfg, vholder.value>*>(this)->add(container, link);
+            return static_cast<Node<Cfg, vholder.value>*>(this)->add(pool, link);
         });
     }
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
     template <class Cfg>
-    bool NodeBase<Cfg>::add(std::size_t level, Container *container, Id id, Link *link)
+    bool NodeBase<Cfg>::add(std::size_t level, Pool *pool, Id id, Link *link)
     {
         return expandSwitch(level, [&](auto vholder){
-            return static_cast<Node<Cfg, vholder.value>*>(this)->add(container, id, link);
+            return static_cast<Node<Cfg, vholder.value>*>(this)->add(pool, id, link);
         });
     }
 
@@ -118,10 +123,29 @@ namespace impl { namespace links
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
     template <class Cfg>
-    typename NodeBase<Cfg>::Link *NodeBase<Cfg>::del(std::size_t level, Container *container, const Id &id)
+    typename NodeBase<Cfg>::Link *NodeBase<Cfg>::del(std::size_t level, Pool *pool, const Id &id)
     {
         return expandSwitch(level, [&](auto vholder){
-            return static_cast<Node<Cfg, vholder.value>*>(this)->del(container, id);
+            return static_cast<Node<Cfg, vholder.value>*>(this)->del(pool, id);
+        });
+    }
+
+    /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
+    template <class Cfg>
+    bool NodeBase<Cfg>::isEmpty(std::size_t level) const
+    {
+        return expandSwitch(level, [&](auto vholder){
+            return static_cast<const Node<Cfg, vholder.value>*>(this)->isEmpty();
+        });
+    }
+
+    /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
+    template <class Cfg>
+    template <class F>
+    void NodeBase<Cfg>::clean(std::size_t level, F &&f)
+    {
+        return expandSwitch(level, [&](auto vholder){
+            return static_cast<Node<Cfg, vholder.value>*>(this)->clean(std::forward<F>(f));
         });
     }
 

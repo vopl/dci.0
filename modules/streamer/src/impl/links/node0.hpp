@@ -12,7 +12,7 @@ namespace impl { namespace links
     public:
         using Parent = Node<Cfg, 1>;
 
-        using Container = typename Cfg::Container;
+        using Pool = typename Cfg::Pool;
         using Link = typename Cfg::Link;
         static const std::size_t _width = Cfg::_width;
         static const std::size_t _levels = Cfg::_levels;
@@ -26,21 +26,26 @@ namespace impl { namespace links
         Node();
         ~Node();
 
-        Id add(Container *container, Link *link);
+        Id add(Pool *pool, Link *link);
         Id add(Link *link);
 
-        bool add(Container *container, Id id, Link *link);
+        bool add(Pool *pool, Id id, Link *link);
         bool add(Id id, Link *link);
 
         Link *get(const Id &id) const;
 
-        Link *del(Container *container, const Id &id);
+        Link *del(Pool *pool, const Id &id);
         Link *del(const Id &id);
 
-        void probablyDown(Container *container);
+        void probablyDown(Pool *pool);
 
         bool isEmpty() const;
         bool isFull() const;
+
+        void clean();
+
+        template <class F>
+        void clean(F &&f);
 
     private:
         Mask _useMask = 0;
@@ -74,7 +79,7 @@ namespace impl { namespace links
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
     template <class Cfg>
-    Id Node<Cfg, 0>::add(Container *container, Link *link)
+    Id Node<Cfg, 0>::add(Pool *pool, Link *link)
     {
         Id id = dci::utils::bits::least1Count(_useMask);
 
@@ -84,11 +89,11 @@ namespace impl { namespace links
             if(Parent::_level < _levels)
             {
                 Parent *p = new Parent(this);
-                container->levelUp(p, p->_level);
+                pool->levelUp(p, p->_level);
                 return p->add(link);
             }
 
-            return Cfg::_badLinkId;
+            return _badId;
         }
 
         assert(link && "null link added?");
@@ -117,15 +122,15 @@ namespace impl { namespace links
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
     template <class Cfg>
-    bool Node<Cfg, 0>::add(Container *container, Id id, Link *link)
+    bool Node<Cfg, 0>::add(Pool *pool, Id id, Link *link)
     {
         if(id >= _width)
         {
             if(Parent::_level < _levels)
             {
                 Parent *p = new Parent(this);
-                container->levelUp(p, p->_level);
-                return p->add(container, id, link);
+                pool->levelUp(p, p->_level);
+                return p->add(pool, id, link);
             }
 
             return false;
@@ -174,9 +179,9 @@ namespace impl { namespace links
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
     template <class Cfg>
-    typename Node<Cfg, 0>::Link *Node<Cfg, 0>::del(Container *container, const Id &id)
+    typename Node<Cfg, 0>::Link *Node<Cfg, 0>::del(Pool *pool, const Id &id)
     {
-        (void)container;
+        (void)pool;
         return del(id);
     }
 
@@ -199,9 +204,9 @@ namespace impl { namespace links
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
     template <class Cfg>
-    void Node<Cfg, 0>::probablyDown(Container *container)
+    void Node<Cfg, 0>::probablyDown(Pool *pool)
     {
-        container->levelDown(this, _level);
+        pool->levelDown(this, _level);
     }
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
@@ -217,5 +222,26 @@ namespace impl { namespace links
     {
         return _fullUseMask == _useMask;
     }
+
+    /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
+    template <class Cfg>
+    template <class F>
+    void Node<Cfg, 0>::clean(F &&f)
+    {
+        while(_useMask)
+        {
+            Id id = dci::utils::bits::least0Count(_useMask);
+            assert(id<_width);
+            assert(_links[id]);
+            assert((_useMask>>id) & 1);
+
+            _useMask &= ~(1ull<<id);
+            Link *link = _links[id];
+            _links[id] = nullptr;
+
+            f(std::unique_ptr<Link>(link));
+        }
+    }
+
 
 }}

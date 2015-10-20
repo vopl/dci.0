@@ -1,5 +1,5 @@
 #include <dci/gtest.hpp>
-#include "../src/impl/links/container.hpp"
+#include "../src/impl/links/pool.hpp"
 
 #include <deque>
 
@@ -20,22 +20,22 @@ struct LinkStub
     }
 };
 
-TEST(LinksContainer, Create)
+TEST(LinksPool, Create)
 {
     //создать-удалить пустой объект
     std::size_t mBefore = dci::mm::occupied();
     {
-        Container<LinkStub> c;
+        Pool<LinkStub> c;
     }
     ASSERT_EQ(mBefore, dci::mm::occupied());
 }
 
-TEST(LinksContainer, AddDel)
+TEST(LinksPool, AddDel)
 {
     //добавить-удалить один линк
     std::size_t mBefore = dci::mm::occupied();
     {
-        Container<LinkStub> c;
+        Pool<LinkStub> c;
 
         LinkStub *l = c.add();
         ASSERT_NE(l, nullptr);
@@ -45,21 +45,21 @@ TEST(LinksContainer, AddDel)
     ASSERT_EQ(mBefore, dci::mm::occupied());
 }
 
-TEST(LinksContainer, AddDelMax)
+TEST(LinksPool, AddDelMax)
 {
     //добавить-удалить до максимума
     std::size_t mBefore = dci::mm::occupied();
 
     auto f = [](auto max) {
 
-        Container<LinkStub, max.value> c;
+        Pool<LinkStub, max.value> c;
 
 
-        ASSERT_TRUE(c.add(max.value-1));
-        c.del(max.value-1);
+        ASSERT_TRUE(c.add((max.value-1)<<1));
+        c.del((max.value-1)<<1);
 
-        ASSERT_TRUE(!c.add(max.value));
-        c.add(max.value);
+        ASSERT_TRUE(!c.add(max.value<<1));
+        c.del(max.value<<1);
 
 
         for(std::size_t i(0); i<max.value; ++i)
@@ -70,12 +70,12 @@ TEST(LinksContainer, AddDelMax)
         }
 
         ASSERT_TRUE(!c.add());
-        ASSERT_TRUE(!c.add(max.value-1));
-        ASSERT_TRUE(!c.add(max.value));
+        ASSERT_TRUE(!c.add((max.value-1)<<1));
+        ASSERT_TRUE(!c.add(max.value<<1));
 
         for(std::size_t i(0); i<max.value; ++i)
         {
-            ASSERT_FALSE(!c.del(i));
+            ASSERT_FALSE(!c.del(i<<1));
         }
     };
 
@@ -105,24 +105,24 @@ TEST(LinksContainer, AddDelMax)
     ASSERT_EQ(mBefore, dci::mm::occupied());
 }
 
-TEST(LinksContainer, InvalidDel)
+TEST(LinksPool, InvalidDel)
 {
     //удалять неправильные линки
     std::size_t mBefore = dci::mm::occupied();
     {
-        Container<LinkStub> c;
+        Pool<LinkStub> c;
 
         for(std::size_t i(0); i<AMOUNT; ++i)
         {
-            ASSERT_TRUE(!c.get(i));
-            ASSERT_TRUE(!c.del(i));
+            ASSERT_TRUE(!c.get(i<<1));
+            ASSERT_TRUE(!c.del(i<<1));
         }
     }
     ASSERT_EQ(mBefore, dci::mm::occupied());
 }
 
 
-TEST(LinksContainer, AddDelMany)
+TEST(LinksPool, AddDelMany)
 {
     //добавить-удалить много линков
 
@@ -131,7 +131,7 @@ TEST(LinksContainer, AddDelMany)
 
     std::size_t mBefore = dci::mm::occupied();
     {
-        Container<LinkStub> c;
+        Pool<LinkStub> c;
 
         for(std::size_t i(0); i<AMOUNT; i++)
         {
@@ -148,7 +148,7 @@ TEST(LinksContainer, AddDelMany)
 
             //удалить неправильный линк
             {
-                Id id = AMOUNT + 100500;
+                Id id = (AMOUNT + 100500)<<1;
                 ASSERT_TRUE(!c.get(id));
                 ASSERT_TRUE(!c.del(id));
             }
@@ -167,7 +167,7 @@ TEST(LinksContainer, AddDelMany)
     ASSERT_EQ(mBefore, dci::mm::occupied());
 }
 
-TEST(LinksContainer, AddDelRndGet)
+TEST(LinksPool, AddDelRndGet)
 {
     //добавить-удалить много линков, несколько раз рандомом
 
@@ -175,7 +175,7 @@ TEST(LinksContainer, AddDelRndGet)
 
     std::size_t mBefore = dci::mm::occupied();
     {
-        Container<LinkStub> c;
+        Pool<LinkStub> c;
 
         for(std::size_t i(0); i<AMOUNT; i++)
         {
@@ -215,7 +215,7 @@ TEST(LinksContainer, AddDelRndGet)
 }
 
 
-TEST(LinksContainer, RndAddDelGet)
+TEST(LinksPool, RndAddDelGet)
 {
     //добавить-удалить много линков, несколько раз рандомом, получать их
 
@@ -223,7 +223,7 @@ TEST(LinksContainer, RndAddDelGet)
 
     std::size_t mBefore = dci::mm::occupied();
     {
-        Container<LinkStub> c;
+        Pool<LinkStub> c;
 
         for(std::size_t i(0); i<AMOUNT; i++)
         {
@@ -280,7 +280,7 @@ TEST(LinksContainer, RndAddDelGet)
     ASSERT_EQ(mBefore, dci::mm::occupied());
 }
 
-TEST(LinksContainer, RndAddIdDelGet)
+TEST(LinksPool, RndAddIdDelGet)
 {
     //добавитьПоID-удалить много линков, несколько раз рандомом, получать их
 
@@ -289,11 +289,11 @@ TEST(LinksContainer, RndAddIdDelGet)
 
     std::size_t mBefore = dci::mm::occupied();
     {
-        Container<LinkStub> c;
+        Pool<LinkStub> c;
 
         for(std::size_t i(0); i<AMOUNT; i++)
         {
-            Id id = static_cast<Id>(rand());
+            Id id = static_cast<Id>(rand())<<1;
             if(!c.get(id))
             {
                 LinkStub *l = c.add(id);
@@ -329,7 +329,7 @@ TEST(LinksContainer, RndAddIdDelGet)
             std::size_t addAmount = rand() % (AMOUNT/10);
             for(std::size_t iadd(0); iadd<addAmount && links.size() < AMOUNT; iadd++)
             {
-                Id id = static_cast<Id>(rand());
+                Id id = static_cast<Id>(rand())<<1;
                 if(!c.get(id))
                 {
                     LinkStub *l = c.add(id);

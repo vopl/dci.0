@@ -34,13 +34,18 @@ set(SRC
     src/impl/serviceHub.hpp
     src/impl/serviceHub.cpp
     src/impl/serviceHub/link.hpp
+    src/impl/serviceHub/link.cpp
+    src/impl/serviceHub/localLink.hpp
+    src/impl/serviceHub/localLink.cpp
+    src/impl/serviceHub/remoteLink.hpp
+    src/impl/serviceHub/remoteLink.cpp
 
     src/impl/amortisseur.hpp
     src/impl/amortisseur.cpp
 
     src/impl/protocol.hpp
 
-    src/impl/links/container.hpp
+    src/impl/links/pool.hpp
     src/impl/links/id.hpp
     src/impl/links/node.hpp
     src/impl/links/node0.hpp
@@ -93,6 +98,6 @@ dciDefineModule(streamer
 ############################################################
 include(dciTest)
 dciTest(${PROJECT} mload
-    SRC test/linksContainer.cpp test/serviceHub.cpp
+    SRC test/linksPool.cpp test/serviceHub.cpp
     LINK ${PROJECT}
 )
