@@ -6,11 +6,11 @@
 namespace dci { namespace couple { namespace serialize
 {
 
-    template <class Settings, class Context, class SinkSource>
+    template <class Settings, class SinkSource>
     class Stream
     {
     private:
-        using Processor = details::Processor<Settings, Context, SinkSource>;
+        using Processor = details::Processor<Settings, SinkSource>;
 
     private:
 
@@ -27,7 +27,7 @@ namespace dci { namespace couple { namespace serialize
         struct hasSaver<Value, decltype(std::declval<Processor>().save(std::declval<Value>()))> : std::true_type { };
 
     public:
-        Stream(Context &ctx, SinkSource &sinkSource);
+        Stream(SinkSource &sinkSource);
         ~Stream();
 
         template <class Value>
@@ -43,31 +43,31 @@ namespace dci { namespace couple { namespace serialize
     };
 
 
-    template <class Settings, class Context, class SinkSource>
-    Stream<Settings, Context, SinkSource>::Stream(Context &ctx, SinkSource &sinkSource)
-        : _processor(ctx, sinkSource)
+    template <class Settings, class SinkSource>
+    Stream<Settings, SinkSource>::Stream(SinkSource &sinkSource)
+        : _processor(sinkSource)
     {
     }
 
-    template <class Settings, class Context, class SinkSource>
-    Stream<Settings, Context, SinkSource>::~Stream()
+    template <class Settings, class SinkSource>
+    Stream<Settings, SinkSource>::~Stream()
     {
     }
 
-    template <class Settings, class Context, class SinkSource>
+    template <class Settings, class SinkSource>
     template <class Value>
 
-    std::enable_if_t<Stream<Settings, Context, SinkSource>::template hasLoader<Value>::value, Stream<Settings, Context, SinkSource> &>
-        Stream<Settings, Context, SinkSource>::operator>>(Value &value)
+    std::enable_if_t<Stream<Settings, SinkSource>::template hasLoader<Value>::value, Stream<Settings, SinkSource> &>
+        Stream<Settings, SinkSource>::operator>>(Value &value)
     {
         _processor.load(value);
         return *this;
     }
 
-    template <class Settings, class Context, class SinkSource>
+    template <class Settings, class SinkSource>
     template <class Value>
-    std::enable_if_t<Stream<Settings, Context, SinkSource>::template hasSaver<Value>::value, Stream<Settings, Context, SinkSource> &>
-        Stream<Settings, Context, SinkSource>::operator<<(Value &&value)
+    std::enable_if_t<Stream<Settings, SinkSource>::template hasSaver<Value>::value, Stream<Settings, SinkSource> &>
+        Stream<Settings, SinkSource>::operator<<(Value &&value)
     {
         _processor.save(std::forward<Value>(value));
         return *this;

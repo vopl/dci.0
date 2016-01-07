@@ -424,6 +424,15 @@ namespace dci { namespace couple { namespace runtime { namespace impl
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
     void Bytes::fillAndDropFirst(byte *data, std::size_t size)
     {
+        if(size < _size)
+        {
+            _size -= size;
+        }
+        else
+        {
+            _size = 0;
+        }
+
         bytes::Segment *iter = _first;
 
         for(;;)
@@ -465,6 +474,10 @@ namespace dci { namespace couple { namespace runtime { namespace impl
         }
 
         _first = iter;
+        if(!_first)
+        {
+            _last = nullptr;
+        }
     }
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7

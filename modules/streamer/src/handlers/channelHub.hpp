@@ -4,9 +4,6 @@
 #include "streamer.hpp"
 #include "streamerHandlerSkel.hpp"
 
-#include "../impl/endpoint.hpp"
-#include "../impl/channelHub.hpp"
-
 namespace handlers
 {
     using namespace dci::couple::runtime;
@@ -14,12 +11,16 @@ namespace handlers
 
     class ChannelHub
         : public generated::handlers::streamer::ChannelHub<ChannelHub>
-        , public ::impl::Endpoint<ChannelHub>
-        , public ::impl::ChannelHub<ChannelHub>
     {
     public:
         ChannelHub();
         ~ChannelHub();
+
+        Future< > attachChannel(Channel &&arg_0);
+        Future< Channel> detachChannel();
+
+        Future< SubchannelId> injectSubchannel(Channel &&arg_0);
+        Future< Channel> ejectSubchannel(SubchannelId &&arg_0);
     };
 
     struct ChannelHubHandlerFactory

@@ -6,6 +6,7 @@ scope streamer
         badChannelValue;
         alreadyAttached;
         alreadyDetached;
+        attachingInProgress;
         detachingInProgress;
         flowRemitted;
         flowAborted;
@@ -33,8 +34,7 @@ scope streamer
     interface Stream
     {
         alias Traffic = bytes;
-        in remit: () -> ();
-        in flow: () -> (Traffic);
+        out flow: (Traffic) -> ();
     }
 
     struct Channel

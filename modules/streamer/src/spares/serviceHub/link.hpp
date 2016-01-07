@@ -4,7 +4,7 @@
 #include <dci/mm/newDelete.hpp>
 #include "streamer.hpp"
 
-namespace impl { namespace serviceHub
+namespace spares { namespace serviceHub
 {
 
     using namespace dci::couple::runtime;

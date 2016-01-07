@@ -101,8 +101,8 @@ namespace xyz
 
     struct Engine
     {
-        using OStream = serialize::Stream<Settings, Engine, SinkSource>;
-        using IStream  = serialize::Stream<Settings, Engine, SinkSource>;
+        using OStream = serialize::Stream<Settings, SinkSource>;
+        using IStream  = serialize::Stream<Settings, SinkSource>;
 
         template <class Service>
         std::uint32_t setService(Service &&);
@@ -119,14 +119,6 @@ namespace xyz
         }
     };
 
-    namespace
-    {
-        struct Context
-        {
-          //std::uint32_t setService(...);
-        } context;
-    }
-
     int f();
     int f()
     {
@@ -137,7 +129,7 @@ namespace xyz
 
             SinkSource sink;
 
-            serialize::Stream<Settings, Context, SinkSource> ostream(context, sink);
+            serialize::Stream<Settings, SinkSource> ostream(sink);
 
             ostream << 10.2;
             ostream << std::move(kin);
@@ -147,7 +139,7 @@ namespace xyz
             std::set<int> kout;
             SinkSource source;
 
-            serialize::Stream<Settings, Context, SinkSource> istream(context, source);
+            serialize::Stream<Settings, SinkSource> istream(source);
 
             istream >> kout;
         }

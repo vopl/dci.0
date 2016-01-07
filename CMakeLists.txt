@@ -73,7 +73,7 @@ set(CMAKE_MODULE_LINKER_FLAGS "-Wl,--no-undefined")
 
 
 
-set(CMAKE_CXX_FLAGS "-Wall -Wextra -Wpedantic -Werror ${CLANG_WARNS} -ftemplate-depth-1000 -fvisibility=hidden -fvisibility-inlines-hidden")
+set(CMAKE_CXX_FLAGS "-Wall -Wextra -Wpedantic ${CLANG_WARNS} -ftemplate-depth-1000 -fvisibility=hidden -fvisibility-inlines-hidden")
 
 #set(CMAKE_SHARED_LINKER_FLAGS_RELEASE "-march=native -flto -O3 -g")
 #set(CMAKE_MODULE_LINKER_FLAGS_RELEASE "-march=native -flto -O3 -g")

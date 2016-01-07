@@ -1,7 +1,7 @@
 #pragma once
 #include "nodeBase.hpp"
 
-namespace impl { namespace links
+namespace spares { namespace hub
 {
     template <class Cfg>
     struct NodeMaxStub

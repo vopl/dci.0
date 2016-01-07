@@ -6,18 +6,20 @@
 #include "../endianness.hpp"
 #include "../valueTraits.hpp"
 
+#include <set>
+#include <map>
+#include <vector>
 #include <system_error>
 #include <type_traits>
 #include <tuple>
 
 namespace dci { namespace couple { namespace serialize { namespace details
 {
-    template <class Settings, class Context, class SinkSource> class Processor
+    template <class Settings, class SinkSource> class Processor
     {
     public:
-        Processor(Context &ctx, SinkSource &ss)
-            : _ctx(ctx)
-            , _ss(ss)
+        Processor(SinkSource &ss)
+            : _ss(ss)
             , _processedSize(0)
         {
         }
@@ -268,7 +270,7 @@ namespace dci { namespace couple { namespace serialize { namespace details
             load(typeId);
             if(!ValueTraits<Value>::isTypeIdValid(typeId))
             {
-                throw std::system_error(err_general::bad_input);
+                throw std::system_error(err_general::badInput);
             }
             value.ensureType(typeId);
             value.visit([this](auto &subval){
@@ -280,28 +282,22 @@ namespace dci { namespace couple { namespace serialize { namespace details
         //struct
         template <class Value> std::enable_if_t<ValueKind::struct_ == ValueTraits<Value>::_kind> save(const Value &value)
         {
-            (void)value;
-            assert(0);
-            ValueTraits<Value>::enumerateFields([this](const auto &subval){
-                save(subval);
+            ValueTraits<Value>::enumerateFields(value, [this](const auto &subval){
+                this->save(subval);
             });
         }
 
         template <class Value> std::enable_if_t<ValueKind::struct_ == ValueTraits<Value>::_kind> save(Value &&value)
         {
-            (void)value;
-            assert(0);
-            ValueTraits<Value>::enumerateFields([this](auto &&subval){
-                save(std::forward<std::remove_reference_t<decltype(subval)>>(subval));
+            ValueTraits<Value>::enumerateFields(std::forward<Value>(value), [this](auto &&subval){
+                this->save(std::forward<std::remove_reference_t<decltype(subval)>>(subval));
             });
         }
 
         template <class Value> std::enable_if_t<ValueKind::struct_ == ValueTraits<Value>::_kind> load(Value &value)
         {
-            (void)value;
-            assert(0);
-            ValueTraits<Value>::enumerateFields([this](auto &subval){
-                load(subval);
+            ValueTraits<Value>::enumerateFields(value, [this](auto &subval){
+                this->load(subval);
             });
         }
 
@@ -323,7 +319,7 @@ namespace dci { namespace couple { namespace serialize { namespace details
         //interface
         template <class Value> std::enable_if_t<ValueKind::interface == ValueTraits<Value>::_kind> save(Value &&value)
         {
-            std::uint32_t serviceId = _ctx.setService(std::forward<Value>(value));
+            std::uint32_t serviceId = _ss.setService(std::forward<Value>(value));
             save(serviceId);
         }
 
@@ -331,7 +327,7 @@ namespace dci { namespace couple { namespace serialize { namespace details
         {
             std::uint32_t serviceId;
             load(serviceId);
-            value = _ctx.getService(serviceId);
+            value = _ss.getService(serviceId);
         }
 
 
@@ -411,7 +407,7 @@ namespace dci { namespace couple { namespace serialize { namespace details
                 return;
             }
 
-            throw std::system_error(err_general::quote_exhausted);
+            throw std::system_error(err_general::quoteExhausted);
         }
 
         void meterProcessedSize(std::size_t size)
@@ -422,7 +418,7 @@ namespace dci { namespace couple { namespace serialize { namespace details
                 return;
             }
 
-            throw std::system_error(err_general::quote_exhausted);
+            throw std::system_error(err_general::quoteExhausted);
         }
 
 
@@ -576,7 +572,6 @@ namespace dci { namespace couple { namespace serialize { namespace details
         }
 
     private:
-        Context &       _ctx;
         SinkSource &    _ss;
         std::size_t     _processedSize;
     };

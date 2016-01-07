@@ -4,9 +4,6 @@
 #include "streamer.hpp"
 #include "streamerHandlerSkel.hpp"
 
-#include "../impl/endpoint.hpp"
-#include "../impl/amortisseur.hpp"
-
 namespace handlers
 {
     using namespace dci::couple::runtime;
@@ -14,14 +11,20 @@ namespace handlers
 
     class Amortisseur
         : public generated::handlers::streamer::Amortisseur<Amortisseur>
-        , public ::impl::Endpoint<Amortisseur>
-        , public ::impl::Amortisseur<Amortisseur>
     {
     public:
         Amortisseur();
         ~Amortisseur();
 
-        using ::impl::Amortisseur<Amortisseur>::amortisseurState;
+        Future< > attachChannel(Channel &&arg_0);
+        Future< Channel> detachChannel();
+
+        Future< > startAmortisseur(Channel &&arg_0);
+        Future< > pauseAmortisseur();
+        Future< > resumeAmortisseur();
+        Future< Channel> migrateAmortisseur(Channel &&arg_0);
+        Future< Channel> stopAmortisseur();
+        Future< AmortisseurState> amortisseurState();
     };
 
     struct AmortisseurHandlerFactory

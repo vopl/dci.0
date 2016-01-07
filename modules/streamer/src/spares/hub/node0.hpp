@@ -2,7 +2,7 @@
 #include "nodeBase.hpp"
 #include <dci/utils/bits.hpp>
 
-namespace impl { namespace links
+namespace spares { namespace hub
 {
     template <class Cfg>
     class Node<Cfg, 0>

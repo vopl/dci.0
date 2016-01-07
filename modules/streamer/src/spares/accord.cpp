@@ -1,5 +1,5 @@
 #include "accord.hpp"
 
-namespace impl
+namespace spares
 {
 }

@@ -18,39 +18,36 @@ set(SRC
     src/handlers/amortisseur.hpp
     src/handlers/amortisseur.cpp
 
-    src/impl/endpoint.hpp
-    src/impl/endpoint.cpp
-    src/impl/endpoint/message.hpp
-    src/impl/endpoint/message.cpp
-    src/impl/endpoint/inputFlowParser.hpp
-    src/impl/endpoint/inputFlowParser.cpp
+    src/spares/protocol/linkId.hpp
+    src/spares/protocol/messageType.hpp
+    src/spares/protocol/message.hpp
+    src/spares/protocol/parser.hpp
+    src/spares/protocol/parser.cpp
 
-    src/impl/accord.hpp
-    src/impl/accord.cpp
+    src/spares/brim.hpp
+    src/spares/brim.cpp
 
-    src/impl/channelHub.hpp
-    src/impl/channelHub.cpp
+    src/spares/accord.hpp
+    src/spares/accord.cpp
 
-    src/impl/serviceHub.hpp
-    src/impl/serviceHub.cpp
-    src/impl/serviceHub/link.hpp
-    src/impl/serviceHub/link.cpp
-    src/impl/serviceHub/localLink.hpp
-    src/impl/serviceHub/localLink.cpp
-    src/impl/serviceHub/remoteLink.hpp
-    src/impl/serviceHub/remoteLink.cpp
+    src/spares/serviceHub/link.hpp
+    src/spares/serviceHub/link.cpp
+    src/spares/serviceHub/localLink.hpp
+    src/spares/serviceHub/localLink.cpp
+    src/spares/serviceHub/remoteLink.hpp
+    src/spares/serviceHub/remoteLink.cpp
 
-    src/impl/amortisseur.hpp
-    src/impl/amortisseur.cpp
+    src/spares/protocol.hpp
+    src/spares/serialize.hpp
+    src/spares/serialize.cpp
 
-    src/impl/protocol.hpp
-
-    src/impl/links/pool.hpp
-    src/impl/links/id.hpp
-    src/impl/links/node.hpp
-    src/impl/links/node0.hpp
-    src/impl/links/nodeBase.hpp
-    src/impl/links/nodeMaxStub.hpp
+    src/spares/hub.hpp
+    src/spares/hub/pool.hpp
+    src/spares/hub/id.hpp
+    src/spares/hub/node.hpp
+    src/spares/hub/node0.hpp
+    src/spares/hub/nodeBase.hpp
+    src/spares/hub/nodeMaxStub.hpp
 
 
 
@@ -98,6 +95,6 @@ dciDefineModule(streamer
 ############################################################
 include(dciTest)
 dciTest(${PROJECT} mload
-    SRC test/linksPool.cpp test/serviceHub.cpp
+    SRC test/hubPool.cpp test/serviceHub.cpp
     LINK ${PROJECT}
 )

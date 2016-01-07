@@ -7,8 +7,9 @@ namespace dci { namespace couple { namespace serialize
 {
     enum class err_general
     {
-        bad_input = 2,
-        quote_exhausted = 3,
+        badInput = 2,
+        quoteExhausted = 3,
+        lowData = 4,
     };
 
     APIDCI_COUPLE_SERIALIZE const std::error_category& err_general_category();

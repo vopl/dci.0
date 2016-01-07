@@ -2,7 +2,7 @@
 #include <dci/mm/newDelete.hpp>
 #include "nodeMaxStub.hpp"
 
-namespace impl { namespace links
+namespace spares { namespace hub
 {
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
     template <class Cfg, std::size_t level>

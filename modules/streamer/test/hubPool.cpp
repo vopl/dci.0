@@ -1,11 +1,11 @@
 #include <dci/gtest.hpp>
-#include "../src/impl/links/pool.hpp"
+#include "../src/spares/hub/pool.hpp"
 
 #include <deque>
 
 using namespace dci::couple::runtime;
 using namespace streamer;
-using namespace ::impl::links;
+using namespace ::spares::hub;
 
 #define AMOUNT 4000
 
@@ -20,7 +20,7 @@ struct LinkStub
     }
 };
 
-TEST(LinksPool, Create)
+TEST(HubPool, Create)
 {
     //создать-удалить пустой объект
     std::size_t mBefore = dci::mm::occupied();
@@ -30,7 +30,7 @@ TEST(LinksPool, Create)
     ASSERT_EQ(mBefore, dci::mm::occupied());
 }
 
-TEST(LinksPool, AddDel)
+TEST(HubPool, AddDel)
 {
     //добавить-удалить один линк
     std::size_t mBefore = dci::mm::occupied();
@@ -45,7 +45,7 @@ TEST(LinksPool, AddDel)
     ASSERT_EQ(mBefore, dci::mm::occupied());
 }
 
-TEST(LinksPool, AddDelMax)
+TEST(HubPool, AddDelMax)
 {
     //добавить-удалить до максимума
     std::size_t mBefore = dci::mm::occupied();
@@ -105,7 +105,7 @@ TEST(LinksPool, AddDelMax)
     ASSERT_EQ(mBefore, dci::mm::occupied());
 }
 
-TEST(LinksPool, InvalidDel)
+TEST(HubPool, InvalidDel)
 {
     //удалять неправильные линки
     std::size_t mBefore = dci::mm::occupied();
@@ -122,7 +122,7 @@ TEST(LinksPool, InvalidDel)
 }
 
 
-TEST(LinksPool, AddDelMany)
+TEST(HubPool, AddDelMany)
 {
     //добавить-удалить много линков
 
@@ -167,7 +167,7 @@ TEST(LinksPool, AddDelMany)
     ASSERT_EQ(mBefore, dci::mm::occupied());
 }
 
-TEST(LinksPool, AddDelRndGet)
+TEST(HubPool, AddDelRndGet)
 {
     //добавить-удалить много линков, несколько раз рандомом
 
@@ -215,7 +215,7 @@ TEST(LinksPool, AddDelRndGet)
 }
 
 
-TEST(LinksPool, RndAddDelGet)
+TEST(HubPool, RndAddDelGet)
 {
     //добавить-удалить много линков, несколько раз рандомом, получать их
 
@@ -280,7 +280,7 @@ TEST(LinksPool, RndAddDelGet)
     ASSERT_EQ(mBefore, dci::mm::occupied());
 }
 
-TEST(LinksPool, RndAddIdDelGet)
+TEST(HubPool, RndAddIdDelGet)
 {
     //добавитьПоID-удалить много линков, несколько раз рандомом, получать их
 

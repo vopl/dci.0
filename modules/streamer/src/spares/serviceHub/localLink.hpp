@@ -2,7 +2,7 @@
 
 #include "link.hpp"
 
-namespace impl { namespace serviceHub
+namespace spares { namespace serviceHub
 {
 
     //

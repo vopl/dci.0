@@ -1,6 +1,6 @@
 #include "remoteLink.hpp"
 
-namespace impl { namespace serviceHub
+namespace spares { namespace serviceHub
 {
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
     RemoteLink::RemoteLink()

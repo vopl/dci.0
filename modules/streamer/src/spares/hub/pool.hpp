@@ -14,7 +14,7 @@
 #include <chrono>
 #include <iostream>
 
-namespace impl { namespace links
+namespace spares { namespace hub
 {
     using namespace dci::couple::runtime;
 
@@ -28,7 +28,7 @@ namespace impl { namespace links
         using Link = Link_;
         struct Cfg
         {
-            using Pool = links::Pool<Link_, volume>;
+            using Pool = hub::Pool<Link_, volume>;
             using Link = Link_;
             static const std::size_t _width = bitsof(void*);
 

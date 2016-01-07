@@ -24,10 +24,12 @@ namespace dci { namespace couple { namespace serialize
             {
                 switch(static_cast<err_general>(value))
                 {
-                case err_general::bad_input:
+                case err_general::badInput:
                     return "bad input";
-                case err_general::quote_exhausted:
+                case err_general::quoteExhausted:
                     return "quote exhausted";
+                case err_general::lowData:
+                    return "low data";
                 }
 
                 return "dci.couple.serialize.general error";
