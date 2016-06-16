@@ -65,9 +65,9 @@ namespace handlers { namespace streamChannel
     {
         assert(dci::poll::Descriptor::rsf_write & readyState);
 
-        int iovAmount = _buffer.segmentsAmount();
         if(!_buffer.empty())
         {
+            int iovAmount = _buffer.segmentsAmount();
 
             iovec *iov = (iovec *)alloca(iovAmount * sizeof(iovec));
             _buffer.fillIovec(iov);
