@@ -1,0 +1,33 @@
+
+scope streamer
+{
+    alias Traffic = Bytes;
+
+    iface Channel
+    {
+        in flow:    (Traffic);
+        in reset:   ();
+
+        out flow:   (Traffic);
+        out reset:  ();
+    }
+
+
+    iface Hub
+    {
+        in channel: () -> (Channel);
+        in reset:   ();
+
+alias iface = int8;
+alias iid = int8;
+
+        in put:     (iface);
+        out put:    (iface);
+
+        in get:     (iid) -> (iface);
+        out get:    (iid) -> (iface);
+
+        in join:    (Channel);
+    }
+
+}
