@@ -108,6 +108,7 @@ namespace handlers
                 }
 
                 auto *v = new StreamChannel<Address>(sock);
+                v->start();
                 p.resolveValue(Channel(*v));
                 return;
             }

@@ -23,7 +23,7 @@ namespace handlers { namespace datagramChannel
         bool hasRequests() const;
         Future< Bytes> pushRequest();
         Future< Bytes, Address> pushRequest2();
-        void pump(Descriptor &d);
+        void pump(int d, std::uint_fast32_t &readyState);
         void close(const std::error_code &ec);
 
     private:
@@ -244,10 +244,10 @@ namespace handlers { namespace datagramChannel
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
     template <class Address>
-    void Reader<Address>::pump(Descriptor &d)
+    void Reader<Address>::pump(int d, std::uint_fast32_t &readyState)
     {
         static_assert(sizeof(typename utils::AddressSpares<Address>::SockAddr) <= sizeof(sockaddr_in6), "addresses buffer too small");
-        assert(dci::poll::Descriptor::rsf_read & d.readyState());
+        assert(dci::poll::Descriptor::rsf_read & readyState);
 
         while(_requestsFirst)
         {
@@ -288,7 +288,7 @@ namespace handlers { namespace datagramChannel
                 }
                 else if((std::size_t)res < mmsgs.size())
                 {
-                    d.resetReadyState(Descriptor::rsf_write);
+                    readyState &= ~Descriptor::rsf_write;
                 }
                 else
                 {

@@ -46,7 +46,7 @@ namespace handlers { namespace streamChannel
     }
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
-    void Reader::pump(Descriptor &d)
+    void Reader::pump(int d, std::uint_fast32_t &readyState)
     {
         assert(_requestsFirst);
         if(!_requestsFirst)
@@ -54,7 +54,7 @@ namespace handlers { namespace streamChannel
             return;
         }
 
-        assert(dci::poll::Descriptor::rsf_read & d.readyState());
+        assert(dci::poll::Descriptor::rsf_read & readyState);
 
         static const std::size_t bufLen = 1024*2;
         std::pair<iovec *, std::size_t> buf = _preparedBuffer.prepare(bufLen);
@@ -77,7 +77,7 @@ namespace handlers { namespace streamChannel
 
         if((std::size_t)res < bufLen)
         {
-            d.resetReadyState(Descriptor::rsf_read);
+            readyState &= ~Descriptor::rsf_read;
         }
 
         request->_promise.resolveValue(_preparedBuffer.flush(res));

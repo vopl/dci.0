@@ -24,7 +24,7 @@ namespace dci { namespace poll
         Descriptor &operator=(const Descriptor &) = delete;
 
     public:
-        enum ReadyStateFlags
+        enum ReadyStateFlags : std::uint_fast32_t
         {
             rsf_read    = 0x01,
             rsf_write   = 0x02,
@@ -47,5 +47,7 @@ namespace dci { namespace poll
         dci::async::Event &readyEvent();
         std::uint_fast32_t readyState() const;
         void resetReadyState(std::uint_fast32_t flags);
+
+        void setReadyCallback(void *userData, void (*)(void *userData, std::uint_fast32_t flags));
     };
 }}

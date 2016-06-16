@@ -7,6 +7,7 @@ namespace dci { namespace poll { namespace impl
 
     TimerEngine::TimerEngine()
         : _now(std::chrono::steady_clock::now())
+        , _lastDistance(std::chrono::milliseconds::max())
         , _grid(std::chrono::duration_cast<LevelsUnit>(_now.time_since_epoch()).count())
     {
 
@@ -20,15 +21,25 @@ namespace dci { namespace poll { namespace impl
     std::chrono::milliseconds TimerEngine::fireTicks()
     {
         _now = std::chrono::steady_clock::now();
-
         time now = std::chrono::duration_cast<LevelsUnit>(_now.time_since_epoch()).count();
+
+        if(_lastCheckpoint == now)
+        {
+            return _lastDistance;
+        }
+        _lastCheckpoint = now;
+
         time next = _grid.rollTo(now, this);
         if(_maxtime == next)
         {
-            return std::chrono::milliseconds::max();
+            _lastDistance = std::chrono::milliseconds::max();
+        }
+        else
+        {
+            _lastDistance = std::chrono::duration_cast<std::chrono::milliseconds>(LevelsUnit(next - now));
         }
 
-        return std::chrono::duration_cast<std::chrono::milliseconds>(LevelsUnit(next - now));
+        return _lastDistance;
     }
 
     void TimerEngine::update(Timer *t)

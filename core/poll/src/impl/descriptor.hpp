@@ -25,6 +25,9 @@ namespace dci { namespace poll { namespace impl
         std::uint_fast32_t readyState() const;
         void resetReadyState(std::uint_fast32_t flags);
 
+        void setReadyCallback(void *userData, void (*)(void *userData, std::uint_fast32_t flags));
+
+
     private:
         std::error_code install();
         void uninstall();
@@ -37,7 +40,11 @@ namespace dci { namespace poll { namespace impl
 
     private:
         int                 _fd;
+
         dci::async::Event   _readyEvent;
         std::uint_fast32_t  _readyState{0};
+
+        void * _readyCallbackData {nullptr};
+        void (*_readyCallback)(void *userData, std::uint_fast32_t flags) {nullptr};
     };
 }}}
